@@ -17,7 +17,7 @@ RCP was formerly delivered as part of CodeXL with the executable name
 * [System Requirements](#system-requirements)
 * [Cloning the Repository](#cloning-the-repository)
 * [Source Code Directory Layout](#source-code-directory-layout)
-* [Why version 5.x?] (#why-version-5x)
+* [Why version 5.x?](#why-version-5x)
 * [Building the Source Code](BUILD.md)
 * [License](LICENSE)
 
