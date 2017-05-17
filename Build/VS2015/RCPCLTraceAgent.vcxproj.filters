@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="../../Src/CLTraceAgent/CLAPIDefBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="../../Src/CLTraceAgent/CLAPIDefs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="../../Src/CLTraceAgent/CLAPIInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="../../Src/CLTraceAgent/CLAPIInfoManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="../../Src/CLTraceAgent/CLAPITraceEntry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="../../Src/CLTraceAgent/CLEnqueueAPIDefs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="../../Src/CLTraceAgent/CLEventHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="../../Src/CLTraceAgent/CLEventManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="../../Src/CLTraceAgent/CLStringUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="../../Src/CLTraceAgent/CLTraceAgent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="../../Src/CLTraceAgent/PMCSamplerManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="../../Src/CLTraceAgent/APTraceUserPMCExt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="../../Src/CLTraceAgent/CLAPIDefBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="../../Src/CLTraceAgent/CLAPIDefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="../../Src/CLTraceAgent/CLAPIInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="../../Src/CLTraceAgent/CLAPIInfoManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="../../Src/CLTraceAgent/CLAPITraceEntry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="../../Src/CLTraceAgent/CLEnqueueAPIDefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="../../Src/CLTraceAgent/CLEventHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="../../Src/CLTraceAgent/CLEventManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="../../Src/CLTraceAgent/CLStringUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="../../Src/CLTraceAgent/CLTraceAgent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="../../Src/CLTraceAgent/PMCSamplerManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="../../Src/CLTraceAgent/resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{0e6e130c-6314-45cd-9853-49392b6cc362}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{742861c7-37f2-4804-ba0b-73d101ab5456}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource FIles">
+      <UniqueIdentifier>{903c128b-20c4-4978-a8b4-32bbe544e84d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\Src\VersionInfo\RCPVersionInfo.rc">
+      <Filter>Resource FIles</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

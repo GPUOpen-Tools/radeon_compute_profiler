@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\Src\Common\APIInfoManagerBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\APITraceUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\ATPFileUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\BinFileHeader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\CSVFileParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\FileUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\GlobalSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\GPAUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\GPUPerfAPICounterLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\HTMLTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\jqPlotChart.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\KernelProfileResultManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\KernelStats.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\LocaleSetting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\OSUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\ProfilerTimer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\StackTracer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\StringUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\TraceInfoManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Common\windows\RefTracker.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Src\ADLUtil\ADLUtil.cpp">
+      <Filter>ADLUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Src\AMDTMutex\AMDTMutex.cpp">
+      <Filter>AMDTMutex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Src\DeviceInfo-Internal\DeviceInfoInternal.cpp">
+      <Filter>DeviceInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Src\DeviceInfo\DeviceInfoUtils.cpp">
+      <Filter>DeviceInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Src\DynamicLibraryModule\DynamicLibraryModule.cpp">
+      <Filter>DynamicLibraryModule</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Src\GPUPerfAPIUtils\GPUPerfAPILoader.cpp">
+      <Filter>GPUPerfAPIUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Src\GPUPerfAPIUtils\GPUPerfAPIRegistry.cpp">
+      <Filter>GPUPerfAPIUtils</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Src\Common\APIInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\APITraceUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\ATPFileUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\BaseParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\BinFileHeader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\CSVFileParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\Defs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\FileUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\GlobalSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\GPAUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\GPUPerfAPICounterLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\HTMLTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\IParserListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\IParserProgressMonitor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\jqPlotChart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\JScript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\KernelProfileResultManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\KernelStats.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\LocaleSetting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\LocalTSingleton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\Logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\OSUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\ProfilerTimer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\Runnable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\SeqIDGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\StackTracer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\StringUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\TraceInfoManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\APIInfoManagerBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\windows\RefTracker.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\Version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Src\ADLUtil\ADLUtil.h">
+      <Filter>ADLUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Src\AMDTMutex\AMDTMutex.h">
+      <Filter>AMDTMutex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Src\DeviceInfo\DeviceInfo.h">
+      <Filter>DeviceInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Src\DeviceInfo\DeviceInfoUtils.h">
+      <Filter>DeviceInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Src\DynamicLibraryModule\DynamicLibraryModule.h">
+      <Filter>DynamicLibraryModule</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Src\GPUPerfAPIUtils\GPUPerfAPILoader.h">
+      <Filter>GPUPerfAPIUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Src\GPUPerfAPIUtils\GPUPerfAPIRegistry.h">
+      <Filter>GPUPerfAPIUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\ProfilerOutputFileDefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\OSDefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\Config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Common\ProfilingParams.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="DeviceInfo">
+      <UniqueIdentifier>{fde47d47-04fd-401d-973c-45bfdd6f658f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DynamicLibraryModule">
+      <UniqueIdentifier>{74fa6d82-487a-4b16-91fc-f7d51a62f369}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GPUPerfAPIUtils">
+      <UniqueIdentifier>{509e05bc-c619-4317-b666-d51bd2137da3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{5efbc9b4-4f2d-4e8f-b236-3f23ee362b4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{3549275f-e7e4-4fde-a3ea-6ce05cbcad64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Windows">
+      <UniqueIdentifier>{c413e142-1ca7-440f-a36f-8b0a5010fed5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AMDTMutex">
+      <UniqueIdentifier>{e1cc8e03-7b53-411e-942a-ae38a544e6e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ADLUtil">
+      <UniqueIdentifier>{3f25ee92-f719-421f-86f4-09ba71c4a4dd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

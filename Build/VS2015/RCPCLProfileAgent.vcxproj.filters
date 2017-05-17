@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Common\Src\DynamicLibraryModule\ACLModule.cpp">
+      <Filter>ACLModuleManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Src\ACLModuleManager\ACLModuleManager.cpp">
+      <Filter>ACLModuleManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Src\ADLUtil\ADLUtil.cpp">
+      <Filter>ADLUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Src\CElf\Src\CElf.cpp">
+      <Filter>CElf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Src\CElf\Src\CElfSection.cpp">
+      <Filter>CElf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Src\CElf\Src\CElfStringTable.cpp">
+      <Filter>CElf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Src\CElf\Src\CElfSymbolTable.cpp">
+      <Filter>CElf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLContextManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLDeferredKernel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLGPAProfiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLInitProfiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLKernel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLKernelAssembly.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLProfileAgent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLProfilerMineCLEntry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLProfilerMineCLMemory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLUserEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Common\Src\ACLModuleManager\ACLModuleManager.h">
+      <Filter>ACLModuleManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLContextManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLDeferredKernel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLGPAProfiler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLInitProfiler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLKernel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLKernelAssembly.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLProfileAgent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLProfilerMineCLEntry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLProfilerMineCLMemory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLUserEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\CLProfileAgent\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{7124187b-7b76-4cc9-bdd2-0ff0af4cbbdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CElf">
+      <UniqueIdentifier>{59c4443f-a055-4755-8763-238265e9bc85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{22d938b8-1adb-4011-ac9a-850e37321634}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{90ebe1c6-68ac-4d65-a554-91b9e6522a45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ADLUtil">
+      <UniqueIdentifier>{33683a43-a8a1-40d6-a5ac-d8b74ef5e4b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ACLModuleManager">
+      <UniqueIdentifier>{f3e0c876-a5b8-4fe4-9f11-125e1ca8d51d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\Src\VersionInfo\RCPVersionInfo.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

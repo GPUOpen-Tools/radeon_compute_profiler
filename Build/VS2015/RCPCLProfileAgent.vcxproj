@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B511B681-4C67-4435-9B7D-BE54689F4044}</ProjectGuid>
+    <RootNamespace>CLProfileAgent</RootNamespace>
+    <ProjectName>RCPCLProfileAgent</ProjectName>
+    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="RCP-Common.props" />
+    <Import Project="RCP-Common-OpenCL.props" />
+    <Import Project="..\..\..\RCP-Internal\Build\VS2015\RCP-Internal.props" Condition="exists('..\..\..\RCP-Internal\Build\VS2015\RCP-Internal.props')" />
+    <Import Project="$(CommonDir)\Lib\AMD\ACL\Global-ACL.props" />
+    <Import Project="$(CommonDir)\Src\CElf\Global-CElf.props" />
+    <Import Project="$(CommonDir)\Src\ADLUtil\Global-ADLUtil.props" />
+    <Import Project="$(CommonDir)\Src\ACLModuleManager\Global-ACLModuleManager.props" />
+    <Import Project="$(CommonDir)\Lib\AMD\CAL\Global-CAL-NoLib.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <CustomBuildStep>
+      <Command>"..\..\Src\CLProfileAgent\CLExternalFileCopy.bat" "$(GPUPerfAPIDir)" "$(AMDTBuildSuffix)" "$(AMDTPlatform)" "$(AMDTPlatformSuffix)" "$(OutDir)"</Command>
+      <Outputs>$(OutDir)GPUPerfAPICL$(AMDTPlatformSuffix)$(AMDT_BUILD_SUFFIX).dll;$(OutDir)\GPUPerfAPICounters$(AMDTPlatformSuffix)$(AMDT_BUILD_SUFFIX).dll;$(Outputs)</Outputs>
+    </CustomBuildStep>
+    <Link>
+      <AdditionalOptions>/EXPORT:clAgent_OnLoad %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+    <ResourceCompile>
+      <PreprocessorDefinitions>RCP_PROJECT_NAME=CLProfileAgent;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Common\Src\ADLUtil\ADLUtil.cpp" />
+    <ClCompile Include="..\..\..\Common\Src\CElf\Src\CElf.cpp" />
+    <ClCompile Include="..\..\..\Common\Src\CElf\Src\CElfSection.cpp" />
+    <ClCompile Include="..\..\..\Common\Src\CElf\Src\CElfStringTable.cpp" />
+    <ClCompile Include="..\..\..\Common\Src\CElf\Src\CElfSymbolTable.cpp" />
+    <ClCompile Include="..\..\..\Common\Src\DynamicLibraryModule\ACLModule.cpp" />
+    <ClCompile Include="..\..\..\Common\Src\ACLModuleManager\ACLModuleManager.cpp" />
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLBuffer.cpp" />
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLContext.cpp" />
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLContextManager.cpp" />
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLDeferredKernel.cpp" />
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLGPAProfiler.cpp" />
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLInitProfiler.cpp" />
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLKernel.cpp" />
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLKernelAssembly.cpp" />
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLProfileAgent.cpp" />
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLProfilerMineCLEntry.cpp" />
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLProfilerMineCLMemory.cpp" />
+    <ClCompile Include="..\..\Src\CLProfileAgent\CLUserEvent.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Common\Src\ACLModuleManager\ACLModuleManager.h" />
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLBuffer.h" />
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLContext.h" />
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLContextManager.h" />
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLDeferredKernel.h" />
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLGPAProfiler.h" />
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLInitProfiler.h" />
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLKernel.h" />
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLKernelAssembly.h" />
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLProfileAgent.h" />
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLProfilerMineCLEntry.h" />
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLProfilerMineCLMemory.h" />
+    <ClInclude Include="..\..\Src\CLProfileAgent\CLUserEvent.h" />
+    <ClInclude Include="..\..\Src\CLProfileAgent\resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Src\AMDTBaseTools\AMDTBaseToolsVS14.vcxproj">
+      <Project>{11221a7f-3883-418f-b286-b0ea1e28ef10}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\Src\AMDTOSWrappers\AMDTOSWrappersVS14.vcxproj">
+      <Project>{5d9222ac-39fb-4123-9497-78cea5be58ad}</Project>
+    </ProjectReference>
+    <ProjectReference Include="RCPCLCommon.vcxproj">
+      <Project>{dfbd3d9e-c64f-401b-8898-b5d34d580c54}</Project>
+    </ProjectReference>
+    <ProjectReference Include="RCPCommon.vcxproj">
+      <Project>{176db1a7-68a5-4c97-8606-2cc1388d7a50}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\Src\VersionInfo\RCPVersionInfo.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

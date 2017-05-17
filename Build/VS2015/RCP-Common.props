@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="UserMacros">
+    <WorkspaceRootDir>$(SolutionDir)..\..\..</WorkspaceRootDir>
+    <CommonDir>$(WorkspaceRootDir)\Common</CommonDir>
+    <CommonSrcDir>$(WorkspaceRootDir)\Common\Src</CommonSrcDir>
+    <RCPDir>$(WorkspaceRootDir)\RCP</RCPDir>
+    <AMDTModuleType>Static</AMDTModuleType>
+  </PropertyGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(CommonSrcDir)\Vsprops\Global-Common.props" />
+    <Import Project="$(CommonSrcDir)\AMDTMutex\Global-AMDTMutex.props" />
+    <Import Project="$(CommonSrcDir)\DeviceInfo\Global-DeviceInfo.props" />
+    <Import Project="$(CommonSrcDir)\GPUPerfAPIUtils\Global-GPUPerfAPIUtils.props" />
+    <Import Project="$(CommonSrcDir)\DynamicLibraryModule\Global-DynamicLibraryModule.props" />
+    <Import Project="$(CommonSrcDir)\AMDTInterceptor\Global-Interceptor-mhook-2015.props" />
+    <Import Project="$(CommonDir)\Lib\Ext\Boost\Global-Boost-2015.props" />
+    <Import Project="RCP-GPUPerfAPI.props" />
+  </ImportGroup>
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <_PropertySheetDisplayName>RCP-Common</_PropertySheetDisplayName>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>NOMINMAX;AMDTOSWRAPPERS_STATIC;AMDTBASETOOLS_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(RCPDir)\Src\Common;$(CommonSrcDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary Condition="$([System.Convert]::ToBoolean($(IsDebug)))">MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="$([System.Convert]::ToBoolean($(IsRelease)))">MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <ImportLibrary>$(IntDir)$(ProjectName)</ImportLibrary>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ResourceCompile>
+        <AdditionalIncludeDirectories>$(RCPDir)\Src\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="CommonDir">
+      <Value>$(CommonDir)</Value>
+    </BuildMacro>
+    <BuildMacro Include="FinalOutuputDir">
+      <Value>$(FinalOutuputDir)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

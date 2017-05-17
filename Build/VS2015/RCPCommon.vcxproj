@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{176DB1A7-68A5-4C97-8606-2CC1388D7A50}</ProjectGuid>
+    <RootNamespace>Common</RootNamespace>
+    <ProjectName>RCPCommon</ProjectName>
+    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="RCP-Common.props" />
+    <Import Project="RCP-Lib.props" />
+    <Import Project="$(CommonDir)\Src\ADLUtil\Global-ADLUtil.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Lib>
+      <AdditionalDependencies>dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <PostBuildEvent>
+      <Message>Copy jqPlot to output</Message>
+      <Command>"..\..\Src\Common\jqPlotCopy.bat" "$(OutputPath)\..\bin" "..\..\Src\Common\"</Command>
+    </PostBuildEvent>
+    <ClCompile>
+      <PreprocessorDefinitions>BOOST_MEM_FN_ENABLE_STDCALL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Common\Src\ADLUtil\ADLUtil.cpp" />
+    <ClCompile Include="..\..\..\Common\Src\GPUPerfAPIUtils\GPUPerfAPIRegistry.cpp" />
+    <ClCompile Include="..\..\Src\Common\APIInfoManagerBase.cpp" />
+    <ClCompile Include="..\..\Src\Common\APITraceUtils.cpp" />
+    <ClCompile Include="..\..\Src\Common\ATPFileUtils.cpp" />
+    <ClCompile Include="..\..\Src\Common\BinFileHeader.cpp" />
+    <ClCompile Include="..\..\Src\Common\CSVFileParser.cpp" />
+    <ClCompile Include="..\..\Src\Common\FileUtils.cpp" />
+    <ClCompile Include="..\..\Src\Common\GlobalSettings.cpp" />
+    <ClCompile Include="..\..\Src\Common\GPAUtils.cpp" />
+    <ClCompile Include="..\..\..\Common\Src\GPUPerfAPIUtils\GPUPerfAPILoader.cpp" />
+    <ClCompile Include="..\..\Src\Common\GPUPerfAPICounterLoader.cpp" />
+    <ClCompile Include="..\..\Src\Common\HTMLTable.cpp" />
+    <ClCompile Include="..\..\Src\Common\jqPlotChart.cpp" />
+    <ClCompile Include="..\..\Src\Common\KernelProfileResultManager.cpp" />
+    <ClCompile Include="..\..\Src\Common\KernelStats.cpp" />
+    <ClCompile Include="..\..\Src\Common\LocaleSetting.cpp" />
+    <ClCompile Include="..\..\Src\Common\Logger.cpp" />
+    <ClCompile Include="..\..\..\Common\Src\AMDTMutex\AMDTMutex.cpp" />
+    <ClCompile Include="..\..\Src\Common\OSUtils.cpp" />
+    <ClCompile Include="..\..\Src\Common\ProfilerTimer.cpp" />
+    <ClCompile Include="..\..\Src\Common\StackTracer.cpp" />
+    <ClCompile Include="..\..\Src\Common\StringUtils.cpp" />
+    <ClCompile Include="..\..\Src\Common\TraceInfoManager.cpp" />
+    <ClCompile Include="..\..\Src\Common\windows\RefTracker.cpp" />
+    <ClCompile Include="..\..\..\Common\Src\DynamicLibraryModule\DynamicLibraryModule.cpp" />
+    <ClCompile Condition="'$(SolutionName)'=='RadeonComputeProfiler-Internal'" Include="..\..\..\Common\Src\DeviceInfo-Internal\DeviceInfoInternal.cpp">
+      <ExcludedFromBuild Condition="'$(AMDT_BUILD)'!='AMDT_INTERNAL'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Src\DeviceInfo\DeviceInfoUtils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Common\Src\ADLUtil\ADLUtil.h" />
+    <ClInclude Include="..\..\..\Common\Src\GPUPerfAPIUtils\GPUPerfAPIRegistry.h" />
+    <ClInclude Include="..\..\Src\Common\APIInfo.h" />
+    <ClInclude Include="..\..\Src\Common\APIInfoManagerBase.h" />
+    <ClInclude Include="..\..\Src\Common\APITraceUtils.h" />
+    <ClInclude Include="..\..\Src\Common\Config.h" />
+    <ClInclude Include="..\..\Src\Common\ProfilingParams.h" />
+    <ClInclude Include="..\..\Src\Common\OSDefs.h" />
+    <ClInclude Include="..\..\Src\Common\ProfilerOutputFileDefs.h" />
+    <ClInclude Include="..\..\Src\Common\ATPFileUtils.h" />
+    <ClInclude Include="..\..\Src\Common\BaseParser.h" />
+    <ClInclude Include="..\..\Src\Common\BinFileHeader.h" />
+    <ClInclude Include="..\..\Src\Common\CSVFileParser.h" />
+    <ClInclude Include="..\..\Src\Common\Defs.h" />
+    <ClInclude Include="..\..\Src\Common\FileUtils.h" />
+    <ClInclude Include="..\..\Src\Common\GlobalSettings.h" />
+    <ClInclude Include="..\..\Src\Common\GPAUtils.h" />
+    <ClInclude Include="..\..\..\Common\Src\GPUPerfAPIUtils\GPUPerfAPILoader.h" />
+    <ClInclude Include="..\..\Src\Common\GPUPerfAPICounterLoader.h" />
+    <ClInclude Include="..\..\Src\Common\HTMLTable.h" />
+    <ClInclude Include="..\..\Src\Common\IParserListener.h" />
+    <ClInclude Include="..\..\Src\Common\IParserProgressMonitor.h" />
+    <ClInclude Include="..\..\Src\Common\jqPlotChart.h" />
+    <ClInclude Include="..\..\Src\Common\JScript.h" />
+    <ClInclude Include="..\..\Src\Common\KernelProfileResultManager.h" />
+    <ClInclude Include="..\..\Src\Common\KernelStats.h" />
+    <ClInclude Include="..\..\Src\Common\LocaleSetting.h" />
+    <ClInclude Include="..\..\Src\Common\LocalTSingleton.h" />
+    <ClInclude Include="..\..\Src\Common\Logger.h" />
+    <ClInclude Include="..\..\..\Common\Src\AMDTMutex\AMDTMutex.h" />
+    <ClInclude Include="..\..\Src\Common\OSUtils.h" />
+    <ClInclude Include="..\..\Src\Common\ProfilerTimer.h" />
+    <ClInclude Include="..\..\Src\Common\Runnable.h" />
+    <ClInclude Include="..\..\Src\Common\SeqIDGenerator.h" />
+    <ClInclude Include="..\..\Src\Common\StackTracer.h" />
+    <ClInclude Include="..\..\Src\Common\StringUtils.h" />
+    <ClInclude Include="..\..\Src\Common\TraceInfoManager.h" />
+    <ClInclude Include="..\..\Src\Common\Version.h" />
+    <ClInclude Include="..\..\Src\Common\windows\RefTracker.h" />
+    <ClInclude Include="..\..\..\Common\Src\DynamicLibraryModule\DynamicLibraryModule.h" />
+    <ClInclude Include="..\..\..\Common\Src\DeviceInfo\DeviceInfo.h" />
+    <ClInclude Include="..\..\..\Common\Src\DeviceInfo\DeviceInfoUtils.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
