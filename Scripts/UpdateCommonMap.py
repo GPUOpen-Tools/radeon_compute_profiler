@@ -36,11 +36,11 @@ GitHubMapping = {
 }
 
 downloadMappingWin = {
-    "https://github.com/GPUOpen-Tools/GPA/releases/download/v2.22/GPUPerfAPI-2.22.2261.0.zip" : "../Common/Lib/AMD/GPUPerfAPI",
+    "https://github.com/GPUOpen-Tools/GPA/releases/download/v2.22.1/GPUPerfAPI-2.22.2262.1.zip" : "../Common/Lib/AMD/GPUPerfAPI",
 }
 
 downloadMappingLin = {
-    "https://github.com/GPUOpen-Tools/GPA/releases/download/v2.22/GPUPerfAPI.2.22.1833-lnx.tgz" : "../Common/Lib/AMD/GPUPerfAPI",
+    "https://github.com/GPUOpen-Tools/GPA/releases/download/v2.22.1/GPUPerfAPI.2.22.1834-lnx.tgz" : "../Common/Lib/AMD/GPUPerfAPI",
 }
 
 
