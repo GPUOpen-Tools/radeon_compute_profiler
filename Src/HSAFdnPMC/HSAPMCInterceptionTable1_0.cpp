@@ -132,11 +132,7 @@ void InitHSAAPIInterceptPMC1_0(ApiTable1_0* pTable)
     g_pRealImageExtFunctions->hsa_ext_sampler_destroy_fn = pTable->std_exts_->hsa_ext_sampler_destroy_fn;
 
     pTable->hsa_agent_get_info_fn = HSA_PMC_hsa_agent_get_info;
-#ifdef FUTURE_ROCR_VERSION
     pTable->hsa_queue_create_fn = HSA_PMC_hsa_queue_create;
-#else
-    pTable->hsa_queue_create_fn = reinterpret_cast<decltype(hsa_queue_create)*>(reinterpret_cast<void*>(HSA_PMC_hsa_queue_create));
-#endif
     pTable->hsa_queue_destroy_fn = HSA_PMC_hsa_queue_destroy;
     pTable->hsa_executable_get_symbol_fn = HSA_PMC_hsa_executable_get_symbol;
     pTable->hsa_iterate_agents_fn = HSA_PMC_hsa_iterate_agents;

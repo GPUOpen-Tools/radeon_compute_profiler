@@ -366,20 +366,12 @@ void InitHSAAPIInterceptTrace1_0(ApiTable1_0* pTable)
 
     if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_queue_create))
     {
-#ifdef FUTURE_ROCR_VERSION
         pTable->hsa_queue_create_fn = HSA_API_Trace_hsa_queue_create;
-#else
-        pTable->hsa_queue_create_fn = reinterpret_cast<decltype(hsa_queue_create)*>(reinterpret_cast<void*>(HSA_API_Trace_hsa_queue_create));
-#endif
     }
 
     if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_soft_queue_create))
     {
-#ifdef FUTURE_ROCR_VERSION
         pTable->hsa_soft_queue_create_fn = HSA_API_Trace_hsa_soft_queue_create;
-#else
-        pTable->hsa_soft_queue_create_fn = reinterpret_cast<decltype(hsa_soft_queue_create)*>(reinterpret_cast<void*>(HSA_API_Trace_hsa_soft_queue_create));
-#endif
     }
 
     if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_queue_destroy))

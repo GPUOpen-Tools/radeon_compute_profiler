@@ -822,7 +822,6 @@ std::string Get_hsa_ext_image_capability_t_String(hsa_ext_image_capability_t inp
 /// \return the string representation of the hsa_ext_image_capability_t
 std::string Get_hsa_ext_image_capability_t_Ptr_String(const hsa_ext_image_capability_t* pInputPtr, hsa_ext_image_capability_t input);
 
-#ifdef FUTURE_ROCR_VERSION
 /// Gets the string representation of the hsa_ext_image_data_layout_t type
 /// \param input the input hsa_ext_image_data_layout_t
 /// \return the string representation of the hsa_ext_image_data_layout_t
@@ -833,7 +832,6 @@ std::string Get_hsa_ext_image_data_layout_t_String(hsa_ext_image_data_layout_t i
 /// \param input the input hsa_ext_image_data_layout_t
 /// \return the string representation of the hsa_ext_image_data_layout_t
 std::string Get_hsa_ext_image_data_layout_t_Ptr_String(const hsa_ext_image_data_layout_t* pInputPtr, hsa_ext_image_data_layout_t input);
-#endif
 
 /// Gets the string representation of the hsa_ext_image_data_info_t type
 /// \param input the input hsa_ext_image_data_info_t

@@ -1277,22 +1277,14 @@ hsa_status_t HSA_API_Trace_hsa_queue_create(hsa_agent_t agent, uint32_t size, hs
     if (pToolsRTModule->IsModuleLoaded())
     {
         ullStart = OSUtils::Instance()->GetTimeNanos();
-#ifdef FUTURE_ROCR_VERSION
         retVal = pToolsRTModule->ext_tools_queue_create_profiled(agent, size, type, callback, data, private_segment_size, group_segment_size, queue);
-#else
-        retVal = pToolsRTModule->ext_tools_queue_create_profiled(agent, size, static_cast<hsa_queue_type_t>(type), callback, data, private_segment_size, group_segment_size, queue);
-#endif
         ullEnd = OSUtils::Instance()->GetTimeNanos();
     }
 
     if (HSA_STATUS_SUCCESS != retVal)
     {
         ullStart = OSUtils::Instance()->GetTimeNanos();
-#ifdef FUTURE_ROCR_VERSION
         retVal = g_pRealCoreFunctions->hsa_queue_create_fn(agent, size, type, callback, data, private_segment_size, group_segment_size, queue);
-#else
-        retVal = g_pRealCoreFunctions->hsa_queue_create_fn(agent, size, static_cast<hsa_queue_type_t>(type), callback, data, private_segment_size, group_segment_size, queue);
-#endif
         ullEnd = OSUtils::Instance()->GetTimeNanos();
     }
 
@@ -1322,11 +1314,7 @@ hsa_status_t HSA_API_Trace_hsa_queue_create(hsa_agent_t agent, uint32_t size, hs
 hsa_status_t HSA_API_Trace_hsa_soft_queue_create(hsa_region_t region, uint32_t size, hsa_queue_type32_t type, uint32_t features, hsa_signal_t doorbell_signal, hsa_queue_t** queue)
 {
     ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
-#ifdef FUTURE_ROCR_VERSION
     hsa_status_t retVal = g_pRealCoreFunctions->hsa_soft_queue_create_fn(region, size, type, features, doorbell_signal, queue);
-#else
-    hsa_status_t retVal = g_pRealCoreFunctions->hsa_soft_queue_create_fn(region, size, static_cast<hsa_queue_type_t>(type), features, doorbell_signal, queue);
-#endif
     ULONGLONG ullEnd = OSUtils::Instance()->GetTimeNanos();
 
     HSA_APITrace_hsa_soft_queue_create* pAPIInfo = new(std::nothrow) HSA_APITrace_hsa_soft_queue_create();
@@ -2997,7 +2985,6 @@ hsa_status_t HSA_API_Trace_hsa_ext_image_get_capability(hsa_agent_t agent, hsa_e
     return retVal;
 }
 
-#ifdef FUTURE_ROCR_VERSION
 hsa_status_t HSA_API_Trace_hsa_ext_image_get_capability_with_layout(hsa_agent_t agent, hsa_ext_image_geometry_t geometry, const hsa_ext_image_format_t* image_format, hsa_ext_image_data_layout_t image_data_layout, uint32_t* capability_mask)
 {
     ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
@@ -3022,7 +3009,6 @@ hsa_status_t HSA_API_Trace_hsa_ext_image_get_capability_with_layout(hsa_agent_t 
 
     return retVal;
 }
-#endif
 
 hsa_status_t HSA_API_Trace_hsa_ext_image_data_get_info(hsa_agent_t agent, const hsa_ext_image_descriptor_t* image_descriptor, hsa_access_permission_t access_permission, hsa_ext_image_data_info_t* image_data_info)
 {
@@ -3048,7 +3034,6 @@ hsa_status_t HSA_API_Trace_hsa_ext_image_data_get_info(hsa_agent_t agent, const 
     return retVal;
 }
 
-#ifdef FUTURE_ROCR_VERSION
 hsa_status_t HSA_API_Trace_hsa_ext_image_data_get_info_with_layout(hsa_agent_t agent, const hsa_ext_image_descriptor_t* image_descriptor, hsa_access_permission_t access_permission, hsa_ext_image_data_layout_t image_data_layout, size_t image_data_row_pitch, size_t image_data_slice_pitch, hsa_ext_image_data_info_t* image_data_info)
 {
     ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
@@ -3075,7 +3060,6 @@ hsa_status_t HSA_API_Trace_hsa_ext_image_data_get_info_with_layout(hsa_agent_t a
 
     return retVal;
 }
-#endif
 
 hsa_status_t HSA_API_Trace_hsa_ext_image_create(hsa_agent_t agent, const hsa_ext_image_descriptor_t* image_descriptor, const void* image_data, hsa_access_permission_t access_permission, hsa_ext_image_t* image)
 {
@@ -3102,7 +3086,6 @@ hsa_status_t HSA_API_Trace_hsa_ext_image_create(hsa_agent_t agent, const hsa_ext
     return retVal;
 }
 
-#ifdef FUTURE_ROCR_VERSION
 hsa_status_t HSA_API_Trace_hsa_ext_image_create_with_layout(hsa_agent_t agent, const hsa_ext_image_descriptor_t* image_descriptor, const void* image_data, hsa_access_permission_t access_permission, hsa_ext_image_data_layout_t image_data_layout, size_t image_data_row_pitch, size_t image_data_slice_pitch, hsa_ext_image_t* image)
 {
     ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
@@ -3130,7 +3113,6 @@ hsa_status_t HSA_API_Trace_hsa_ext_image_create_with_layout(hsa_agent_t agent, c
 
     return retVal;
 }
-#endif
 
 hsa_status_t HSA_API_Trace_hsa_ext_image_destroy(hsa_agent_t agent, hsa_ext_image_t image)
 {
@@ -4340,20 +4322,12 @@ void InitHSAAPIInterceptTrace(HsaApiTable* pTable)
 
     if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_queue_create))
     {
-#ifdef FUTURE_ROCR_VERSION
         pTable->core_->hsa_queue_create_fn = HSA_API_Trace_hsa_queue_create;
-#else
-        pTable->core_->hsa_queue_create_fn = reinterpret_cast<decltype(hsa_queue_create)*>(reinterpret_cast<void*>(HSA_API_Trace_hsa_queue_create));
-#endif
     }
 
     if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_soft_queue_create))
     {
-#ifdef FUTURE_ROCR_VERSION
         pTable->core_->hsa_soft_queue_create_fn = HSA_API_Trace_hsa_soft_queue_create;
-#else
-        pTable->core_->hsa_soft_queue_create_fn = reinterpret_cast<decltype(hsa_soft_queue_create)*>(reinterpret_cast<void*>(HSA_API_Trace_hsa_soft_queue_create));
-#endif
     }
 
     if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_queue_destroy))
@@ -4716,36 +4690,30 @@ void InitHSAAPIInterceptTrace(HsaApiTable* pTable)
         pTable->image_ext_->hsa_ext_image_get_capability_fn = HSA_API_Trace_hsa_ext_image_get_capability;
     }
 
-#ifdef FUTURE_ROCR_VERSION
     if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_ext_image_get_capability_with_layout))
     {
         pTable->image_ext_->hsa_ext_image_get_capability_with_layout_fn = HSA_API_Trace_hsa_ext_image_get_capability_with_layout;
     }
-#endif
 
     if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_ext_image_data_get_info))
     {
         pTable->image_ext_->hsa_ext_image_data_get_info_fn = HSA_API_Trace_hsa_ext_image_data_get_info;
     }
 
-#ifdef FUTURE_ROCR_VERSION
     if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_ext_image_data_get_info_with_layout))
     {
         pTable->image_ext_->hsa_ext_image_data_get_info_with_layout_fn = HSA_API_Trace_hsa_ext_image_data_get_info_with_layout;
     }
-#endif
 
     if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_ext_image_create))
     {
         pTable->image_ext_->hsa_ext_image_create_fn = HSA_API_Trace_hsa_ext_image_create;
     }
 
-#ifdef FUTURE_ROCR_VERSION
     if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_ext_image_create_with_layout))
     {
         pTable->image_ext_->hsa_ext_image_create_with_layout_fn = HSA_API_Trace_hsa_ext_image_create_with_layout;
     }
-#endif
 
     if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_ext_image_destroy))
     {

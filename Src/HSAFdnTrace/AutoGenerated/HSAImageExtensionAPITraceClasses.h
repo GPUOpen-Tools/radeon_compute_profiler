@@ -64,7 +64,6 @@ private:
     hsa_status_t m_retVal; ///< Parameter passed to hsa_ext_image_get_capability
 };
 
-#ifdef FUTURE_ROCR_VERSION
 ///////////////////////////////////////////////////
 /// Class used to trace hsa_ext_image_get_capability_with_layout
 ///////////////////////////////////////////////////
@@ -121,7 +120,6 @@ private:
     uint32_t m_capability_maskVal; ///< Member to hold value passed to hsa_ext_image_get_capability_with_layout in capability_mask parameter
     hsa_status_t m_retVal; ///< Parameter passed to hsa_ext_image_get_capability_with_layout
 };
-#endif
 
 ///////////////////////////////////////////////////
 /// Class used to trace hsa_ext_image_data_get_info
@@ -177,7 +175,6 @@ private:
     hsa_status_t m_retVal; ///< Parameter passed to hsa_ext_image_data_get_info
 };
 
-#ifdef FUTURE_ROCR_VERSION
 ///////////////////////////////////////////////////
 /// Class used to trace hsa_ext_image_data_get_info_with_layout
 ///////////////////////////////////////////////////
@@ -240,7 +237,6 @@ private:
     hsa_ext_image_data_info_t m_image_data_infoVal; ///< Member to hold value passed to hsa_ext_image_data_get_info_with_layout in image_data_info parameter
     hsa_status_t m_retVal; ///< Parameter passed to hsa_ext_image_data_get_info_with_layout
 };
-#endif
 
 ///////////////////////////////////////////////////
 /// Class used to trace hsa_ext_image_create
@@ -299,7 +295,6 @@ private:
     hsa_status_t m_retVal; ///< Parameter passed to hsa_ext_image_create
 };
 
-#ifdef FUTURE_ROCR_VERSION
 ///////////////////////////////////////////////////
 /// Class used to trace hsa_ext_image_create_with_layout
 ///////////////////////////////////////////////////
@@ -365,7 +360,6 @@ private:
     hsa_ext_image_t m_imageVal; ///< Member to hold value passed to hsa_ext_image_create_with_layout in image parameter
     hsa_status_t m_retVal; ///< Parameter passed to hsa_ext_image_create_with_layout
 };
-#endif
 
 ///////////////////////////////////////////////////
 /// Class used to trace hsa_ext_image_destroy

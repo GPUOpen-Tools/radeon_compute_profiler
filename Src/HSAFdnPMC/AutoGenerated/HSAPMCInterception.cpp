@@ -48,11 +48,7 @@ hsa_status_t HSA_PMC_hsa_queue_create(hsa_agent_t agent, uint32_t size, hsa_queu
         size = MIN_QUEUE_SIZE_FOR_SOFTCP;
     }
 
-#ifdef FUTURE_ROCR_VERSION
     hsa_status_t retVal = g_pRealCoreFunctions->hsa_queue_create_fn(agent, size, type, callback, data, private_segment_size, group_segment_size, queue);
-#else
-    hsa_status_t retVal = g_pRealCoreFunctions->hsa_queue_create_fn(agent, size, static_cast<hsa_queue_type_t>(type), callback, data, private_segment_size, group_segment_size, queue);
-#endif
     HSA_PMC_hsa_queue_create_PostCallHelper(retVal, agent, size, type, callback, data, private_segment_size, group_segment_size, queue);
 
     return retVal;
@@ -116,11 +112,7 @@ void InitHSAAPIInterceptPMC(HsaApiTable* pTable)
 
     pTable->core_->hsa_agent_get_info_fn = HSA_PMC_hsa_agent_get_info;
     pTable->core_->hsa_iterate_agents_fn = HSA_PMC_hsa_iterate_agents;
-#ifdef FUTURE_ROCR_VERSION
     pTable->core_->hsa_queue_create_fn = HSA_PMC_hsa_queue_create;
-#else
-    pTable->core_->hsa_queue_create_fn = reinterpret_cast<decltype(hsa_queue_create)*>(reinterpret_cast<void*>(HSA_PMC_hsa_queue_create));
-#endif
     pTable->core_->hsa_queue_destroy_fn = HSA_PMC_hsa_queue_destroy;
     pTable->core_->hsa_executable_get_symbol_fn = HSA_PMC_hsa_executable_get_symbol;
     pTable->core_->hsa_executable_get_symbol_by_name_fn = HSA_PMC_hsa_executable_get_symbol_by_name;

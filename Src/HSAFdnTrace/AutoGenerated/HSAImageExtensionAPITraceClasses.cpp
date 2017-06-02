@@ -68,7 +68,6 @@ void HSA_APITrace_hsa_ext_image_get_capability::Create(
     m_retVal = retVal;
 }
 
-#ifdef FUTURE_ROCR_VERSION
 ///////////////////////////////////////////////////
 /// Class HSA_APITrace_hsa_ext_image_get_capability_with_layout
 ///////////////////////////////////////////////////
@@ -129,7 +128,6 @@ void HSA_APITrace_hsa_ext_image_get_capability_with_layout::Create(
 
     m_retVal = retVal;
 }
-#endif
 
 ///////////////////////////////////////////////////
 /// Class HSA_APITrace_hsa_ext_image_data_get_info
@@ -189,7 +187,6 @@ void HSA_APITrace_hsa_ext_image_data_get_info::Create(
     m_retVal = retVal;
 }
 
-#ifdef FUTURE_ROCR_VERSION
 ///////////////////////////////////////////////////
 /// Class HSA_APITrace_hsa_ext_image_data_get_info_with_layout
 ///////////////////////////////////////////////////
@@ -256,7 +253,6 @@ void HSA_APITrace_hsa_ext_image_data_get_info_with_layout::Create(
 
     m_retVal = retVal;
 }
-#endif
 
 ///////////////////////////////////////////////////
 /// Class HSA_APITrace_hsa_ext_image_create
@@ -319,7 +315,6 @@ void HSA_APITrace_hsa_ext_image_create::Create(
     m_retVal = retVal;
 }
 
-#ifdef FUTURE_ROCR_VERSION
 ///////////////////////////////////////////////////
 /// Class HSA_APITrace_hsa_ext_image_create_with_layout
 ///////////////////////////////////////////////////
@@ -389,7 +384,6 @@ void HSA_APITrace_hsa_ext_image_create_with_layout::Create(
 
     m_retVal = retVal;
 }
-#endif
 
 ///////////////////////////////////////////////////
 /// Class HSA_APITrace_hsa_ext_image_destroy

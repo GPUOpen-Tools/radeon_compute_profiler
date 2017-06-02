@@ -2223,7 +2223,6 @@ std::string HSATraceStringUtils::Get_hsa_ext_image_capability_t_Ptr_String(const
     }
 }
 
-#ifdef FUTURE_ROCR_VERSION
 std::string HSATraceStringUtils::Get_hsa_ext_image_data_layout_t_String(hsa_ext_image_data_layout_t input)
 {
     std::ostringstream ss;
@@ -2252,7 +2251,6 @@ std::string HSATraceStringUtils::Get_hsa_ext_image_data_layout_t_Ptr_String(cons
         return SurroundWithDeRef(Get_hsa_ext_image_data_layout_t_String(input));
     }
 }
-#endif
 
 std::string HSATraceStringUtils::Get_hsa_ext_image_data_info_t_String(hsa_ext_image_data_info_t input)
 {
@@ -2449,11 +2447,9 @@ std::string HSATraceStringUtils::Get_hsa_amd_agent_info_t_String(hsa_amd_agent_i
             CASE(HSA_AMD_AGENT_INFO_MEMORY_MAX_FREQUENCY);
             CASE(HSA_AMD_AGENT_INFO_PRODUCT_NAME);
             CASE(HSA_AMD_AGENT_INFO_MAX_WAVES_PER_CU);
-#ifdef FUTURE_ROCR_VERSION
             CASE(HSA_AMD_AGENT_INFO_NUM_SIMDS_PER_CU);
             CASE(HSA_AMD_AGENT_INFO_NUM_SHADER_ENGINES);
             CASE(HSA_AMD_AGENT_INFO_NUM_SHADER_ARRAYS_PER_SE);
-#endif
 
         default:
             ss << input;

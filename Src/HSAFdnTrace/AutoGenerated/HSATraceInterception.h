@@ -153,17 +153,11 @@ hsa_status_t HSA_API_Trace_hsa_ext_program_iterate_modules(hsa_ext_program_t pro
 hsa_status_t HSA_API_Trace_hsa_ext_program_get_info(hsa_ext_program_t program, hsa_ext_program_info_t attribute, void* value);
 hsa_status_t HSA_API_Trace_hsa_ext_program_finalize(hsa_ext_program_t program, hsa_isa_t isa, int32_t call_convention, hsa_ext_control_directives_t control_directives, const char* options, hsa_code_object_type_t code_object_type, hsa_code_object_t* code_object);
 hsa_status_t HSA_API_Trace_hsa_ext_image_get_capability(hsa_agent_t agent, hsa_ext_image_geometry_t geometry, const hsa_ext_image_format_t* image_format, uint32_t* capability_mask);
-#ifdef FUTURE_ROCR_VERSION
 hsa_status_t HSA_API_Trace_hsa_ext_image_get_capability_with_layout(hsa_agent_t agent, hsa_ext_image_geometry_t geometry, const hsa_ext_image_format_t* image_format, hsa_ext_image_data_layout_t image_data_layout, uint32_t* capability_mask);
-#endif
 hsa_status_t HSA_API_Trace_hsa_ext_image_data_get_info(hsa_agent_t agent, const hsa_ext_image_descriptor_t* image_descriptor, hsa_access_permission_t access_permission, hsa_ext_image_data_info_t* image_data_info);
-#ifdef FUTURE_ROCR_VERSION
 hsa_status_t HSA_API_Trace_hsa_ext_image_data_get_info_with_layout(hsa_agent_t agent, const hsa_ext_image_descriptor_t* image_descriptor, hsa_access_permission_t access_permission, hsa_ext_image_data_layout_t image_data_layout, size_t image_data_row_pitch, size_t image_data_slice_pitch, hsa_ext_image_data_info_t* image_data_info);
-#endif
 hsa_status_t HSA_API_Trace_hsa_ext_image_create(hsa_agent_t agent, const hsa_ext_image_descriptor_t* image_descriptor, const void* image_data, hsa_access_permission_t access_permission, hsa_ext_image_t* image);
-#ifdef FUTURE_ROCR_VERSION
 hsa_status_t HSA_API_Trace_hsa_ext_image_create_with_layout(hsa_agent_t agent, const hsa_ext_image_descriptor_t* image_descriptor, const void* image_data, hsa_access_permission_t access_permission, hsa_ext_image_data_layout_t image_data_layout, size_t image_data_row_pitch, size_t image_data_slice_pitch, hsa_ext_image_t* image);
-#endif
 hsa_status_t HSA_API_Trace_hsa_ext_image_destroy(hsa_agent_t agent, hsa_ext_image_t image);
 hsa_status_t HSA_API_Trace_hsa_ext_image_copy(hsa_agent_t agent, hsa_ext_image_t src_image, const hsa_dim3_t* src_offset, hsa_ext_image_t dst_image, const hsa_dim3_t* dst_offset, const hsa_dim3_t* range);
 hsa_status_t HSA_API_Trace_hsa_ext_image_import(hsa_agent_t agent, const void* src_memory, size_t src_row_pitch, size_t src_slice_pitch, hsa_ext_image_t dst_image, const hsa_ext_image_region_t* image_region);

@@ -28,11 +28,7 @@ void InitHSAAPIInterceptPMC1_2(HsaApiTable1_2* pTable)
     memcpy(g_pRealAmdExtFunctions, pTable->amd_ext_, pTable->amd_ext_->version.minor_id);
 
     pTable->core_->hsa_agent_get_info_fn = HSA_PMC_hsa_agent_get_info;
-#ifdef FUTURE_ROCR_VERSION
     pTable->core_->hsa_queue_create_fn = HSA_PMC_hsa_queue_create;
-#else
-    pTable->core_->hsa_queue_create_fn = reinterpret_cast<decltype(hsa_queue_create)*>(reinterpret_cast<void*>(HSA_PMC_hsa_queue_create));
-#endif
     pTable->core_->hsa_queue_destroy_fn = HSA_PMC_hsa_queue_destroy;
     pTable->core_->hsa_executable_get_symbol_fn = HSA_PMC_hsa_executable_get_symbol;
     pTable->core_->hsa_iterate_agents_fn = HSA_PMC_hsa_iterate_agents;
