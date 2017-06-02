@@ -7,7 +7,7 @@ TARGET = $(OUTPUT_BIN_DIR)/$(PROJECT_NAME)$(TARGET_SUFFIX)
 
 ADDL_DEFINES = -DNON_BLOCKING_TIMEOUT -DAMD_INTERNAL_BUILD
 ADDL_CFLAGS = $(HSAFDN_CFLAGS)
-ADDL_LINKFLAGS = -Wl,--export-dynamic
+ADDL_LINKFLAGS = -Wl,--export-dynamic $(BOOST_DEFINES) -Wl,--unresolved-symbols=ignore-in-shared-libs
 
 INCLUDES = \
 	-I./ \

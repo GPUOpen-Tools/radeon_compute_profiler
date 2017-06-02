@@ -42,6 +42,14 @@ this script every time you pull new changes from RCP repository.
    * `sudo apt-get install gcc-multilib g++-multilib`
  * When building on Ubuntu 16.04, you will need to install the compatible Boost libraries:
    * `sudo apt-get install libboost-all-dev`
+   * If you plan to build the 32 bit version of the profiler, you will need to install the 32-bit versions of the required boost libraries:
+     * `sudo apt-get install libboost-chrono-dev:i386`
+     * `sudo apt-get install libboost-date-time-dev:i386`
+     * `sudo apt-get install libboost-filesystem-dev:i386`
+     * `sudo apt-get install libboost-program-options-dev:i386`
+     * `sudo apt-get install libboost-system-dev:i386`
+     * `sudo apt-get install libboost-thread-dev:i386`
+     * `sudo apt-get install libboost-wave-dev:i386`
 
 ##### Building the HSA/ROCm Profiler
 * In order to build the HSA/ROCm profiler, the rocm package needs to be installed (so that the ROCR header files are available at build time).
@@ -61,9 +69,11 @@ this script every time you pull new changes from RCP repository.
    * `quick` or `incremental`: performs an incremental build (as opposed to a from-scratch build)
    * `clean`: performs a "clean" on all build targets, removing all intermediate and final output files
    * `hsadir`: overrides the location of the ROCm/HSA header files (by default they are expected to be in /opt/rocm/hsa)
-   * `boostlidir`: overrides the location of the Boost libraries
- * When building on Ubuntu 16.04, you will need to use the following boostlibdir argument:
+   * `boostlibdir`: overrides the location of the Boost libraries
+   * `boostlibdir32`: overrides the location of the 32-bit Boost libraries
+ * When building on Ubuntu 16.04, you will need to use the following boostlibdir arguments:
    * boostlibdir /usr/lib/x86_64-linux-gnu
+   * boostlibdir32 /usr/lib/i386-linux-gnu
  * After a successful build, the RCP binaries can be found in __RCP\Output\bin__
  * Example build command line (builds the debug versions of the binaries, skipping the ROCm/HSA profiler):
    * ./build_rcp.sh debug skip-hsaprofiler
