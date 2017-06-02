@@ -46,8 +46,10 @@ RCP was formerly delivered as part of CodeXL with the executable name
 ## Cloning the Repository
 To clone the RCP repository, execute the following git commands
  * git clone https://github.com/GPUOpen-Tools/RCP.git
+ 
 After cloning the repository, please run the following python script to retrieve the required dependencies (see [BUILD.md](BUILD.md) for more information):
  * python Scripts/UpdateCommon.py
+
 UpdateCommon has replaced the use of git submodules in the CodeXL repository
 
 ## Source Code Directory Layout
