@@ -40,7 +40,7 @@ RCP was formerly delivered as part of CodeXL with the executable name
 * Radeon Software Crimson Edition 17.2.2 or later (Driver Packaging Version 16.60 or later).
 * ROCm 1.5. See system requirements for ROCm: https://rocm.github.io/install.html and https://rocm.github.io/hardware.html.
 * Windows 7, 8.1, and 10
-** For Windows, the __Visual C++ Redistributable for Visual Studio 2015__ is required. It can be downloaded from https://www.microsoft.com/en-us/download/details.aspx?id=48145
+  * For Windows, the __Visual C++ Redistributable for Visual Studio 2015__ is required. It can be downloaded from https://www.microsoft.com/en-us/download/details.aspx?id=48145
 * Ubuntu (14.04 and later) and RHEL (7 and later) distributions
 
 ## Cloning the Repository
