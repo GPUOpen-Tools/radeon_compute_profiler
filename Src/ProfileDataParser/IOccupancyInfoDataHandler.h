@@ -24,12 +24,12 @@ public:
     virtual unsigned int GetThreadId() const = 0;
 
     /// Get the kernel name
-    /// \return kernel name string
-    virtual std::string GetKernelName() const = 0;
+    /// \return kernel name char array
+    virtual const char* GetKernelName() const = 0;
 
     /// Get the device name
-    /// \return device name string
-    virtual std::string GetDeviceName() const = 0;
+    /// \return device name char array
+    virtual const char* GetDeviceName() const = 0;
 
     /// Get the Graphics ip version of the device
     /// \return gfxIp of the device
@@ -120,18 +120,18 @@ public:
     virtual float GetOccupancy() const = 0;
 
     /// Get ASIC generation
-    /// \return generation
+    /// \return ASIC generation
     virtual GDT_HW_GENERATION GetGeneration() const = 0;
 
-    /// Set the number of SIMDS per CU
-    // \return number of SIMDS per CU
+    /// Get the number of SIMDS per CU
+    /// \return number of SIMDS per CU
     virtual unsigned int GetSimdsPerCU() const = 0;
 
     /// Generate the Occupancy Chart HTML Files
-    /// \param[in] outputFile occupancy chart output file
-    /// \param[out] errorMessage error message if operation was not successful
+    /// \param[in] pOutputFile occupancy chart output file
+    /// \param[out] ppErrorMessage error message if operation was not successful
     /// \return flag indicating the operation is successful or not
-    virtual bool GenerateOccupancyChart(const std::string outputFile, std::string& errorMessage) const = 0;
+    virtual bool GenerateOccupancyChart(const char* pOutputFile, char** ppErrorMessage) const = 0;
 
     /// Virtual Destructor
     virtual ~IOccupancyInfoDataHandler() = default;

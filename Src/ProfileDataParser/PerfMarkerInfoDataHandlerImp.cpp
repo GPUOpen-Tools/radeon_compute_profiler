@@ -71,54 +71,50 @@ osThreadId PerfMarkerInfoDataHandler::GetPerfMarkerThreadId() const
     return m_pPerfMarkerEntry->m_tid;
 }
 
-std::string PerfMarkerInfoDataHandler::GetPerfMarkerBeginInfoName() const
+const char* PerfMarkerInfoDataHandler::GetPerfMarkerBeginInfoName() const
 {
-    std::string beginInfoName;
     PerfMarkerBeginEntry* perfMarkerBeginEntry = dynamic_cast<PerfMarkerBeginEntry*>(m_pPerfMarkerEntry);
 
-    if (perfMarkerBeginEntry)
+    if (nullptr != perfMarkerBeginEntry)
     {
-        beginInfoName = perfMarkerBeginEntry->m_strName;
+        return perfMarkerBeginEntry->m_strName.c_str();
     }
 
-    return beginInfoName;
+    return nullptr;
 }
 
-std::string PerfMarkerInfoDataHandler::GetPerfMarkerBeginInfoGroupName() const
+const char* PerfMarkerInfoDataHandler::GetPerfMarkerBeginInfoGroupName() const
 {
-    std::string beginGroupInfoName;
     PerfMarkerBeginEntry* perfMarkerBeginEntry = dynamic_cast<PerfMarkerBeginEntry*>(m_pPerfMarkerEntry);
 
-    if (perfMarkerBeginEntry)
+    if (nullptr != perfMarkerBeginEntry)
     {
-        beginGroupInfoName = perfMarkerBeginEntry->m_strGroup;
+        return perfMarkerBeginEntry->m_strGroup.c_str();
     }
 
-    return beginGroupInfoName;
+    return nullptr;
 }
 
-std::string PerfMarkerInfoDataHandler::GetPerfMarkerEndExName() const
+const char* PerfMarkerInfoDataHandler::GetPerfMarkerEndExName() const
 {
-    std::string beginInfoName;
-    PerfMarkerEndExEntry* perfMarkerBeginEntry = dynamic_cast<PerfMarkerEndExEntry*>(m_pPerfMarkerEntry);
+    PerfMarkerEndExEntry* perfMarkerEndExEntry = dynamic_cast<PerfMarkerEndExEntry*>(m_pPerfMarkerEntry);
 
-    if (perfMarkerBeginEntry)
+    if (nullptr != perfMarkerEndExEntry)
     {
-        beginInfoName = perfMarkerBeginEntry->m_strName;
+        return perfMarkerEndExEntry->m_strName.c_str();
     }
 
-    return beginInfoName;
+    return nullptr;
 }
 
-std::string PerfMarkerInfoDataHandler::GetPerfMarkerEndExGroupName() const
+const char* PerfMarkerInfoDataHandler::GetPerfMarkerEndExGroupName() const
 {
-    std::string beginGroupInfoName;
-    PerfMarkerEndExEntry* perfMarkerBeginEntry = dynamic_cast<PerfMarkerEndExEntry*>(m_pPerfMarkerEntry);
+    PerfMarkerEndExEntry* perfMarkerEndExEntry = dynamic_cast<PerfMarkerEndExEntry*>(m_pPerfMarkerEntry);
 
-    if (perfMarkerBeginEntry)
+    if (nullptr != perfMarkerEndExEntry)
     {
-        beginGroupInfoName = perfMarkerBeginEntry->m_strGroup;
+        return perfMarkerEndExEntry->m_strGroup.c_str();
     }
 
-    return beginGroupInfoName;
+    return nullptr;
 }

@@ -69,17 +69,17 @@ public:
     /// \return thread id of the api
     osThreadId GetApiThreadId() const override;
 
-    /// Get the return type of the api as string
+    /// Get the return type of the api as char array
     /// \return return type of api
-    std::string GetApiRetString() const override;
+    const char* GetApiRetString() const override;
 
-    /// Get the api name as string
-    /// \return name of the api as string
-    std::string GetApiNameString() const override;
+    /// Get the api name as char array
+    /// \return name of the api as char array
+    const char* GetApiNameString() const override;
 
-    /// Get the argument list of the api as string
-    /// \return argument list of the api as string
-    std::string GetApiArgListString() const override;
+    /// Get the argument list of the api as char array
+    /// \return argument list of the api as char array
+    const char* GetApiArgListString() const override;
 
     /// Get the api type of the hsa api
     /// \return hsa api type
@@ -103,43 +103,43 @@ public:
 
     /// Get the source agent for the hsa memory transfer
     /// \return source agent
-    std::string GetHSASrcAgentString() const override;
+    const char* GetHSASrcAgentString() const override;
 
     /// Get the destination agent for the hsa memory transfer
     /// \return destination agent
-    std::string GetHSADestinationAgentString() const override;
+    const char* GetHSADestinationAgentString() const override;
 
     /// Get the HSA Dispatch Kernel name
     /// \return kernel Name
-    std::string GetHSAKernelName() const override;
+    const char* GetHSAKernelName() const override;
 
     /// Get the HSA Dispatch Kernel Handle
-    /// \return kernel handle string
+    /// \return kernel handle as char array
     unsigned long long GetHSAKernelHandle() const override;
 
     /// Get the HSA Device Name
     /// \return hsa device name
-    std::string GetHSADeviceName() const override;
+    const char* GetHSADeviceName() const override;
 
-    /// Get the Device Handle String
-    /// \return device handle string
-    std::string GetHSADeviceHandleString() const override;
+    /// Get the Device Handle as char array
+    /// \return device handle as char array
+    const char* GetHSADeviceHandleString() const override;
 
     /// Get the HSA Queue Index
     /// \return queue index
     unsigned int GetHSAQueueIndex() const override;
 
-    /// Get the HSA Queue index handle string
-    /// \return hsa queue handle string
-    std::string GetHSAQueueHandleString() const override;
+    /// Get the HSA Queue index handle as char array
+    /// \return hsa queue handle as char array
+    const char* GetHSAQueueHandleString() const override;
 
     /// Get the HSA Work Group size
     /// \return hsa work group size
-    std::string GetHSAWorkGroupSizeString() const override;
+    const char* GetHSAWorkGroupSizeString() const override;
 
     /// Get the HSA global work group size
     /// \return global work group size
-    std::string GetHSAGlobalWorkGroupSize() const override;
+    const char* GetHSAGlobalWorkGroupSize() const override;
 
     /// Get the HSA local groups
     /// \param[out] ppHsaLocalGroups hsa local groups

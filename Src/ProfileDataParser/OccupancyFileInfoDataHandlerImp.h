@@ -27,9 +27,9 @@ public:
     OccupancyFileInfoDataHandler(std::string& occupancyFileName);
 
     /// Parse the Occupancy file
-    /// \param[in] occupancyFile name of the occupancy file
+    /// \param[in] pOccupancyFile name of the occupancy file
     /// \return flag indicating the parsing was successful or not
-    bool ParseOccupancyFile(const std::string& occupancyFile) override;
+    bool ParseOccupancyFile(const char* pOccupancyFile) override;
 
     /// Indicates the data is ready or not after parsing
     /// \return flag indicating the parsed data is ready for use or not
@@ -40,24 +40,26 @@ public:
     /// \param[out] minor minor version of the occupancy file format
     void GetOccupancyFileVersion(unsigned int& major, unsigned int& minor) const override;
 
-    /// Returns the list of the column names of the header of the occupancy file
-    /// \return list containing the header data of the occupancy file
-    std::vector<ColumnName> GetHeaderInOrder() const override;
+    /// Gets the list of the column names of the header of the occupancy file
+    /// \param[out] ppColumnNames containing the header data of the occupancy file
+    /// \param[out] columnCount number of the columns in the occupancy file
+    void GetHeaderInOrder(char** ppColumnNames, unsigned int& columnCount) const override;
 
-    /// Returns the map  of count of the kernels associated with a thread
-    /// \return map containig the count of the kernels based on thread Id
-    std::map<osThreadId, KernelCount> GetKernelCountByThreadId() const override;
+    /// Gets all the distinct threads in the occupancy file
+    /// \param[out] ppThreadId pointer to the array of all distinct threads
+    /// \param[out] threadCount number of distinct threads in the occupancy file
+    void GetOccupancyThreads(osThreadId** ppThreadId, unsigned int& threadCount) const override;
+
+    /// Gets the kernel count of the thread ID
+    /// \param[in] threadId thread Id of the kernel
+    /// \param[out] kernelCount number of the kernels for the given thread id in the occupancy file
+    void GetKernelCountByThreadId(osThreadId threadId, unsigned int& kernelCount) const override;
 
     /// Get the occupancy info interface pointer associated with a thread and index of kernel on that thread
-    /// param[in] threadId thread Id
-    /// param[in] index kernel index
-    /// \return occupancy info interface pointer
+    /// \param[in] threadId thread id of the kernel
+    /// \param[in] index index of the kernel on the given thread
+    /// \return Occupancy info interface pointer
     const IOccupancyInfoDataHandler* GetOccupancyInfoDataHandler(osThreadId threadId, unsigned int index) const override;
-
-    /// Gets the list of all the kernel occupancy info on a thread
-    /// \param[in] threadId thread id
-    /// \return list of the occupancy info interface pointer
-    std::vector<const IOccupancyInfoDataHandler*> GetOccupancyInfoByThreadId(osThreadId threadId) const override;
 
     /// Releases the data and frees the memory
     void ReleaseData() override;
@@ -77,11 +79,13 @@ private:
 
     std::string                                     m_occupancyFileName;                    ///< occupancy file name
     bool                                            m_bIsDataReady;                         ///< flag indicates the data is reday or not after parsing
-    std::vector<ColumnName>                         m_headerList;                           ///< header names in the occupancy file
+    char**                                          m_ppHeaderList;                         ///< header names in the occupancy file
+    unsigned int                                    m_headerColumnCount;                    ///< number of the header columns in the occupancy file
     unsigned int                                    m_occupancyFileMajorVersion;            ///< occupancy file major version
     unsigned int                                    m_occupancyFileMinorVersion;            ///< occupancy file minor version
     OccupancyInfoByThreadId                         m_kernelCountInfoByThreadId;            ///< kernels info per thread Id
     std::vector<IOccupancyInfoDataHandler*>         m_occupancyInfoList;                    ///< list of occupancy info
+    mutable std::vector<osThreadId*>                m_threadIdList;                         ///< list of the thread Ids - for deallocation
 };
 
 #endif // _OCCUPANCY_FILE_INFO_DATA_HANDLER_IMP_H_

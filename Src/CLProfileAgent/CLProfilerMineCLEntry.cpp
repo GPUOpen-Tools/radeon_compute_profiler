@@ -22,6 +22,7 @@
 
 #include "../Common/SeqIDGenerator.h"
 #include "AMDTMutex.h"
+#include "CLDeviceReplacer.h"
 
 using std::cout;
 
@@ -687,6 +688,11 @@ cl_int CL_API_CALL Mine_clGetDeviceIDs(
                      num_entries,
                      device_list,
                      num_devices);
+
+    if (CL_SUCCESS == ret && GlobalSettings::GetInstance()->m_params.m_bForceSingleGPU && 0u <= GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex)
+    {
+        ret = CLDeviceReplacer::Instance()->ReplaceDeviceIds(platform, device_type, num_entries, device_list, num_devices, GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex, ret);
+    }
 
     return ret;
 }

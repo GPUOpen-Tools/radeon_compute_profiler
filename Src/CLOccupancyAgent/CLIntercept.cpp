@@ -14,6 +14,7 @@
 #include "../Common/OSUtils.h"
 #include "../CLCommon/CLUtils.h"
 #include "DeviceInfoUtils.h"
+#include "CLDeviceReplacer.h"
 
 using namespace GPULogger;
 
@@ -310,6 +311,29 @@ CL_OCCUPANCY_API_ENTRY_ReleaseContext(cl_context  context)
         OccupancyInfoManager::Instance()->TrySwapBuffer();
         OccupancyInfoManager::Instance()->FlushTraceData(true);
         OccupancyInfoManager::Instance()->ResumeTimer();
+    }
+
+    return ret;
+}
+
+cl_int CL_API_CALL
+CL_OCCUPANCY_API_ENTRY_GetDeviceIDs(
+    cl_platform_id    platform,
+    cl_device_type    device_type,
+    cl_uint           num_entries,
+    cl_device_id*     device_list,
+    cl_uint*          num_devices)
+{
+    cl_int ret = g_nextDispatchTable.GetDeviceIDs(
+        platform,
+        device_type,
+        num_entries,
+        device_list,
+        num_devices);
+
+    if (CL_SUCCESS == ret && GlobalSettings::GetInstance()->m_params.m_bForceSingleGPU && 0u <= GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex)
+    {
+        ret = CLDeviceReplacer::Instance()->ReplaceDeviceIds(platform, device_type, num_entries, device_list, num_devices, GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex, ret);
     }
 
     return ret;

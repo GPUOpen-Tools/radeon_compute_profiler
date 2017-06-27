@@ -63,7 +63,7 @@ extern "C" DLL_PUBLIC void amdtCodeXLResumeProfiling()
 /// Vectored Exception Handler used to handle crashes in a profiled app during automated tests
 /// This exception handler is only installed when the profiler is started in test mode (--__testmode__)
 /// This handler just terminates the process (the assumption being that test apps will never raise an OS exception)
-/// \param exception_info the exception information structure containing the exception record
+/// \param except_info the exception information structure containing the exception record
 /// \return a value indicating what should be done with the exception
 LONG CALLBACK TestModeExceptionHandler(PEXCEPTION_POINTERS except_info)
 {

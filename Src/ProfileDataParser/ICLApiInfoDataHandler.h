@@ -62,9 +62,9 @@ public:
     /// \return api id
     virtual unsigned int GetCLApiId() const = 0;
 
-    /// Get the comment string
-    /// \return comment String
-    virtual std::string GetCLApiComment() const = 0;
+    /// Get the comment char array
+    /// \return comment char array
+    virtual const char* GetCLApiComment() const = 0;
 
     /// Virtual Destructor
     virtual ~ICLAPIInfoDataHandler() = default;
@@ -80,24 +80,24 @@ public:
     virtual bool IsCLEnqueueInformationMissing() const = 0;
 
     /// Get the CLEnqueue command type string
-    /// \return command type string
-    virtual std::string GetCLCommandTypeString() const = 0;
+    /// \return command type char array
+    virtual const char* GetCLCommandTypeString() const = 0;
 
-    /// Get the CL Device name string
+    /// Get the CL Device name char array
     /// \return cl device name
-    virtual std::string GetCLDeviceNameString() const = 0;
+    virtual const char* GetCLDeviceNameString() const = 0;
 
-    /// Get the CL context handle string
-    /// \return cl context handle string
-    virtual std::string GetCLContextHandleString() const = 0;
+    /// Get the CL context handle char array
+    /// \return cl context handle char array
+    virtual const char* GetCLContextHandleString() const = 0;
 
-    /// Get the CL Command Queue Handle string
-    /// \return cl command queue handle string
-    virtual std::string GetCLCommandQueueHandleString() const = 0;
+    /// Get the CL Command queue handle char array
+    /// \return cl command queue handle char array
+    virtual const char* GetCLCommandQueueHandleString() const = 0;
 
-    /// Get the cl event handle string
-    /// \return cl event hadnle string
-    virtual std::string GetCLEventHandleString() const = 0;
+    /// Get the cl event handle char array
+    /// \return cl event handle char array
+    virtual const char* GetCLEventHandleString() const = 0;
 
     /// Get the CL queue timestamp
     /// \return cl queue timestamp
@@ -172,21 +172,21 @@ public:
 class ICLKernelApiInfoDataHandler
 {
 public:
-    /// Get the CL kernel handle String
-    /// \return kernel handle as string
-    virtual std::string GetCLKernelHandleString() const = 0;
+    /// Get the CL kernel handle char array
+    /// \return kernel handle as char array
+    virtual const char* GetCLKernelHandleString() const = 0;
 
     /// Get the CL Kernel name
-    /// \return kernel name
-    virtual std::string GetCLKernelNameString() const = 0;
+    /// \return kernel name as char array
+    virtual const char* GetCLKernelNameString() const = 0;
 
     /// Get the CL kernel work group size
     /// \return kernel work group size
-    virtual std::string GetCLKernelWorkGroupSize() const = 0;
+    virtual const char* GetCLKernelWorkGroupSize() const = 0;
 
     /// Get the CL global work group size
     /// \return kernel global work group size
-    virtual std::string GetCLKernelGlobalWorkGroupSize() const = 0;
+    virtual const char* GetCLKernelGlobalWorkGroupSize() const = 0;
 
     /// Virtual Destructor
     virtual ~ICLKernelApiInfoDataHandler() = default;

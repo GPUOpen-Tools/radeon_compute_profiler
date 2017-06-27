@@ -159,6 +159,7 @@ clAgent_OnLoad(cl_agent* agent)
 
     agentDispatch.EnqueueNDRangeKernel = CL_OCCUPANCY_API_ENTRY_EnqueueNDRangeKernel;
     agentDispatch.ReleaseContext = CL_OCCUPANCY_API_ENTRY_ReleaseContext;
+    agentDispatch.GetDeviceIDs = CL_OCCUPANCY_API_ENTRY_GetDeviceIDs;
 
     status = agent->SetICDDispatchTable(agent, &agentDispatch, sizeof(cl_icd_dispatch_table));
 

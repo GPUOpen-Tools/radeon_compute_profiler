@@ -80,11 +80,11 @@ public:
 
     /// Get the source agent for the hsa memory transfer
     /// \return source agent
-    virtual std::string GetHSASrcAgentString() const = 0;
+    virtual const char* GetHSASrcAgentString() const = 0;
 
     /// Get the destination agent for the hsa memory transfer
     /// \return destination agent
-    virtual std::string GetHSADestinationAgentString() const = 0;
+    virtual const char* GetHSADestinationAgentString() const = 0;
 
     /// Virtual Destructor
     virtual ~IHSAMemoryTransferApiInfoDataHandler() = default;
@@ -97,35 +97,35 @@ class IHSADispatchApiInfoDataHandler
 public:
     /// Get the HSA Dispatch Kernel name
     /// \return kernel Name
-    virtual std::string GetHSAKernelName() const = 0;
+    virtual const char* GetHSAKernelName() const = 0;
 
     /// Get the HSA Dispatch Kernel Handle
-    /// \return kernel handle string
+    /// \return kernel handle
     virtual ULONGLONG GetHSAKernelHandle() const = 0;
 
     /// Get the HSA Device Name
-    /// \return hsa device name
-    virtual std::string GetHSADeviceName() const = 0;
+    /// \return hsa device name as char array
+    virtual const char* GetHSADeviceName() const = 0;
 
-    /// Get the Device Handle String
-    /// \return device handle string
-    virtual std::string GetHSADeviceHandleString() const = 0;
+    /// Get the Device Handle as char array
+    /// \return device handle as char array
+    virtual const char* GetHSADeviceHandleString() const = 0;
 
     /// Get the HSA Queue Index
     /// \return queue index
     virtual unsigned int GetHSAQueueIndex() const = 0;
 
-    /// Get the HSA Queue index handle string
-    /// \return hsa queue handle string
-    virtual std::string GetHSAQueueHandleString() const = 0;
+    /// Get the HSA Queue index handle as char array
+    /// \return hsa queue handle as char array
+    virtual const char* GetHSAQueueHandleString() const = 0;
 
     /// Get the HSA Work Group size
     /// \return hsa work group size
-    virtual std::string GetHSAWorkGroupSizeString() const = 0;
+    virtual const char* GetHSAWorkGroupSizeString() const = 0;
 
     /// Get the HSA global work group size
     /// \return global work group size
-    virtual std::string GetHSAGlobalWorkGroupSize() const = 0;
+    virtual const char* GetHSAGlobalWorkGroupSize() const = 0;
 
     /// Get the HSA local groups
     /// \param[out] ppHsaLocalGroups hsa local groups

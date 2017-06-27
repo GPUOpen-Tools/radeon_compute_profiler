@@ -18,12 +18,14 @@
 OccupancyFileInfoDataHandler::OccupancyFileInfoDataHandler(std::string& occupancyFileName):
     m_occupancyFileName(occupancyFileName),
     m_bIsDataReady(false),
+    m_ppHeaderList(nullptr),
+    m_headerColumnCount(0u),
     m_occupancyFileMajorVersion(0u),
     m_occupancyFileMinorVersion(0u)
 {
 }
 
-bool OccupancyFileInfoDataHandler::ParseOccupancyFile(const std::string& occupancyFile)
+bool OccupancyFileInfoDataHandler::ParseOccupancyFile(const char* pOccupancyFile)
 {
     bool success = m_bIsDataReady;
 
@@ -31,20 +33,36 @@ bool OccupancyFileInfoDataHandler::ParseOccupancyFile(const std::string& occupan
     {
         CSVFileParser parser;
         parser.AddListener(this);
-        parser.LoadFile(occupancyFile.c_str());
+        parser.LoadFile(pOccupancyFile);
 
         if (parser.Parse())
         {
-            success = true;
-            m_headerList = parser.GetColumns();
-            GenerateKernelInfoByThreadId();
+            std::vector<std::string> columnHeaders = parser.GetColumns();
+            m_headerColumnCount = static_cast<unsigned int>(columnHeaders.size());
+            m_ppHeaderList = new (std::nothrow) char*[m_headerColumnCount];
+            if (nullptr != m_ppHeaderList)
+            {
+                unsigned int headerIndex = 0;
+                for (std::vector<std::string>::iterator columnHeaderIter = columnHeaders.begin(); columnHeaderIter != columnHeaders.end(); ++columnHeaderIter)
+                {
+                    m_ppHeaderList[headerIndex] = new (std::nothrow) char[columnHeaderIter->size() + 1];
+                    if (nullptr != m_ppHeaderList)
+                    {
+                        memcpy(m_ppHeaderList[headerIndex], columnHeaderIter->c_str(), columnHeaderIter->size());
+                        m_ppHeaderList[headerIndex][columnHeaderIter->size()] = '\0';
+                        headerIndex++;
+                    }
+                }
+                success = true;
+                GenerateKernelInfoByThreadId();
+            }
 
             std::vector<std::string> comments = parser.GetHeaders();
             bool foundVersion = false;
 
             for (std::vector<std::string>::const_iterator it = comments.begin(); it != comments.end() && !foundVersion; ++it)
             {
-                if (0 == it->compare(FILE_HEADER_PROFILE_FILE_VERSION))
+                if (std::string::npos != it->find(FILE_HEADER_PROFILER_VERSION))
                 {
                     foundVersion = true;
 
@@ -54,6 +72,7 @@ bool OccupancyFileInfoDataHandler::ParseOccupancyFile(const std::string& occupan
                     }
                 }
             }
+            success &= foundVersion;
         }
 
         m_bIsDataReady = success;
@@ -139,26 +158,45 @@ void OccupancyFileInfoDataHandler::GetOccupancyFileVersion(unsigned int& major, 
     minor = m_occupancyFileMinorVersion;
 }
 
-std::vector<ColumnName> OccupancyFileInfoDataHandler::GetHeaderInOrder() const
+void OccupancyFileInfoDataHandler::GetHeaderInOrder(char** ppColumnNames, unsigned int& columnCount) const
 {
-    return m_headerList;
+    if(nullptr != ppColumnNames && nullptr != m_ppHeaderList)
+    {
+        columnCount = static_cast<unsigned int>(m_headerColumnCount);
+        *ppColumnNames = *m_ppHeaderList;
+    }
 }
 
-std::map<osThreadId, KernelCount> OccupancyFileInfoDataHandler::GetKernelCountByThreadId() const
+void OccupancyFileInfoDataHandler::GetOccupancyThreads(osThreadId** ppThreadId, unsigned int& threadCount) const
 {
-    std::map<osThreadId, KernelCount> kernelCountByThreadIdMap;
-
-    if (m_bIsDataReady)
+    if(!m_kernelCountInfoByThreadId.empty())
     {
-        OccupancyInfoByThreadId::const_iterator const_iter;
-
-        for (const_iter = m_kernelCountInfoByThreadId.begin(); const_iter != m_kernelCountInfoByThreadId.end(); ++const_iter)
+        threadCount = static_cast<unsigned int>(m_kernelCountInfoByThreadId.size());
+        *ppThreadId = new (std::nothrow) osThreadId[threadCount];
+        if (nullptr != *ppThreadId)
         {
-            kernelCountByThreadIdMap.insert(std::pair<osThreadId, KernelCount>(const_iter->first, static_cast<unsigned int>(const_iter->second.size())));
+            m_threadIdList.push_back(*ppThreadId);
+            unsigned int threadIndex = 0;
+            for (OccupancyInfoByThreadId::const_iterator it = m_kernelCountInfoByThreadId.begin(); it != m_kernelCountInfoByThreadId.end(); ++it)
+            {
+                (*ppThreadId)[threadIndex] = it->first;
+                threadIndex++;
+            }
         }
     }
+    else
+    {
+        threadCount = 0u;
+    }
+}
 
-    return kernelCountByThreadIdMap;
+void OccupancyFileInfoDataHandler::GetKernelCountByThreadId(osThreadId threadId, unsigned int& kernelCount) const
+{
+    OccupancyInfoByThreadId::const_iterator it = m_kernelCountInfoByThreadId.find(threadId);
+    if(it != m_kernelCountInfoByThreadId.end())
+    {
+        kernelCount = static_cast<unsigned int>(it->second.size());
+    }
 }
 
 const IOccupancyInfoDataHandler* OccupancyFileInfoDataHandler::GetOccupancyInfoDataHandler(osThreadId threadId, unsigned int index) const
@@ -166,28 +204,12 @@ const IOccupancyInfoDataHandler* OccupancyFileInfoDataHandler::GetOccupancyInfoD
     IOccupancyInfoDataHandler* pRetHandler = nullptr;
     OccupancyInfoByThreadId::const_iterator occupancyInfoIter = m_kernelCountInfoByThreadId.find(threadId);
 
-    if (occupancyInfoIter != m_kernelCountInfoByThreadId.end() && occupancyInfoIter->second.size() < index)
+    if (occupancyInfoIter != m_kernelCountInfoByThreadId.end() && index < occupancyInfoIter->second.size())
     {
         pRetHandler = occupancyInfoIter->second[index];
     }
 
     return pRetHandler;
-}
-
-std::vector<const IOccupancyInfoDataHandler*> OccupancyFileInfoDataHandler::GetOccupancyInfoByThreadId(osThreadId threadId) const
-{
-    std::vector<const IOccupancyInfoDataHandler*> retList;
-    OccupancyInfoByThreadId::const_iterator occupancyInfoIter = m_kernelCountInfoByThreadId.find(threadId);
-
-    if (occupancyInfoIter != m_kernelCountInfoByThreadId.end())
-    {
-        for (std::vector<IOccupancyInfoDataHandler*>::const_iterator it = occupancyInfoIter->second.begin(); it != occupancyInfoIter->second.end(); ++it)
-        {
-            retList.push_back(*it);
-        }
-    }
-
-    return retList;
 }
 
 void OccupancyFileInfoDataHandler::ReleaseData()
@@ -207,6 +229,19 @@ void OccupancyFileInfoDataHandler::ReleaseData()
 
     m_kernelCountInfoByThreadId.clear();
     m_occupancyInfoList.clear();
+
+    for (unsigned int i = 0; i< m_headerColumnCount; i++)
+    {
+        delete[] m_ppHeaderList[i];
+    }
+    delete[] m_ppHeaderList;
+
+    for (std::vector<osThreadId*>::iterator it = m_threadIdList.begin(); it != m_threadIdList.end(); ++it)
+    {
+        delete (*it);
+    }
+
+    m_threadIdList.clear();
 }
 
 OccupancyFileInfoDataHandler::~OccupancyFileInfoDataHandler()
@@ -227,6 +262,19 @@ OccupancyFileInfoDataHandler::~OccupancyFileInfoDataHandler()
 
         m_kernelCountInfoByThreadId.clear();
         m_occupancyInfoList.clear();
+
+        for(unsigned int i=0; i< m_headerColumnCount; i++)
+        {
+            delete[] m_ppHeaderList[i];
+        }
+        delete[] m_ppHeaderList;
+
+        for(std::vector<osThreadId*>::iterator it = m_threadIdList.begin(); it != m_threadIdList.end(); ++it)
+        {
+            delete (*it);
+        }
+
+        m_threadIdList.clear();
     }
 }
 

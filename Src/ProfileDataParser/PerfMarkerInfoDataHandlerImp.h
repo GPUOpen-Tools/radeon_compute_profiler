@@ -52,25 +52,25 @@ public:
 
     /// Get the perf marker name
     /// \return perf marker name
-    std::string GetPerfMarkerBeginInfoName() const override;
+    const char* GetPerfMarkerBeginInfoName() const override;
 
     /// Get the perf marker group name
     /// \return perf marker group name
-    std::string GetPerfMarkerBeginInfoGroupName() const override;
+    const char* GetPerfMarkerBeginInfoGroupName() const override;
 
     /// Get the perf marker name
     /// \return perf marker name
-    std::string GetPerfMarkerEndExName() const override;
+    const char* GetPerfMarkerEndExName() const override;
 
     /// Get the perf marker group name
     /// \return perf marker group name
-    std::string GetPerfMarkerEndExGroupName() const override;
+    const char* GetPerfMarkerEndExGroupName() const override;
 
-    /// Virtual Destructor
-    ~PerfMarkerInfoDataHandler() = default;
+    /// Destructor
+    ~PerfMarkerInfoDataHandler(){}
 
 private:
-    PerfMarkerEntry* m_pPerfMarkerEntry;             ///< pointer to perf marker entry
+    PerfMarkerEntry*                    m_pPerfMarkerEntry;             ///< pointer to perf marker entry
 };
 
 #endif // _PERF_MARKER_INFO_DATA_HANDLER_IMP_H_

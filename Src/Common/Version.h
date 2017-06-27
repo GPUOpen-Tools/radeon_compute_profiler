@@ -23,7 +23,7 @@
 // @{
 
 #define RCP_MAJOR_VERSION 5
-#define RCP_MINOR_VERSION 0
+#define RCP_MINOR_VERSION 1
 #define RCP_BUILD_NUMBER 0
 #define RCP_UPDATE_VERSION 0
 

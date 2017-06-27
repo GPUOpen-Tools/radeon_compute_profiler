@@ -489,9 +489,9 @@ bool KernelAssembly::Generate(const cl_command_queue& commandQueue,
 
     vector<char> binary;
     cl_program program;
-    bool bRet = g_realDispatchTable.GetKernelInfo(kernel, CL_KERNEL_PROGRAM, sizeof(cl_program), &program, NULL) == CL_SUCCESS;
+    bool bRet = g_realDispatchTable.GetKernelInfo(kernel, CL_KERNEL_PROGRAM, sizeof(cl_program), &program, nullptr) == CL_SUCCESS;
 
-    bRet |= GetProgramBinary(program, device, &binary);
+    bRet &= GetProgramBinary(program, device, &binary);
 
     if (bRet)
     {
@@ -515,17 +515,20 @@ bool KernelAssembly::DumpCLSource(const cl_kernel&   kernel,
 
     // get the CL program handle
     cl_program program;
-    result |= g_realDispatchTable.GetKernelInfo(kernel, CL_KERNEL_PROGRAM, sizeof(cl_program), &program, NULL);
+    result = g_realDispatchTable.GetKernelInfo(kernel, CL_KERNEL_PROGRAM, sizeof(cl_program), &program, nullptr);
+    SpAssertRet(result == CL_SUCCESS) false;
 
     // Get the CL kernel source size
     size_t size;
-    result |= g_realDispatchTable.GetProgramInfo(program, CL_PROGRAM_SOURCE, 0, NULL, &size);
+    result = g_realDispatchTable.GetProgramInfo(program, CL_PROGRAM_SOURCE, 0, nullptr, &size);
+    SpAssertRet(result == CL_SUCCESS) false;
 
     // Get the CL kernel source
     char* pszSource = new(std::nothrow) char[ size + 1 ];
-    SpAssertRet(pszSource != NULL) false;
+    SpAssertRet(pszSource != nullptr) false;
 
-    result |= g_realDispatchTable.GetProgramInfo(program, CL_PROGRAM_SOURCE, size, pszSource, NULL);
+    result = g_realDispatchTable.GetProgramInfo(program, CL_PROGRAM_SOURCE, size, pszSource, nullptr);
+    SpAssertRet(result == CL_SUCCESS) false;
 
     if (CL_SUCCESS != result)
     {

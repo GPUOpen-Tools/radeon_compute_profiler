@@ -7,20 +7,21 @@
 
 #include "OccupancyInfoDataHandlerImp.h"
 #include "../sprofile/OccupancyChart.h"
+#include <cstring>
 
 unsigned int OccupancyInfoDataHandler::GetThreadId() const
 {
     return m_occupancyInfo.m_nTID;
 }
 
-std::string OccupancyInfoDataHandler::GetKernelName() const
+const char* OccupancyInfoDataHandler::GetKernelName() const
 {
-    return m_occupancyInfo.m_strKernelName;
+    return m_occupancyInfo.m_strKernelName.c_str();
 }
 
-std::string OccupancyInfoDataHandler::GetDeviceName() const
+const char* OccupancyInfoDataHandler::GetDeviceName() const
 {
-    return m_occupancyInfo.m_strDeviceName;
+    return m_occupancyInfo.m_strDeviceName.c_str();
 }
 
 unsigned int OccupancyInfoDataHandler::GetDeviceGfxIp() const
@@ -143,7 +144,47 @@ unsigned int OccupancyInfoDataHandler::GetSimdsPerCU() const
     return m_occupancyInfo.m_nSimdsPerCU;
 }
 
-bool OccupancyInfoDataHandler::GenerateOccupancyChart(const std::string outputFile, std::string& errorMessage) const
+bool OccupancyInfoDataHandler::GenerateOccupancyChart(const char* pOutputFile, char** ppErrorMessage) const
 {
-    return ::GenerateOccupancyChart(m_occupancyInfo, outputFile, errorMessage);
+    std::string tmpErrorMessage;
+    bool success = false;
+    if (nullptr != pOutputFile)
+    {
+        success = ::GenerateOccupancyChart(m_occupancyInfo, pOutputFile, tmpErrorMessage);
+    }
+
+    if(success != true)
+    {
+        if (nullptr != m_pErrorMessageResource)
+        {
+            delete[] m_pErrorMessageResource;
+        }
+
+        if (!tmpErrorMessage.empty())
+        {
+            *ppErrorMessage = new (std::nothrow) char[tmpErrorMessage.size() + 1];
+            if (nullptr != *ppErrorMessage)
+            {
+                memcpy(*ppErrorMessage, tmpErrorMessage.c_str(), tmpErrorMessage.size());
+                (*ppErrorMessage)[tmpErrorMessage.size()] = '\0';
+                m_pErrorMessageResource = *ppErrorMessage;
+            }
+        }
+        else
+        {
+            *ppErrorMessage = new (std::nothrow) char[1];
+            if (nullptr != ppErrorMessage)
+            {
+                *ppErrorMessage[0] = '\0';
+                m_pErrorMessageResource = *ppErrorMessage;
+            }
+        }
+    }
+
+    return success;
+}
+
+OccupancyInfoDataHandler::~OccupancyInfoDataHandler()
+{
+    delete[] m_pErrorMessageResource;
 }

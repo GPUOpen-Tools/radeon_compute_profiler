@@ -355,11 +355,8 @@ unsigned int HSATraceStringUtils::Get_hsa_amd_agent_get_info_AttributeSize(hsa_a
         case HSA_AMD_AGENT_INFO_MAX_ADDRESS_WATCH_POINTS:
         case HSA_AMD_AGENT_INFO_MEMORY_WIDTH:
         case HSA_AMD_AGENT_INFO_MEMORY_MAX_FREQUENCY:
-            return sizeof(uint32_t);
-
-        // uint16_t
         case HSA_AMD_AGENT_INFO_BDFID:
-            return sizeof(uint16_t);
+            return sizeof(uint32_t);
 
         default:
             return 0;
@@ -393,12 +390,8 @@ std::string HSATraceStringUtils::Get_hsa_amd_agent_get_info_AttributeString(void
                 case HSA_AMD_AGENT_INFO_MAX_ADDRESS_WATCH_POINTS:
                 case HSA_AMD_AGENT_INFO_MEMORY_WIDTH:
                 case HSA_AMD_AGENT_INFO_MEMORY_MAX_FREQUENCY:
-                    ss << (*(static_cast<uint32_t*>(value)));
-                    break;
-
-                // uint16_t
                 case HSA_AMD_AGENT_INFO_BDFID:
-                    ss << (*(static_cast<uint16_t*>(value)));
+                    ss << (*(static_cast<uint32_t*>(value)));
                     break;
 
             default:

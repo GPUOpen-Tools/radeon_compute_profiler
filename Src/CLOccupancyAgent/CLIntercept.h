@@ -26,4 +26,12 @@ CL_OCCUPANCY_API_ENTRY_EnqueueNDRangeKernel(
 extern cl_int CL_API_CALL
 CL_OCCUPANCY_API_ENTRY_ReleaseContext(cl_context context);
 
+extern cl_int CL_API_CALL
+CL_OCCUPANCY_API_ENTRY_GetDeviceIDs(
+    cl_platform_id    platform,
+    cl_device_type    device_type,
+    cl_uint           num_entries,
+    cl_device_id*     device_list,
+    cl_uint*          num_devices);
+
 #endif // _CL_INTERCEPT_H_

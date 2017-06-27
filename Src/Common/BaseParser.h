@@ -11,7 +11,7 @@
 #include <vector>
 #include <fstream>
 #include <string>
-#include <AMDTBaseTools/Include/gtString.h>
+#include <AMDTBaseTools/Include/gtASCIIString.h>
 #include "IParserListener.h"
 
 
@@ -114,10 +114,9 @@ protected:
             }
         }
 
-        gtString gtLine;
-        gtLine = gtLine.fromASCIIString(line.c_str());
+        gtASCIIString gtLine(line.c_str());
         gtLine.trim();
-        line = gtLine.asASCIICharArray();
+        line = gtLine.asCharArray();
         m_nLine++;
         return true;
     }

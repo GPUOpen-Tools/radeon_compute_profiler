@@ -16,6 +16,7 @@
 #include "../Common/Defs.h"
 #include "../Common/Logger.h"
 #include "../CLCommon/CLUtils.h"
+#include "../CLCommon/CLDeviceReplacer.h"
 
 using namespace std;
 using namespace GPULogger;
@@ -124,10 +125,10 @@ cl_int CL_API_CALL CL_API_TRACE_clGetPlatformInfo(
 }
 
 cl_int CL_API_CALL CL_API_TRACE_clGetDeviceIDs(
-    cl_platform_id    platform ,
-    cl_device_type    device_type ,
-    cl_uint           num_entries ,
-    cl_device_id*     device_list ,
+    cl_platform_id    platform,
+    cl_device_type    device_type,
+    cl_uint           num_entries,
+    cl_device_id*     device_list,
     cl_uint*          num_devices)
 {
     bool replaced_null_param = num_devices == NULL;
@@ -147,28 +148,34 @@ cl_int CL_API_CALL CL_API_TRACE_clGetDeviceIDs(
     ULONGLONG ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(pAPIInfo);
 
     cl_int ret = g_nextDispatchTable.GetDeviceIDs(
-                     platform,
-                     device_type,
-                     num_entries,
-                     device_list,
-                     num_devices);
+        platform,
+        device_type,
+        num_entries,
+        device_list,
+        num_devices);
 
     ULONGLONG ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(pAPIInfo);
+
+    if(CL_SUCCESS == ret && GlobalSettings::GetInstance()->m_params.m_bForceSingleGPU && 0u <= GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex)
+    {
+        ret = CLDeviceReplacer::Instance()->ReplaceDeviceIds(platform, device_type, num_entries, device_list, num_devices, GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex, ret);
+    }
 
     SpAssertRet(pAPIInfo != NULL) ret;
 
     pAPIInfo->Create(ullStart,
-                     ullEnd,
-                     platform,
-                     device_type,
-                     num_entries,
-                     device_list,
-                     num_devices,
-                     replaced_null_param,
-                     ret);
+        ullEnd,
+        platform,
+        device_type,
+        num_entries,
+        device_list,
+        num_devices,
+        replaced_null_param,
+        ret);
 
     RECORD_STACK_TRACE_FOR_API(pAPIInfo)
     CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
     return ret;
 }
 

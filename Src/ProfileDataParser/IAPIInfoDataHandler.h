@@ -40,17 +40,17 @@ public:
     /// \return thread id of the api
     virtual osThreadId GetApiThreadId() const = 0;
 
-    /// Get the return type of the api as string
+    /// Get the return type of the api as char array
     /// \return return type of api
-    virtual std::string GetApiRetString() const = 0;
+    virtual const char* GetApiRetString() const = 0;
 
     /// Get the api name as string
-    /// \return name of the api as string
-    virtual std::string GetApiNameString() const = 0;
+    /// \return name of the api as char array
+    virtual const char* GetApiNameString() const = 0;
 
-    /// Get the argument list of the api as string
-    /// \return argument list of the api as string
-    virtual std::string GetApiArgListString() const = 0;
+    /// Get the argument list of the api as char array
+    /// \return argument list of the api as char array
+    virtual const char* GetApiArgListString() const = 0;
 
     /// Virtual Destructor
     virtual ~IAPIInfoDataHandler() = default;

@@ -80,17 +80,17 @@ public:
     /// \return thread id of the api
     osThreadId GetApiThreadId() const override;
 
-    /// Get the return type of the api as string
+    /// Get the return type of the api as char array
     /// \return return type of api
-    std::string GetApiRetString() const override;
+    const char* GetApiRetString() const override;
 
-    /// Get the api name as string
-    /// \return name of the api as string
-    std::string GetApiNameString() const override;
+    /// Get the api name as char array
+    /// \return name of the api as char array
+    const char* GetApiNameString() const override;
 
-    /// Get the argument list of the api as string
-    /// \return argument list of the api as string
-    std::string GetApiArgListString() const override;
+    /// Get the argument list of the api as char array
+    /// \return argument list of the api as char array
+    const char* GetApiArgListString() const override;
 
     /// Gets the cl api type
     /// \return api Type
@@ -100,33 +100,33 @@ public:
     /// \return api id
     unsigned int GetCLApiId() const override;
 
-    /// Get the comment string
-    /// \return comment String
-    std::string GetCLApiComment() const override;
+    /// Get the comment char array
+    /// \return comment char array
+    const char* GetCLApiComment() const override;
 
     /// Checks the Enqueue information is missing or not
     /// \return flag indicating Enqueue information is present or not
     bool IsCLEnqueueInformationMissing() const override;
 
-    /// Get the CLEnqueue command type string
-    /// \return command type string
-    std::string GetCLCommandTypeString() const override;
+    /// Get the CLEnqueue command type as char array
+    /// \return command type as char array
+    const char* GetCLCommandTypeString() const override;
 
-    /// Get the CL Device name string
-    /// \return cl device name
-    std::string GetCLDeviceNameString() const override;
+    /// Get the CL Device name as char array
+    /// \return cl device name as char array
+    const char* GetCLDeviceNameString() const override;
 
-    /// Get the CL context handle string
-    /// \return cl context handle string
-    std::string GetCLContextHandleString() const override;
+    /// Get the CL context handle as char array
+    /// \return cl context handle as char array
+    const char* GetCLContextHandleString() const override;
 
-    /// Get the CL Command Queue Handle string
-    /// \return cl command queue handle string
-    std::string GetCLCommandQueueHandleString() const override;
+    /// Get the CL Command Queue Handle as char array
+    /// \return cl command queue handle as char array
+    const char* GetCLCommandQueueHandleString() const override;
 
-    /// Get the cl event handle string
-    /// \return cl event hadnle string
-    std::string GetCLEventHandleString() const override;
+    /// Get the cl event handle as char array
+    /// \return cl event hadnle as char array
+    const char* GetCLEventHandleString() const override;
 
     /// Get the CL queue timestamp
     /// \return cl queue timestamp
@@ -164,21 +164,21 @@ public:
     /// \return data transfer size
     unsigned int GetCLDataTransferSize() const override;
 
-    /// Get the CL kernel handle String
-    /// \return kernel handle as string
-    std::string GetCLKernelHandleString() const override;
+    /// Get the CL kernel handle as char array
+    /// \return kernel handle as char array
+    const char* GetCLKernelHandleString() const override;
 
     /// Get the CL Kernel name
     /// \return kernel name
-    std::string GetCLKernelNameString() const override;
+    const char* GetCLKernelNameString() const override;
 
     /// Get the CL kernel work group size
     /// \return kernel work group size
-    std::string GetCLKernelWorkGroupSize() const override;
+    const char* GetCLKernelWorkGroupSize() const override;
 
     /// Get the CL global work group size
     /// \return kernel global work group size
-    std::string GetCLKernelGlobalWorkGroupSize() const override;
+    const char* GetCLKernelGlobalWorkGroupSize() const override;
 
     ///Destructor
     ~CLAPIInfoDataHandler() = default;

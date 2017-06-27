@@ -52,9 +52,9 @@ public:
     ISymbolFileEntryInfoDataHandler* GetSymbolFileEntryInfoDataHandler() override;
 
     /// Get the Occupancy File Parser Handler Interface
-    /// \param[in] occupancyFileName name of the occupancy file
+    /// \param[in] pOccupancyFileName name of the occupancy file
     /// \return pointer to occupancy file parser handler
-    IOccupancyFileInfoDataHandler* GetOccupancyFileInfoDataHandler(const std::string& occupancyFileName) override;
+    IOccupancyFileInfoDataHandler* GetOccupancyFileInfoDataHandler(const char* pOccupancyFileName) override;
 
     /// Parse the passed atp file
     /// \param[in] filename name of the atp file
@@ -110,9 +110,9 @@ private:
     /// Constructor
     AtpDataHandler();
 
-    ParserListener_OnParseCallback                                          m_pCallbackOnParse;                           ///< OnParse callback function pointer
-    ParserListener_SetApiNumCallback                                        m_pCallbackOnSetApiNum;                      ///< SetApiNum callback function pointer
-    ParserProgress_ReportProgressCallback                                   m_pCallbackOnReportProgress;                 ///< parser progress report callback function pointer
+    ParserListener_OnParseCallback                                          m_pCallbackOnParse;                         ///< OnParse callback function pointer
+    ParserListener_SetApiNumCallback                                        m_pCallbackOnSetApiNum;                     ///< SetApiNum callback function pointer
+    ParserProgress_ReportProgressCallback                                   m_pCallbackOnReportProgress;                ///< parser progress report callback function pointer
     CLApiInfoDataHandlerList                                                m_clApiInfoDataHandlerList;                 ///< map of atpfile and its list of clApiInfodata Handler Interface pointer
     HSAApiInfoDataHandlerList                                               m_hsaApiInfoDataHandlerList;                ///< map of atpfile and its list of hsaApiInfodata Handler Interface pointer
     PerfMarkerInfoDataHandlerList                                           m_perfMarkerInfoDataHandlerList;            ///< map of atpfile and its list of perfMarkerInfodata Handler Interface pointer

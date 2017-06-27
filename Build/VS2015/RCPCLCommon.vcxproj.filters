@@ -22,6 +22,9 @@
     <ClCompile Include="..\..\..\Common\Src\DynamicLibraryModule\OpenCLModule.cpp">
       <Filter>DynamicLibraryModule</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Src\CLCommon\CLDeviceReplacer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Src\CLCommon\CLCUInfoBase.h">
@@ -44,6 +47,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Common\Src\DynamicLibraryModule\OpenCLModule.h">
       <Filter>DynamicLibraryModule</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\CLCommon\CLDeviceReplacer.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

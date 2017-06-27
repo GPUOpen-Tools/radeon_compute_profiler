@@ -37,19 +37,19 @@ osThreadId HSAAPIInfoDataHandler::GetApiThreadId() const
     return m_pHsaApiInfo->m_tid;
 }
 
-std::string HSAAPIInfoDataHandler::GetApiRetString() const
+const char* HSAAPIInfoDataHandler::GetApiRetString() const
 {
-    return m_pHsaApiInfo->m_strRet;
+    return m_pHsaApiInfo->m_strRet.c_str();
 }
 
-std::string HSAAPIInfoDataHandler::GetApiNameString() const
+const char* HSAAPIInfoDataHandler::GetApiNameString() const
 {
-    return m_pHsaApiInfo->m_strName;
+    return m_pHsaApiInfo->m_strName.c_str();
 }
 
-std::string HSAAPIInfoDataHandler::GetApiArgListString() const
+const char* HSAAPIInfoDataHandler::GetApiArgListString() const
 {
-    return m_pHsaApiInfo->m_argList;
+    return m_pHsaApiInfo->m_argList.c_str();
 }
 
 bool HSAAPIInfoDataHandler::IsHSAMemoryApi(IHSAMemoryApiInfoDataHandler** ppHsaMemoryApiInfoDataHandler)
@@ -156,19 +156,19 @@ uint64_t HSAAPIInfoDataHandler::GetHSAMemoryTransferEndTime() const
     return (dynamic_cast<HSAMemoryTransferAPIInfo*>(m_pHsaApiInfo))->m_transferEndTime;
 }
 
-std::string HSAAPIInfoDataHandler::GetHSASrcAgentString() const
+const char* HSAAPIInfoDataHandler::GetHSASrcAgentString() const
 {
-    return (dynamic_cast<HSAMemoryTransferAPIInfo*>(m_pHsaApiInfo))->m_strSrcAgent;
+    return (dynamic_cast<HSAMemoryTransferAPIInfo*>(m_pHsaApiInfo))->m_strSrcAgent.c_str();
 }
 
-std::string HSAAPIInfoDataHandler::GetHSADestinationAgentString() const
+const char* HSAAPIInfoDataHandler::GetHSADestinationAgentString() const
 {
-    return (dynamic_cast<HSAMemoryTransferAPIInfo*>(m_pHsaApiInfo))->m_strDstAgent;
+    return (dynamic_cast<HSAMemoryTransferAPIInfo*>(m_pHsaApiInfo))->m_strDstAgent.c_str();
 }
 
-std::string HSAAPIInfoDataHandler::GetHSAKernelName() const
+const char* HSAAPIInfoDataHandler::GetHSAKernelName() const
 {
-    return (dynamic_cast<HSADispatchInfo*>(m_pHsaApiInfo))->m_strKernelName;
+    return (dynamic_cast<HSADispatchInfo*>(m_pHsaApiInfo))->m_strKernelName.c_str();
 }
 
 unsigned long long HSAAPIInfoDataHandler::GetHSAKernelHandle() const
@@ -176,14 +176,14 @@ unsigned long long HSAAPIInfoDataHandler::GetHSAKernelHandle() const
     return (dynamic_cast<HSADispatchInfo*>(m_pHsaApiInfo))->m_uiKernelHandle;
 }
 
-std::string HSAAPIInfoDataHandler::GetHSADeviceName() const
+const char* HSAAPIInfoDataHandler::GetHSADeviceName() const
 {
-    return (dynamic_cast<HSADispatchInfo*>(m_pHsaApiInfo))->m_strDeviceName;
+    return (dynamic_cast<HSADispatchInfo*>(m_pHsaApiInfo))->m_strDeviceName.c_str();
 }
 
-std::string HSAAPIInfoDataHandler::GetHSADeviceHandleString() const
+const char* HSAAPIInfoDataHandler::GetHSADeviceHandleString() const
 {
-    return (dynamic_cast<HSADispatchInfo*>(m_pHsaApiInfo))->m_strDeviceHandle;
+    return (dynamic_cast<HSADispatchInfo*>(m_pHsaApiInfo))->m_strDeviceHandle.c_str();
 }
 
 unsigned int HSAAPIInfoDataHandler::GetHSAQueueIndex() const
@@ -191,19 +191,19 @@ unsigned int HSAAPIInfoDataHandler::GetHSAQueueIndex() const
     return (dynamic_cast<HSADispatchInfo*>(m_pHsaApiInfo))->m_queueIndex;
 }
 
-std::string HSAAPIInfoDataHandler::GetHSAQueueHandleString() const
+const char* HSAAPIInfoDataHandler::GetHSAQueueHandleString() const
 {
-    return (dynamic_cast<HSADispatchInfo*>(m_pHsaApiInfo))->m_strQueueHandle;
+    return (dynamic_cast<HSADispatchInfo*>(m_pHsaApiInfo))->m_strQueueHandle.c_str();
 }
 
-std::string HSAAPIInfoDataHandler::GetHSAWorkGroupSizeString() const
+const char* HSAAPIInfoDataHandler::GetHSAWorkGroupSizeString() const
 {
-    return (dynamic_cast<HSADispatchInfo*>(m_pHsaApiInfo))->m_strGroupWorkSize;
+    return (dynamic_cast<HSADispatchInfo*>(m_pHsaApiInfo))->m_strGroupWorkSize.c_str();
 }
 
-std::string HSAAPIInfoDataHandler::GetHSAGlobalWorkGroupSize() const
+const char* HSAAPIInfoDataHandler::GetHSAGlobalWorkGroupSize() const
 {
-    return (dynamic_cast<HSADispatchInfo*>(m_pHsaApiInfo))->m_strGlobalWorkSize;
+    return (dynamic_cast<HSADispatchInfo*>(m_pHsaApiInfo))->m_strGlobalWorkSize.c_str();
 }
 
 void HSAAPIInfoDataHandler::GetHSALocalGroups(size_t** ppHsaLocalGroups, size_t& groupCount) const

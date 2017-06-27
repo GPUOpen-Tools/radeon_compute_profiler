@@ -46,21 +46,21 @@ public:
     /// \return line number of the entry
     virtual LineNum GetLineNumber() const = 0;
 
-    /// Get the address as a string
-    /// \return stack address as string
-    virtual std::string GetAddressString() const = 0;
+    /// Get the address as char array
+    /// \return stack address as char array
+    virtual const char* GetAddressString() const = 0;
 
     /// Get the file name
     /// \return file name of the symbol entry
-    virtual std::string GetFileNameString() const = 0;
+    virtual const char* GetFileNameString() const = 0;
 
     /// Get the module name
-    /// \return module name as string
-    virtual std::string GetModuleNameString() const = 0;
+    /// \return module name as char array
+    virtual const char* GetModuleNameString() const = 0;
 
-    /// Get the Symbol Name as String
-    /// \return symbol name as string
-    virtual std::string GetSymbolNameString() const = 0;
+    /// Get the Symbol Name as char array
+    /// \return symbol name as char array
+    virtual const char* GetSymbolNameString() const = 0;
 
     /// Virtual Destructor
     virtual ~IStackEntryInfoDataHandler() = default;
@@ -77,16 +77,16 @@ public:
     virtual IStackEntryInfoDataHandler* GetStackEntryInfoHandler() = 0;
 
     /// Get the module name
-    /// \return module name as string
-    virtual std::string GetSymbolModuleName() const = 0;
+    /// \return module name as char array
+    virtual const char* GetSymbolModuleName() const = 0;
 
     /// Get the thread Id of the symbol
     /// \return thread id of the symbol
     virtual osThreadId GetsymbolThreadId() const = 0;
 
     /// Get the api name of the symbol
-    /// \return api namme string
-    virtual std::string GetSymbolApiName() const = 0;
+    /// \return api namme char array
+    virtual const char* GetSymbolApiName() const = 0;
 
     /// Checks the stack entry is availbale or not
     /// \return flag indicating availability of the stack entry with the symbol or not

@@ -117,7 +117,7 @@ void AtpDataHandler::OnParserProgress(const std::string& strProgressMessage, uns
 {
     if (nullptr != m_pCallbackOnReportProgress)
     {
-        m_pCallbackOnReportProgress(strProgressMessage, uiCurItem, uiTotalItems);
+        m_pCallbackOnReportProgress(strProgressMessage.c_str(), uiCurItem, uiTotalItems);
     }
 }
 
@@ -184,11 +184,11 @@ ISymbolFileEntryInfoDataHandler* AtpDataHandler::GetSymbolFileEntryInfoDataHandl
     return pRetHandler;
 }
 
-IOccupancyFileInfoDataHandler* AtpDataHandler::GetOccupancyFileInfoDataHandler(const std::string& occupancyFileName)
+IOccupancyFileInfoDataHandler* AtpDataHandler::GetOccupancyFileInfoDataHandler(const char* pOccupancyFileName)
 {
     IOccupancyFileInfoDataHandler* pRetHandler = nullptr;
     std::map<std::string, IOccupancyFileInfoDataHandler*>::iterator mapIter;
-    std::string tempOccupancyFileName = occupancyFileName;
+    std::string tempOccupancyFileName(pOccupancyFileName);
     mapIter = m_occupancyFileInfoDataHandlers.find(tempOccupancyFileName);
 
     if (mapIter != m_occupancyFileInfoDataHandlers.end() && nullptr != mapIter->second)
@@ -201,7 +201,7 @@ IOccupancyFileInfoDataHandler* AtpDataHandler::GetOccupancyFileInfoDataHandler(c
 
         if (nullptr != pRetHandler)
         {
-            m_occupancyFileInfoDataHandlers.insert(std::pair<OccupancyFile, IOccupancyFileInfoDataHandler*>(occupancyFileName, pRetHandler));
+            m_occupancyFileInfoDataHandlers.insert(std::pair<OccupancyFile, IOccupancyFileInfoDataHandler*>(pOccupancyFileName, pRetHandler));
         }
     }
 

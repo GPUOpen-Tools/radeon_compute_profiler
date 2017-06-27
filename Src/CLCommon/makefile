@@ -24,6 +24,7 @@ LIB_OBJS =  \
 	./$(OBJ_DIR)/CLCUInfoBase.o \
 	./$(OBJ_DIR)/CLPlatformInfo.o \
 	./$(OBJ_DIR)/OpenCLModule.o \
+	./$(OBJ_DIR)/CLDeviceReplacer.o \
 
 include $(DEPTH)/Build/Linux/CommonTargets.mk
 

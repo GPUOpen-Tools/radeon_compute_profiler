@@ -53,64 +53,54 @@ LineNum SymbolFileEntryInfoDataHandler::GetLineNumber() const
     return lineNum;
 }
 
-std::string SymbolFileEntryInfoDataHandler::GetAddressString() const
+const char* SymbolFileEntryInfoDataHandler::GetAddressString() const
 {
-    std::string addressString;
-
     if (nullptr != m_pSymbolFileEntry  && !IsStackEntryNull())
     {
-        addressString = m_pSymbolFileEntry->m_pStackEntry->m_strSymAddr;
+        return m_pSymbolFileEntry->m_pStackEntry->m_strSymAddr.c_str();
     }
 
-    return addressString;
+    return nullptr;
 }
 
-std::string SymbolFileEntryInfoDataHandler::GetFileNameString() const
+const char* SymbolFileEntryInfoDataHandler::GetFileNameString() const
 {
-    std::string fileNameString;
-
     if (nullptr != m_pSymbolFileEntry  && !IsStackEntryNull())
     {
-        fileNameString = m_pSymbolFileEntry->m_pStackEntry->m_strFile;
+        return m_pSymbolFileEntry->m_pStackEntry->m_strFile.c_str();
     }
 
-    return fileNameString;
+    return nullptr;
 }
 
-std::string SymbolFileEntryInfoDataHandler::GetModuleNameString() const
+const char* SymbolFileEntryInfoDataHandler::GetModuleNameString() const
 {
-    std::string moduleNameString;
-
     if (nullptr != m_pSymbolFileEntry  && !IsStackEntryNull())
     {
-        moduleNameString = m_pSymbolFileEntry->m_pStackEntry->m_strModName;
+        return m_pSymbolFileEntry->m_pStackEntry->m_strModName.c_str();
     }
 
-    return moduleNameString;
+    return nullptr;
 }
 
-std::string SymbolFileEntryInfoDataHandler::GetSymbolNameString() const
+const char* SymbolFileEntryInfoDataHandler::GetSymbolNameString() const
 {
-    std::string symbolNameString;
-
     if (nullptr != m_pSymbolFileEntry  && !IsStackEntryNull())
     {
-        symbolNameString = m_pSymbolFileEntry->m_pStackEntry->m_strSymName;
+        return m_pSymbolFileEntry->m_pStackEntry->m_strSymName.c_str();
     }
 
-    return symbolNameString;
+    return nullptr;
 }
 
-std::string SymbolFileEntryInfoDataHandler::GetSymbolModuleName() const
+const char* SymbolFileEntryInfoDataHandler::GetSymbolModuleName() const
 {
-    std::string symbolModuleName;
-
     if (nullptr != m_pSymbolFileEntry)
     {
-        symbolModuleName = m_pSymbolFileEntry->m_strModName;
+        return m_pSymbolFileEntry->m_strModName.c_str();
     }
 
-    return symbolModuleName;
+    return nullptr;
 }
 
 osThreadId SymbolFileEntryInfoDataHandler::GetsymbolThreadId() const
@@ -125,16 +115,14 @@ osThreadId SymbolFileEntryInfoDataHandler::GetsymbolThreadId() const
     return threadId;
 }
 
-std::string SymbolFileEntryInfoDataHandler::GetSymbolApiName() const
+const char* SymbolFileEntryInfoDataHandler::GetSymbolApiName() const
 {
-    std::string symbolApiName;
-
     if (nullptr != m_pSymbolFileEntry)
     {
-        symbolApiName = m_pSymbolFileEntry->m_strAPIName;
+        return m_pSymbolFileEntry->m_strAPIName.c_str();
     }
 
-    return symbolApiName;
+    return nullptr;
 }
 
 bool SymbolFileEntryInfoDataHandler::IsStackEntryNull() const
@@ -146,3 +134,4 @@ bool SymbolFileEntryInfoDataHandler::IsStackEntryNull() const
 
     return true;
 }
+

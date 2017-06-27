@@ -16,17 +16,22 @@ class OccupancyInfoDataHandler : public IOccupancyInfoDataHandler
 {
 public:
 
+    ///Constructor
+    OccupancyInfoDataHandler() : m_pErrorMessageResource(nullptr)
+    {
+    }
+
     /// Get the thread Id
     /// \return thread Id
     unsigned int GetThreadId() const override;
 
     /// Get the kernel name
-    /// \return kernel name string
-    std::string GetKernelName() const override;
+    /// \return kernel name char array
+    const char* GetKernelName() const override;
 
     /// Get the device name
-    /// \return device name string
-    std::string GetDeviceName() const override;
+    /// \return device name char array
+    const char* GetDeviceName() const override;
 
     /// Get the Graphics ip version of the device
     /// \return gfxIp of the device
@@ -121,19 +126,22 @@ public:
     GDT_HW_GENERATION GetGeneration() const override;
 
     /// Set the number of SIMDS per CU
-    // \return number of SIMDS per CU
+    /// \return number of SIMDS per CU
     unsigned int GetSimdsPerCU() const override;
 
     /// Generate the Occupancy Chart HTML Files
-    /// \param[in] outputFile occupancy chart output file
-    /// \param[out] errorMessage error message if operation was not successful
+    /// \param[in] pOutputFile occupancy chart output file
+    /// \param[out] ppErrorMessage error message if operation was not successful
     /// \return flag indicating the operation is successful or not
-    bool GenerateOccupancyChart(const std::string outputFile, std::string& errorMessage) const override;
+    bool GenerateOccupancyChart(const char* pOutputFile, char** ppErrorMessage) const override;
 
     /// Virtual Destructor
-    ~OccupancyInfoDataHandler() = default;
+    ~OccupancyInfoDataHandler();
 
-    OccupancyUtils::OccupancyParams m_occupancyInfo; ///< occupancy info struct member
+    OccupancyUtils::OccupancyParams m_occupancyInfo;        ///< occupancy info struct member
+
+private:
+    mutable char* m_pErrorMessageResource;                  ///< error message resource for handling message on generating occupancy chart
 };
 
 #endif // _OCCUPANCY_INFO_DATA_HANDLER_IMP_H_

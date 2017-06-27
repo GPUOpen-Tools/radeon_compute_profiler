@@ -380,6 +380,10 @@ GPA_HW_GENERATION GPAUtils::GdtHwGenToGpaHwGen(const GDT_HW_GENERATION gdtHwGen)
             gpaHwGen = GPA_HW_GENERATION_VOLCANICISLAND;
             break;
 
+        case GDT_HW_GENERATION_GFX9:
+            gpaHwGen = GPA_HW_GENERATION_GFX9;
+            break;
+
         default:
             break;
     }
@@ -533,7 +537,7 @@ CounterList& GPAUtils::GetCounters(GPA_HW_GENERATION generation, const bool shou
     return list;
 }
 
-CounterList& GPAUtils::GetCountersForDevice(gpa_uint32 uDeviceid, gpa_uint32 uRevisionid, size_t nMaxPass)
+CounterList& GPAUtils::GetCountersForDevice(gpa_uint32 uDeviceid, gpa_uint32 uRevisionid, size_t nMaxPass, bool applyGfx9SinglePassWorkaround)
 {
     CounterList& list = m_HWCounterDeviceMap[uDeviceid];
 
@@ -556,6 +560,9 @@ CounterList& GPAUtils::GetCountersForDevice(gpa_uint32 uDeviceid, gpa_uint32 uRe
 
         gpa_uint32 uRequiredPass;
 
+        gpa_uint32 lastEnabledCounterIndex = 0;
+        bool anyCounterDisabled = false;
+
         for (gpa_uint32 i = 0; i < nCounters; ++i)
         {
             pScheduler->EnableCounter(i);
@@ -563,13 +570,24 @@ CounterList& GPAUtils::GetCountersForDevice(gpa_uint32 uDeviceid, gpa_uint32 uRe
 
             if (uRequiredPass <= nMaxPass)
             {
+                lastEnabledCounterIndex = i;
                 list.push_back(pAccessor->GetCounterName(i));
             }
             else
             {
+                anyCounterDisabled = true;
                 pScheduler->DisableCounter(i);
                 continue;
             }
+        }
+
+        GDT_HW_GENERATION generation = GDT_HW_GENERATION_NONE;
+        AMDTDeviceInfoUtils::Instance()->GetHardwareGeneration(uDeviceid, generation);
+
+        if (applyGfx9SinglePassWorkaround && anyCounterDisabled && GDT_HW_GENERATION_GFX9 == generation)
+        {
+            pScheduler->DisableCounter(lastEnabledCounterIndex);
+            list.pop_back();
         }
     }
 
@@ -591,6 +609,7 @@ bool GPAUtils::GetAvailableCounters(GPA_HW_GENERATION generation, CounterList& a
         case GPA_HW_GENERATION_SOUTHERNISLAND:
         case GPA_HW_GENERATION_SEAISLAND:
         case GPA_HW_GENERATION_VOLCANICISLAND:
+        case GPA_HW_GENERATION_GFX9:
             retVal = true;
             break;
 
@@ -624,16 +643,25 @@ bool GPAUtils::GetAvailableCountersGdt(GDT_HW_GENERATION generation, CounterList
     return retVal;
 }
 
-bool GPAUtils::GetAvailableCountersForDevice(gpa_uint32 deviceId, gpa_uint32 revisionId, size_t nMaxPass, CounterList& availableCounters)
+bool GPAUtils::GetAvailableCountersForDevice(gpa_uint32 deviceId, gpa_uint32 revisionId, size_t nMaxPass, CounterList& availableCounters, bool applyGfx9SinglePassWorkaround)
 {
-    availableCounters = GetCountersForDevice(deviceId, revisionId, nMaxPass);
+    availableCounters = GetCountersForDevice(deviceId, revisionId, nMaxPass, applyGfx9SinglePassWorkaround);
     return true;
 }
 
 void GPAUtils::VerifyCounter(const std::string& strCounter, GPA_HW_GENERATION& generation)
 {
-    CounterList& list = GetCounters(GPA_HW_GENERATION_VOLCANICISLAND);
+    CounterList& list = GetCounters(GPA_HW_GENERATION_GFX9);
     CounterList::iterator it = std::find(list.begin(), list.end(), strCounter);
+
+    if (it != list.end())
+    {
+        generation = GPA_HW_GENERATION_GFX9;
+        return;
+    }
+
+    list = GetCounters(GPA_HW_GENERATION_VOLCANICISLAND);
+    it = std::find(list.begin(), list.end(), strCounter);
 
     if (it != list.end())
     {

@@ -41,43 +41,43 @@ public:
     /// \return line number of the entry
     LineNum GetLineNumber() const override;
 
-    /// Get the address as a string
-    /// \return stack address as string
-    std::string GetAddressString() const override;
+    /// Get the address as char array
+    /// \return stack address as char array
+    const char* GetAddressString() const override;
 
     /// Get the file name
     /// \return file name of the symbol entry
-    std::string GetFileNameString() const override;
+    const char* GetFileNameString() const override;
 
     /// Get the module name
-    /// \return module name as string
-    std::string GetModuleNameString() const override;
+    /// \return module name as char array
+    const char* GetModuleNameString() const override;
 
-    /// Get the Symbol Name as String
-    /// \return symbol name as string
-    std::string GetSymbolNameString() const override;
+    /// Get the Symbol Name as char array
+    /// \return symbol name as char array
+    const char* GetSymbolNameString() const override;
 
     /// Get the module name
-    /// \return module name as string
-    std::string GetSymbolModuleName() const override;
+    /// \return module name as char array
+    const char* GetSymbolModuleName() const override;
 
     /// Get the thread Id of the symbol
     /// \return thread id of the symbol
     osThreadId GetsymbolThreadId() const override;
 
     /// Get the api name of the symbol
-    /// \return api namme string
-    std::string GetSymbolApiName() const override;
+    /// \return api namme as char array
+    const char* GetSymbolApiName() const override;
 
     /// Checks the stack entry is availbale or not
     /// \return flag indicating availability of the stack entry with the symbol or not
     bool IsStackEntryNull() const override;
 
     /// Destructor
-    ~SymbolFileEntryInfoDataHandler() = default;
+    ~SymbolFileEntryInfoDataHandler(){}
 
 private:
-    SymbolFileEntry* m_pSymbolFileEntry;             ///< pointer to symbol file entry data
+    SymbolFileEntry*                    m_pSymbolFileEntry;             ///< pointer to symbol file entry data
 };
 
 #endif // _SYMBOL_FILE_ENTRY_INFO_DATA_HANDLER_IMP_H_

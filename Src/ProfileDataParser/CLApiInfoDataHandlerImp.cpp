@@ -37,19 +37,19 @@ osThreadId CLAPIInfoDataHandler::GetApiThreadId() const
     return m_pCLApiInfo->m_tid;
 }
 
-std::string CLAPIInfoDataHandler::GetApiRetString() const
+const char* CLAPIInfoDataHandler::GetApiRetString() const
 {
-    return m_pCLApiInfo->m_strRet;
+    return m_pCLApiInfo->m_strRet.c_str();
 }
 
-std::string CLAPIInfoDataHandler::GetApiNameString() const
+const char* CLAPIInfoDataHandler::GetApiNameString() const
 {
-    return m_pCLApiInfo->m_strName;
+    return m_pCLApiInfo->m_strName.c_str();
 }
 
-std::string CLAPIInfoDataHandler::GetApiArgListString() const
+const char* CLAPIInfoDataHandler::GetApiArgListString() const
 {
-    return m_pCLApiInfo->m_argList;
+    return m_pCLApiInfo->m_argList.c_str();
 }
 
 bool CLAPIInfoDataHandler::IsCLMemoryApiInfo(ICLMemApiInfoDataHandler** ppClMemApiInfoDataHandler)
@@ -177,9 +177,9 @@ unsigned int CLAPIInfoDataHandler::GetCLApiId() const
     return (dynamic_cast<CLAPIInfo*>(m_pCLApiInfo))->m_uiAPIID;
 }
 
-std::string CLAPIInfoDataHandler::GetCLApiComment() const
+const char* CLAPIInfoDataHandler::GetCLApiComment() const
 {
-    return (dynamic_cast<CLAPIInfo*>(m_pCLApiInfo))->m_strComment;
+    return (dynamic_cast<CLAPIInfo*>(m_pCLApiInfo))->m_strComment.c_str();
 }
 
 bool CLAPIInfoDataHandler::IsCLEnqueueInformationMissing() const
@@ -187,29 +187,29 @@ bool CLAPIInfoDataHandler::IsCLEnqueueInformationMissing() const
     return (dynamic_cast<CLEnqueueAPI*>(m_pCLApiInfo))->m_bInfoMissing;
 }
 
-std::string CLAPIInfoDataHandler::GetCLCommandTypeString() const
+const char* CLAPIInfoDataHandler::GetCLCommandTypeString() const
 {
-    return (dynamic_cast<CLEnqueueAPI*>(m_pCLApiInfo))->m_strCMDType;
+    return (dynamic_cast<CLEnqueueAPI*>(m_pCLApiInfo))->m_strCMDType.c_str();
 }
 
-std::string CLAPIInfoDataHandler::GetCLDeviceNameString() const
+const char* CLAPIInfoDataHandler::GetCLDeviceNameString() const
 {
-    return (dynamic_cast<CLEnqueueAPI*>(m_pCLApiInfo))->m_strDevice;
+    return (dynamic_cast<CLEnqueueAPI*>(m_pCLApiInfo))->m_strDevice.c_str();
 }
 
-std::string CLAPIInfoDataHandler::GetCLContextHandleString() const
+const char* CLAPIInfoDataHandler::GetCLContextHandleString() const
 {
-    return (dynamic_cast<CLEnqueueAPI*>(m_pCLApiInfo))->m_strCntxHandle;
+    return (dynamic_cast<CLEnqueueAPI*>(m_pCLApiInfo))->m_strCntxHandle.c_str();
 }
 
-std::string CLAPIInfoDataHandler::GetCLCommandQueueHandleString() const
+const char* CLAPIInfoDataHandler::GetCLCommandQueueHandleString() const
 {
-    return (dynamic_cast<CLEnqueueAPI*>(m_pCLApiInfo))->m_strCmdQHandle;
+    return (dynamic_cast<CLEnqueueAPI*>(m_pCLApiInfo))->m_strCmdQHandle.c_str();
 }
 
-std::string CLAPIInfoDataHandler::GetCLEventHandleString() const
+const char* CLAPIInfoDataHandler::GetCLEventHandleString() const
 {
-    return (dynamic_cast<CLEnqueueAPI*>(m_pCLApiInfo))->m_strEventHandle;
+    return (dynamic_cast<CLEnqueueAPI*>(m_pCLApiInfo))->m_strEventHandle.c_str();
 }
 
 ULONGLONG CLAPIInfoDataHandler::GetCLQueueTimestamp() const
@@ -257,23 +257,23 @@ unsigned int CLAPIInfoDataHandler::GetCLDataTransferSize() const
     return (dynamic_cast<CLDataEnqueueAPIInfo*>(m_pCLApiInfo))->m_uiDataSize;
 }
 
-std::string CLAPIInfoDataHandler::GetCLKernelHandleString() const
+const char* CLAPIInfoDataHandler::GetCLKernelHandleString() const
 {
-    return (dynamic_cast<CLKernelAPIInfo*>(m_pCLApiInfo))->m_strKernelHandle;
+    return (dynamic_cast<CLKernelAPIInfo*>(m_pCLApiInfo))->m_strKernelHandle.c_str();
 }
 
-std::string CLAPIInfoDataHandler::GetCLKernelNameString() const
+const char* CLAPIInfoDataHandler::GetCLKernelNameString() const
 {
-    return (dynamic_cast<CLKernelAPIInfo*>(m_pCLApiInfo))->m_strKernelName;
+    return (dynamic_cast<CLKernelAPIInfo*>(m_pCLApiInfo))->m_strKernelName.c_str();
 }
 
-std::string CLAPIInfoDataHandler::GetCLKernelWorkGroupSize() const
+const char* CLAPIInfoDataHandler::GetCLKernelWorkGroupSize() const
 {
-    return (dynamic_cast<CLKernelAPIInfo*>(m_pCLApiInfo))->m_strGroupWorkSize;
+    return (dynamic_cast<CLKernelAPIInfo*>(m_pCLApiInfo))->m_strGroupWorkSize.c_str();
 }
 
-std::string CLAPIInfoDataHandler::GetCLKernelGlobalWorkGroupSize() const
+const char* CLAPIInfoDataHandler::GetCLKernelGlobalWorkGroupSize() const
 {
-    return (dynamic_cast<CLKernelAPIInfo*>(m_pCLApiInfo))->m_strGlobalWorkSize;
+    return (dynamic_cast<CLKernelAPIInfo*>(m_pCLApiInfo))->m_strGlobalWorkSize.c_str();
 }
 

@@ -58,11 +58,11 @@ class IPerfMarkerBeginInfoDataHandler
 public:
     /// Get the perf marker name
     /// \return perf marker name
-    virtual std::string GetPerfMarkerBeginInfoName() const = 0;
+    virtual const char* GetPerfMarkerBeginInfoName() const = 0;
 
     /// Get the perf marker group name
     /// \return perf marker group name
-    virtual std::string GetPerfMarkerBeginInfoGroupName() const = 0;
+    virtual const char* GetPerfMarkerBeginInfoGroupName() const = 0;
 
     /// Virtual Destructor
     virtual ~IPerfMarkerBeginInfoDataHandler() = default;
@@ -75,11 +75,11 @@ class IPerfMarkerEndExInfoDataHandler
 public:
     /// Get the perf marker name
     /// \return perf marker name
-    virtual std::string GetPerfMarkerEndExName() const = 0;
+    virtual const char* GetPerfMarkerEndExName() const = 0;
 
     /// Get the perf marker group name
     /// \return perf marker group name
-    virtual std::string GetPerfMarkerEndExGroupName() const = 0;
+    virtual const char* GetPerfMarkerEndExGroupName() const = 0;
 
     /// Virtual Destructor
     virtual ~IPerfMarkerEndExInfoDataHandler() = default;

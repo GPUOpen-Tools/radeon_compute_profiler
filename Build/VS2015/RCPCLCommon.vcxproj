@@ -45,6 +45,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Src\CLCommon\CLCUInfoBase.cpp" />
+    <ClCompile Include="..\..\Src\CLCommon\CLDeviceReplacer.cpp" />
     <ClCompile Include="..\..\Src\CLCommon\CLFunctionDefs.cpp" />
     <ClCompile Include="..\..\Src\CLCommon\CLFunctionEnumDefs.cpp" />
     <ClCompile Include="..\..\Src\CLCommon\CLInternalFunctionDefs.cpp" />
@@ -54,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Src\CLCommon\CLCUInfoBase.h" />
+    <ClInclude Include="..\..\Src\CLCommon\CLDeviceReplacer.h" />
     <ClInclude Include="..\..\Src\CLCommon\CLFunctionDefs.h" />
     <ClInclude Include="..\..\Src\CLCommon\CLFunctionEnumDefs.h" />
     <ClInclude Include="..\..\Src\CLCommon\CLInternalFunctionDefs.h" />

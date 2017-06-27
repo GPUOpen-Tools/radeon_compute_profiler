@@ -618,9 +618,6 @@ int ProfileApplication(const std::string& strCounterFile, const int& profilerBit
         strAppCommandLine.appendFormattedString(L" %ls", config.strInjectedAppArgs.asCharArray());
     }
 
-    // call SetDllDirectory so that the app being profiled can locate and load AMDTBaseTools/AMDTOSWrappers DLLs
-    SetDllDirectory(strDirPath.asCharArray());
-
     int ret = CreateProcessWithDetour(strDirPath, strAppCommandLine, strAppWorkingDirectory, !config.bNoDetours);
 
     if (ret != 0)

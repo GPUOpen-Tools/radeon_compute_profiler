@@ -55,6 +55,7 @@ struct DeviceInfo
         m_vendorId = 0x1002; //AMD_VENDOR_ID
         m_deviceId = 0;
         m_revId = REVISION_ID_ANY;
+        m_generation = GDT_HW_GENERATION_NONE;
     }
 };
 
@@ -84,7 +85,7 @@ void PrintCounterList(CounterList counterList);
 std::vector<DeviceInfo> GetDeviceInfoList(GPA_API_Type);
 std::vector<CounterPassInfo> GetNumberOfPassForAPI(GPA_API_Type apiType, CounterList counterList, bool forceSinglePassForHSA = true);
 std::vector<CounterPassInfo> GetNumberOfPassFromGPUPerfAPI(GPA_API_Type apiType, CounterList counterList, std::vector<DeviceInfo> deviceInfoList, bool forceSinglePassForHSA = true);
-std::vector<CounterList> GetCounterListsByMaxPassForEachDevice(GPA_API_Type apiType, CounterPassInfo counterPassInfo, unsigned int maxPass, CounterList& leftCounterList);
+std::vector<CounterList> GetCounterListsByMaxPassForEachDevice(GPA_API_Type apiType, CounterPassInfo counterPassInfo, unsigned int maxPass, CounterList& leftCounterList, bool applySinglePassWorkaroundForGfx9);
 void ListCounterToFileForMaxPass(CounterList counterList, std::string counterOutputFile, unsigned int maxPass);
 
 pair<string, string> Parser(const string& strOptionToParse);
@@ -92,7 +93,7 @@ pair<string, string> Parser(const string& strOptionToParse);
 // globals to track command line alongside boost
 static bool s_bEncounteredPositional;
 static string s_strInjectedApp, s_strInjectedAppArgs;
-static po::options_description* s_pCmdline_options = NULL;
+static po::options_description* s_pCmdline_options = nullptr;
 static string s_profilerTitleVersion = RCP_PRODUCT_NAME " (" PROFILER_EXE ") " NUMBITS " bits - " RCP_VERSION_STRING;
 
 bool ParseCmdLine(int argc, wchar_t* argv[], Config& configOut)
@@ -198,7 +199,7 @@ bool ParseCmdLine(int argc, wchar_t* argv[], Config& configOut)
         ("__preload__", po::value<string>(), "Name of an optional library or libraries to preload in the application being profiled.")
 #endif
         ("__nodetours__", "Don't launch application using detours.")
-        ("__hsaforcesinglegpu__", po::value<unsigned int>(), "Override HSA agent discovery to only expose a single GPU to the application. The argument is the device index.");
+        ("__forcesinglegpu__", po::value<unsigned int>(), "Override profiler agents discovery to only expose a single GPU to the application. The argument is the device index (0-based).");
 
         // all options available from command line
         po::options_description cmdline_options;
@@ -246,7 +247,7 @@ bool ParseCmdLine(int argc, wchar_t* argv[], Config& configOut)
         SP_TODO("Pass the options to vm in newer boost that might support unicode parameters")
         // store(programOptions, vm);
 
-        s_pCmdline_options = NULL;
+        s_pCmdline_options = nullptr;
 
         // Handle Options
         SP_TODO("Restore notify(vm) when boost version enables store(programOptions,vm) with a unicode version")
@@ -677,7 +678,7 @@ bool ParseCmdLine(int argc, wchar_t* argv[], Config& configOut)
                 }
                 else if (0 == unicodeOptionsMap.count("help"))
                 {
-                    cout << "Invalid command line argument. Please specify input .atp file." << endl;
+                    cout << "Invalid command line argument. Please specify input .atp file using the --atpfile (-a) switch." << endl;
                     return false;
                 }
             }
@@ -747,11 +748,11 @@ bool ParseCmdLine(int argc, wchar_t* argv[], Config& configOut)
 
         configOut.bNoDetours = unicodeOptionsMap.count("__nodetours__") > 0;
 
-        configOut.bForceSingleGPU = unicodeOptionsMap.count("__hsaforcesinglegpu__") > 0;
+        configOut.bForceSingleGPU = unicodeOptionsMap.count("__forcesinglegpu__") > 0;
 
         if (configOut.bForceSingleGPU)
         {
-            wstring valueStr = unicodeOptionsMap["__hsaforcesinglegpu__"];
+            wstring valueStr = unicodeOptionsMap["__forcesinglegpu__"];
             string valueStrConverted;
             StringUtils::WideStringToUtf8String(valueStr, valueStrConverted);
             configOut.uiForcedGpuIndex = boost::lexical_cast<unsigned int>(valueStrConverted.c_str());
@@ -1030,11 +1031,11 @@ pair<string, string> Parser(const string& strOptionToParse)
         strOptionName.erase(0, 2);
     }
 
-    if (s_pCmdline_options != NULL)
+    if (s_pCmdline_options != nullptr)
     {
         const po::option_description* desc = s_pCmdline_options->find_nothrow(strOptionName, false);
 
-        if (desc != NULL)
+        if (desc != nullptr)
         {
             // if the option is found and it takes an argument, then the next token can not be the injected app -- it will be the argument for this option
             boost::shared_ptr<const po::value_semantic> vs = desc->semantic();
@@ -1075,6 +1076,10 @@ bool GetGenerationName(GPA_HW_GENERATION gen, std::string& strGenerationName)
 
         case GPA_HW_GENERATION_VOLCANICISLAND:
             generation = GDT_HW_GENERATION_VOLCANICISLAND;
+            break;
+
+        case GPA_HW_GENERATION_GFX9:
+            generation = GDT_HW_GENERATION_GFX9;
             break;
 
         default:
@@ -1137,7 +1142,7 @@ void PrintCounters(const std::string& strOutputFile, const bool shouldIncludeCou
     bool gpaInit = gpaUtils.InitGPA(GPA_API_OPENCL,
                                     strDirPath,
                                     strErrorOut,
-                                    NULL,
+                                    nullptr,
                                     &counterList);
 
     if (gpaInit)
@@ -1168,7 +1173,7 @@ void PrintCounters(const std::string& strOutputFile, const bool shouldIncludeCou
     gpaInit = gpaUtils.InitGPA(GPA_API_HSA,
                                strDirPath,
                                strErrorOut,
-                               NULL,
+                               nullptr,
                                &counterList);
 
     if (gpaInit)
@@ -1455,7 +1460,12 @@ void PrintCounterList(CounterList counterList)
 
         if (lineEnd == 0)
         {
-            std::cout << ", " << std::endl;
+            if (counterListSizeMinusOne != i)
+            {
+                std::cout << ",";
+            }
+
+            std::cout << std::endl;
             lineEnd = 5;
         }
         else
@@ -1546,13 +1556,13 @@ std::vector<DeviceInfo> GetDeviceInfoList(GPA_API_Type apiType)
 
                     cl_platform_id* platformIds = nullptr;
                     cl_uint number_platforms;
-                    success &= CL_SUCCESS == clModule.GetPlatformIDs(NULL, platformIds, &number_platforms);
+                    success &= CL_SUCCESS == clModule.GetPlatformIDs(0u, platformIds, &number_platforms);
 
                     if (success && (number_platforms >= 1))
                     {
                         platformIds = new(std::nothrow) cl_platform_id[number_platforms];
 
-                        success &= CL_SUCCESS == clModule.GetPlatformIDs(number_platforms, platformIds, NULL);
+                        success &= CL_SUCCESS == clModule.GetPlatformIDs(number_platforms, platformIds, nullptr);
 
                         for (unsigned int platformIter = 0; success && (platformIter < number_platforms); platformIter++)
                         {
@@ -1575,12 +1585,12 @@ std::vector<DeviceInfo> GetDeviceInfoList(GPA_API_Type apiType)
                                     {
                                         cl_uint numberOfDevices = 0;
                                         cl_uint numberOfEntries = 0;
-                                        success &= CL_SUCCESS == clModule.GetDeviceIDs(platformIds[platformIter], CL_DEVICE_TYPE_GPU, numberOfEntries, NULL, &numberOfDevices);
+                                        success &= CL_SUCCESS == clModule.GetDeviceIDs(platformIds[platformIter], CL_DEVICE_TYPE_GPU, numberOfEntries, nullptr, &numberOfDevices);
 
                                         if (success && (numberOfDevices >= 1))
                                         {
                                             cl_device_id* deviceIds = new(std::nothrow) cl_device_id[numberOfDevices];
-                                            success &= CL_SUCCESS == clModule.GetDeviceIDs(platformIds[platformIter], CL_DEVICE_TYPE_GPU, numberOfDevices, deviceIds, NULL);
+                                            success &= CL_SUCCESS == clModule.GetDeviceIDs(platformIds[platformIter], CL_DEVICE_TYPE_GPU, numberOfDevices, deviceIds, nullptr);
 
                                             for (unsigned int deviceIdIter = 0; success && (deviceIdIter < numberOfDevices); deviceIdIter++)
                                             {
@@ -1732,7 +1742,7 @@ std::vector<CounterPassInfo> GetNumberOfPassFromGPUPerfAPI(GPA_API_Type apiType,
                         computeCounterList.push_back(ppCounterAccessor->GetCounterName(j));
                     }
 
-                    if (apiType == GPA_API_HSA && forceSinglePassForHSA)
+                    if (GPA_API_HSA == apiType && forceSinglePassForHSA)
                     {
                         considerNumberOfPassToBeOne = true;
                     }
@@ -1744,9 +1754,11 @@ std::vector<CounterPassInfo> GetNumberOfPassFromGPUPerfAPI(GPA_API_Type apiType,
                     ppCounterScheduler->DisableAllCounters();
                 }
 
+                gpa_uint32 lastCounterEnabled = 0;
+
                 for (std::vector<std::string>::const_iterator availableCountersIter = computeCounterList.begin(); availableCountersIter != computeCounterList.end(); ++availableCountersIter)
                 {
-                    uint32_t index = 0;
+                    gpa_uint32 index = 0;
                     success &= ppCounterAccessor->GetCounterIndex(availableCountersIter->c_str(), &index);
                     success &= ppCounterScheduler->EnableCounter(index) == GPA_STATUS_OK;
 
@@ -1759,6 +1771,7 @@ std::vector<CounterPassInfo> GetNumberOfPassFromGPUPerfAPI(GPA_API_Type apiType,
                         {
                             if (tempNumberPass == numPass)
                             {
+                                lastCounterEnabled = index;
                                 counterListForHSA.push_back(availableCountersIter->c_str());
                             }
                             else
@@ -1775,6 +1788,13 @@ std::vector<CounterPassInfo> GetNumberOfPassFromGPUPerfAPI(GPA_API_Type apiType,
                 }
                 else
                 {
+                    // applySinglePassWorkaroundForGfx9
+                    if (GPA_API_HSA == apiType && GDT_HW_GENERATION_GFX9 == i->m_generation)
+                    {
+                        counterListForHSA.pop_back();
+                        ppCounterScheduler->DisableCounter(lastCounterEnabled);
+                    }
+
                     computeCounterList.clear();
                     computeCounterList = counterListForHSA;
                 }
@@ -1806,14 +1826,14 @@ void ListCounterToFileForMaxPass(CounterList counterList, std::string counterOut
     std::vector<CounterPassInfo> counterPassInfoList;
     std::string apiTypeString;
 
-    auto CounterToFileForMaxPassLambda = [&]()
+    auto CounterToFileForMaxPassLambda = [&](bool applySinglePassWorkaroundForGfx9)
     {
         counterPassInfoList = GetNumberOfPassForAPI(apiType, counterList, false);
 
         for (unsigned int i = 0; i < counterPassInfoList.size(); ++i)
         {
             std::string deviceNameWithPass = counterPassInfoList[i].m_deviceInfo.m_deviceCALName + "_pass";
-            counterListByEachPass = GetCounterListsByMaxPassForEachDevice(apiType, counterPassInfoList[i], maxPass, leftCounterList);
+            counterListByEachPass = GetCounterListsByMaxPassForEachDevice(apiType, counterPassInfoList[i], maxPass, leftCounterList, applySinglePassWorkaroundForGfx9);
 
             for (unsigned int j = 0; j < counterListByEachPass.size(); ++j)
             {
@@ -1837,20 +1857,20 @@ void ListCounterToFileForMaxPass(CounterList counterList, std::string counterOut
     apiType = GPA_API_OPENCL;
     apiTypeString = "OpenCL";
 
-    CounterToFileForMaxPassLambda();
+    CounterToFileForMaxPassLambda(false);
 
 #if defined (_LINUX) || defined (LINUX)
     // HSA
     apiType = GPA_API_HSA;
     apiTypeString = "HSA";
 
-    CounterToFileForMaxPassLambda();
+    CounterToFileForMaxPassLambda(true);
 
 #endif
 }
 
 
-std::vector<CounterList> GetCounterListsByMaxPassForEachDevice(GPA_API_Type apiType, CounterPassInfo counterPassInfo, unsigned int maxPass, CounterList& leftCounterList)
+std::vector<CounterList> GetCounterListsByMaxPassForEachDevice(GPA_API_Type apiType, CounterPassInfo counterPassInfo, unsigned int maxPass, CounterList& leftCounterList, bool applySinglePassWorkaroundForGfx9)
 {
     std::vector<CounterList> counterListEachPass;
     gtString strDirPath = FileUtils::GetExePathAsUnicode();
@@ -1889,6 +1909,7 @@ std::vector<CounterList> GetCounterListsByMaxPassForEachDevice(GPA_API_Type apiT
                 CounterList excludeCountersInThisPass;
 
                 bool succeed = false;
+                unsigned int lastCounterInPass = 0;
 
                 for (unsigned int k = 0; k < handleCounters.size(); ++k)
                 {
@@ -1910,7 +1931,25 @@ std::vector<CounterList> GetCounterListsByMaxPassForEachDevice(GPA_API_Type apiT
                     }
                     else
                     {
+                        lastCounterInPass = k;
                         includeCountersInThisPass.push_back(handleCounters[k]);
+                    }
+                }
+
+                if (applySinglePassWorkaroundForGfx9)
+                {
+                    GDT_HW_GENERATION generation;
+
+                    if (AMDTDeviceInfoUtils::Instance()->GetHardwareGeneration(counterPassInfo.m_deviceInfo.m_deviceId, generation))
+                    {
+                        if (GDT_HW_GENERATION_GFX9 == generation)
+                        {
+                            if (!excludeCountersInThisPass.empty())
+                            {
+                                includeCountersInThisPass.pop_back();
+                                excludeCountersInThisPass.push_back(handleCounters[lastCounterInPass]);
+                            }
+                        }
                     }
                 }
 
