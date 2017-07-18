@@ -84,7 +84,7 @@ was included in CodeXL, and the codebase was labelled as version 4.x. Now that R
 is being pulled out of CodeXL and into its own codebase again, we've bumped the
 version number up to 5.x.
 
-##Known Issues
+## Known Issues
 * For the OpenCL™ Profiler
   * Collecting Performance Counters for an OpenCL™ application is not currently working for Vega GPUs on Windows when using a 17.20-based driver. This is due to missing driver support in the 17.20 driver. Future driver versions should provide the support needed.
   * Collecting Performance Counters using --perfcounter for an OpenCL™ application when running OpenCL-on-ROCm is not suported currently. The workaround is to profile using the ROCm profiler (using the --hsapmc command-line switch).
