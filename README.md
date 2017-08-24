@@ -66,7 +66,6 @@ UpdateCommon.py has replaced the use of git submodules in the CodeXL repository
 * [Src/CLTraceAgent](Src/CLTraceAgent) -- contains source code for the OpenCL™ agent which collects application trace information
 * [Src/Common](Src/Common) -- contains source code shared by all of RCP
 * [Src/DeviceInfo](Src/DeviceInfo) -- builds a lib containing the Common/Src/DeviceInfo code (Linux only)
-* [Src/GPUPerfAPI](Src/GPUPerfAPI) - contains GPUPerfAPI header files that are not yet included in the GPUPerfAPI delivery
 * [Src/HSAFdnCommon](Src/HSAFdnCommon) -- contains source code shared by the various ROCm agents
 * [Src/HSAFdnPMC](Src/HSAFdnPMC) -- contains source code for the ROCm agent which collects hardware performance counters
 * [Src/HSAFdnTrace](Src/HSAFdnTrace) -- contains source code for the ROCm agent which collects application trace information
