@@ -11,6 +11,8 @@ RCP was formerly delivered as part of CodeXL with the executable name
 "CodeXLGpuProfiler". Prior to its inclusion in CodeXL, it was known as
 "sprofile" and was part of the AMD APP Profiler product.
 
+A subset of RCP is (the portion that supports [ROCm](https://rocm.github.io/)) is automatically installed with ROCm.  Once ROCm is installed, the profiler will appear in the /opt/rocm/profiler directory.
+
 ## Table of Contents
 * [Major Features](#major-features)
 * [What's New](#whats-new)
