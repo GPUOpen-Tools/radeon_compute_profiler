@@ -1075,17 +1075,6 @@ std::string Get_hsa_amd_pointer_type_t_String(hsa_amd_pointer_type_t input);
 /// \return the string representation of the hsa_amd_pointer_type_t
 std::string Get_hsa_amd_pointer_type_t_Ptr_String(const hsa_amd_pointer_type_t* pInputPtr, hsa_amd_pointer_type_t input);
 
-/// Gets the string representation of the hsa_amd_pointer_info_v1_t type
-/// \param input the input hsa_amd_pointer_info_v1_t
-/// \return the string representation of the hsa_amd_pointer_info_v1_t
-std::string Get_hsa_amd_pointer_info_v1_t_String(hsa_amd_pointer_info_v1_t input);
-
-/// Gets the string representation of the hsa_amd_pointer_info_v1_t pointer type
-/// \param pInputPtr the input hsa_amd_pointer_info_v1_t pointer
-/// \param input the input hsa_amd_pointer_info_v1_t
-/// \return the string representation of the hsa_amd_pointer_info_v1_t
-std::string Get_hsa_amd_pointer_info_v1_t_Ptr_String(const hsa_amd_pointer_info_v1_t* pInputPtr, hsa_amd_pointer_info_v1_t input);
-
 /// Gets the string representation of the hsa_amd_pointer_info_t type
 /// \param input the input hsa_amd_pointer_info_t
 /// \return the string representation of the hsa_amd_pointer_info_t

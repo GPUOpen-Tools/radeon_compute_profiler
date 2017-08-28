@@ -2865,7 +2865,7 @@ std::string HSATraceStringUtils::Get_hsa_amd_pointer_type_t_Ptr_String(const hsa
     }
 }
 
-std::string HSATraceStringUtils::Get_hsa_amd_pointer_info_v1_t_String(hsa_amd_pointer_info_v1_t input)
+std::string HSATraceStringUtils::Get_hsa_amd_pointer_info_t_String(hsa_amd_pointer_info_t input)
 {
     std::ostringstream ss;
 
@@ -2874,28 +2874,7 @@ std::string HSATraceStringUtils::Get_hsa_amd_pointer_info_v1_t_String(hsa_amd_po
     ss << StringUtils::ToString(input.agentBaseAddress) << s_pFieldSeparator;
     ss << StringUtils::ToString(input.hostBaseAddress) << s_pFieldSeparator;
     ss << StringUtils::ToString(input.sizeInBytes) << s_pFieldSeparator;
-    ss << StringUtils::ToString(input.userData);
-
-    return SurroundWithStruct(ss.str());
-}
-
-std::string HSATraceStringUtils::Get_hsa_amd_pointer_info_v1_t_Ptr_String(const hsa_amd_pointer_info_v1_t* pInputPtr, hsa_amd_pointer_info_v1_t input)
-{
-    if (nullptr == pInputPtr)
-    {
-        return "NULL";
-    }
-    else
-    {
-        return SurroundWithDeRef(Get_hsa_amd_pointer_info_v1_t_String(input));
-    }
-}
-
-std::string HSATraceStringUtils::Get_hsa_amd_pointer_info_t_String(hsa_amd_pointer_info_t input)
-{
-    std::ostringstream ss;
-
-    ss << HSATraceStringUtils::Get_hsa_amd_pointer_info_v1_t_String(*dynamic_cast<hsa_amd_pointer_info_v1_t*>(&input)) << s_pFieldSeparator;
+    ss << StringUtils::ToString(input.userData) << s_pFieldSeparator;
     ss << HSATraceStringUtils::Get_hsa_agent_t_String(input.agentOwner);
 
     return SurroundWithStruct(ss.str());
