@@ -14,6 +14,8 @@ import platform
 MACHINE_OS = ""
 if "windows" in platform.system().lower():
     MACHINE_OS = "Windows"
+elif "cygwin" in platform.system().lower():
+    MACHINE_OS = "Windows"
 elif "linux" in platform.system().lower():
     MACHINE_OS = "Linux"
 else:
