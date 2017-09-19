@@ -19,7 +19,6 @@
 
 // ADL headers
 #include <ADLUtil.h>
-#include <customer/oem_structures.h>
 
 // common
 #include <DeviceInfoUtils.h>

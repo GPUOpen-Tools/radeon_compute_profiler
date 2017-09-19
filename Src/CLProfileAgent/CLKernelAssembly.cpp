@@ -13,7 +13,6 @@
 
 // ADL headers
 #include <ADLUtil.h>
-#include <customer/oem_structures.h>
 
 #include "../Common/StringUtils.h"
 #include "../Common/FileUtils.h"
