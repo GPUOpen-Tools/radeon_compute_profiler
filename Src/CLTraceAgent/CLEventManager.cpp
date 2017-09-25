@@ -79,7 +79,7 @@ void CLEventManager::FlushTraceData(bool bForceFlush)
     string strFile = ss.str();
     ofstream fout(strFile.c_str(), fstream::out | fstream::app);
 
-    for (TraceInfoMap::iterator mapIt = nonActiveMap.begin(); mapIt != nonActiveMap.end(); mapIt++)
+    for (TraceInfoMap::iterator mapIt = nonActiveMap.begin(); mapIt != nonActiveMap.end(); ++mapIt)
     {
         while (!mapIt->second.empty())
         {
@@ -100,11 +100,11 @@ CLEventRawInfo* CLEventManager::AddEventRawInfo(cl_event event, cl_int status, c
     if (CLAPIInfoManager::Instance()->IsCapReached())
     {
         // Do not allocate more memory if max number of APIs are traced.
-        return NULL;
+        return nullptr;
     }
 
     CLEventRawInfo* pInfo = new(nothrow) CLEventRawInfo();
-    SpAssertRet(pInfo != NULL) NULL;
+    SpAssertRet(nullptr != pInfo) nullptr;
 
     pInfo->m_event = event;
     pInfo->m_iStatus = status;
@@ -118,14 +118,14 @@ CLEventPtr CLEventManager::AddEvent(cl_event event)
 {
     AMDTScopeLock lock(m_pMtx);
 
-    if (event != NULL)
+    if (nullptr != event)
     {
         CLEventMap::iterator it = m_clEventMap.find(event);
 
         if (it != m_clEventMap.end())
         {
             cl_uint refC;
-            GetRealDispatchTable()->GetEventInfo(event, CL_EVENT_REFERENCE_COUNT, sizeof(cl_uint), &refC, NULL);
+            GetRealDispatchTable()->GetEventInfo(event, CL_EVENT_REFERENCE_COUNT, sizeof(cl_uint), &refC, nullptr);
             Log(logWARNING, "Event(0x%p) is already in EventManager. Ref = %d. IsUserEvent = %s. \n", event, refC, (it->second->m_bIsUserEvent ? "True" : "False"));
             return it->second;
         }
@@ -145,7 +145,7 @@ CLEventPtr CLEventManager::AddEvent(cl_event event)
     else
     {
         Log(logERROR, "NULL event obj\n");
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -166,9 +166,9 @@ CLEventPtr CLEventManager::UpdateEvent(cl_event event, bool isUserEvent, CLEnque
 {
     AMDTScopeLock lock(m_pMtx);
 
-    CLEventPtr clEvent(NULL);
+    CLEventPtr clEvent(nullptr);
 
-    if (event != NULL)
+    if (nullptr != event)
     {
         CLEventMap::iterator it = m_clEventMap.find(event);
 
@@ -240,14 +240,14 @@ CLEventPtr CLEventManager::GetCLEvent(cl_event event)
 
 void CLEventManager::Release()
 {
-    for (CLEventMap::iterator it = m_clEventMap.begin(); it != m_clEventMap.end(); it++)
+    for (CLEventMap::iterator it = m_clEventMap.begin(); it != m_clEventMap.end(); ++it)
     {
-        if ((NULL != it->second->m_pEvent) && (NULL != it->second->m_pOwner))
+        if ((nullptr != it->second->m_pEvent) && (nullptr != it->second->m_pOwner))
         {
             // If pOwner == NULL, we never retain it or this event is not created by us
             cl_int res = GetRealDispatchTable()->ReleaseEvent(it->second->m_pEvent);
 
-            if (res != CL_SUCCESS)
+            if (CL_SUCCESS != res)
             {
                 Log(logWARNING, "CLEventManager::Release() failed\n");
             }
@@ -261,13 +261,13 @@ void CLEventManager::Debug(std::string& strFileName)
 {
     ofstream fout(strFileName.c_str());
 
-    for (CLEventMap::iterator it = m_clEventMap.begin(); it != m_clEventMap.end(); it++)
+    for (CLEventMap::iterator it = m_clEventMap.begin(); it != m_clEventMap.end(); ++it)
     {
         if (!it->second->m_ullRunning == 0)
         {
             //fout << it->second.
             cl_command_type cmd_type;
-            GetRealDispatchTable()->GetEventInfo(it->second->m_pEvent, CL_EVENT_COMMAND_TYPE, sizeof(cl_command_type), &cmd_type, NULL);
+            GetRealDispatchTable()->GetEventInfo(it->second->m_pEvent, CL_EVENT_COMMAND_TYPE, sizeof(cl_command_type), &cmd_type, nullptr);
             fout << cmd_type << "   ";
             fout << CLStringUtils::GetCommandTypeString(cmd_type) << "   ";
             fout << it->second->m_ullQueued << "   ";

@@ -48,11 +48,11 @@ struct CLEvent
     /// Default constructor
     CLEvent()
     {
-        SetClEvent(NULL);
+        SetClEvent(nullptr);
         m_bIsUserEvent = false;
         m_bIsReady = false;
         m_ullQueued = m_ullSubmitted = m_ullRunning = m_ullComplete = m_ullCPUQueued = 0;
-        m_pOwner = NULL;
+        m_pOwner = nullptr;
     }
 
     /// For Queued and submitted event, ocl runtime queries CPU timestamp and maps to GPU timestamp so that all 4 timestamps are consistent
@@ -121,7 +121,7 @@ struct CLEvent
                 CL_EVENT_COMMAND_TYPE,
                 sizeof(cl_command_type),
                 &(m_clCommandType),
-                NULL);
+                nullptr);
         }
 
         m_clEventString = StringUtils::ToHexString(m_pEvent);
@@ -185,10 +185,10 @@ public:
     CLEventRawInfo* AddEventRawInfo(cl_event event, cl_int status, cl_long ts);
 
     /// Flush queued event raw info entries.
-    void FlushTraceData(bool bForceFlush = false);
+    void FlushTraceData(bool bForceFlush = false) override;
 
     /// Release cl_event created by CLTraceAgent
-    void Release();
+    void Release() override;
 
     /// Save gpu timestamp to file
     /// \param strFileName output file path+name
@@ -204,14 +204,13 @@ private:
 
     /// Disable copy constructor
     /// \param obj obj
-    CLEventManager(const CLEventManager& obj);
+    CLEventManager(const CLEventManager& obj) = delete;
 
     /// Disable assignment operator
     /// \param obj obj
     /// \return lhs
-    CLEventManager& operator = (const CLEventManager& obj);
+    CLEventManager& operator= (const CLEventManager& obj) = delete;
 
-private:
     CLEventMap m_clEventMap;                  ///< events map
     AMDTMutex* m_pMtx;                        ///< mutex for m_clEventMap
 };

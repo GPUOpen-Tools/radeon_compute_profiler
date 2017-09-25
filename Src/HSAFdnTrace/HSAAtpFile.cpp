@@ -110,7 +110,7 @@ bool HSAAtpFilePart::WriteContentSection(SP_fileStream& sout, const std::string&
 
 HSAAPIInfo* HSAAtpFilePart::CreateAPIInfo(const std::string& strAPIName)
 {
-    HSAAPIInfo* retObj = NULL;
+    HSAAPIInfo* retObj = nullptr;
 
     HSA_API_Type apiType = HSAFunctionDefsUtils::Instance()->ToHSAAPIType(strAPIName);
 
@@ -261,6 +261,7 @@ bool HSAAtpFilePart::ParseDeviceTimestamp(const char* buf, HSADispatchInfo* pDis
 
     ss >> strKernelName;
     strKernelName = StringUtils::Replace(strKernelName, std::string(SPACE), " ");
+    strKernelName = StringUtils::Replace(strKernelName, std::string(COMMA), ",");
     CHECK_SS_ERROR(ss)
     ss >> std::hex >> uiKernelHandle >> std::dec;
     CHECK_SS_ERROR(ss)
@@ -305,7 +306,7 @@ bool HSAAtpFilePart::Parse(std::istream& in, std::string& outErrorMsg)
     bool bError = false;
     bool bTSStart = false;
     bool bKTSStart = false;
-    std::string strProgressMessage = "Parsing Trace Data...";
+    std::string strProgressMessage = "Parsing HSA Trace Data...";
     ErrorMessageUpdater errorMessageUpdater(outErrorMsg, this);
 
     if (s_HSA_KERNEL_TIMESTAMP_OUTPUT == m_strCurrentSectionName)
@@ -353,7 +354,7 @@ bool HSAAtpFilePart::Parse(std::istream& in, std::string& outErrorMsg)
             if (!bTSStart)
             {
                 bTSStart = true;
-                strProgressMessage = "Parsing Timeline Data...";
+                strProgressMessage = "Parsing HSA Timeline Data...";
                 // read thread id
                 ReadLine(in, line);
             }
@@ -366,7 +367,7 @@ bool HSAAtpFilePart::Parse(std::istream& in, std::string& outErrorMsg)
                 if (!bKTSStart && std::find(m_sections.begin(), m_sections.end(), sectionName) != m_sections.end())
                 {
                     bKTSStart = true;
-                    strProgressMessage = "Parsing Kernel Timestamp Data...";
+                    strProgressMessage = "Parsing HSA Kernel Timestamp Data...";
                     // read api count
                     ReadLine(in, line);
 
@@ -420,9 +421,9 @@ bool HSAAtpFilePart::Parse(std::istream& in, std::string& outErrorMsg)
 
         if (!bKTSStart)
         {
-            for (std::vector<IParserListener<HSAAPIInfo>*>::iterator it = m_listenerList.begin(); it != m_listenerList.end(); it++)
+            for (std::vector<IParserListener<HSAAPIInfo>*>::iterator it = m_listenerList.begin(); it != m_listenerList.end(); ++it)
             {
-                if ((*it) != NULL)
+                if (nullptr != (*it))
                 {
                     (*it)->SetAPINum(tid, apiNum);
                 }
@@ -446,8 +447,6 @@ bool HSAAtpFilePart::Parse(std::istream& in, std::string& outErrorMsg)
                 {
                     continue;
                 }
-
-                string name;
 
                 // First find the API name (required for the API info object allocation)
                 size_t equalSignPos = apiTraceStr.find_first_of("=");
@@ -476,7 +475,7 @@ bool HSAAtpFilePart::Parse(std::istream& in, std::string& outErrorMsg)
 
                     if ((nameStartIndex < apiTraceStr.size()) && (nameStartIndex + nameLength <= apiTraceStr.size()))
                     {
-                        name = apiTraceStr.substr(nameStartIndex, nameEndIndex - nameStartIndex);
+                        string name = apiTraceStr.substr(nameStartIndex, nameEndIndex - nameStartIndex);
 
                         // Create the HSA API info object
                         HSAAPIInfo* pAPIInfo = CreateAPIInfo(name);
@@ -492,7 +491,7 @@ bool HSAAtpFilePart::Parse(std::istream& in, std::string& outErrorMsg)
                         }
 
                         // Parse the arg list
-                        size_t argListEndIndex = apiTraceStr.find_first_of(")");
+                        size_t argListEndIndex = apiTraceStr.find_last_of(")");
 
                         if (argListEndIndex != string::npos)
                         {
@@ -529,7 +528,7 @@ bool HSAAtpFilePart::Parse(std::istream& in, std::string& outErrorMsg)
             {
                 // timestamp
                 // find APIInfo object from InfoMap
-                HSAAPIInfo* pAPIInfo = NULL;
+                HSAAPIInfo* pAPIInfo = nullptr;
                 std::vector<HSAAPIInfo*>& apiList = m_HSAAPIInfoMap[ tid ];
 
                 if (apiList.size() <= i)
@@ -555,7 +554,7 @@ bool HSAAtpFilePart::Parse(std::istream& in, std::string& outErrorMsg)
 
                 for (std::vector<IParserListener<HSAAPIInfo>*>::iterator it = m_listenerList.begin(); it != m_listenerList.end() && !m_shouldStopParsing; it++)
                 {
-                    if (((*it) != NULL) && (pAPIInfo != NULL))
+                    if ((nullptr != (*it)) && (nullptr != pAPIInfo))
                     {
                         (*it)->OnParse(pAPIInfo, m_shouldStopParsing);
                     }
@@ -569,7 +568,7 @@ bool HSAAtpFilePart::Parse(std::istream& in, std::string& outErrorMsg)
             {
                 HSADispatchInfo* dispatchInfo = new (std::nothrow) HSADispatchInfo();
 
-                if (NULL == dispatchInfo)
+                if (nullptr == dispatchInfo)
                 {
                     Log(logERROR, "Error: out of memory\n");
                     return false;
@@ -585,7 +584,7 @@ bool HSAAtpFilePart::Parse(std::istream& in, std::string& outErrorMsg)
 
                 for (std::vector<IParserListener<HSAAPIInfo>*>::iterator it = m_listenerList.begin(); it != m_listenerList.end() && !m_shouldStopParsing; it++)
                 {
-                    if (((*it) != NULL))
+                    if (nullptr != (*it))
                     {
                         (*it)->OnParse(dispatchInfo, m_shouldStopParsing);
                     }
@@ -627,8 +626,7 @@ bool HSAAtpFilePart::UpdateTmpTimestampFiles(const std::string& strTmpFilePath, 
         // first locate the async copy timestamp file
         for (vector<string>::iterator it = files.begin(); it != files.end(); ++it)
         {
-            size_t part_found;
-            part_found = it->find(strPartName);
+            size_t part_found = it->find(strPartName);
 
             if (part_found == string::npos)
             {
@@ -695,8 +693,7 @@ bool HSAAtpFilePart::UpdateTmpTimestampFiles(const std::string& strTmpFilePath, 
             // now update the timestamp data for the has_amd_memory_async_copy to include the data transfer timing
             for (vector<string>::iterator it = files.begin(); it != files.end(); ++it)
             {
-                size_t part_found;
-                part_found = it->find(strPartName);
+                size_t part_found = it->find(strPartName);
 
                 if (part_found == string::npos)
                 {
@@ -870,16 +867,15 @@ bool HSAAtpFilePart::UpdateApiIndexes(const std::string strFile, ThreadCopyItemM
                 }
 
                 // Parse the arg list
-                size_t argListEndIndex = line.find_first_of(")");
+                size_t argListEndIndex = line.find_last_of(")");
 
                 if (argListEndIndex != string::npos)
                 {
                     size_t argListLength = argListEndIndex - openParenPos;
-                    std::string argList;
 
                     if (nameEndIndex + argListLength < line.size())
                     {
-                        argList = StringUtils::Trim(line.substr(nameEndIndex + 2, argListLength - 2));
+                        std::string argList = StringUtils::Trim(line.substr(nameEndIndex + 2, argListLength - 2));
 
                         size_t signalHandleStart = argList.find_last_of("{");
 

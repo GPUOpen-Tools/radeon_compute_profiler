@@ -674,24 +674,36 @@ cl_int CL_API_CALL Mine_clGetPlatformInfo(
 }
 
 cl_int CL_API_CALL Mine_clGetDeviceIDs(
-    cl_platform_id    platform ,
-    cl_device_type    device_type ,
-    cl_uint           num_entries ,
-    cl_device_id*     device_list ,
+    cl_platform_id    platform,
+    cl_device_type    device_type,
+    cl_uint           num_entries,
+    cl_device_id*     device_list,
     cl_uint*          num_devices)
 {
     SeqIDGenerator::Instance()->GenerateID();
 
-    cl_int ret = g_nextDispatchTable.GetDeviceIDs(
-                     platform,
-                     device_type,
-                     num_entries,
-                     device_list,
-                     num_devices);
+    cl_int ret = CL_SUCCESS;
 
-    if (CL_SUCCESS == ret && GlobalSettings::GetInstance()->m_params.m_bForceSingleGPU && 0u <= GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex)
+    if (((device_type & CL_DEVICE_TYPE_GPU) == CL_DEVICE_TYPE_GPU) &&
+        GlobalSettings::GetInstance()->m_params.m_bForceSingleGPU &&
+        0u <= GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex)
     {
-        ret = CLDeviceReplacer::Instance()->ReplaceDeviceIds(platform, device_type, num_entries, device_list, num_devices, GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex, ret);
+        ret = CLDeviceReplacer::ReplaceDeviceIdsInclGetDeviceIds(
+                  platform,
+                  device_type,
+                  num_entries,
+                  device_list,
+                  num_devices,
+                  GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex);
+    }
+    else
+    {
+        ret = g_nextDispatchTable.GetDeviceIDs(
+                  platform,
+                  device_type,
+                  num_entries,
+                  device_list,
+                  num_devices);
     }
 
     return ret;
@@ -759,12 +771,29 @@ cl_int CL_API_CALL Mine_clGetContextInfo(
 {
     SeqIDGenerator::Instance()->GenerateID();
 
-    cl_int ret = g_nextDispatchTable.GetContextInfo(
-                     context,
-                     param_name,
-                     param_value_size,
-                     param_value,
-                     param_value_size_ret);
+    cl_int ret = CL_SUCCESS;
+
+    if ((CL_CONTEXT_DEVICES == param_name || CL_CONTEXT_NUM_DEVICES == param_name) &&
+        GlobalSettings::GetInstance()->m_params.m_bForceSingleGPU &&
+        0u <= GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex)
+    {
+        ret = CLDeviceReplacer::ReplaceDeviceIdsInclGetContextInfo(
+                  context,
+                  param_name,
+                  param_value_size,
+                  param_value,
+                  param_value_size_ret,
+                  GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex);
+    }
+    else
+    {
+        ret = g_nextDispatchTable.GetContextInfo(
+                  context,
+                  param_name,
+                  param_value_size,
+                  param_value,
+                  param_value_size_ret);
+    }
 
     return ret;
 }

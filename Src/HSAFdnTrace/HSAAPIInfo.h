@@ -36,12 +36,11 @@
 /// \param argListWithParamName list of the arguments
 inline void RemoveParamNameFromArgList(std::vector<std::string>& argListWithParamName)
 {
-    std::string tempString;
     size_t equalSignPos = std::string::npos;
 
     for (std::vector<std::string>::iterator it = argListWithParamName.begin(); it != argListWithParamName.end(); ++it)
     {
-        equalSignPos = (*it).find_first_of(HSA_ATP_PARAM_VALUE_DELIMITER);
+        equalSignPos = (*it).find_first_of(ATP_PARAM_VALUE_DELIMITER);
 
         // To-Do: Need to remove this once we update gold file
         size_t paramValPosFromDelimiter = (*it)[equalSignPos + 1] == ' ' ? 2 : 1;
@@ -89,7 +88,7 @@ public:
     virtual ~HSAMemoryAPIInfo() {}
 
     /// Parse the argument list
-    virtual void ParseArgList()
+    virtual void ParseArgList() override
     {
         unsigned int sizeArgPos = 0;
         bool doesAPIHaveSizeArg = false;
@@ -130,7 +129,8 @@ public:
         if (doesAPIHaveSizeArg)
         {
             std::vector<std::string> args;
-            StringUtils::Split(args, m_argList, ";");
+            m_argList = StringUtils::ReplaceHTMLSymbolsToASCIISymbols(m_argList);
+            StringUtils::Split(args, m_argList, ATP_TRACE_ENTRY_ARG_SEPARATOR);
             RemoveParamNameFromArgList(args);
 
             if (sizeArgPos < args.size())
@@ -170,12 +170,12 @@ public:
     virtual ~HSAMemoryTransferAPIInfo() {}
 
     /// Parse the argument list
-    virtual void ParseArgList()
+    virtual void ParseArgList() override
     {
         HSAMemoryAPIInfo::ParseArgList();
 
         std::vector<std::string> args;
-        StringUtils::Split(args, m_argList, ";");
+        StringUtils::Split(args, m_argList, ATP_TRACE_ENTRY_ARG_SEPARATOR);
         RemoveParamNameFromArgList(args);
 
         if (3 < args.size())

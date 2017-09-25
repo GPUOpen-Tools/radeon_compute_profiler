@@ -26,8 +26,13 @@ struct CLOccupancyHdr
 /// Write occupancy header
 /// \param sout output stream
 /// \param header Occupancy file header
+/// \param kernelCount number of the kernels/occupancy
 /// \param cListSeparator List separator
-void WriteOccupancyHeader(std::ostream& sout, const CLOccupancyHdr& header, char cListSeparator = OCCUPANCY_DEFAULT_LIST_SEPARATOR_CHAR);
+void WriteOccupancyHeader(
+    std::ostream& sout,
+    const CLOccupancyHdr& header,
+    size_t kernelCount,
+    char cListSeparator = OCCUPANCY_DEFAULT_LIST_SEPARATOR_CHAR);
 
 /// Merge tmp cl trace file
 /// \param [in] strOutputFile output occupancy file

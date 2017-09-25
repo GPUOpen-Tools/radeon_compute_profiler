@@ -58,7 +58,9 @@ void HSAMemSummarizer::GenerateHTMLTable(std::ostream& sout)
     unsigned int count = 0;
 
     table.AddColumn("Source Agent Handle")
+    .AddColumn("Source Agent Name")
     .AddColumn("Destination Agent Handle")
+    .AddColumn("Destination Agent Name")
     .AddColumn("Duration(ms)", true, true)
     .AddColumn("Transfer Size", true, true)
     .AddColumn("Transfer Rate(MB/s)")
@@ -87,26 +89,55 @@ void HSAMemSummarizer::GenerateHTMLTable(std::ostream& sout)
         else
         {
             unsigned int mb = 1 << 20;
-            double dSize = (double)info->m_size / mb;
-            double dRate = dSize / ((double)ullDuration * 1e-9);
+            double dSize = static_cast<double>(info->m_size) / mb;
+            double dRate = dSize / (static_cast<double>(ullDuration) * 1e-9);
             strRate = StringUtils::ToStringPrecision(dRate, 3);  // + "MB/s"; //StringUtils::GetDataSizeStr( (unsigned int)ullRate, 3 ) + "/s";
         }
 
         HTMLTableRow row(&table);
 
-        std::string keyValues;
-        keyValues = GenerateHTMLKeyValue(gs_THREAD_ID_TAG, info->m_tid);
+        std::string keyValues = GenerateHTMLKeyValue(gs_THREAD_ID_TAG, info->m_tid);
         keyValues = AppendHTMLKeyValue(keyValues, GenerateHTMLKeyValue(gs_SEQUENCE_ID_TAG, info->m_uiSeqID));
         keyValues = AppendHTMLKeyValue(keyValues, GenerateHTMLKeyValue(gs_VIEW_TAG, gs_VIEW_TIMELINE_DEVICE_TAG));
         std::string hRef = GenerateHref(keyValues, info->m_uiSeqID);
 
-        row.AddItem(0, info->m_strSrcAgent)
-        .AddItem(1, info->m_strDstAgent)
-        .AddItem(2, StringUtils::NanosecToMillisec(ullDuration))
-        .AddItem(3, strSize)
-        .AddItem(4, strRate)
-        .AddItem(5, StringUtils::ToString(info->m_tid))
-        .AddItem(6, hRef);
+        auto SplitAgentHandleAndName = [](const std::string& agentString, std::string& agentHandle, std::string& agentName)
+        {
+            // {handle=13816720,name=Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz}
+            std::string tempString = std::string(agentString.begin() + 1, agentString.end() - 1);
+            size_t agentHandleNameSeparatorPos = tempString.find(",");
+
+            agentHandle = std::string(tempString.begin(), tempString.begin() + agentHandleNameSeparatorPos);
+            size_t nameValueseparatorPos = agentHandle.find(ATP_PARAM_VALUE_DELIMITER);
+            agentHandle = std::string(agentHandle.begin() + nameValueseparatorPos + 1, agentHandle.end());
+
+            agentName = std::string(tempString.begin() + agentHandleNameSeparatorPos + 1, tempString.end());
+            nameValueseparatorPos = agentName.find(ATP_PARAM_VALUE_DELIMITER);
+            agentName = std::string(agentName.begin() + nameValueseparatorPos + 1, agentName.end());
+        };
+
+
+        std::string srcAgentHandle;
+        std::string srcAgentName;
+
+        std::string destAgentHandle;
+        std::string destAgentName;
+
+        std::string agentString = info->m_strSrcAgent;
+        SplitAgentHandleAndName(agentString, srcAgentHandle, srcAgentName);
+
+        agentString = info->m_strDstAgent;
+        SplitAgentHandleAndName(agentString, destAgentHandle, destAgentName);
+
+        row.AddItem(0, srcAgentHandle)
+        .AddItem(1, srcAgentName)
+        .AddItem(2, destAgentHandle)
+        .AddItem(3, destAgentName)
+        .AddItem(4, StringUtils::NanosecToMillisec(ullDuration))
+        .AddItem(5, strSize)
+        .AddItem(6, strRate)
+        .AddItem(7, StringUtils::ToString(info->m_tid))
+        .AddItem(8, hRef);
         table.AddRow(row);
 
         count++;

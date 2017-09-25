@@ -20,7 +20,7 @@ bool CLAPI_clGetEventInfo::ms_collapseCalls = true;
 
 void CLAPI_clCreateContextBase::AddToInfoManager(cl_context context)
 {
-    if (context != NULL)
+    if (nullptr != context)
     {
         CLAPIInfoManager::Instance()->AddToContextMap(context, this);
     }
@@ -41,7 +41,7 @@ void CLAPI_clCreateCommandQueueBase::Create(
 
     m_errcode_ret = errcode_ret;
 
-    if (errcode_ret != NULL)
+    if (nullptr != errcode_ret)
     {
         m_errcode_retVal = *errcode_ret;
     }
@@ -52,17 +52,17 @@ void CLAPI_clCreateCommandQueueBase::Create(
 
     m_retVal = retVal;
 
-    if (retVal != NULL)
+    if (nullptr != retVal)
     {
         CLAPIInfoManager::Instance()->AddToCommandQueueMap(retVal, this);
     }
 
-    if (device != NULL)
+    if (nullptr != device)
     {
-        cl_int ret = GetRealDispatchTable()->GetDeviceInfo(device, CL_DEVICE_TYPE, sizeof(cl_device_type), &m_dtype, NULL);
-        ret = GetRealDispatchTable()->GetDeviceInfo(device, CL_DEVICE_NAME, sizeof(char) * MAX_DEVICE_NAME_STR, m_szDevice, NULL);
+        cl_int ret = GetRealDispatchTable()->GetDeviceInfo(device, CL_DEVICE_TYPE, sizeof(cl_device_type), &m_dtype, nullptr);
+        ret = GetRealDispatchTable()->GetDeviceInfo(device, CL_DEVICE_NAME, sizeof(char) * MAX_DEVICE_NAME_STR, m_szDevice, nullptr);
 
-        if (ret != CL_SUCCESS)
+        if (CL_SUCCESS != ret)
         {
             // failed to retrieve device type
             Log(logWARNING, "Failed to retrieve device type.\n");
@@ -127,7 +127,7 @@ void CLAPI_clCreateCommandQueueWithProperties::Create(
 
     int num_properties = 0;
 
-    if (pProperties != NULL)
+    if (nullptr != pProperties)
     {
         // properties is 0 terminated
         while (pProperties[0] != 0 && num_properties < SP_MAX_NUM_CONTEXT_PROPERTIES)
@@ -138,7 +138,7 @@ void CLAPI_clCreateCommandQueueWithProperties::Create(
         }
     }
 
-    if (num_properties == SP_MAX_NUM_CONTEXT_PROPERTIES)
+    if (SP_MAX_NUM_CONTEXT_PROPERTIES == num_properties)
     {
         //add a dummy value (zero) that tells GetCommandQueuePropertiesString that the list has been truncated
         m_vecProperties.push_back(0);
@@ -169,7 +169,7 @@ void CLAPI_clCreateKernelsInProgram::Create(
     m_replaced_null_param = replaced_null_param;
     m_retVal = retVal;
 
-    if (retVal == CL_SUCCESS)
+    if (CL_SUCCESS == retVal)
     {
         char buf[MAX_KERNEL_NAME_LEN];
 
@@ -177,14 +177,14 @@ void CLAPI_clCreateKernelsInProgram::Create(
         cl_uint min_num_kernels = RETVALMIN(m_num_kernels_retVal, m_num_kernels);
         DeepCopyArray(&m_kernels, kernels, min_num_kernels);
 
-        if (kernels != NULL)
+        if (nullptr != kernels)
         {
             for (cl_uint i = 0; i < min_num_kernels; i++)
             {
                 // reset buf just in case
                 memset(buf, 0, MAX_KERNEL_NAME_LEN * sizeof(char));
                 // add all kernels to KernelMap
-                cl_int ret = GetRealDispatchTable()->GetKernelInfo(kernels[ i ], CL_KERNEL_FUNCTION_NAME, MAX_KERNEL_NAME_LEN, buf, NULL);
+                cl_int ret = GetRealDispatchTable()->GetKernelInfo(kernels[ i ], CL_KERNEL_FUNCTION_NAME, MAX_KERNEL_NAME_LEN, buf, nullptr);
 
                 if (ret != CL_SUCCESS)
                 {
@@ -213,7 +213,7 @@ void CLAPI_clCreateKernel::Create(
     m_type = CL_FUNC_TYPE_clCreateKernel;
     m_program = program;
 
-    if (kernel_name == NULL)
+    if (nullptr == kernel_name)
     {
         m_str_kernel_name = "NULL";
     }
@@ -226,7 +226,7 @@ void CLAPI_clCreateKernel::Create(
 
     m_errcode_ret = errcode_ret;
 
-    if (errcode_ret != NULL)
+    if (nullptr != errcode_ret)
     {
         m_errcode_retVal = *errcode_ret;
     }
@@ -237,7 +237,7 @@ void CLAPI_clCreateKernel::Create(
 
     m_retVal = retVal;
 
-    if (retVal != NULL)
+    if (nullptr != retVal)
     {
         CLAPIInfoManager::Instance()->AddToKernelMap(m_retVal, kernel_name);
     }

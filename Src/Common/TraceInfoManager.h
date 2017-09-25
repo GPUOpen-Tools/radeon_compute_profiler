@@ -58,12 +58,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    ITraceEntry(const ITraceEntry& obj);
+    ITraceEntry(const ITraceEntry& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj  the input object
     /// \return a reference of the object
-    ITraceEntry& operator=(const ITraceEntry& obj);
+    ITraceEntry& operator=(const ITraceEntry& obj) = delete;
 };
 
 typedef std::map<osThreadId, std::list<ITraceEntry*> > TraceInfoMap;
@@ -142,12 +142,12 @@ public:
 protected:
     /// Disable copy constructor
     /// \param obj obj
-    TraceInfoManager(const TraceInfoManager& obj);
+    TraceInfoManager(const TraceInfoManager& obj) = delete;
 
     /// Disable assignment operator
     /// \param obj obj
     /// \return lhs
-    TraceInfoManager& operator = (const TraceInfoManager& obj);
+    TraceInfoManager& operator = (const TraceInfoManager& obj) = delete;
 
 protected:
     TraceInfoMap m_TraceInfoMap[2];  ///< stl map that maintains all captured apis

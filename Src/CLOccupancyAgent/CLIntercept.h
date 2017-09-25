@@ -34,4 +34,12 @@ CL_OCCUPANCY_API_ENTRY_GetDeviceIDs(
     cl_device_id*     device_list,
     cl_uint*          num_devices);
 
+extern cl_int CL_API_CALL
+CL_OCCUPANCY_API_ENTRY_GetContextInfo(
+    cl_context          context,
+    cl_context_info     param_name,
+    size_t              param_value_size,
+    void*               param_value,
+    size_t*             param_value_size_ret);
+
 #endif // _CL_INTERCEPT_H_

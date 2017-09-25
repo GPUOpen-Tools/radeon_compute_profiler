@@ -11,6 +11,7 @@
 #include "../CLCommon/CLFunctionEnumDefs.h"
 #include "../Common/Logger.h"
 #include "../Common/StringUtils.h"
+#include "ProfilerOutputFileDefs.h"
 
 //#define DEBUG_REF_TRACKER
 using namespace GPULogger;
@@ -150,7 +151,7 @@ std::string CLObjRefTracker::GetEventHandle(CLAPIInfo* pAPIInfo)
             // cl_event object is the last arg
             std::string strHandle;
             std::vector<std::string> strs;
-            StringUtils::Split(strs, pAPIInfo->m_argList, std::string(";"), true, true);
+            StringUtils::Split(strs, pAPIInfo->m_argList, std::string(ATP_TRACE_ENTRY_ARG_SEPARATOR), true, true);
 
             if (strs.size() > 1)
             {
@@ -182,7 +183,7 @@ std::string CLObjRefTracker::GetEventHandle(CLAPIInfo* pAPIInfo)
             // cl_event object is the 2nd last arg
             std::string strHandle;
             std::vector<std::string> strs;
-            StringUtils::Split(strs, pAPIInfo->m_argList, std::string(";"), true, true);
+            StringUtils::Split(strs, pAPIInfo->m_argList, std::string(ATP_TRACE_ENTRY_ARG_SEPARATOR), true, true);
 
             if (strs.size() > 2)
             {
@@ -275,7 +276,7 @@ void CLObjRefTracker::FlattenedAPIAnalyze(APIInfo* pAPIInfo)
                 if (pCLApiInfo->m_strRet == "CL_SUCCESS")
                 {
                     std::vector<std::string> output;
-                    StringUtils::Split(output, pCLApiInfo->m_argList, std::string(";"));
+                    StringUtils::Split(output, pCLApiInfo->m_argList, std::string(ATP_TRACE_ENTRY_ARG_SEPARATOR));
                     SpAssert(output.size() == NUM_ARG_CL_CREATE_SUB_DEVICES_EXT);
 
                     if (output.size() == NUM_ARG_CL_CREATE_SUB_DEVICES_EXT)
@@ -318,7 +319,7 @@ void CLObjRefTracker::FlattenedAPIAnalyze(APIInfo* pAPIInfo)
                 if (pCLApiInfo->m_strRet == "CL_SUCCESS")
                 {
                     std::vector<std::string> output;
-                    StringUtils::Split(output, pCLApiInfo->m_argList, std::string(";"));
+                    StringUtils::Split(output, pCLApiInfo->m_argList, std::string(ATP_TRACE_ENTRY_ARG_SEPARATOR));
                     SpAssert(output.size() == NUM_ARG_CL_CREATE_KERNELS_IN_PROGRAM);
 
                     if (output.size() == NUM_ARG_CL_CREATE_KERNELS_IN_PROGRAM)
@@ -407,7 +408,7 @@ void CLObjRefTracker::FlattenedAPIAnalyze(APIInfo* pAPIInfo)
                 // svm pointer is the last arg
                 std::string strHandle;
                 std::vector<std::string> strs;
-                StringUtils::Split(strs, pCLApiInfo->m_argList, std::string(";"), true, true);
+                StringUtils::Split(strs, pCLApiInfo->m_argList, std::string(ATP_TRACE_ENTRY_ARG_SEPARATOR), true, true);
 
                 if (strs.size() > 1)
                 {

@@ -35,7 +35,7 @@ GPAUtils::GPAUtils()
 
 bool GPAUtils::Open(void* context)
 {
-    // Remove it when Peter make GPA threadsafe
+    // Remove this lock when GPA is threadsafe
     AMDTScopeLock lock(mtx);
 
     if (!m_GPALoader.Loaded())

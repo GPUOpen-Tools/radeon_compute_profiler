@@ -16,7 +16,7 @@
 
 /// Gets the display name for an API
 /// \param type the API whose name is needed
-/// \param[out] apiDisplayName the display name of the specified API
+/// \param[out] hsa10SpecApiName the display name of the specified API
 /// \return true if the display name is returned for the specified API
 bool TranslateHSASpec11ToHSASpec10(HSA_API_Type type, std::string& hsa10SpecApiName)
 {
@@ -173,16 +173,16 @@ void InitHSAAPIInterceptTrace1_2(HsaApiTable1_2* pTable)
     HSATraceStringUtils::pGetApiDisplayName = TranslateHSASpec11ToHSASpec10;
 
     // minor_id gets set to the size of the struct
-    g_pRealCoreFunctions = (CoreApiTable*)malloc(pTable->core_->version.minor_id);
+    g_pRealCoreFunctions = reinterpret_cast<CoreApiTable*>(malloc(pTable->core_->version.minor_id));
     memcpy(g_pRealCoreFunctions, pTable->core_, pTable->core_->version.minor_id);
 
-    g_pRealFinalizerExtFunctions = (FinalizerExtTable*)malloc(pTable->finalizer_ext_->version.minor_id);
+    g_pRealFinalizerExtFunctions = reinterpret_cast<FinalizerExtTable*>(malloc(pTable->finalizer_ext_->version.minor_id));
     memcpy(g_pRealFinalizerExtFunctions, pTable->finalizer_ext_, pTable->finalizer_ext_->version.minor_id);
 
-    g_pRealImageExtFunctions = (ImageExtTable*)malloc(pTable->image_ext_->version.minor_id);
+    g_pRealImageExtFunctions = reinterpret_cast<ImageExtTable*>(malloc(pTable->image_ext_->version.minor_id));
     memcpy(g_pRealImageExtFunctions, pTable->image_ext_, pTable->image_ext_->version.minor_id);
 
-    g_pRealAmdExtFunctions = (AmdExtTable*)malloc(pTable->amd_ext_->version.minor_id);
+    g_pRealAmdExtFunctions = reinterpret_cast<AmdExtTable*>(malloc(pTable->amd_ext_->version.minor_id));
     memcpy(g_pRealAmdExtFunctions, pTable->amd_ext_, pTable->amd_ext_->version.minor_id);
 
     if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_status_string))

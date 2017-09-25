@@ -31,7 +31,7 @@ class APIBase : public ITraceEntry
 {
 public:
     /// Constructor
-    APIBase() : m_ullStart(0), m_ullEnd(0), m_pStackEntry(NULL)
+    APIBase() : m_ullStart(0), m_ullEnd(0), m_pStackEntry(nullptr)
     {
         m_strName.clear();
     }
@@ -44,7 +44,7 @@ public:
 
     /// Pure virtual to string
     /// \return string representation of the API
-    virtual std::string ToString() = 0;
+    virtual std::string ToString() override = 0;
 
     /// Pure virtual function get return value string
     /// \return string representation of the return value;
@@ -74,12 +74,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    APIBase(const APIBase& obj);
+    APIBase(const APIBase& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj  the input object
     /// \return a reference of the object
-    APIBase& operator=(const APIBase& obj);
+    APIBase& operator=(const APIBase& obj) = delete;
 };
 
 //------------------------------------------------------------------------------------
@@ -103,10 +103,10 @@ public:
 
     /// Save trace data to tmp file
     /// \param bForceFlush Force to write all data out no matter it's ready or not - used in Detach() only
-    virtual void FlushTraceData(bool bForceFlush = false);
+    virtual void FlushTraceData(bool bForceFlush = false) override;
 
     /// Save to Atp File
-    void SaveToOutputFile();
+    virtual void SaveToOutputFile();
 
     /// Load API filter file if specified
     /// \param strFileName API filter file
@@ -115,12 +115,12 @@ public:
 protected:
     /// Disable copy constructor
     /// \param obj obj
-    APIInfoManagerBase(const APIInfoManagerBase& obj);
+    APIInfoManagerBase(const APIInfoManagerBase& obj) = delete;
 
     /// Disable assignment operator
     /// \param obj obj
     /// \return lhs
-    APIInfoManagerBase& operator = (const APIInfoManagerBase& obj);
+    APIInfoManagerBase& operator= (const APIInfoManagerBase& obj) = delete;
 
     /// write captured api to stream
     /// \param sout output stream

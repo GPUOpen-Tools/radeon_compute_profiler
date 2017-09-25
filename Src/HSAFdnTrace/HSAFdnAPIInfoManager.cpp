@@ -25,6 +25,7 @@
 #include <AMDTBaseTools/Include/gtAssert.h>
 #include "HSAFdnMaxApiTime.h"
 #include <ProfilerOutputFileDefs.h>
+#include "HSAAgentUtils.h"
 
 using namespace std;
 
@@ -121,20 +122,19 @@ bool HSAAPIInfoManager::WriteKernelTimestampEntry(std::ostream& sout, const hsa_
         // end time
         sout << std::left << std::setw(21) << record.time.end;
 
-        std::string strDeviceName = "<UnknownDeviceName>";
-        char agentName[64];
-        hsa_status_t status = g_pRealCoreFunctions->hsa_agent_get_info_fn(record.agent, HSA_AGENT_INFO_NAME, agentName);
+        std::string agentHandle = HSAAgentUtils::GetHSAAgentString(record.agent, false, true);
+        std::string strDeviceName = HSAAgentsContainer::Instance()->GetAgentName(record.agent);
 
-        if (HSA_STATUS_SUCCESS == status)
+        if (strDeviceName.empty())
         {
-            strDeviceName = std::string(agentName);
+            strDeviceName = "<UnknownDeviceName>";
         }
 
         // agent (device) name
         sout << std::left << std::setw(64) << strDeviceName;
 
         // agent (device) handle
-        sout << std::left << std::setw(21) << HSATraceStringUtils::Get_hsa_agent_t_String(record.agent);
+        sout << std::left << std::setw(21) << agentHandle;
 
         // queue index
         uint64_t queueId = 0;

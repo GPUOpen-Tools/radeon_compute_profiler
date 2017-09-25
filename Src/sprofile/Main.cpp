@@ -44,21 +44,12 @@
 #include "../HSAFdnTrace/HSAAtpFile.h"
 #include "../CLOccupancyAgent/CLOccupancyFile.h"
 
-
-
 #include <AMDTOSWrappers/Include/osDirectory.h>
 #include <AMDTOSWrappers/Include/osFilePath.h>
 #include <AMDTOSWrappers/Include/osEnvironmentVariable.h>
 #include <AMDTOSWrappers/Include/osProcess.h>
 #include <AMDTOSWrappers/Include/osFile.h>
 #include <AMDTOSWrappers/Include/osOutOfMemoryHandling.h>
-
-using std::string;
-using std::cout;
-using std::endl;
-using std::ifstream;
-using std::ofstream;
-using namespace std;
 
 static Parameters params;
 static Config config;
@@ -124,8 +115,8 @@ static bool PrintLastError(wchar_t* szPre)
                   1024,
                   NULL);
 
-    cout << szPre << ": "
-         << dwError << ": " << szError << endl;
+    std::cout << szPre << ": "
+              << dwError << ": " << szError << std::endl;
 
     return true;
 }
@@ -133,7 +124,7 @@ static bool PrintLastError(wchar_t* szPre)
 static int CreateProcessWithDetour(gtString& strDirPath, gtString& strAppCommandLine, gtString& strAppWorkingDirectory, bool useDetours)
 {
     // set the detoured and microDLL server's path
-    string dirPathAsUTF8;
+    std::string dirPathAsUTF8;
     StringUtils::WideStringToUtf8String(strDirPath.asCharArray(), dirPathAsUTF8);
 
     char szMicroDllPath[ MAX_PATH ];
@@ -266,11 +257,11 @@ void CheckOutputFile(const Config& configInner)
 
         if (FileUtils::FileExist(strOutputFile))
         {
-            cout << "Session output path: " << strOutputFile << endl;
+            std::cout << "Session output path: " << strOutputFile << std::endl;
         }
         else
         {
-            cout << "Failed to generate profile result " << strOutputFile << "." << endl;
+            std::cout << "Failed to generate profile result " << strOutputFile << "." << std::endl;
         }
     }
 
@@ -295,11 +286,11 @@ void CheckOutputFile(const Config& configInner)
 
         if (FileUtils::FileExist(strOutputFile))
         {
-            cout << "Session output path: " << strOutputFile << endl;
+            std::cout << "Session output path: " << strOutputFile << std::endl;
         }
         else
         {
-            cout << "Failed to generate profile result " << strOutputFile << "." << endl;
+            std::cout << "Failed to generate profile result " << strOutputFile << "." << std::endl;
         }
     }
 
@@ -310,11 +301,11 @@ void CheckOutputFile(const Config& configInner)
 
         if (FileUtils::FileExist(strOutputFile))
         {
-            cout << "Session output path: " << strOutputFile << endl;
+            std::cout << "Session output path: " << strOutputFile << std::endl;
         }
         else
         {
-            cout << "Failed to generate profile result " << strOutputFile << "." << endl;
+            std::cout << "Failed to generate profile result " << strOutputFile << "." << std::endl;
         }
     }
 }
@@ -393,8 +384,8 @@ int ProfileApplication(const std::string& strCounterFile, const int& profilerBit
 
     if (config.bMergeMode)
     {
-        cout << "--- Merge Mode ---" << endl;
-        cout << "Temp files prefix (Process ID): " << config.uiPID << endl;
+        std::cout << "--- Merge Mode ---" << std::endl;
+        std::cout << "Temp files prefix (Process ID): " << config.uiPID << std::endl;
         processId = config.uiPID;
 
         if (config.strWorkingDirectory.isEmpty())
@@ -409,6 +400,7 @@ int ProfileApplication(const std::string& strCounterFile, const int& profilerBit
         }
 
         config.bTrace = true;
+        config.bHSATrace = true;
         params.m_bTimeOutBasedOutput = true;
         MergeFragFiles(1);
 
@@ -432,7 +424,7 @@ int ProfileApplication(const std::string& strCounterFile, const int& profilerBit
         //----------------------------------------
         gtString retVal;
         osGetCurrentProcessEnvVariableValue(L"HOME", retVal);
-        string strHomePath;
+        std::string strHomePath;
         StringUtils::WideStringToUtf8String(retVal.asCharArray(), strHomePath);
 
         FileUtils::ReplaceTilde(strHomePath, config.strOutputFile);
@@ -452,7 +444,7 @@ int ProfileApplication(const std::string& strCounterFile, const int& profilerBit
 
         if (!fileToCheck.exists())
         {
-            cout << "Process failed to run. Make sure you have specified the correct path." << endl;
+            std::cout << "Process failed to run. Make sure you have specified the correct path." << std::endl;
             return -1;
         }
     }
@@ -474,7 +466,7 @@ int ProfileApplication(const std::string& strCounterFile, const int& profilerBit
     {
         if (!config.bAnalyzeOnly && !config.bMergeMode)
         {
-            cout << "No profile mode specified. Nothing will be done." << endl;
+            std::cout << "No profile mode specified. Nothing will be done." << std::endl;
         }
 
         return 1;
@@ -591,7 +583,7 @@ int ProfileApplication(const std::string& strCounterFile, const int& profilerBit
     //check that the application to be profiled is valid
     if (!CheckIsAppValid(config.strInjectedApp, profilerBits))
     {
-        wcout << config.strInjectedApp.asCharArray() << " is not a valid application" << endl;
+        std::wcout << config.strInjectedApp.asCharArray() << " is not a valid application" << std::endl;
         return -1;
     }
 
@@ -645,7 +637,7 @@ int ProfileApplication(const std::string& strCounterFile, const int& profilerBit
 
     if (pszCmdline == NULL)
     {
-        cout << "Error processing command line\n";
+        std::cout << "Error processing command line\n";
         return -1;
     }
 
@@ -770,7 +762,7 @@ int ProcessCommandLine(const std::string& strCounterFile)
     {
         if (!APITraceAnalyze(config))
         {
-            cout << "\nFailed to generate summary pages\n";
+            std::cout << "\nFailed to generate summary pages\n";
         }
     }
 
@@ -992,7 +984,7 @@ bool MergeKernelProfileOutputFiles(std::vector<std::string> counterFileList,
 #else
     std::vector<wchar_t*> convertedArg;
     convertedArg.reserve(argc);
-    wstring wargs[argc];
+    std::wstring wargs[argc];
 
     for (int nArg = 0 ; nArg < argc ; nArg++)
     {
@@ -1265,7 +1257,7 @@ static void MergeTraceFile(int sig)
 
             if (config.bSym)
             {
-                pClStackTrace = new(std::nothrow) StackTraceAtpFilePart(string("ocl"), config);
+                pClStackTrace = new(std::nothrow) StackTraceAtpFilePart(std::string("ocl"), config);
 
                 if (nullptr != pClStackTrace)
                 {
@@ -1285,7 +1277,7 @@ static void MergeTraceFile(int sig)
 
             if (config.bSym)
             {
-                pHsaStackTrace = new(std::nothrow) StackTraceAtpFilePart(string("hsa"), config);
+                pHsaStackTrace = new(std::nothrow) StackTraceAtpFilePart(std::string("hsa"), config);
 
                 if (nullptr != pHsaStackTrace)
                 {
@@ -1313,7 +1305,7 @@ static bool SetHSAServer(const gtString& strDirPathUnicode)
     std::string strDirPath;
     StringUtils::WideStringToUtf8String(strDirPathWide, strDirPath);
 
-    string strServerPath;
+    std::string strServerPath;
 
     if (config.bHSATrace)
     {
@@ -1351,7 +1343,7 @@ static bool SetHSAServer(const gtString& strDirPathUnicode)
     if (config.bHSATrace || config.bHSAPMC)
     {
         // need to specify the runtime tools lib as well for both HSA Trace and HSA PMC mode
-        string toolsRuntimeLib = HSA_RUNTIME_TOOLS_LIB;
+        std::string toolsRuntimeLib = HSA_RUNTIME_TOOLS_LIB;
         toolsRuntimeLib.append(" ");
         strServerPath = toolsRuntimeLib + strServerPath;
     }
@@ -1385,14 +1377,14 @@ static bool SetAgent(const gtString& strDirPathUnicode)
     if (config.bTrace)
     {
         SP_strcpy(szAgentDllPath, SP_MAX_PATH, CL_TRACE_AGENT_DLL);
-        strAgentDllPath = strDirPath + string(szAgentDllPath);
+        strAgentDllPath = strDirPath + std::string(szAgentDllPath);
         vAgentDllPath.push_back(strAgentDllPath);
 
         if (config.bOccupancy)
         {
             strAgentDllPath.clear();
             SP_strcpy(szAgentDllPath, SP_MAX_PATH, CL_OCCUPANCY_AGENT_DLL);
-            strAgentDllPath = strDirPath + string(szAgentDllPath);
+            strAgentDllPath = strDirPath + std::string(szAgentDllPath);
             vAgentDllPath.push_back(strAgentDllPath);
         }
 
@@ -1400,7 +1392,7 @@ static bool SetAgent(const gtString& strDirPathUnicode)
         {
             strAgentDllPath.clear();
             SP_strcpy(szAgentDllPath, SP_MAX_PATH, CL_SUB_KERNEL_PROFILE_AGENT_DLL);
-            strAgentDllPath = strDirPath + string(szAgentDllPath);
+            strAgentDllPath = strDirPath + std::string(szAgentDllPath);
             vAgentDllPath.push_back(strAgentDllPath);
         }
 
@@ -1408,7 +1400,7 @@ static bool SetAgent(const gtString& strDirPathUnicode)
         {
             strAgentDllPath.clear();
             SP_strcpy(szAgentDllPath, SP_MAX_PATH, CL_PROFILE_AGENT_DLL);
-            strAgentDllPath = strDirPath + string(szAgentDllPath);
+            strAgentDllPath = strDirPath + std::string(szAgentDllPath);
             vAgentDllPath.push_back(strAgentDllPath);
         }
     }
@@ -1419,20 +1411,20 @@ static bool SetAgent(const gtString& strDirPathUnicode)
         {
             strAgentDllPath.clear();
             SP_strcpy(szAgentDllPath, SP_MAX_PATH, CL_OCCUPANCY_AGENT_DLL);
-            strAgentDllPath = strDirPath + string(szAgentDllPath);
+            strAgentDllPath = strDirPath + std::string(szAgentDllPath);
             vAgentDllPath.push_back(strAgentDllPath);
         }
 
         strAgentDllPath.clear();
         SP_strcpy(szAgentDllPath, SP_MAX_PATH, CL_SUB_KERNEL_PROFILE_AGENT_DLL);
-        strAgentDllPath = strDirPath + string(szAgentDllPath);
+        strAgentDllPath = strDirPath + std::string(szAgentDllPath);
         vAgentDllPath.push_back(strAgentDllPath);
 
         if (config.bPerfCounter)
         {
             strAgentDllPath.clear();
             SP_strcpy(szAgentDllPath, SP_MAX_PATH, CL_PROFILE_AGENT_DLL);
-            strAgentDllPath = strDirPath + string(szAgentDllPath);
+            strAgentDllPath = strDirPath + std::string(szAgentDllPath);
             vAgentDllPath.push_back(strAgentDllPath);
         }
     }
@@ -1442,27 +1434,27 @@ static bool SetAgent(const gtString& strDirPathUnicode)
         {
             strAgentDllPath.clear();
             SP_strcpy(szAgentDllPath, SP_MAX_PATH, CL_OCCUPANCY_AGENT_DLL);
-            strAgentDllPath = strDirPath + string(szAgentDllPath);
+            strAgentDllPath = strDirPath + std::string(szAgentDllPath);
             vAgentDllPath.push_back(strAgentDllPath);
         }
 
         strAgentDllPath.clear();
         SP_strcpy(szAgentDllPath, SP_MAX_PATH, CL_PROFILE_AGENT_DLL);
-        strAgentDllPath = strDirPath + string(szAgentDllPath);
+        strAgentDllPath = strDirPath + std::string(szAgentDllPath);
         vAgentDllPath.push_back(strAgentDllPath);
     }
     else if (config.bOccupancy && !config.bHSAPMC  && !config.bHSATrace)
     {
         strAgentDllPath.clear();
         SP_strcpy(szAgentDllPath, SP_MAX_PATH, CL_OCCUPANCY_AGENT_DLL);
-        strAgentDllPath = strDirPath + string(szAgentDllPath);
+        strAgentDllPath = strDirPath + std::string(szAgentDllPath);
         vAgentDllPath.push_back(strAgentDllPath);
     }
     else if (config.bThreadTrace)
     {
         strAgentDllPath.clear();
         SP_strcpy(szAgentDllPath, SP_MAX_PATH, CL_THREAD_TRACE_AGENT_DLL);
-        strAgentDllPath = strDirPath + string(szAgentDllPath);
+        strAgentDllPath = strDirPath + std::string(szAgentDllPath);
         vAgentDllPath.push_back(strAgentDllPath);
     }
 
@@ -1492,7 +1484,7 @@ static bool SetAgent(const gtString& strDirPathUnicode)
     }
 
     // Check existing agents
-    string agents = OSUtils::Instance()->GetEnvVar(OCL_ENABLE_PROFILING_ENV_VAR);
+    std::string agents = OSUtils::Instance()->GetEnvVar(OCL_ENABLE_PROFILING_ENV_VAR);
 
     if (!agents.empty())
     {
@@ -1507,11 +1499,11 @@ static bool SetAgent(const gtString& strDirPathUnicode)
         }
 
         //If the agents are not empty, parse the values of the environment variable
-        string strToken;
+        std::string strToken;
         size_t nPos1 = 0;
         size_t nPos2 = agents.find_first_of(",", nPos1);
 
-        while (nPos2 != string::npos)
+        while (nPos2 != std::string::npos)
         {
             strToken = agents.substr(nPos1, nPos2);
 
@@ -1521,18 +1513,18 @@ static bool SetAgent(const gtString& strDirPathUnicode)
 
             // After having extracted the agent strings, check if it agent has already been set
             // via the switches
-            if (strToken.find(CL_AGENT_TRACE) != string::npos)
+            if (strToken.find(CL_AGENT_TRACE) != std::string::npos)
             {
                 if (!config.bTrace)
                 {
                     vAgentDllPath.insert(vAgentDllPath.begin(), strToken);
                 }
             }
-            else if (strToken.find(CL_AGENT_OCCUPANCY) != string::npos)
+            else if (strToken.find(CL_AGENT_OCCUPANCY) != std::string::npos)
             {
                 if (!config.bOccupancy)
                 {
-                    if (vAgentDllPath[0].find(CL_AGENT_TRACE) != string::npos)
+                    if (vAgentDllPath[0].find(CL_AGENT_TRACE) != std::string::npos)
                     {
                         vAgentDllPath.insert(vAgentDllPath.begin() + 1, strToken);
                     }
@@ -1542,11 +1534,11 @@ static bool SetAgent(const gtString& strDirPathUnicode)
                     }
                 }
             }
-            else if (strToken.find(CL_AGENT_SUB_KRNL) != string::npos)
+            else if (strToken.find(CL_AGENT_SUB_KRNL) != std::string::npos)
             {
                 if (!config.bSubKernelProfile)
                 {
-                    if (vAgentDllPath[ vAgentDllPath.size() - 1 ].find(CL_AGENT_PERF_CTR) != string::npos)
+                    if (vAgentDllPath[ vAgentDllPath.size() - 1 ].find(CL_AGENT_PERF_CTR) != std::string::npos)
                     {
                         vAgentDllPath.insert(vAgentDllPath.begin() + vAgentDllPath.size() - 2, strToken);
                     }
@@ -1556,7 +1548,7 @@ static bool SetAgent(const gtString& strDirPathUnicode)
                     }
                 }
             }
-            else if (strToken.find(CL_AGENT_PERF_CTR) != string::npos)
+            else if (strToken.find(CL_AGENT_PERF_CTR) != std::string::npos)
             {
                 if (!config.bPerfCounter)
                 {
@@ -1567,14 +1559,14 @@ static bool SetAgent(const gtString& strDirPathUnicode)
             {
                 if (!strToken.empty())   //assume a user-specified token
                 {
-                    if (vAgentDllPath[0].find(CL_AGENT_TRACE) != string::npos)
+                    if (vAgentDllPath[0].find(CL_AGENT_TRACE) != std::string::npos)
                     {
                         if (vAgentDllPath.size() > 1)
                         {
                             // Additional token, so need to check if it is occupancy agent or not
                             // If occupancy agent, append after occupancy agent, otherwise, before next
                             // agent
-                            if (vAgentDllPath[1].find(CL_AGENT_OCCUPANCY) != string::npos)
+                            if (vAgentDllPath[1].find(CL_AGENT_OCCUPANCY) != std::string::npos)
                             {
                                 vAgentDllPath.insert(vAgentDllPath.begin() + 2, strToken);
                             }
@@ -1591,7 +1583,7 @@ static bool SetAgent(const gtString& strDirPathUnicode)
                     }
                     else
                     {
-                        if (vAgentDllPath[0].find(CL_AGENT_OCCUPANCY) != string::npos)
+                        if (vAgentDllPath[0].find(CL_AGENT_OCCUPANCY) != std::string::npos)
                         {
                             vAgentDllPath.insert(vAgentDllPath.begin() + 1, strToken);
                         }
@@ -1776,33 +1768,36 @@ bool CheckIsAppValid(const gtString& strAppName, int iProfilerNbrBits)
 
     if (nFileType < 0)
     {
-        cout << "Unable to open the application to be profiled to determine file type" << endl;
+        std::cout << "Unable to open the application to be profiled to determine file type" << std::endl;
     }
 
     if (nFileType == FileUtils::FTYPE_EXE)
     {
-        bStatus = true;
-    }
-    else
-    {
-        bStatus = false;
-    }
+        //Assume that the app to be profiled is a valid executable, next, we check that the bitness
+        //is the same as that of the profiler
 
-    //Assume that the app to be profiled is a valid executable, next, we check that the bitness
-    //is the same as that of the profiler
-    int iBinaryFileNbrBits = FileUtils::FILE_BITS_UNKNOWN;
-
-    if (bStatus == true)
-    {
-        iBinaryFileNbrBits = FileUtils::GetBinaryNbrBits(strAppName);
+        int iBinaryFileNbrBits = FileUtils::GetBinaryNbrBits(strAppName);
 
         if (iBinaryFileNbrBits != iProfilerNbrBits)
         {
-            cout << "The profiler is a " << iProfilerNbrBits << " bit application while the application to be profiled is " << iBinaryFileNbrBits << " bits." << std::endl;
-            cout << "The number of address bits of the profiler must match the number of the address bits of the application being profiled" << std::endl;
+            std::cout << "The profiler is a " << iProfilerNbrBits << " bit application while the application to be profiled is " << iBinaryFileNbrBits << " bits." << std::endl;
+            std::cout << "The number of address bits of the profiler must match the number of the address bits of the application being profiled" << std::endl;
             bStatus = false;
         }
     }
+    else
+    {
+#if defined (_LINUX) || defined (LINUX)
+        std::string convertedName;
+        StringUtils::WideStringToUtf8String(strAppName.asCharArray(), convertedName);
+
+        struct stat statBuf = {};
+        bStatus = (stat(convertedName.c_str(), &statBuf) == 0) && (statBuf.st_mode & S_IXUSR);
+#else
+        bStatus = false;
+#endif
+    }
+
 
     return bStatus;
 }

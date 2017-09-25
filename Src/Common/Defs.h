@@ -188,7 +188,14 @@
     #endif
 #endif //DLL_PUBLIC
 
+// HTML symbol names
 #define SPACE "&nbsp;"
+#define COMMA "&comma;"
+#define AMPERSAND "&amp;"
+#define NUMSIGN "&#35;"
+#define LESSTHAN "&lt;"
+#define GREATERTHAN "&gt;"
+#define ATSYMBOL "&#64;"
 
 #define DEFAULT_TIMEOUT_INTERVAL 100
 
@@ -199,6 +206,7 @@
 
 #define CASE(x) case x: return #x;
 #define CASESTR(x) case x: ss << #x; break;
+#define ENUMTOSTRING(X) return #X;
 
 // Call clGetEventInfo to retrieve ref count in Trace_func
 // Create overhead, debug use only

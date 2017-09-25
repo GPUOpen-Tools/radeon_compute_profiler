@@ -12,7 +12,7 @@ void ProfilerTimer::SetTimerFinishHandler(TimerEndHandler timerEndHandler)
     m_timerHandler = timerEndHandler;
 }
 
-ProfilerTimerType ProfilerTimer::GetTimerType()
+ProfilerTimerType ProfilerTimer::GetTimerType() const
 {
     return m_timerType;
 }

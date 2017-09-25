@@ -22,6 +22,7 @@
 #include "HSASignalPool.h"
 #include "HSAAqlPacketTimeCollector.h"
 
+
 hsa_status_t AqlPacketTraceCallback(const hsa_aql_trace_t* pAqlPacketTrace, void* pUserArg)
 {
     SpAssertRet(nullptr != pAqlPacketTrace) HSA_STATUS_ERROR_INVALID_ARGUMENT;

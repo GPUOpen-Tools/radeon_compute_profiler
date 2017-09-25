@@ -11,13 +11,13 @@ bool PMCSamplerManager::LoadPMCSamplers(const char* szPath)
 {
     LIB_HANDLE pMod = OSUtils::Instance()->GenericLoadLibrary(std::string(szPath));
 
-    if (pMod == NULL)
+    if (nullptr == pMod)
     {
         std::cout << "Failed to load user PMC dynamic library " << szPath << std::endl;
         return false;
     }
 
-    InitPMCsProc pInit = (InitPMCsProc)OSUtils::Instance()->GetSymbolAddr(pMod, std::string("InitPMCs"));
+    InitPMCsProc pInit = reinterpret_cast<InitPMCsProc>(OSUtils::Instance()->GetSymbolAddr(pMod, std::string("InitPMCs")));
 
     const char** ppNames;
     size_t num;
@@ -29,7 +29,7 @@ bool PMCSamplerManager::LoadPMCSamplers(const char* szPath)
         ss << "AP_Get";
         ss << ppNames[i];
         m_names.push_back(ppNames[i]);
-        GetPMCProc pGetPMC = (GetPMCProc)OSUtils::Instance()->GetSymbolAddr(pMod, ss.str());
+        GetPMCProc pGetPMC = reinterpret_cast<GetPMCProc>(OSUtils::Instance()->GetSymbolAddr(pMod, ss.str()));
         CHECK_PROC_ADDR(pGetPMC, ppNames[i])
         m_callbacks.push_back(pGetPMC);
         std::cout << "PMC " << ppNames[i] << " initialized." << std::endl;

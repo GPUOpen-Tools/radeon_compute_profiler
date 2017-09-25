@@ -10,6 +10,7 @@
 #include "SimpleCLAPIRuleManager.h"
 #include "../Common/Logger.h"
 #include "../Common/StringUtils.h"
+#include "ProfilerOutputFileDefs.h"
 
 using namespace std;
 using namespace GPULogger;
@@ -131,7 +132,7 @@ CmdQueueInfoList::~CmdQueueInfoList()
 void CmdQueueInfoList::AddToCmdQInfoList(CLAPIInfo* pAPIInfo)
 {
     std::vector<std::string> argList;
-    StringUtils::Split(argList, pAPIInfo->m_argList, std::string(";"), true, true);
+    StringUtils::Split(argList, pAPIInfo->m_argList, std::string(ATP_TRACE_ENTRY_ARG_SEPARATOR), true, true);
 
     if (argList.size() < 4)
     {
@@ -161,7 +162,7 @@ void CmdQueueInfoList::AddToCmdQInfoList(CLAPIInfo* pAPIInfo)
 void CmdQueueInfoList::RemoveFromCmdQInfoList(CLAPIInfo* pAPIInfo)
 {
     std::vector<std::string> argList;
-    StringUtils::Split(argList, pAPIInfo->m_argList, std::string(";"), true, true);
+    StringUtils::Split(argList, pAPIInfo->m_argList, std::string(ATP_TRACE_ENTRY_ARG_SEPARATOR), true, true);
     CmdQueueMap::iterator it = m_CmdQueueMap.find(argList[0]);
 
     if (it == m_CmdQueueMap.end())
@@ -183,7 +184,7 @@ void CmdQueueInfoList::RemoveFromCmdQInfoList(CLAPIInfo* pAPIInfo)
 void CmdQueueInfoList::SetRefCntInCmdQInfoList(CLAPIInfo* pAPIInfo)
 {
     std::vector<std::string> argList;
-    StringUtils::Split(argList, pAPIInfo->m_argList, std::string(";"), true, true);
+    StringUtils::Split(argList, pAPIInfo->m_argList, std::string(ATP_TRACE_ENTRY_ARG_SEPARATOR), true, true);
     CmdQueueMap::iterator it = m_CmdQueueMap.find(argList[0]);
 
     if (it != m_CmdQueueMap.end())

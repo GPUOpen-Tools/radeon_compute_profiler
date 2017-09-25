@@ -327,16 +327,23 @@ void OccupancyInfoManager::SaveToOccupancyFile()
             return;
         }
 
+        // Count the kernels in the map
+        size_t kernelCount = 0u;
+        for (TraceInfoMap::iterator mapIt = activeMap.begin(); mapIt != activeMap.end(); ++mapIt)
+        {
+            kernelCount += mapIt->second.size();
+        }
+
         CLOccupancyHdr header;
         header.m_strAppArgs = GlobalSettings::GetInstance()->m_params.m_strCmdArgs;
         header.m_strAppName = FileUtils::GetExeFullPathAsUnicode();
         header.m_listSeparator = GlobalSettings::GetInstance()->m_params.m_cOutputSeparator;
-        WriteOccupancyHeader(fout, header, m_cListSeparator);
+        WriteOccupancyHeader(fout, header, kernelCount, m_cListSeparator);
         fout << endl;
 
-        for (TraceInfoMap::iterator mapIt = activeMap.begin(); mapIt != activeMap.end(); mapIt++)
+        for (TraceInfoMap::iterator mapIt = activeMap.begin(); mapIt != activeMap.end(); ++mapIt)
         {
-            for (list<ITraceEntry*>::iterator listIt = mapIt->second.begin(); listIt != mapIt->second.end(); listIt++)
+            for (list<ITraceEntry*>::iterator listIt = mapIt->second.begin(); listIt != mapIt->second.end(); ++listIt)
             {
                 ITraceEntry* en = *listIt;
                 fout << en->ToString().c_str();

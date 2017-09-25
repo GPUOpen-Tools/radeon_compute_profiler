@@ -9,6 +9,7 @@
 #include "GlobalSettings.h"
 
 #include "HSAAgentIterateReplacer.h"
+#include "HSAAgentUtils.h"
 
 unsigned int HSAAgentIterateReplacer::m_gpuAgentCount = 0;
 HSAAgentIterateReplacer::HSAAgentIteratorCallback HSAAgentIterateReplacer::m_userSepcifiedIterateAgentsCallback = nullptr;
@@ -20,42 +21,42 @@ HSAAgentIterateReplacer::HSAAgentIteratorCallback HSAAgentIterateReplacer::GetAg
     m_gpuAgentCount = 0;
     m_userSepcifiedIterateAgentsCallback = nullptr;
     m_pRealCoreFunctions = pRealCoreFunctions;
-
-    if (GlobalSettings::GetInstance()->m_params.m_bForceSingleGPU && nullptr != userCallback)
-    {
-        m_userSepcifiedIterateAgentsCallback = userCallback;
-        return ReplacedIterateAgentsCallback;
-    }
-    else
-    {
-        return userCallback;
-    }
+    m_userSepcifiedIterateAgentsCallback = userCallback;
+    return ReplacedIterateAgentsCallback;
 }
 
 hsa_status_t HSAAgentIterateReplacer::ReplacedIterateAgentsCallback(hsa_agent_t agent, void* data)
 {
+    char agentName[512];
+    if (HSA_STATUS_SUCCESS == m_pRealCoreFunctions->hsa_agent_get_info_fn(agent, HSA_AGENT_INFO_NAME, agentName))
+    {
+        HSAAgentsContainer::Instance()->AddAgent(agent, agentName);
+    }
+
     hsa_status_t retVal = HSA_STATUS_SUCCESS;
     bool callUserSpecifiedCallback = true;
-
     hsa_device_type_t deviceType;
 
-    // Query type of device
-    hsa_status_t status = m_pRealCoreFunctions->hsa_agent_get_info_fn(agent, HSA_AGENT_INFO_DEVICE, &deviceType);
-
-    if (HSA_STATUS_SUCCESS == status)
+    if (nullptr != m_userSepcifiedIterateAgentsCallback)
     {
-        if (HSA_DEVICE_TYPE_GPU == deviceType)
-        {
-            if (m_gpuAgentCount != GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex)
-            {
-                callUserSpecifiedCallback = false;
-            }
-            else
-            {
-                m_agentHandleToGPUIndexMap[agent.handle] = m_gpuAgentCount;
-            }
+        // Query type of device
+        hsa_status_t status = m_pRealCoreFunctions->hsa_agent_get_info_fn(agent, HSA_AGENT_INFO_DEVICE, &deviceType);
 
-            m_gpuAgentCount++;
+        if (HSA_STATUS_SUCCESS == status)
+        {
+            if (HSA_DEVICE_TYPE_GPU == deviceType)
+            {
+                if (GlobalSettings::GetInstance()->m_params.m_bForceSingleGPU && m_gpuAgentCount != GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex)
+                {
+                    callUserSpecifiedCallback = false;
+                }
+                else
+                {
+                    m_agentHandleToGPUIndexMap[agent.handle] = m_gpuAgentCount;
+                }
+
+                m_gpuAgentCount++;
+            }
         }
     }
 

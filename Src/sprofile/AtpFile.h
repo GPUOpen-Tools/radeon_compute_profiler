@@ -132,8 +132,8 @@ protected:
     std::string GetSectionHeader(const std::string& strSectionName);
 
     /// Disable copy constructor and assignment operator
-    IAtpFilePart& operator = (const IAtpFilePart& rhs);
-    IAtpFilePart(const IAtpFilePart& rhs);
+    IAtpFilePart& operator= (const IAtpFilePart& rhs) = delete;
+    IAtpFilePart(const IAtpFilePart& rhs) = delete;
 
     const Config& m_config;                ///< Config
     std::string m_strPartName;             ///< Atp part name
@@ -149,7 +149,7 @@ class AtpFile
 {
 public:
     /// Constructor
-    AtpFile() {}
+    AtpFile() = default;
 
     /// Destructor
     virtual ~AtpFile() {}
@@ -190,8 +190,8 @@ public:
 
 private:
     /// Disable copy constructor and assignment operator
-    AtpFileWriter& operator = (const AtpFileWriter& rhs);
-    AtpFileWriter(const AtpFileWriter& rhs);
+    AtpFileWriter& operator = (const AtpFileWriter& rhs) = delete;
+    AtpFileWriter(const AtpFileWriter& rhs) = delete;
 
     const Config& m_config;             ///< Config object
     std::string m_strPID;               ///< child process ID
@@ -217,7 +217,7 @@ public:
     ~AtpFileParser() {}
 
     /// Parse atp file
-    bool Parse();
+    bool Parse() override;
 
 protected:
 

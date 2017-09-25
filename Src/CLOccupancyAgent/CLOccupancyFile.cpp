@@ -20,15 +20,16 @@
 
 using namespace std;
 
-void WriteOccupancyHeader(std::ostream& sout, const CLOccupancyHdr& occupancyHeader, char cListSeparator)
+void WriteOccupancyHeader(std::ostream& sout, const CLOccupancyHdr& occupancyHeader, size_t kernelCount, char cListSeparator)
 {
     string convertedInfo;
-    sout << "# "<< FILE_HEADER_PROFILER_VERSION << EQUAL_SIGN_STR << RCP_MAJOR_VERSION << "." << RCP_MINOR_VERSION << "." << RCP_BUILD_NUMBER << std::endl;
+    sout << OCCUPANCY_HEADER_START << FILE_HEADER_PROFILER_VERSION << EQUAL_SIGN_STR << RCP_MAJOR_VERSION << "." << RCP_MINOR_VERSION << "." << RCP_BUILD_NUMBER << std::endl;
     StringUtils::WideStringToUtf8String(occupancyHeader.m_strAppName.asCharArray(), convertedInfo);
-    sout << "# " << FILE_HEADER_APPLICATION << EQUAL_SIGN_STR << convertedInfo.c_str() << std::endl;
+    sout << OCCUPANCY_HEADER_START << FILE_HEADER_APPLICATION << EQUAL_SIGN_STR << convertedInfo.c_str() << std::endl;
     StringUtils::WideStringToUtf8String(occupancyHeader.m_strAppArgs.asCharArray(), convertedInfo);
-    sout << "# " << FILE_HEADER_APPLICATION_ARGS << EQUAL_SIGN_STR << convertedInfo.c_str() << std::endl;
-    sout << "# " << FILE_HEADER_LIST_SEPARATOR << EQUAL_SIGN_STR << occupancyHeader.m_listSeparator << std::endl;
+    sout << OCCUPANCY_HEADER_START << FILE_HEADER_APPLICATION_ARGS << EQUAL_SIGN_STR << convertedInfo.c_str() << std::endl;
+    sout << OCCUPANCY_HEADER_START << FILE_HEADER_LIST_SEPARATOR << EQUAL_SIGN_STR << occupancyHeader.m_listSeparator << std::endl;
+    sout << OCCUPANCY_HEADER_START << FILE_HEADER_KERNEL_COUNT << EQUAL_SIGN_STR << kernelCount << std::endl;
 
     sout << left << OCCUPANCY_COLUMN_NAME_THREADID << cListSeparator;
     sout << left << OCCUPANCY_COLUMN_NAME_KERNELNAME << cListSeparator;

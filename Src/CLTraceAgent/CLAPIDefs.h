@@ -44,13 +44,13 @@ public:
     /// Constructor
     CLAPI_clGetPlatformIDs()
     {
-        m_platform_list = NULL;
+        m_platform_list = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetPlatformIDs()
     {
-        if (m_platform_list != NULL)
+        if (nullptr != m_platform_list)
         {
             FreeArray(m_platform_list);
         }
@@ -58,7 +58,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -67,7 +67,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << m_num_entries << s_strParamSeparator
@@ -100,7 +100,7 @@ public:
         m_num_platforms = num_platforms;
         m_replaced_null_param = replaced_null_param;
 
-        if (retVal == CL_SUCCESS)
+        if (CL_SUCCESS == retVal)
         {
             m_num_platformsVal = *num_platforms;
             DeepCopyArray(&m_platform_list, platform_list, RETVALMIN(m_num_platformsVal, m_num_entries));
@@ -112,12 +112,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetPlatformIDs(const CLAPI_clGetPlatformIDs& obj);
+    CLAPI_clGetPlatformIDs(const CLAPI_clGetPlatformIDs& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetPlatformIDs& operator = (const CLAPI_clGetPlatformIDs& obj);
+    CLAPI_clGetPlatformIDs& operator= (const CLAPI_clGetPlatformIDs& obj) = delete;
 
 private:
     cl_uint         m_num_entries;         ///< parameter for clGetPlatformIDs
@@ -137,13 +137,13 @@ public:
     /// Constructor
     CLAPI_clGetPlatformInfo()
     {
-        m_param_value = NULL;
+        m_param_value = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetPlatformInfo()
     {
-        if (m_param_value != NULL)
+        if (nullptr != m_param_value)
         {
             FreeBuffer(m_param_value);
         }
@@ -151,7 +151,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -160,7 +160,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_platform) << s_strParamSeparator
@@ -203,7 +203,7 @@ public:
         m_replaced_null_param = replaced_null_param;
         m_param_value_size_retVal = *param_value_size_ret;
 
-        if (param_value != NULL)
+        if (nullptr != param_value)
         {
             DeepCopyBuffer(&m_param_value, param_value, RETVALMIN(m_param_value_size_retVal, m_param_value_size));
         }
@@ -214,12 +214,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetPlatformInfo(const CLAPI_clGetPlatformInfo& obj);
+    CLAPI_clGetPlatformInfo(const CLAPI_clGetPlatformInfo& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetPlatformInfo& operator = (const CLAPI_clGetPlatformInfo& obj);
+    CLAPI_clGetPlatformInfo& operator= (const CLAPI_clGetPlatformInfo& obj) = delete;
 
 private:
     cl_platform_id   m_platform;                ///< parameter for clGetPlatformInfo
@@ -241,13 +241,14 @@ public:
     /// Constructor
     CLAPI_clGetDeviceIDs()
     {
-        m_device_list = NULL;
+        m_device_list = nullptr;
+        m_num_devicesVal = 0u;
     }
 
     /// Destructor
     ~CLAPI_clGetDeviceIDs()
     {
-        if (m_device_list != NULL)
+        if (nullptr != m_device_list)
         {
             FreeArray(m_device_list);
         }
@@ -255,7 +256,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -264,7 +265,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_platform) << s_strParamSeparator
@@ -305,7 +306,7 @@ public:
         m_num_devices = num_devices;
         m_replaced_null_param = replaced_null_param;
 
-        if (retVal == CL_SUCCESS)
+        if (CL_SUCCESS == retVal)
         {
             m_num_devicesVal = *num_devices;
             DeepCopyArray(&m_device_list, device_list, RETVALMIN(m_num_devicesVal, m_num_entries));
@@ -317,12 +318,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetDeviceIDs(const CLAPI_clGetDeviceIDs& obj);
+    CLAPI_clGetDeviceIDs(const CLAPI_clGetDeviceIDs& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetDeviceIDs& operator = (const CLAPI_clGetDeviceIDs& obj);
+    CLAPI_clGetDeviceIDs& operator = (const CLAPI_clGetDeviceIDs& obj) = delete;
 
 private:
     cl_platform_id m_platform;            ///< parameter for clGetDeviceIDs
@@ -344,13 +345,13 @@ public:
     /// Constructor
     CLAPI_clGetDeviceInfo()
     {
-        m_param_value = NULL;
+        m_param_value = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetDeviceInfo()
     {
-        if (m_param_value != NULL)
+        if (nullptr != m_param_value)
         {
             FreeBuffer(m_param_value);
         }
@@ -358,7 +359,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -367,7 +368,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_device) << s_strParamSeparator
@@ -410,7 +411,7 @@ public:
         m_replaced_null_param = replaced_null_param;
         m_param_value_size_retVal = *param_value_size_ret;
 
-        if (param_value != NULL)
+        if (nullptr != param_value)
         {
             DeepCopyBuffer(&m_param_value, param_value, RETVALMIN(m_param_value_size_retVal, m_param_value_size));
         }
@@ -421,12 +422,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetDeviceInfo(const CLAPI_clGetDeviceInfo& obj);
+    CLAPI_clGetDeviceInfo(const CLAPI_clGetDeviceInfo& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetDeviceInfo& operator = (const CLAPI_clGetDeviceInfo& obj);
+    CLAPI_clGetDeviceInfo& operator = (const CLAPI_clGetDeviceInfo& obj) = delete;
 
 private:
     cl_device_id   m_device;                  ///< parameter for clGetDeviceInfo
@@ -480,7 +481,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
@@ -494,12 +495,12 @@ protected:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateContextBase(const CLAPI_clCreateContextBase& obj);
+    CLAPI_clCreateContextBase(const CLAPI_clCreateContextBase& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateContextBase& operator = (const CLAPI_clCreateContextBase& obj);
+    CLAPI_clCreateContextBase& operator = (const CLAPI_clCreateContextBase& obj) = delete;
 
     static cl_uint   ms_NumInstance; ///< number of instances created
     static AMDTMutex ms_mtx;         ///< mutex to protect ms_NumInstance
@@ -515,13 +516,13 @@ public:
     /// Constructor
     CLAPI_clCreateContext()
     {
-        m_device_list = NULL;
+        m_device_list = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clCreateContext()
     {
-        if (m_device_list != NULL)
+        if (nullptr != m_device_list)
         {
             FreeArray(m_device_list);
         }
@@ -529,7 +530,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetContextPropertiesString(m_properties, m_vecProperties) << s_strParamSeparator
@@ -569,7 +570,7 @@ public:
 
         int num_properties = 0;
 
-        if (properties != NULL)
+        if (nullptr != properties)
         {
             // properties is 0 terminated
             while (properties[0] != 0 && num_properties < SP_MAX_NUM_CONTEXT_PROPERTIES)
@@ -580,7 +581,7 @@ public:
             }
         }
 
-        if (num_properties == SP_MAX_NUM_CONTEXT_PROPERTIES)
+        if (SP_MAX_NUM_CONTEXT_PROPERTIES == num_properties)
         {
             //add a dummy value (zero) that tells GetContextPropertiesString that the list has been truncated
             m_vecProperties.push_back(0);
@@ -593,7 +594,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -609,12 +610,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateContext(const CLAPI_clCreateContext& obj);
+    CLAPI_clCreateContext(const CLAPI_clCreateContext& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateContext& operator = (const CLAPI_clCreateContext& obj);
+    CLAPI_clCreateContext& operator= (const CLAPI_clCreateContext& obj) = delete;
 
 private:
     const cl_context_properties*       m_properties;     ///< parameter for clCreateContext
@@ -647,7 +648,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetContextPropertiesString(m_properties, m_vecProperties) << s_strParamSeparator
@@ -663,7 +664,7 @@ public:
     /// \param ullEndTime end api call time stamp
     /// \param properties Parameter for CLAPI_clCreateContextFromType
     /// \param device_type Parameter for CLAPI_clCreateContextFromType
-    /// \param pfn_notify Parameter for CLAPI_clCreateContextFromType
+    /// \param pfn_notify1 Parameter for CLAPI_clCreateContextFromType
     /// \param user_data Parameter for CLAPI_clCreateContextFromType
     /// \param errcode_ret Parameter for CLAPI_clCreateContextFromType
     /// \param retVal return value
@@ -684,7 +685,7 @@ public:
 
         int num_properties = 0;
 
-        if (properties != NULL)
+        if (nullptr != properties)
         {
             // properties is 0 terminated
             while (properties[0] != 0 && num_properties < SP_MAX_NUM_CONTEXT_PROPERTIES)
@@ -695,7 +696,7 @@ public:
             }
         }
 
-        if (num_properties == SP_MAX_NUM_CONTEXT_PROPERTIES)
+        if (SP_MAX_NUM_CONTEXT_PROPERTIES == num_properties)
         {
             //add a dummy value (zero) that tells GetContextPropertiesString that the list has been truncated
             m_vecProperties.push_back(0);
@@ -707,7 +708,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -723,12 +724,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateContextFromType(const CLAPI_clCreateContextFromType& obj);
+    CLAPI_clCreateContextFromType(const CLAPI_clCreateContextFromType& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateContextFromType& operator = (const CLAPI_clCreateContextFromType& obj);
+    CLAPI_clCreateContextFromType& operator = (const CLAPI_clCreateContextFromType& obj) = delete;
 
 private:
     const cl_context_properties*       m_properties;     ///< parameter for clCreateContextFromType
@@ -747,14 +748,14 @@ class CLAPI_clRetainContext : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clRetainContext() {}
+    CLAPI_clRetainContext() = default;
 
     /// Destructor
     ~CLAPI_clRetainContext() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -763,7 +764,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context);
@@ -791,12 +792,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clRetainContext(const CLAPI_clRetainContext& obj);
+    CLAPI_clRetainContext(const CLAPI_clRetainContext& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clRetainContext& operator = (const CLAPI_clRetainContext& obj);
+    CLAPI_clRetainContext& operator = (const CLAPI_clRetainContext& obj) = delete;
 
 private:
     cl_context  m_context; ///< parameter for clRetainContext
@@ -810,14 +811,14 @@ class CLAPI_clReleaseContext : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clReleaseContext() {}
+    CLAPI_clReleaseContext() = default;
 
     /// Destructor
     ~CLAPI_clReleaseContext() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -826,7 +827,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context);
@@ -854,12 +855,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clReleaseContext(const CLAPI_clReleaseContext& obj);
+    CLAPI_clReleaseContext(const CLAPI_clReleaseContext& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clReleaseContext& operator = (const CLAPI_clReleaseContext& obj);
+    CLAPI_clReleaseContext& operator = (const CLAPI_clReleaseContext& obj) = delete;
 
 private:
     cl_context m_context; ///< parameter for clReleaseContext
@@ -875,13 +876,13 @@ public:
     /// Constructor
     CLAPI_clGetContextInfo()
     {
-        m_param_value = NULL;
+        m_param_value = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetContextInfo()
     {
-        if (m_param_value != NULL)
+        if (nullptr != m_param_value)
         {
             FreeBuffer(m_param_value);
         }
@@ -889,7 +890,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -898,7 +899,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -941,7 +942,7 @@ public:
         m_replaced_null_param = replaced_null_param;
         m_param_value_size_retVal = *param_value_size_ret;
 
-        if (param_value != NULL)
+        if (nullptr != param_value)
         {
             DeepCopyBuffer(&m_param_value, param_value, RETVALMIN(m_param_value_size_retVal, m_param_value_size));
         }
@@ -952,12 +953,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetContextInfo(const CLAPI_clGetContextInfo& obj);
+    CLAPI_clGetContextInfo(const CLAPI_clGetContextInfo& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetContextInfo& operator = (const CLAPI_clGetContextInfo& obj);
+    CLAPI_clGetContextInfo& operator = (const CLAPI_clGetContextInfo& obj) = delete;
 
 private:
     cl_context      m_context;                 ///< parameter for clGetContextInfo
@@ -993,7 +994,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
@@ -1021,7 +1022,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -1056,7 +1057,6 @@ protected:
     /// Save the parameter values, return value and time stamps of CLAPI_clCreateCommandQueueBase
     /// \param ullStartTime start api call time stamp
     /// \param ullEndTime end api call time stamp
-    /// \param type the function type (clCreateCommandQueue/clCreateCommandQueueWithProperties)
     /// \param context Parameter for CLAPI_clCreateCommandQueueBase
     /// \param device Parameter for CLAPI_clCreateCommandQueueBase
     /// \param errcode_ret Parameter for CLAPI_clCreateCommandQueueBase
@@ -1076,12 +1076,12 @@ protected:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateCommandQueueBase(const CLAPI_clCreateCommandQueueBase& obj);
+    CLAPI_clCreateCommandQueueBase(const CLAPI_clCreateCommandQueueBase& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateCommandQueueBase& operator = (const CLAPI_clCreateCommandQueueBase& obj);
+    CLAPI_clCreateCommandQueueBase& operator = (const CLAPI_clCreateCommandQueueBase& obj) = delete;
 
 protected:
     cl_context                  m_context;                         ///< parameter for clCreateCommandQueue/clCreateCommandQueueWithProperties
@@ -1105,6 +1105,9 @@ class CLAPI_clCreateCommandQueue : public CLAPI_clCreateCommandQueueBase
 {
     FRIENDTESTCASE(clCreateCommandQueue);
 public:
+    /// Constructor
+    CLAPI_clCreateCommandQueue() = default;
+
     /// Save the parameter values, return value and time stamps of CLAPI_clCreateCommandQueue
     /// \param ullStartTime start api call time stamp
     /// \param ullEndTime end api call time stamp
@@ -1125,7 +1128,7 @@ public:
 protected:
     /// Gets the string representation of the properties parameter
     /// \return the string representation of the properties parameter
-    std::string GetPropertiesString()
+    std::string GetPropertiesString() override
     {
         return CLStringUtils::GetCommandQueuePropertyString(m_properties);
     }
@@ -1140,6 +1143,9 @@ private:
 class CLAPI_clCreateCommandQueueWithProperties : public CLAPI_clCreateCommandQueueBase
 {
 public:
+    /// Constructor
+    CLAPI_clCreateCommandQueueWithProperties() = default;
+
     /// Save the parameter values, return value and time stamps of CLAPI_clCreateCommandQueue
     /// \param ullStartTime start api call time stamp
     /// \param ullEndTime end api call time stamp
@@ -1147,7 +1153,6 @@ public:
     /// \param device Parameter for CLAPI_clCreateCommandQueue
     /// \param pProperties the properties parameter for this API
     /// \param bUserSetProfileFlag flag indicating whether the CL_QUEUE_PROFILING_ENABLE property was set by the original API call
-    /// \param properties the properties parameter for this API
     /// \param errcode_ret Parameter for CLAPI_clCreateCommandQueue
     /// \param retVal return value
     void Create(
@@ -1163,7 +1168,7 @@ public:
 protected:
     /// Gets the string representation of the properties parameter
     /// \return the string representation of the properties parameter
-    std::string GetPropertiesString()
+    std::string GetPropertiesString() override
     {
         return CLStringUtils::GetCommandQueuePropertiesString(m_pProperties, m_vecProperties);
     }
@@ -1180,14 +1185,14 @@ class CLAPI_clRetainCommandQueue : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clRetainCommandQueue() {}
+    CLAPI_clRetainCommandQueue() = default;
 
     /// Destructor
     ~CLAPI_clRetainCommandQueue() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -1196,7 +1201,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue);
@@ -1224,12 +1229,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clRetainCommandQueue(const CLAPI_clRetainCommandQueue& obj);
+    CLAPI_clRetainCommandQueue(const CLAPI_clRetainCommandQueue& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clRetainCommandQueue& operator = (const CLAPI_clRetainCommandQueue& obj);
+    CLAPI_clRetainCommandQueue& operator = (const CLAPI_clRetainCommandQueue& obj) = delete;
 
 private:
     cl_command_queue m_command_queue; ///< parameter for clRetainCommandQueue
@@ -1243,14 +1248,14 @@ class CLAPI_clReleaseCommandQueue : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clReleaseCommandQueue() {}
+    CLAPI_clReleaseCommandQueue() = default;
 
     /// Destructor
     ~CLAPI_clReleaseCommandQueue() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -1259,7 +1264,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue);
@@ -1287,12 +1292,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clReleaseCommandQueue(const CLAPI_clReleaseCommandQueue& obj);
+    CLAPI_clReleaseCommandQueue(const CLAPI_clReleaseCommandQueue& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clReleaseCommandQueue& operator = (const CLAPI_clReleaseCommandQueue& obj);
+    CLAPI_clReleaseCommandQueue& operator = (const CLAPI_clReleaseCommandQueue& obj) = delete;
 
 private:
     cl_command_queue m_command_queue; ///< parameter for clReleaseCommandQueue
@@ -1308,13 +1313,13 @@ public:
     /// Constructor
     CLAPI_clGetCommandQueueInfo()
     {
-        m_param_value = NULL;
+        m_param_value = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetCommandQueueInfo()
     {
-        if (m_param_value != NULL)
+        if (nullptr != m_param_value)
         {
             FreeBuffer(m_param_value);
         }
@@ -1322,7 +1327,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -1331,7 +1336,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -1374,7 +1379,7 @@ public:
         m_replaced_null_param = replaced_null_param;
         m_param_value_size_retVal = *param_value_size_ret;
 
-        if (param_value != NULL)
+        if (nullptr != param_value)
         {
             DeepCopyBuffer(&m_param_value, param_value, RETVALMIN(m_param_value_size_retVal, m_param_value_size));
         }
@@ -1385,12 +1390,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetCommandQueueInfo(const CLAPI_clGetCommandQueueInfo& obj);
+    CLAPI_clGetCommandQueueInfo(const CLAPI_clGetCommandQueueInfo& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetCommandQueueInfo& operator = (const CLAPI_clGetCommandQueueInfo& obj);
+    CLAPI_clGetCommandQueueInfo& operator = (const CLAPI_clGetCommandQueueInfo& obj) = delete;
 
 private:
     cl_command_queue      m_command_queue;           ///< parameter for clGetCommandQueueInfo
@@ -1411,14 +1416,14 @@ class CLAPI_clSetCommandQueueProperty : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clSetCommandQueueProperty() {}
+    CLAPI_clSetCommandQueueProperty() = default;
 
     /// Destructor
     ~CLAPI_clSetCommandQueueProperty() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -1427,7 +1432,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -1463,7 +1468,7 @@ public:
         m_enable = enable;
         m_old_properties = old_properties;
 
-        if (old_properties != NULL)
+        if (nullptr != old_properties)
         {
             m_old_properties_val = *old_properties;
         }
@@ -1474,12 +1479,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clSetCommandQueueProperty(const CLAPI_clSetCommandQueueProperty& obj);
+    CLAPI_clSetCommandQueueProperty(const CLAPI_clSetCommandQueueProperty& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clSetCommandQueueProperty& operator = (const CLAPI_clSetCommandQueueProperty& obj);
+    CLAPI_clSetCommandQueueProperty& operator = (const CLAPI_clSetCommandQueueProperty& obj) = delete;
 
 private:
     cl_command_queue             m_command_queue;      ///< parameter for clSetCommandQueueProperty
@@ -1498,21 +1503,21 @@ class CLAPI_clCreateBuffer : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clCreateBuffer() {}
+    CLAPI_clCreateBuffer() = default;
 
     /// Destructor
     ~CLAPI_clCreateBuffer() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -1552,7 +1557,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -1567,12 +1572,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateBuffer(const CLAPI_clCreateBuffer& obj);
+    CLAPI_clCreateBuffer(const CLAPI_clCreateBuffer& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateBuffer& operator = (const CLAPI_clCreateBuffer& obj);
+    CLAPI_clCreateBuffer& operator = (const CLAPI_clCreateBuffer& obj) = delete;
 
 private:
     cl_context   m_context;        ///< parameter for clCreateBuffer
@@ -1593,13 +1598,13 @@ public:
     /// Constructor
     CLAPI_clCreateSubBuffer()
     {
-        m_buffer_create_info = NULL;
+        m_buffer_create_info = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clCreateSubBuffer()
     {
-        if (m_buffer_create_type == CL_BUFFER_CREATE_TYPE_REGION && m_buffer_create_info != NULL)
+        if (CL_BUFFER_CREATE_TYPE_REGION == m_buffer_create_type && nullptr != m_buffer_create_info)
         {
             FreeBuffer(m_buffer_create_info);
         }
@@ -1607,14 +1612,14 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_buffer) << s_strParamSeparator
@@ -1651,7 +1656,7 @@ public:
         m_flags = flags;
         m_buffer_create_type = buffer_create_type;
 
-        if (m_buffer_create_type == CL_BUFFER_CREATE_TYPE_REGION)
+        if (CL_BUFFER_CREATE_TYPE_REGION == m_buffer_create_type)
         {
             DeepCopyBuffer(&m_buffer_create_info, buffer_create_info, sizeof(cl_buffer_region));
         }
@@ -1662,7 +1667,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -1677,12 +1682,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateSubBuffer(const CLAPI_clCreateSubBuffer& obj);
+    CLAPI_clCreateSubBuffer(const CLAPI_clCreateSubBuffer& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateSubBuffer& operator = (const CLAPI_clCreateSubBuffer& obj);
+    CLAPI_clCreateSubBuffer& operator = (const CLAPI_clCreateSubBuffer& obj) = delete;
 
 private:
     cl_mem                m_buffer;             ///< parameter for clCreateSubBuffer
@@ -1703,13 +1708,13 @@ public:
     /// Constructor
     CLAPI_clCreateImage2D()
     {
-        m_image_format = NULL;
+        m_image_format = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clCreateImage2D()
     {
-        if (m_image_format != NULL)
+        if (nullptr != m_image_format)
         {
             delete m_image_format;
         }
@@ -1717,14 +1722,14 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -1777,7 +1782,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -1792,12 +1797,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateImage2D(const CLAPI_clCreateImage2D& obj);
+    CLAPI_clCreateImage2D(const CLAPI_clCreateImage2D& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateImage2D& operator = (const CLAPI_clCreateImage2D& obj);
+    CLAPI_clCreateImage2D& operator = (const CLAPI_clCreateImage2D& obj) = delete;
 
 private:
     cl_context       m_context;         ///< parameter for clCreateImage2D
@@ -1821,13 +1826,13 @@ public:
     /// Constructor
     CLAPI_clCreateImage3D()
     {
-        m_image_format = NULL;
+        m_image_format = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clCreateImage3D()
     {
-        if (m_image_format != NULL)
+        if (nullptr != m_image_format)
         {
             delete m_image_format;
         }
@@ -1835,14 +1840,14 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -1903,7 +1908,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -1918,12 +1923,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateImage3D(const CLAPI_clCreateImage3D& obj);
+    CLAPI_clCreateImage3D(const CLAPI_clCreateImage3D& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateImage3D& operator = (const CLAPI_clCreateImage3D& obj);
+    CLAPI_clCreateImage3D& operator = (const CLAPI_clCreateImage3D& obj) = delete;
 
 private:
     cl_context       m_context;           ///< parameter for clCreateImage3D
@@ -1947,14 +1952,14 @@ class CLAPI_clRetainMemObject : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clRetainMemObject() {}
+    CLAPI_clRetainMemObject() = default;
 
     /// Destructor
     ~CLAPI_clRetainMemObject() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -1963,7 +1968,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_memobj);
@@ -1991,12 +1996,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clRetainMemObject(const CLAPI_clRetainMemObject& obj);
+    CLAPI_clRetainMemObject(const CLAPI_clRetainMemObject& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clRetainMemObject& operator = (const CLAPI_clRetainMemObject& obj);
+    CLAPI_clRetainMemObject& operator = (const CLAPI_clRetainMemObject& obj) = delete;
 
 private:
     cl_mem   m_memobj; ///< parameter for clRetainMemObject
@@ -2010,14 +2015,14 @@ class CLAPI_clReleaseMemObject : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clReleaseMemObject() {}
+    CLAPI_clReleaseMemObject() = default;
 
     /// Destructor
     ~CLAPI_clReleaseMemObject() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -2026,7 +2031,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_memobj);
@@ -2054,12 +2059,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clReleaseMemObject(const CLAPI_clReleaseMemObject& obj);
+    CLAPI_clReleaseMemObject(const CLAPI_clReleaseMemObject& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clReleaseMemObject& operator = (const CLAPI_clReleaseMemObject& obj);
+    CLAPI_clReleaseMemObject& operator = (const CLAPI_clReleaseMemObject& obj) = delete;
 
 private:
     cl_mem  m_memobj; ///< parameter for clReleaseMemObject
@@ -2075,13 +2080,13 @@ public:
     /// Constructor
     CLAPI_clGetSupportedImageFormats()
     {
-        m_image_formats = NULL;
+        m_image_formats = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetSupportedImageFormats()
     {
-        if (m_image_formats != NULL)
+        if (nullptr != m_image_formats)
         {
             FreeArray(m_image_formats);
         }
@@ -2089,7 +2094,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -2098,7 +2103,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -2144,7 +2149,7 @@ public:
         m_num_image_formats = num_image_formats;
         m_replaced_null_param = replaced_null_param;
 
-        if (retVal == CL_SUCCESS)
+        if (CL_SUCCESS == retVal)
         {
             m_num_image_formatsVal = *num_image_formats;
             DeepCopyArray(&m_image_formats, image_formats, RETVALMIN(m_num_image_formatsVal, m_num_entries));
@@ -2156,12 +2161,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetSupportedImageFormats(const CLAPI_clGetSupportedImageFormats& obj);
+    CLAPI_clGetSupportedImageFormats(const CLAPI_clGetSupportedImageFormats& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetSupportedImageFormats& operator = (const CLAPI_clGetSupportedImageFormats& obj);
+    CLAPI_clGetSupportedImageFormats& operator = (const CLAPI_clGetSupportedImageFormats& obj) = delete;
 
 private:
     cl_context         m_context;              ///< parameter for clGetSupportedImageFormats
@@ -2184,13 +2189,13 @@ public:
     /// Constructor
     CLAPI_clGetMemObjectInfo()
     {
-        m_param_value = NULL;
+        m_param_value = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetMemObjectInfo()
     {
-        if (m_param_value != NULL)
+        if (nullptr != m_param_value)
         {
             FreeBuffer(m_param_value);
         }
@@ -2198,7 +2203,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -2207,7 +2212,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_memobj) << s_strParamSeparator
@@ -2250,7 +2255,7 @@ public:
         m_replaced_null_param = replaced_null_param;
         m_param_value_size_retVal = *param_value_size_ret;
 
-        if (param_value != NULL)
+        if (nullptr != param_value)
         {
             DeepCopyBuffer(&m_param_value, param_value, RETVALMIN(m_param_value_size_retVal, m_param_value_size));
         }
@@ -2261,12 +2266,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetMemObjectInfo(const CLAPI_clGetMemObjectInfo& obj);
+    CLAPI_clGetMemObjectInfo(const CLAPI_clGetMemObjectInfo& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetMemObjectInfo& operator = (const CLAPI_clGetMemObjectInfo& obj);
+    CLAPI_clGetMemObjectInfo& operator = (const CLAPI_clGetMemObjectInfo& obj) = delete;
 
 private:
     cl_mem      m_memobj;                  ///< parameter for clGetMemObjectInfo
@@ -2288,13 +2293,13 @@ public:
     /// Constructor
     CLAPI_clGetImageInfo()
     {
-        m_param_value = NULL;
+        m_param_value = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetImageInfo()
     {
-        if (m_param_value != NULL)
+        if (nullptr != m_param_value)
         {
             FreeBuffer(m_param_value);
         }
@@ -2302,7 +2307,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -2311,7 +2316,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_image) << s_strParamSeparator
@@ -2354,7 +2359,7 @@ public:
         m_replaced_null_param = replaced_null_param;
         m_param_value_size_retVal = *param_value_size_ret;
 
-        if (param_value != NULL)
+        if (nullptr != param_value)
         {
             DeepCopyBuffer(&m_param_value, param_value, RETVALMIN(m_param_value_size_retVal, m_param_value_size));
         }
@@ -2365,12 +2370,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetImageInfo(const CLAPI_clGetImageInfo& obj);
+    CLAPI_clGetImageInfo(const CLAPI_clGetImageInfo& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetImageInfo& operator = (const CLAPI_clGetImageInfo& obj);
+    CLAPI_clGetImageInfo& operator = (const CLAPI_clGetImageInfo& obj) = delete;
 
 private:
     cl_mem        m_image;                   ///< parameter for clGetImageInfo
@@ -2390,14 +2395,14 @@ class CLAPI_clSetMemObjectDestructorCallback : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clSetMemObjectDestructorCallback() {}
+    CLAPI_clSetMemObjectDestructorCallback() = default;
 
     /// Destructor
     ~CLAPI_clSetMemObjectDestructorCallback() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -2406,7 +2411,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_memobj) << s_strParamSeparator
@@ -2419,7 +2424,7 @@ public:
     /// \param ullStartTime start api call time stamp
     /// \param ullEndTime end api call time stamp
     /// \param memobj Parameter for CLAPI_clSetMemObjectDestructorCallback
-    /// \param pfn_notify Parameter for CLAPI_clSetMemObjectDestructorCallback
+    /// \param pfn_notify1 Parameter for CLAPI_clSetMemObjectDestructorCallback
     /// \param user_data Parameter for CLAPI_clSetMemObjectDestructorCallback
     /// \param retVal return value
     void Create(
@@ -2442,12 +2447,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clSetMemObjectDestructorCallback(const CLAPI_clSetMemObjectDestructorCallback& obj);
+    CLAPI_clSetMemObjectDestructorCallback(const CLAPI_clSetMemObjectDestructorCallback& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clSetMemObjectDestructorCallback& operator = (const CLAPI_clSetMemObjectDestructorCallback& obj);
+    CLAPI_clSetMemObjectDestructorCallback& operator = (const CLAPI_clSetMemObjectDestructorCallback& obj) = delete;
 
 private:
     cl_mem   m_memobj;    ///< parameter for clSetMemObjectDestructorCallback
@@ -2463,21 +2468,21 @@ class CLAPI_clCreateSampler : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clCreateSampler() {}
+    CLAPI_clCreateSampler() = default;
 
     /// Destructor
     ~CLAPI_clCreateSampler() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -2517,7 +2522,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -2532,12 +2537,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateSampler(const CLAPI_clCreateSampler& obj);
+    CLAPI_clCreateSampler(const CLAPI_clCreateSampler& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateSampler& operator = (const CLAPI_clCreateSampler& obj);
+    CLAPI_clCreateSampler& operator = (const CLAPI_clCreateSampler& obj) = delete;
 
 private:
     cl_context         m_context;           ///< parameter for clCreateSampler
@@ -2556,21 +2561,21 @@ class CLAPI_clCreateSamplerWithProperties : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clCreateSamplerWithProperties() {}
+    CLAPI_clCreateSamplerWithProperties() = default;
 
     /// Destructor
     ~CLAPI_clCreateSamplerWithProperties() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -2602,7 +2607,7 @@ public:
 
         int num_properties = 0;
 
-        if (pProperties != NULL)
+        if (nullptr != pProperties)
         {
             // properties is 0 terminated
             while (pProperties[0] != 0 && num_properties < SP_MAX_NUM_CONTEXT_PROPERTIES)
@@ -2613,7 +2618,7 @@ public:
             }
         }
 
-        if (num_properties == SP_MAX_NUM_CONTEXT_PROPERTIES)
+        if (SP_MAX_NUM_CONTEXT_PROPERTIES == num_properties)
         {
             //add a dummy value (zero) that tells GetSamplerPropertiesString that the list has been truncated
             m_vecProperties.push_back(0);
@@ -2621,7 +2626,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -2636,12 +2641,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateSamplerWithProperties(const CLAPI_clCreateSamplerWithProperties& obj);
+    CLAPI_clCreateSamplerWithProperties(const CLAPI_clCreateSamplerWithProperties& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateSamplerWithProperties& operator = (const CLAPI_clCreateSamplerWithProperties& obj);
+    CLAPI_clCreateSamplerWithProperties& operator = (const CLAPI_clCreateSamplerWithProperties& obj) = delete;
 
 private:
     cl_context                         m_context;        ///< parameter for clCreateSamplerWithProperties
@@ -2659,14 +2664,14 @@ class CLAPI_clRetainSampler : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clRetainSampler() {}
+    CLAPI_clRetainSampler() = default;
 
     /// Destructor
     ~CLAPI_clRetainSampler() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -2675,7 +2680,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_sampler);
@@ -2703,12 +2708,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clRetainSampler(const CLAPI_clRetainSampler& obj);
+    CLAPI_clRetainSampler(const CLAPI_clRetainSampler& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clRetainSampler& operator = (const CLAPI_clRetainSampler& obj);
+    CLAPI_clRetainSampler& operator = (const CLAPI_clRetainSampler& obj) = delete;
 
 private:
     cl_sampler m_sampler; ///< parameter for clRetainSampler
@@ -2722,14 +2727,14 @@ class CLAPI_clReleaseSampler : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clReleaseSampler() {}
+    CLAPI_clReleaseSampler() = default;
 
     /// Destructor
     ~CLAPI_clReleaseSampler() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -2738,7 +2743,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_sampler);
@@ -2766,12 +2771,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clReleaseSampler(const CLAPI_clReleaseSampler& obj);
+    CLAPI_clReleaseSampler(const CLAPI_clReleaseSampler& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clReleaseSampler& operator = (const CLAPI_clReleaseSampler& obj);
+    CLAPI_clReleaseSampler& operator = (const CLAPI_clReleaseSampler& obj) = delete;
 
 private:
     cl_sampler m_sampler; ///< parameter for clReleaseSampler
@@ -2787,13 +2792,13 @@ public:
     /// Constructor
     CLAPI_clGetSamplerInfo()
     {
-        m_param_value = NULL;
+        m_param_value = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetSamplerInfo()
     {
-        if (m_param_value != NULL)
+        if (nullptr != m_param_value)
         {
             FreeBuffer(m_param_value);
         }
@@ -2801,7 +2806,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -2810,7 +2815,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_sampler) << s_strParamSeparator
@@ -2853,7 +2858,7 @@ public:
         m_replaced_null_param = replaced_null_param;
         m_param_value_size_retVal = *param_value_size_ret;
 
-        if (param_value != NULL)
+        if (nullptr != param_value)
         {
             DeepCopyBuffer(&m_param_value, param_value, RETVALMIN(m_param_value_size_retVal, m_param_value_size));
         }
@@ -2864,12 +2869,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetSamplerInfo(const CLAPI_clGetSamplerInfo& obj);
+    CLAPI_clGetSamplerInfo(const CLAPI_clGetSamplerInfo& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetSamplerInfo& operator = (const CLAPI_clGetSamplerInfo& obj);
+    CLAPI_clGetSamplerInfo& operator = (const CLAPI_clGetSamplerInfo& obj) = delete;
 
 private:
     cl_sampler      m_sampler;                 ///< parameter for clGetSamplerInfo
@@ -2889,21 +2894,21 @@ class CLAPI_clCreateProgramWithSource : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clCreateProgramWithSource() {}
+    CLAPI_clCreateProgramWithSource() = default;
 
     /// Destructor
     ~CLAPI_clCreateProgramWithSource() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -2943,7 +2948,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -2958,12 +2963,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateProgramWithSource(const CLAPI_clCreateProgramWithSource& obj);
+    CLAPI_clCreateProgramWithSource(const CLAPI_clCreateProgramWithSource& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateProgramWithSource& operator = (const CLAPI_clCreateProgramWithSource& obj);
+    CLAPI_clCreateProgramWithSource& operator = (const CLAPI_clCreateProgramWithSource& obj) = delete;
 
 private:
     cl_context    m_context;        ///< parameter for clCreateProgramWithSource
@@ -2984,28 +2989,28 @@ public:
     /// Constructor
     CLAPI_clCreateProgramWithBinary()
     {
-        m_device_list = NULL;
+        m_device_list = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clCreateProgramWithBinary()
     {
-        if (m_device_list != NULL)
+        if (nullptr != m_device_list)
         {
             FreeArray(m_device_list);
         }
 
-        if (m_lengths != NULL)
+        if (nullptr != m_lengths)
         {
             FreeArray(m_lengths);
         }
 
-        if (m_binaries != NULL)
+        if (nullptr != m_binaries)
         {
             FreeArray(m_binaries);
         }
 
-        if (m_binary_status != NULL)
+        if (nullptr != m_binary_status)
         {
             FreeArray(m_binary_status);
         }
@@ -3013,14 +3018,14 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -3069,7 +3074,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -3084,12 +3089,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateProgramWithBinary(const CLAPI_clCreateProgramWithBinary& obj);
+    CLAPI_clCreateProgramWithBinary(const CLAPI_clCreateProgramWithBinary& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateProgramWithBinary& operator = (const CLAPI_clCreateProgramWithBinary& obj);
+    CLAPI_clCreateProgramWithBinary& operator = (const CLAPI_clCreateProgramWithBinary& obj) = delete;
 
 private:
     cl_context            m_context;        ///< parameter for clCreateProgramWithBinary
@@ -3110,14 +3115,14 @@ class CLAPI_clRetainProgram : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clRetainProgram() {}
+    CLAPI_clRetainProgram() = default;
 
     /// Destructor
     ~CLAPI_clRetainProgram() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -3126,7 +3131,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_program);
@@ -3154,12 +3159,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clRetainProgram(const CLAPI_clRetainProgram& obj);
+    CLAPI_clRetainProgram(const CLAPI_clRetainProgram& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clRetainProgram& operator = (const CLAPI_clRetainProgram& obj);
+    CLAPI_clRetainProgram& operator = (const CLAPI_clRetainProgram& obj) = delete;
 
 private:
     cl_program m_program; ///< parameter for clRetainProgram
@@ -3173,14 +3178,14 @@ class CLAPI_clReleaseProgram : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clReleaseProgram() {}
+    CLAPI_clReleaseProgram() = default;
 
     /// Destructor
     ~CLAPI_clReleaseProgram() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -3189,7 +3194,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_program);
@@ -3217,12 +3222,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clReleaseProgram(const CLAPI_clReleaseProgram& obj);
+    CLAPI_clReleaseProgram(const CLAPI_clReleaseProgram& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clReleaseProgram& operator = (const CLAPI_clReleaseProgram& obj);
+    CLAPI_clReleaseProgram& operator = (const CLAPI_clReleaseProgram& obj) = delete;
 
 private:
     cl_program m_program; ///< parameter for clReleaseProgram
@@ -3238,13 +3243,13 @@ public:
     /// Constructor
     CLAPI_clBuildProgram()
     {
-        m_device_list = NULL;
+        m_device_list = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clBuildProgram()
     {
-        if (m_device_list != NULL)
+        if (nullptr != m_device_list)
         {
             FreeArray(m_device_list);
         }
@@ -3252,7 +3257,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -3261,7 +3266,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_program) << s_strParamSeparator
@@ -3280,7 +3285,7 @@ public:
     /// \param num_devices Parameter for CLAPI_clBuildProgram
     /// \param device_list Parameter for CLAPI_clBuildProgram
     /// \param options Parameter for CLAPI_clBuildProgram
-    /// \param pfn_notify Parameter for CLAPI_clBuildProgram
+    /// \param pfn_notify1 Parameter for CLAPI_clBuildProgram
     /// \param user_data Parameter for CLAPI_clBuildProgram
     /// \param retVal return value
     void Create(
@@ -3312,7 +3317,7 @@ public:
         std::string strExtraBldOpts = OSUtils::Instance()->GetEnvVar("AMD_OCL_BUILD_OPTIONS_APPEND");
         m_bOptionsAppended = !strExtraBldOpts.empty();
 
-        if (options != NULL)
+        if (nullptr != options)
         {
             m_strOptions = std::string(options);
             std::vector<std::string> switches;
@@ -3360,12 +3365,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clBuildProgram(const CLAPI_clBuildProgram& obj);
+    CLAPI_clBuildProgram(const CLAPI_clBuildProgram& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clBuildProgram& operator = (const CLAPI_clBuildProgram& obj);
+    CLAPI_clBuildProgram& operator = (const CLAPI_clBuildProgram& obj) = delete;
 
 private:
     cl_program    m_program;              ///< parameter for clBuildProgram
@@ -3387,21 +3392,21 @@ class CLAPI_clUnloadCompiler : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clUnloadCompiler() {}
+    CLAPI_clUnloadCompiler() = default;
 
     /// Destructor
     ~CLAPI_clUnloadCompiler() {}
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         return "";
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -3446,13 +3451,13 @@ public:
     /// Constructor
     CLAPI_clGetProgramInfo()
     {
-        m_param_value = NULL;
+        m_param_value = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetProgramInfo()
     {
-        if (m_param_value != NULL)
+        if (nullptr != m_param_value)
         {
             FreeBuffer(m_param_value);
         }
@@ -3460,7 +3465,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -3469,7 +3474,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_program) << s_strParamSeparator
@@ -3512,7 +3517,7 @@ public:
         m_replaced_null_param = replaced_null_param;
         m_param_value_size_retVal = *param_value_size_ret;
 
-        if (param_value != NULL)
+        if (nullptr != param_value)
         {
             DeepCopyBuffer(&m_param_value, param_value, RETVALMIN(m_param_value_size_retVal, m_param_value_size));
         }
@@ -3523,12 +3528,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetProgramInfo(const CLAPI_clGetProgramInfo& obj);
+    CLAPI_clGetProgramInfo(const CLAPI_clGetProgramInfo& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetProgramInfo& operator = (const CLAPI_clGetProgramInfo& obj);
+    CLAPI_clGetProgramInfo& operator = (const CLAPI_clGetProgramInfo& obj) = delete;
 
 private:
     cl_program      m_program;                 ///< parameter for clGetProgramInfo
@@ -3550,13 +3555,13 @@ public:
     /// Constructor
     CLAPI_clGetProgramBuildInfo()
     {
-        m_param_value = NULL;
+        m_param_value = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetProgramBuildInfo()
     {
-        if (m_param_value != NULL)
+        if (nullptr != m_param_value)
         {
             FreeBuffer(m_param_value);
         }
@@ -3564,7 +3569,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -3573,7 +3578,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_program) << s_strParamSeparator
@@ -3621,7 +3626,7 @@ public:
         m_replaced_null_param = replaced_null_param;
         m_param_value_size_retVal = *param_value_size_ret;
 
-        if (param_value != NULL)
+        if (nullptr != param_value)
         {
             DeepCopyBuffer(&m_param_value, param_value, RETVALMIN(m_param_value_size_retVal, m_param_value_size));
         }
@@ -3632,12 +3637,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetProgramBuildInfo(const CLAPI_clGetProgramBuildInfo& obj);
+    CLAPI_clGetProgramBuildInfo(const CLAPI_clGetProgramBuildInfo& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetProgramBuildInfo& operator = (const CLAPI_clGetProgramBuildInfo& obj);
+    CLAPI_clGetProgramBuildInfo& operator = (const CLAPI_clGetProgramBuildInfo& obj) = delete;
 
 private:
     cl_program            m_program;                 ///< parameter for clGetProgramBuildInfo
@@ -3659,21 +3664,21 @@ class CLAPI_clCreateKernel : public CLAPIBase
     FRIENDTESTCASE(clCreateKernel);
 public:
     /// Constructor
-    CLAPI_clCreateKernel() {}
+    CLAPI_clCreateKernel() = default;
 
     /// Destructor
     ~CLAPI_clCreateKernel() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_program) << s_strParamSeparator
@@ -3700,12 +3705,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateKernel(const CLAPI_clCreateKernel& obj);
+    CLAPI_clCreateKernel(const CLAPI_clCreateKernel& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateKernel& operator = (const CLAPI_clCreateKernel& obj);
+    CLAPI_clCreateKernel& operator = (const CLAPI_clCreateKernel& obj) = delete;
 
 private:
     cl_program  m_program;         ///< parameter for clCreateKernel
@@ -3726,13 +3731,13 @@ public:
     /// Constructor
     CLAPI_clCreateKernelsInProgram()
     {
-        m_kernels = NULL;
+        m_kernels = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clCreateKernelsInProgram()
     {
-        if (m_kernels != NULL)
+        if (nullptr != m_kernels)
         {
             FreeArray(m_kernels);
         }
@@ -3740,7 +3745,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -3749,7 +3754,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_program) << s_strParamSeparator
@@ -3781,12 +3786,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateKernelsInProgram(const CLAPI_clCreateKernelsInProgram& obj);
+    CLAPI_clCreateKernelsInProgram(const CLAPI_clCreateKernelsInProgram& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateKernelsInProgram& operator = (const CLAPI_clCreateKernelsInProgram& obj);
+    CLAPI_clCreateKernelsInProgram& operator = (const CLAPI_clCreateKernelsInProgram& obj) = delete;
 
 private:
     cl_program m_program;             ///< parameter for clCreateKernelsInProgram
@@ -3805,14 +3810,14 @@ class CLAPI_clRetainKernel : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clRetainKernel() {}
+    CLAPI_clRetainKernel() = default;
 
     /// Destructor
     ~CLAPI_clRetainKernel() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -3821,7 +3826,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_kernel);
@@ -3849,12 +3854,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clRetainKernel(const CLAPI_clRetainKernel& obj);
+    CLAPI_clRetainKernel(const CLAPI_clRetainKernel& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clRetainKernel& operator = (const CLAPI_clRetainKernel& obj);
+    CLAPI_clRetainKernel& operator = (const CLAPI_clRetainKernel& obj) = delete;
 
 private:
     cl_kernel m_kernel; ///< parameter for clRetainKernel
@@ -3868,14 +3873,14 @@ class CLAPI_clReleaseKernel : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clReleaseKernel() {}
+    CLAPI_clReleaseKernel() = default;
 
     /// Destructor
     ~CLAPI_clReleaseKernel() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -3884,7 +3889,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_kernel);
@@ -3912,12 +3917,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clReleaseKernel(const CLAPI_clReleaseKernel& obj);
+    CLAPI_clReleaseKernel(const CLAPI_clReleaseKernel& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clReleaseKernel& operator = (const CLAPI_clReleaseKernel& obj);
+    CLAPI_clReleaseKernel& operator = (const CLAPI_clReleaseKernel& obj) = delete;
 
 private:
     cl_kernel m_kernel; ///< parameter for clReleaseKernel
@@ -3933,13 +3938,13 @@ public:
     /// Constructor
     CLAPI_clSetKernelArg()
     {
-        m_arg_value = NULL;
+        m_arg_value = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clSetKernelArg()
     {
-        if (m_arg_size == sizeof(int*) && m_arg_valueVal != NULL)
+        if (sizeof(int*) == m_arg_size && nullptr != m_arg_valueVal)
         {
             FreeBuffer(m_arg_valueVal);
         }
@@ -3947,7 +3952,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -3956,24 +3961,24 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_kernel) << s_strParamSeparator
            << m_arg_index << s_strParamSeparator
            << m_arg_size << s_strParamSeparator;
 
-        if (m_arg_size == sizeof(int*) && m_arg_valueVal != NULL)
+        if (sizeof(int*) == m_arg_size && nullptr != m_arg_valueVal)
         {
             // see the comment in Create()
-            if ((*((int*)m_arg_valueVal)) == 0)
+            if (0 == *static_cast<int*>(m_arg_valueVal))
             {
                 // If dereferenced value is 0 it means it's not a cl object but a integer, output 0 instead of NULL
                 ss << "[0]";
             }
             else
             {
-                ss << '[' << StringUtils::ToHexString((*((int*)m_arg_valueVal))) << ']';
+                ss << '[' << StringUtils::ToHexString((*static_cast<int*>(m_arg_valueVal))) << ']';
             }
         }
         else
@@ -4009,7 +4014,7 @@ public:
         m_arg_size = arg_size;
         m_arg_value = arg_value;
 
-        if (m_arg_size == sizeof(int*) && retVal == CL_SUCCESS)
+        if (sizeof(int*) == m_arg_size && CL_SUCCESS == retVal)
         {
             // If arg size = sizeof( pointer ), we want to dereference it since it helps user to debug.
             // e.g. check whether correct cl_mem object is bound.
@@ -4017,7 +4022,7 @@ public:
         }
         else
         {
-            m_arg_valueVal = NULL;
+            m_arg_valueVal = nullptr;
         }
 
         m_retVal = retVal;
@@ -4026,12 +4031,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clSetKernelArg(const CLAPI_clSetKernelArg& obj);
+    CLAPI_clSetKernelArg(const CLAPI_clSetKernelArg& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clSetKernelArg& operator = (const CLAPI_clSetKernelArg& obj);
+    CLAPI_clSetKernelArg& operator = (const CLAPI_clSetKernelArg& obj) = delete;
 
 private:
     cl_kernel   m_kernel;       ///< parameter for clSetKernelArg
@@ -4051,13 +4056,13 @@ public:
     /// Constructor
     CLAPI_clGetKernelInfo()
     {
-        m_param_value = NULL;
+        m_param_value = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetKernelInfo()
     {
-        if (m_param_value != NULL)
+        if (nullptr != m_param_value)
         {
             FreeBuffer(m_param_value);
         }
@@ -4065,7 +4070,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -4074,7 +4079,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_kernel) << s_strParamSeparator
@@ -4117,7 +4122,7 @@ public:
         m_replaced_null_param = replaced_null_param;
         m_param_value_size_retVal = *param_value_size_ret;
 
-        if (param_value != NULL)
+        if (nullptr != param_value)
         {
             DeepCopyBuffer(&m_param_value, param_value, RETVALMIN(m_param_value_size_retVal, m_param_value_size));
         }
@@ -4128,12 +4133,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetKernelInfo(const CLAPI_clGetKernelInfo& obj);
+    CLAPI_clGetKernelInfo(const CLAPI_clGetKernelInfo& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetKernelInfo& operator = (const CLAPI_clGetKernelInfo& obj);
+    CLAPI_clGetKernelInfo& operator = (const CLAPI_clGetKernelInfo& obj) = delete;
 
 private:
     cl_kernel      m_kernel;                  ///< parameter for clGetKernelInfo
@@ -4155,13 +4160,13 @@ public:
     /// Constructor
     CLAPI_clGetKernelWorkGroupInfo()
     {
-        m_param_value = NULL;
+        m_param_value = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetKernelWorkGroupInfo()
     {
-        if (NULL != m_param_value)
+        if (nullptr != m_param_value)
         {
             FreeBuffer(m_param_value);
         }
@@ -4169,7 +4174,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -4178,7 +4183,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_kernel) << s_strParamSeparator
@@ -4225,7 +4230,7 @@ public:
         m_replaced_null_param = replaced_null_param;
         m_param_value_size_retVal = *param_value_size_ret;
 
-        if (param_value != NULL)
+        if (nullptr != param_value)
         {
             DeepCopyBuffer(&m_param_value, param_value, RETVALMIN(m_param_value_size_retVal, m_param_value_size));
         }
@@ -4236,12 +4241,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetKernelWorkGroupInfo(const CLAPI_clGetKernelWorkGroupInfo& obj);
+    CLAPI_clGetKernelWorkGroupInfo(const CLAPI_clGetKernelWorkGroupInfo& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetKernelWorkGroupInfo& operator = (const CLAPI_clGetKernelWorkGroupInfo& obj);
+    CLAPI_clGetKernelWorkGroupInfo& operator = (const CLAPI_clGetKernelWorkGroupInfo& obj) = delete;
 
 private:
     cl_kernel                 m_kernel;                  ///< parameter for clGetKernelWorkGroupInfo
@@ -4264,13 +4269,13 @@ public:
     /// Constructor
     CLAPI_clWaitForEvents()
     {
-        m_event_list = NULL;
+        m_event_list = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clWaitForEvents()
     {
-        if (m_event_list != NULL)
+        if (nullptr != m_event_list)
         {
             FreeArray(m_event_list);
         }
@@ -4278,7 +4283,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -4287,7 +4292,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << m_num_events << s_strParamSeparator
@@ -4320,12 +4325,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clWaitForEvents(const CLAPI_clWaitForEvents& obj);
+    CLAPI_clWaitForEvents(const CLAPI_clWaitForEvents& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clWaitForEvents& operator = (const CLAPI_clWaitForEvents& obj);
+    CLAPI_clWaitForEvents& operator = (const CLAPI_clWaitForEvents& obj) = delete;
 
 private:
     cl_uint   m_num_events; ///< parameter for clWaitForEvents
@@ -4345,13 +4350,13 @@ public:
     /// Constructor
     CLAPI_clGetEventInfo()
     {
-        m_param_value = NULL;
+        m_param_value = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetEventInfo()
     {
-        if (NULL != m_param_value)
+        if (nullptr != m_param_value)
         {
             FreeBuffer(m_param_value);
         }
@@ -4359,7 +4364,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -4368,7 +4373,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_event) << s_strParamSeparator
@@ -4417,7 +4422,7 @@ public:
         m_param_value_size_retVal = *param_value_size_ret;
         m_consecutiveCount = 1;
 
-        if (param_value != NULL)
+        if (nullptr != param_value)
         {
             DeepCopyBuffer(&m_param_value, param_value, RETVALMIN(m_param_value_size_retVal, m_param_value_size));
         }
@@ -4430,25 +4435,25 @@ public:
     /// \return true if obj has the same parameters as this instance
     bool SameParameters(const CLAPI_clGetEventInfo* obj) const
     {
-        return (obj != NULL &&
+        return (nullptr != obj &&
                 m_type == obj->m_type &&
                 m_event == obj->m_event &&
                 m_param_name == obj->m_param_name &&
                 m_param_value_size == obj->m_param_value_size &&
-                m_param_value != NULL && obj->m_param_value != NULL &&
-                *(cl_int*)(m_param_value) == *(cl_int*)(obj->m_param_value) &&
+                nullptr != m_param_value && nullptr != obj->m_param_value &&
+                *static_cast<cl_int*>(m_param_value) == *static_cast<cl_int*>(obj->m_param_value) &&
                 m_param_value_size_retVal == obj->m_param_value_size_retVal);
     }
 
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetEventInfo(const CLAPI_clGetEventInfo& obj);
+    CLAPI_clGetEventInfo(const CLAPI_clGetEventInfo& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetEventInfo& operator = (const CLAPI_clGetEventInfo& obj);
+    CLAPI_clGetEventInfo& operator = (const CLAPI_clGetEventInfo& obj) = delete;
 
 private:
     cl_event      m_event;                   ///< parameter for clGetEventInfo
@@ -4468,21 +4473,21 @@ class CLAPI_clCreateUserEvent : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clCreateUserEvent() {}
+    CLAPI_clCreateUserEvent() = default;
 
     /// Destructor
     ~CLAPI_clCreateUserEvent() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -4510,7 +4515,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -4525,12 +4530,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateUserEvent(const CLAPI_clCreateUserEvent& obj);
+    CLAPI_clCreateUserEvent(const CLAPI_clCreateUserEvent& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateUserEvent& operator = (const CLAPI_clCreateUserEvent& obj);
+    CLAPI_clCreateUserEvent& operator = (const CLAPI_clCreateUserEvent& obj) = delete;
 
 private:
     cl_context m_context;        ///< parameter for clCreateUserEvent
@@ -4546,14 +4551,14 @@ class CLAPI_clRetainEvent : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clRetainEvent() {}
+    CLAPI_clRetainEvent() = default;
 
     /// Destructor
     ~CLAPI_clRetainEvent() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -4562,7 +4567,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_event);
@@ -4590,12 +4595,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clRetainEvent(const CLAPI_clRetainEvent& obj);
+    CLAPI_clRetainEvent(const CLAPI_clRetainEvent& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clRetainEvent& operator = (const CLAPI_clRetainEvent& obj);
+    CLAPI_clRetainEvent& operator = (const CLAPI_clRetainEvent& obj) = delete;
 
 private:
     cl_event m_event;  ///< parameter for clRetainEvent
@@ -4609,14 +4614,14 @@ class CLAPI_clReleaseEvent : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clReleaseEvent() {}
+    CLAPI_clReleaseEvent() = default;
 
     /// Destructor
     ~CLAPI_clReleaseEvent() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -4625,7 +4630,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_event);
@@ -4656,12 +4661,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clReleaseEvent(const CLAPI_clReleaseEvent& obj);
+    CLAPI_clReleaseEvent(const CLAPI_clReleaseEvent& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clReleaseEvent& operator = (const CLAPI_clReleaseEvent& obj);
+    CLAPI_clReleaseEvent& operator = (const CLAPI_clReleaseEvent& obj) = delete;
 
 private:
     cl_event m_event;      ///< parameter for clReleaseEvent
@@ -4679,14 +4684,14 @@ class CLAPI_clSetUserEventStatus : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clSetUserEventStatus() {}
+    CLAPI_clSetUserEventStatus() = default;
 
     /// Destructor
     ~CLAPI_clSetUserEventStatus() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -4695,7 +4700,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_event) << s_strParamSeparator
@@ -4727,12 +4732,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clSetUserEventStatus(const CLAPI_clSetUserEventStatus& obj);
+    CLAPI_clSetUserEventStatus(const CLAPI_clSetUserEventStatus& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clSetUserEventStatus& operator = (const CLAPI_clSetUserEventStatus& obj);
+    CLAPI_clSetUserEventStatus& operator = (const CLAPI_clSetUserEventStatus& obj) = delete;
 
 private:
     cl_event m_event;            ///< parameter for clSetUserEventStatus
@@ -4747,14 +4752,14 @@ class CLAPI_clSetEventCallback : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clSetEventCallback() {}
+    CLAPI_clSetEventCallback() = default;
 
     /// Destructor
     ~CLAPI_clSetEventCallback() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -4763,7 +4768,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_event) << s_strParamSeparator
@@ -4803,12 +4808,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clSetEventCallback(const CLAPI_clSetEventCallback& obj);
+    CLAPI_clSetEventCallback(const CLAPI_clSetEventCallback& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clSetEventCallback& operator = (const CLAPI_clSetEventCallback& obj);
+    CLAPI_clSetEventCallback& operator = (const CLAPI_clSetEventCallback& obj) = delete;
 
 private:
     cl_event m_event;                      ///< parameter for clSetEventCallback
@@ -4827,13 +4832,13 @@ public:
     /// Constructor
     CLAPI_clGetEventProfilingInfo()
     {
-        m_param_value = NULL;
+        m_param_value = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetEventProfilingInfo()
     {
-        if (m_param_value != NULL)
+        if (nullptr != m_param_value)
         {
             FreeBuffer(m_param_value);
         }
@@ -4841,7 +4846,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -4850,7 +4855,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_event) << s_strParamSeparator
@@ -4893,7 +4898,7 @@ public:
         m_replaced_null_param = replaced_null_param;
         m_param_value_size_retVal = *param_value_size_ret;
 
-        if (param_value != NULL)
+        if (nullptr != param_value)
         {
             DeepCopyBuffer(&m_param_value, param_value, RETVALMIN(m_param_value_size_retVal, m_param_value_size));
         }
@@ -4904,12 +4909,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetEventProfilingInfo(const CLAPI_clGetEventProfilingInfo& obj);
+    CLAPI_clGetEventProfilingInfo(const CLAPI_clGetEventProfilingInfo& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetEventProfilingInfo& operator = (const CLAPI_clGetEventProfilingInfo& obj);
+    CLAPI_clGetEventProfilingInfo& operator = (const CLAPI_clGetEventProfilingInfo& obj) = delete;
 
 private:
     cl_event          m_event;                   ///< parameter for clGetEventProfilingInfo
@@ -4929,14 +4934,14 @@ class CLAPI_clFlush : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clFlush() {}
+    CLAPI_clFlush() = default;
 
     /// Destructor
     ~CLAPI_clFlush() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -4945,7 +4950,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue);
@@ -4973,12 +4978,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clFlush(const CLAPI_clFlush& obj);
+    CLAPI_clFlush(const CLAPI_clFlush& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clFlush& operator = (const CLAPI_clFlush& obj);
+    CLAPI_clFlush& operator = (const CLAPI_clFlush& obj) = delete;
 
 private:
     cl_command_queue m_command_queue; ///< parameter for clFlush
@@ -4992,14 +4997,14 @@ class CLAPI_clFinish : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clFinish() {}
+    CLAPI_clFinish() = default;
 
     /// Destructor
     ~CLAPI_clFinish() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -5008,7 +5013,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue);
@@ -5036,12 +5041,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clFinish(const CLAPI_clFinish& obj);
+    CLAPI_clFinish(const CLAPI_clFinish& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clFinish& operator = (const CLAPI_clFinish& obj);
+    CLAPI_clFinish& operator = (const CLAPI_clFinish& obj) = delete;
 
 private:
     cl_command_queue m_command_queue; ///< parameter for clFinish
@@ -5055,21 +5060,21 @@ class CLAPI_clCreateFromGLBuffer : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clCreateFromGLBuffer() {}
+    CLAPI_clCreateFromGLBuffer() = default;
 
     /// Destructor
     ~CLAPI_clCreateFromGLBuffer() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -5105,7 +5110,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -5120,12 +5125,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateFromGLBuffer(const CLAPI_clCreateFromGLBuffer& obj);
+    CLAPI_clCreateFromGLBuffer(const CLAPI_clCreateFromGLBuffer& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateFromGLBuffer& operator = (const CLAPI_clCreateFromGLBuffer& obj);
+    CLAPI_clCreateFromGLBuffer& operator = (const CLAPI_clCreateFromGLBuffer& obj) = delete;
 
 private:
     cl_context   m_context;        ///< parameter for clCreateFromGLBuffer
@@ -5143,21 +5148,21 @@ class CLAPI_clCreateFromGLTexture2D : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clCreateFromGLTexture2D() {}
+    CLAPI_clCreateFromGLTexture2D() = default;
 
     /// Destructor
     ~CLAPI_clCreateFromGLTexture2D() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -5201,7 +5206,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -5216,12 +5221,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateFromGLTexture2D(const CLAPI_clCreateFromGLTexture2D& obj);
+    CLAPI_clCreateFromGLTexture2D(const CLAPI_clCreateFromGLTexture2D& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateFromGLTexture2D& operator = (const CLAPI_clCreateFromGLTexture2D& obj);
+    CLAPI_clCreateFromGLTexture2D& operator = (const CLAPI_clCreateFromGLTexture2D& obj) = delete;
 
 private:
     cl_context   m_context;        ///< parameter for clCreateFromGLTexture2D
@@ -5241,21 +5246,21 @@ class CLAPI_clCreateFromGLTexture3D : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clCreateFromGLTexture3D() {}
+    CLAPI_clCreateFromGLTexture3D() = default;
 
     /// Destructor
     ~CLAPI_clCreateFromGLTexture3D() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -5299,7 +5304,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -5314,12 +5319,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateFromGLTexture3D(const CLAPI_clCreateFromGLTexture3D& obj);
+    CLAPI_clCreateFromGLTexture3D(const CLAPI_clCreateFromGLTexture3D& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateFromGLTexture3D& operator = (const CLAPI_clCreateFromGLTexture3D& obj);
+    CLAPI_clCreateFromGLTexture3D& operator = (const CLAPI_clCreateFromGLTexture3D& obj) = delete;
 
 private:
     cl_context   m_context;        ///< parameter for clCreateFromGLTexture3D
@@ -5339,21 +5344,21 @@ class CLAPI_clCreateFromGLRenderbuffer : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clCreateFromGLRenderbuffer() {}
+    CLAPI_clCreateFromGLRenderbuffer() = default;
 
     /// Destructor
     ~CLAPI_clCreateFromGLRenderbuffer() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -5389,7 +5394,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -5404,12 +5409,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateFromGLRenderbuffer(const CLAPI_clCreateFromGLRenderbuffer& obj);
+    CLAPI_clCreateFromGLRenderbuffer(const CLAPI_clCreateFromGLRenderbuffer& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateFromGLRenderbuffer& operator = (const CLAPI_clCreateFromGLRenderbuffer& obj);
+    CLAPI_clCreateFromGLRenderbuffer& operator = (const CLAPI_clCreateFromGLRenderbuffer& obj) = delete;
 
 private:
     cl_context   m_context;        ///< parameter for clCreateFromGLRenderbuffer
@@ -5427,21 +5432,21 @@ class CLAPI_clGetGLObjectInfo : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clGetGLObjectInfo() {}
+    CLAPI_clGetGLObjectInfo() = default;
 
     /// Destructor
     ~CLAPI_clGetGLObjectInfo() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return CLStringUtils::GetErrorString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_memobj) << s_strParamSeparator
@@ -5471,7 +5476,7 @@ public:
         m_memobj = memobj;
         m_gl_object_type = gl_object_type;
 
-        if (gl_object_type != NULL)
+        if (nullptr != gl_object_type)
         {
             m_gl_object_typeVal = *gl_object_type;
         }
@@ -5482,7 +5487,7 @@ public:
 
         m_gl_object_name = gl_object_name;
 
-        if (gl_object_name != NULL)
+        if (nullptr != gl_object_name)
         {
             m_gl_object_nameVal = *gl_object_name;
         }
@@ -5498,12 +5503,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetGLObjectInfo(const CLAPI_clGetGLObjectInfo& obj);
+    CLAPI_clGetGLObjectInfo(const CLAPI_clGetGLObjectInfo& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetGLObjectInfo& operator = (const CLAPI_clGetGLObjectInfo& obj);
+    CLAPI_clGetGLObjectInfo& operator= (const CLAPI_clGetGLObjectInfo& obj) = delete;
 
 private:
     cl_mem             m_memobj;            ///< parameter for clGetGLObjectInfo
@@ -5523,13 +5528,13 @@ public:
     /// Constructor
     CLAPI_clGetGLTextureInfo()
     {
-        m_param_value = NULL;
+        m_param_value = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetGLTextureInfo()
     {
-        if (m_param_value != NULL)
+        if (nullptr != m_param_value)
         {
             FreeBuffer(m_param_value);
         }
@@ -5537,14 +5542,14 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return CLStringUtils::GetErrorString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_memobj) << s_strParamSeparator
@@ -5587,7 +5592,7 @@ public:
         m_replaced_null_param = replaced_null_param;
         m_param_value_size_retVal = *param_value_size_ret;
 
-        if (param_value != NULL)
+        if (nullptr != param_value)
         {
             DeepCopyBuffer(&m_param_value, param_value, RETVALMIN(m_param_value_size_retVal, m_param_value_size));
         }
@@ -5598,12 +5603,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetGLTextureInfo(const CLAPI_clGetGLTextureInfo& obj);
+    CLAPI_clGetGLTextureInfo(const CLAPI_clGetGLTextureInfo& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetGLTextureInfo& operator = (const CLAPI_clGetGLTextureInfo& obj);
+    CLAPI_clGetGLTextureInfo& operator = (const CLAPI_clGetGLTextureInfo& obj) = delete;
 
 private:
     cl_mem             m_memobj;                  ///< parameter for clGetGLTextureInfo
@@ -5623,21 +5628,21 @@ class CLAPI_clCreateEventFromGLsyncKHR : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clCreateEventFromGLsyncKHR() {}
+    CLAPI_clCreateEventFromGLsyncKHR() = default;
 
     /// Destructor
     ~CLAPI_clCreateEventFromGLsyncKHR() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -5669,7 +5674,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -5684,12 +5689,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateEventFromGLsyncKHR(const CLAPI_clCreateEventFromGLsyncKHR& obj);
+    CLAPI_clCreateEventFromGLsyncKHR(const CLAPI_clCreateEventFromGLsyncKHR& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateEventFromGLsyncKHR& operator = (const CLAPI_clCreateEventFromGLsyncKHR& obj);
+    CLAPI_clCreateEventFromGLsyncKHR& operator = (const CLAPI_clCreateEventFromGLsyncKHR& obj) = delete;
 
 private:
     cl_context m_context;        ///< parameter for clCreateEventFromGLsyncKHR
@@ -5708,13 +5713,13 @@ public:
     /// Constructor
     CLAPI_clGetGLContextInfoKHR()
     {
-        m_param_value = NULL;
+        m_param_value = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetGLContextInfoKHR()
     {
-        if (m_param_value != NULL)
+        if (nullptr != m_param_value)
         {
             FreeBuffer(m_param_value);
         }
@@ -5722,14 +5727,14 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return CLStringUtils::GetErrorString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetContextPropertiesString(m_properties, m_vecProperties) << s_strParamSeparator
@@ -5769,7 +5774,7 @@ public:
 
         int num_properties = 0;
 
-        if (properties != NULL)
+        if (nullptr != properties)
         {
             // properties is 0 terminated
             while (properties[0] != 0 && num_properties < SP_MAX_NUM_CONTEXT_PROPERTIES)
@@ -5780,7 +5785,7 @@ public:
             }
         }
 
-        if (num_properties == SP_MAX_NUM_CONTEXT_PROPERTIES)
+        if (SP_MAX_NUM_CONTEXT_PROPERTIES == num_properties)
         {
             //add a dummy value (zero) that tells GetContextPropertiesString that the list has been truncated
             m_vecProperties.push_back(0);
@@ -5792,7 +5797,7 @@ public:
         m_replaced_null_param = replaced_null_param;
         m_param_value_size_retVal = *param_value_size_ret;
 
-        if (param_value != NULL)
+        if (nullptr != param_value)
         {
             DeepCopyBuffer(&m_param_value, param_value, RETVALMIN(m_param_value_size_retVal, m_param_value_size));
         }
@@ -5803,12 +5808,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetGLContextInfoKHR(const CLAPI_clGetGLContextInfoKHR& obj);
+    CLAPI_clGetGLContextInfoKHR(const CLAPI_clGetGLContextInfoKHR& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetGLContextInfoKHR& operator = (const CLAPI_clGetGLContextInfoKHR& obj);
+    CLAPI_clGetGLContextInfoKHR& operator= (const CLAPI_clGetGLContextInfoKHR& obj) = delete;
 
 private:
     const cl_context_properties*       m_properties;              ///< parameter for clGetGLContextInfoKHR
@@ -5831,13 +5836,13 @@ public:
     /// Constructor
     CLAPI_clCreateSubDevicesEXT()
     {
-        m_out_devices = NULL;
+        m_out_devices = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clCreateSubDevicesEXT()
     {
-        if (m_out_devices != NULL)
+        if (nullptr != m_out_devices)
         {
             FreeArray(m_out_devices);
         }
@@ -5845,7 +5850,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -5854,7 +5859,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_in_device) << s_strParamSeparator
@@ -5891,11 +5896,11 @@ public:
         m_type = CL_FUNC_TYPE_clCreateSubDevicesEXT;
         m_in_device = in_device;
 
-        if (partition_properties != NULL)
+        if (nullptr != partition_properties)
         {
             cl_device_partition_property_ext sub_list_terminator = 0;
 
-            if (partition_properties[0] == CL_DEVICE_PARTITION_BY_NAMES_EXT)
+            if (CL_DEVICE_PARTITION_BY_NAMES_EXT == partition_properties[0])
             {
                 sub_list_terminator = CL_PARTITION_BY_NAMES_LIST_END_EXT;
             }
@@ -5911,7 +5916,7 @@ public:
         m_num_devices = num_devices;
         m_replaced_null_param = replaced_null_param;
 
-        if (retVal == CL_SUCCESS)
+        if (CL_SUCCESS == retVal)
         {
             m_num_devicesVal = *num_devices;
             DeepCopyArray(&m_out_devices, out_devices, RETVALMIN(m_num_devicesVal, m_num_entries));
@@ -5923,12 +5928,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateSubDevicesEXT(const CLAPI_clCreateSubDevicesEXT& obj);
+    CLAPI_clCreateSubDevicesEXT(const CLAPI_clCreateSubDevicesEXT& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateSubDevicesEXT& operator = (const CLAPI_clCreateSubDevicesEXT& obj);
+    CLAPI_clCreateSubDevicesEXT& operator = (const CLAPI_clCreateSubDevicesEXT& obj) = delete;
 
 private:
     cl_device_id     m_in_device;           ///< parameter for clCreateSubDevicesEXT
@@ -5949,14 +5954,14 @@ class CLAPI_clRetainDeviceEXT : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clRetainDeviceEXT() {}
+    CLAPI_clRetainDeviceEXT() = default;
 
     /// Destructor
     ~CLAPI_clRetainDeviceEXT() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -5965,7 +5970,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_device);
@@ -5993,12 +5998,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clRetainDeviceEXT(const CLAPI_clRetainDeviceEXT& obj);
+    CLAPI_clRetainDeviceEXT(const CLAPI_clRetainDeviceEXT& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clRetainDeviceEXT& operator = (const CLAPI_clRetainDeviceEXT& obj);
+    CLAPI_clRetainDeviceEXT& operator = (const CLAPI_clRetainDeviceEXT& obj) = delete;
 
 private:
     cl_device_id m_device; ///< parameter for clRetainDeviceEXT
@@ -6012,14 +6017,14 @@ class CLAPI_clReleaseDeviceEXT : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clReleaseDeviceEXT() {}
+    CLAPI_clReleaseDeviceEXT() = default;
 
     /// Destructor
     ~CLAPI_clReleaseDeviceEXT() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -6028,7 +6033,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_device);
@@ -6056,12 +6061,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clReleaseDeviceEXT(const CLAPI_clReleaseDeviceEXT& obj);
+    CLAPI_clReleaseDeviceEXT(const CLAPI_clReleaseDeviceEXT& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clReleaseDeviceEXT& operator = (const CLAPI_clReleaseDeviceEXT& obj);
+    CLAPI_clReleaseDeviceEXT& operator = (const CLAPI_clReleaseDeviceEXT& obj) = delete;
 
 private:
     cl_device_id m_device; ///< parameter for clReleaseDeviceEXT
@@ -6078,13 +6083,13 @@ public:
     /// Constructor
     CLAPI_clGetDeviceIDsFromD3D10KHR()
     {
-        m_device_list = NULL;
+        m_device_list = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetDeviceIDsFromD3D10KHR()
     {
-        if (m_device_list != NULL)
+        if (nullptr != m_device_list)
         {
             FreeArray(m_device_list);
         }
@@ -6092,14 +6097,14 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return CLStringUtils::GetErrorString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_platform) << s_strParamSeparator
@@ -6150,7 +6155,7 @@ public:
         m_num_devices = num_devices;
         m_replaced_null_param = replaced_null_param;
 
-        if (retVal == CL_SUCCESS)
+        if (CL_SUCCESS == retVal)
         {
             m_num_devicesVal = *num_devices;
             DeepCopyArray(&m_device_list, device_list, RETVALMIN(m_num_devicesVal, m_num_entries));
@@ -6162,12 +6167,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetDeviceIDsFromD3D10KHR(const CLAPI_clGetDeviceIDsFromD3D10KHR& obj);
+    CLAPI_clGetDeviceIDsFromD3D10KHR(const CLAPI_clGetDeviceIDsFromD3D10KHR& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetDeviceIDsFromD3D10KHR& operator = (const CLAPI_clGetDeviceIDsFromD3D10KHR& obj);
+    CLAPI_clGetDeviceIDsFromD3D10KHR& operator = (const CLAPI_clGetDeviceIDsFromD3D10KHR& obj) = delete;
 
 private:
     cl_platform_id             m_platform;            ///< parameter for clGetDeviceIDsFromD3D10KHR
@@ -6189,21 +6194,21 @@ class CLAPI_clCreateFromD3D10BufferKHR : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clCreateFromD3D10BufferKHR() { }
+    CLAPI_clCreateFromD3D10BufferKHR() = default;
 
     /// Destructor
     ~CLAPI_clCreateFromD3D10BufferKHR() { }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -6240,7 +6245,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -6255,12 +6260,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateFromD3D10BufferKHR(const CLAPI_clCreateFromD3D10BufferKHR& obj);
+    CLAPI_clCreateFromD3D10BufferKHR(const CLAPI_clCreateFromD3D10BufferKHR& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateFromD3D10BufferKHR& operator = (const CLAPI_clCreateFromD3D10BufferKHR& obj);
+    CLAPI_clCreateFromD3D10BufferKHR& operator = (const CLAPI_clCreateFromD3D10BufferKHR& obj) = delete;
 
 private:
     cl_context    m_context;        ///< parameter for clCreateFromD3D10BufferKHR
@@ -6278,21 +6283,21 @@ class CLAPI_clCreateFromD3D10Texture2DKHR : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clCreateFromD3D10Texture2DKHR() { }
+    CLAPI_clCreateFromD3D10Texture2DKHR() = default;
 
     /// Destructor
     ~CLAPI_clCreateFromD3D10Texture2DKHR() { }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -6333,7 +6338,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -6348,12 +6353,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateFromD3D10Texture2DKHR(const CLAPI_clCreateFromD3D10Texture2DKHR& obj);
+    CLAPI_clCreateFromD3D10Texture2DKHR(const CLAPI_clCreateFromD3D10Texture2DKHR& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateFromD3D10Texture2DKHR& operator = (const CLAPI_clCreateFromD3D10Texture2DKHR& obj);
+    CLAPI_clCreateFromD3D10Texture2DKHR& operator = (const CLAPI_clCreateFromD3D10Texture2DKHR& obj) = delete;
 
 private:
     cl_context       m_context;        ///< parameter for clCreateFromD3D10Texture2DKHR
@@ -6372,21 +6377,21 @@ class CLAPI_clCreateFromD3D10Texture3DKHR : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clCreateFromD3D10Texture3DKHR() { }
+    CLAPI_clCreateFromD3D10Texture3DKHR() = default;
 
     /// Destructor
     ~CLAPI_clCreateFromD3D10Texture3DKHR() { }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -6427,7 +6432,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr !=  errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -6442,12 +6447,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateFromD3D10Texture3DKHR(const CLAPI_clCreateFromD3D10Texture3DKHR& obj);
+    CLAPI_clCreateFromD3D10Texture3DKHR(const CLAPI_clCreateFromD3D10Texture3DKHR& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateFromD3D10Texture3DKHR& operator = (const CLAPI_clCreateFromD3D10Texture3DKHR& obj);
+    CLAPI_clCreateFromD3D10Texture3DKHR& operator = (const CLAPI_clCreateFromD3D10Texture3DKHR& obj) = delete;
 
 private:
     cl_context       m_context;        ///< parameter for clCreateFromD3D10Texture3DKHR
@@ -6469,13 +6474,13 @@ public:
     /// Constructor
     CLAPI_clCreateSubDevices()
     {
-        m_out_devices = NULL;
+        m_out_devices = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clCreateSubDevices()
     {
-        if (m_out_devices != NULL)
+        if (nullptr != m_out_devices)
         {
             FreeArray(m_out_devices);
         }
@@ -6483,7 +6488,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -6492,7 +6497,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_in_device) << s_strParamSeparator
@@ -6529,11 +6534,11 @@ public:
         m_type = CL_FUNC_TYPE_clCreateSubDevices;
         m_in_device = in_device;
 
-        if (partition_properties != NULL)
+        if (nullptr != partition_properties)
         {
             cl_device_partition_property sub_list_terminator = 0;
 
-            if (partition_properties[0] == CL_DEVICE_PARTITION_BY_COUNTS)
+            if (CL_DEVICE_PARTITION_BY_COUNTS == partition_properties[0])
             {
                 sub_list_terminator = CL_DEVICE_PARTITION_BY_COUNTS_LIST_END;
             }
@@ -6549,7 +6554,7 @@ public:
         m_num_devices = num_devices;
         m_replaced_null_param = replaced_null_param;
 
-        if (retVal == CL_SUCCESS)
+        if (CL_SUCCESS == retVal)
         {
             m_num_devicesVal = *num_devices;
             DeepCopyArray(&m_out_devices, out_devices, RETVALMIN(m_num_devicesVal, m_num_entries));
@@ -6561,12 +6566,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateSubDevices(const CLAPI_clCreateSubDevices& obj);
+    CLAPI_clCreateSubDevices(const CLAPI_clCreateSubDevices& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateSubDevices& operator = (const CLAPI_clCreateSubDevices& obj);
+    CLAPI_clCreateSubDevices& operator = (const CLAPI_clCreateSubDevices& obj) = delete;
 
 private:
     cl_device_id     m_in_device;           ///< parameter for clCreateSubDevices
@@ -6587,14 +6592,14 @@ class CLAPI_clRetainDevice : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clRetainDevice() {}
+    CLAPI_clRetainDevice() = default;
 
     /// Destructor
     ~CLAPI_clRetainDevice() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -6603,7 +6608,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_device);
@@ -6631,12 +6636,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clRetainDevice(const CLAPI_clRetainDevice& obj);
+    CLAPI_clRetainDevice(const CLAPI_clRetainDevice& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clRetainDevice& operator = (const CLAPI_clRetainDevice& obj);
+    CLAPI_clRetainDevice& operator = (const CLAPI_clRetainDevice& obj) = delete;
 
 private:
     cl_device_id m_device; ///< parameter for clRetainDevice
@@ -6650,14 +6655,14 @@ class CLAPI_clReleaseDevice : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clReleaseDevice() {}
+    CLAPI_clReleaseDevice() = default;
 
     /// Destructor
     ~CLAPI_clReleaseDevice() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -6666,7 +6671,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_device);
@@ -6694,12 +6699,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clReleaseDevice(const CLAPI_clReleaseDevice& obj);
+    CLAPI_clReleaseDevice(const CLAPI_clReleaseDevice& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clReleaseDevice& operator = (const CLAPI_clReleaseDevice& obj);
+    CLAPI_clReleaseDevice& operator = (const CLAPI_clReleaseDevice& obj) = delete;
 
 private:
     cl_device_id m_device; ///< parameter for clReleaseDevice
@@ -6715,18 +6720,18 @@ public:
     /// Constructor
     CLAPI_clCreateImage()
     {
-        m_image_format = NULL;
+        m_image_format = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clCreateImage()
     {
-        if (m_image_format != NULL)
+        if (nullptr != m_image_format)
         {
             delete m_image_format;
         }
 
-        if (m_image_desc != NULL)
+        if (nullptr != m_image_desc)
         {
             delete m_image_desc;
         }
@@ -6734,14 +6739,14 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -6785,7 +6790,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -6800,12 +6805,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateImage(const CLAPI_clCreateImage& obj);
+    CLAPI_clCreateImage(const CLAPI_clCreateImage& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateImage& operator = (const CLAPI_clCreateImage& obj);
+    CLAPI_clCreateImage& operator = (const CLAPI_clCreateImage& obj) = delete;
 
 private:
     cl_context       m_context;         ///< parameter for clCreateImage
@@ -6827,13 +6832,13 @@ public:
     /// Constructor
     CLAPI_clCreateProgramWithBuiltInKernels()
     {
-        m_device_list = NULL;
+        m_device_list = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clCreateProgramWithBuiltInKernels()
     {
-        if (m_device_list != NULL)
+        if (nullptr != m_device_list)
         {
             FreeArray(m_device_list);
         }
@@ -6841,14 +6846,14 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -6886,7 +6891,7 @@ public:
         DeepCopyArray(&m_device_list, device_list, num_devices);
         m_kernel_names = kernel_names;
 
-        if (kernel_names != NULL)
+        if (nullptr != kernel_names)
         {
             m_str_kernel_names = std::string(kernel_names);
         }
@@ -6897,7 +6902,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -6912,12 +6917,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateProgramWithBuiltInKernels(const CLAPI_clCreateProgramWithBuiltInKernels& obj);
+    CLAPI_clCreateProgramWithBuiltInKernels(const CLAPI_clCreateProgramWithBuiltInKernels& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateProgramWithBuiltInKernels& operator = (const CLAPI_clCreateProgramWithBuiltInKernels& obj);
+    CLAPI_clCreateProgramWithBuiltInKernels& operator = (const CLAPI_clCreateProgramWithBuiltInKernels& obj) = delete;
 
 private:
     cl_context            m_context;          ///< parameter for clCreateProgramWithBuiltInKernels
@@ -6939,23 +6944,23 @@ public:
     /// Constructor
     CLAPI_clCompileProgram()
     {
-        m_device_list = NULL;
+        m_device_list = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clCompileProgram()
     {
-        if (m_device_list != NULL)
+        if (nullptr != m_device_list)
         {
             FreeArray(m_device_list);
         }
 
-        if (m_input_headers != NULL)
+        if (nullptr != m_input_headers)
         {
             FreeArray(m_input_headers);
         }
 
-        if (m_header_include_names != NULL)
+        if (nullptr != m_header_include_names)
         {
             FreeArray(m_header_include_names);
         }
@@ -6963,7 +6968,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -6972,7 +6977,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_program) << s_strParamSeparator
@@ -7031,7 +7036,7 @@ public:
         std::string strExtraBldOpts = OSUtils::Instance()->GetEnvVar("AMD_OCL_BUILD_OPTIONS_APPEND");
         m_bOptionsAppended = !strExtraBldOpts.empty();
 
-        if (options != NULL)
+        if (nullptr != options)
         {
             m_strOptions = std::string(options);
             std::vector<std::string> switches;
@@ -7083,12 +7088,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCompileProgram(const CLAPI_clCompileProgram& obj);
+    CLAPI_clCompileProgram(const CLAPI_clCompileProgram& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCompileProgram& operator = (const CLAPI_clCompileProgram& obj);
+    CLAPI_clCompileProgram& operator = (const CLAPI_clCompileProgram& obj) = delete;
 
 private:
     cl_program    m_program;              ///< parameter for clCompileProgram
@@ -7115,18 +7120,18 @@ public:
     /// Constructor
     CLAPI_clLinkProgram()
     {
-        m_device_list = NULL;
+        m_device_list = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clLinkProgram()
     {
-        if (m_device_list != NULL)
+        if (nullptr != m_device_list)
         {
             FreeArray(m_device_list);
         }
 
-        if (m_input_programs != NULL)
+        if (nullptr != m_input_programs)
         {
             FreeArray(m_input_programs);
         }
@@ -7134,7 +7139,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_retVal);
@@ -7143,7 +7148,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -7203,7 +7208,7 @@ public:
         std::string strExtraBldOpts = OSUtils::Instance()->GetEnvVar("AMD_OCL_LINK_OPTIONS_APPEND");
         m_bOptionsAppended = !strExtraBldOpts.empty();
 
-        if (options != NULL)
+        if (nullptr != options)
         {
             m_strOptions = std::string(options);
             std::vector<std::string> switches;
@@ -7251,7 +7256,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -7266,12 +7271,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clLinkProgram(const CLAPI_clLinkProgram& obj);
+    CLAPI_clLinkProgram(const CLAPI_clLinkProgram& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clLinkProgram& operator = (const CLAPI_clLinkProgram& obj);
+    CLAPI_clLinkProgram& operator = (const CLAPI_clLinkProgram& obj) = delete;
 
 private:
     cl_context    m_context;              ///< parameter for clLinkProgram
@@ -7297,14 +7302,14 @@ class CLAPI_clUnloadPlatformCompiler : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clUnloadPlatformCompiler() {}
+    CLAPI_clUnloadPlatformCompiler() = default;
 
     /// Destructor
     ~CLAPI_clUnloadPlatformCompiler() {}
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_platform) << s_strParamSeparator;
@@ -7313,7 +7318,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -7341,12 +7346,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clUnloadPlatformCompiler(const CLAPI_clUnloadPlatformCompiler& obj);
+    CLAPI_clUnloadPlatformCompiler(const CLAPI_clUnloadPlatformCompiler& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clUnloadPlatformCompiler& operator = (const CLAPI_clUnloadPlatformCompiler& obj);
+    CLAPI_clUnloadPlatformCompiler& operator = (const CLAPI_clUnloadPlatformCompiler& obj) = delete;
 
 private:
     cl_platform_id m_platform; ///< parameter for clUnloadPlatformCompiler
@@ -7362,13 +7367,13 @@ public:
     /// Constructor
     CLAPI_clGetKernelArgInfo()
     {
-        m_param_value = NULL;
+        m_param_value = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetKernelArgInfo()
     {
-        if (NULL != m_param_value)
+        if (nullptr != m_param_value)
         {
             FreeBuffer(m_param_value);
         }
@@ -7376,14 +7381,14 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return CLStringUtils::GetErrorString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_kernel) << s_strParamSeparator
@@ -7430,7 +7435,7 @@ public:
         m_replaced_null_param = replaced_null_param;
         m_param_value_size_retVal = *param_value_size_ret;
 
-        if (param_value != NULL)
+        if (nullptr != param_value)
         {
             DeepCopyBuffer(&m_param_value, param_value, RETVALMIN(m_param_value_size_retVal, m_param_value_size));
         }
@@ -7442,12 +7447,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetKernelArgInfo(const CLAPI_clGetKernelArgInfo& obj);
+    CLAPI_clGetKernelArgInfo(const CLAPI_clGetKernelArgInfo& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetKernelArgInfo& operator = (const CLAPI_clGetKernelArgInfo& obj);
+    CLAPI_clGetKernelArgInfo& operator = (const CLAPI_clGetKernelArgInfo& obj) = delete;
 
     cl_kernel          m_kernel;                  ///< parameter for CLAPI_clGetKernelArgInfo
     cl_uint            m_arg_index;               ///< parameter for CLAPI_clGetKernelArgInfo
@@ -7467,21 +7472,21 @@ class CLAPI_clGetExtensionFunctionAddressForPlatform : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clGetExtensionFunctionAddressForPlatform() { }
+    CLAPI_clGetExtensionFunctionAddressForPlatform() = default;
 
     /// Destructor
     ~CLAPI_clGetExtensionFunctionAddressForPlatform() { }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_platform) << s_strParamSeparator
@@ -7514,12 +7519,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetExtensionFunctionAddressForPlatform(const CLAPI_clGetExtensionFunctionAddressForPlatform& obj);
+    CLAPI_clGetExtensionFunctionAddressForPlatform(const CLAPI_clGetExtensionFunctionAddressForPlatform& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetExtensionFunctionAddressForPlatform& operator = (const CLAPI_clGetExtensionFunctionAddressForPlatform& obj);
+    CLAPI_clGetExtensionFunctionAddressForPlatform& operator = (const CLAPI_clGetExtensionFunctionAddressForPlatform& obj) = delete;
 
     cl_platform_id m_platform;     ///< parameter for CLAPI_clGetExtensionFunctionAddressForPlatform
     const char*    m_funcname;     ///< parameter for CLAPI_clGetExtensionFunctionAddressForPlatform
@@ -7534,21 +7539,21 @@ class CLAPI_clCreateFromGLTexture : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clCreateFromGLTexture() {}
+    CLAPI_clCreateFromGLTexture() = default;
 
     /// Destructor
     ~CLAPI_clCreateFromGLTexture() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -7592,7 +7597,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -7607,12 +7612,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreateFromGLTexture(const CLAPI_clCreateFromGLTexture& obj);
+    CLAPI_clCreateFromGLTexture(const CLAPI_clCreateFromGLTexture& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreateFromGLTexture& operator = (const CLAPI_clCreateFromGLTexture& obj);
+    CLAPI_clCreateFromGLTexture& operator = (const CLAPI_clCreateFromGLTexture& obj) = delete;
 
 private:
     cl_context   m_context;        ///< parameter for clCreateFromGLTexture
@@ -7632,21 +7637,21 @@ class CLAPI_clGetExtensionFunctionAddress : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clGetExtensionFunctionAddress() { }
+    CLAPI_clGetExtensionFunctionAddress() = default;
 
     /// Destructor
     ~CLAPI_clGetExtensionFunctionAddress() { }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetQuotedString(m_str_funcname, m_funcname);
@@ -7675,12 +7680,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetExtensionFunctionAddress(const CLAPI_clGetExtensionFunctionAddress& obj);
+    CLAPI_clGetExtensionFunctionAddress(const CLAPI_clGetExtensionFunctionAddress& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetExtensionFunctionAddress& operator = (const CLAPI_clGetExtensionFunctionAddress& obj);
+    CLAPI_clGetExtensionFunctionAddress& operator = (const CLAPI_clGetExtensionFunctionAddress& obj) = delete;
 
     const char* m_funcname;     ///< parameter for CLAPI_clGetExtensionFunctionAddress
     std::string m_str_funcname; ///< std:string version of the function name
@@ -7694,21 +7699,21 @@ class CLAPI_clSVMAlloc : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clSVMAlloc() { }
+    CLAPI_clSVMAlloc() = default;
 
     /// Destructor
     ~CLAPI_clSVMAlloc() { }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -7759,12 +7764,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clSVMAlloc(const CLAPI_clSVMAlloc& obj);
+    CLAPI_clSVMAlloc(const CLAPI_clSVMAlloc& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clSVMAlloc& operator = (const CLAPI_clSVMAlloc& obj);
+    CLAPI_clSVMAlloc& operator = (const CLAPI_clSVMAlloc& obj) = delete;
 
     cl_context       m_context;   ///< parameter for CLAPI_clSVMAlloc
     cl_svm_mem_flags m_flags;     ///< parameter for CLAPI_clSVMAlloc
@@ -7780,21 +7785,21 @@ class CLAPI_clSVMFree : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clSVMFree() { }
+    CLAPI_clSVMFree() = default;
 
     /// Destructor
     ~CLAPI_clSVMFree() { }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return "";
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -7833,12 +7838,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clSVMFree(const CLAPI_clSVMFree& obj);
+    CLAPI_clSVMFree(const CLAPI_clSVMFree& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clSVMFree& operator = (const CLAPI_clSVMFree& obj);
+    CLAPI_clSVMFree& operator = (const CLAPI_clSVMFree& obj) = delete;
 
     cl_context m_context;     ///< parameter for CLAPI_clSVMFree
     void*      m_svm_pointer; ///< parameter for CLAPI_clSVMFree
@@ -7851,21 +7856,21 @@ class CLAPI_clSetKernelArgSVMPointer : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clSetKernelArgSVMPointer() { }
+    CLAPI_clSetKernelArgSVMPointer() = default;
 
     /// Destructor
     ~CLAPI_clSetKernelArgSVMPointer() { }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return CLStringUtils::GetErrorString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_kernel) << s_strParamSeparator
@@ -7912,12 +7917,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clSetKernelArgSVMPointer(const CLAPI_clSetKernelArgSVMPointer& obj);
+    CLAPI_clSetKernelArgSVMPointer(const CLAPI_clSetKernelArgSVMPointer& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clSetKernelArgSVMPointer& operator = (const CLAPI_clSetKernelArgSVMPointer& obj);
+    CLAPI_clSetKernelArgSVMPointer& operator = (const CLAPI_clSetKernelArgSVMPointer& obj) = delete;
 
     cl_kernel   m_kernel;    ///< parameter for CLAPI_clSetKernelArgSVMPointer
     cl_uint     m_arg_index; ///< parameter for CLAPI_clSetKernelArgSVMPointer
@@ -7934,13 +7939,13 @@ public:
     /// Constructor
     CLAPI_clSetKernelExecInfo()
     {
-        m_param_value = NULL;
+        m_param_value = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clSetKernelExecInfo()
     {
-        if (m_param_value != NULL)
+        if (nullptr != m_param_value)
         {
             FreeBuffer(m_param_value);
         }
@@ -7948,14 +7953,14 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return CLStringUtils::GetErrorString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_kernel) << s_strParamSeparator
@@ -7990,7 +7995,7 @@ public:
         m_param_name = param_name;
         m_param_value_size = param_value_size;
 
-        if (param_value != NULL)
+        if (nullptr != param_value)
         {
             DeepCopyBuffer(&m_param_value, param_value, m_param_value_size);
         }
@@ -8010,12 +8015,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clSetKernelExecInfo(const CLAPI_clSetKernelExecInfo& obj);
+    CLAPI_clSetKernelExecInfo(const CLAPI_clSetKernelExecInfo& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clSetKernelExecInfo& operator = (const CLAPI_clSetKernelExecInfo& obj);
+    CLAPI_clSetKernelExecInfo& operator = (const CLAPI_clSetKernelExecInfo& obj) = delete;
 
     cl_kernel   m_kernel;             ///< parameter for CLAPI_clSetKernelExecInfo
     cl_kernel_exec_info m_param_name; ///< parameter for CLAPI_clSetKernelExecInfo
@@ -8031,21 +8036,21 @@ class CLAPI_clCreatePipe : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clCreatePipe() {}
+    CLAPI_clCreatePipe() = default;
 
     /// Destructor
     ~CLAPI_clCreatePipe() {}
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return StringUtils::ToHexString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
@@ -8089,7 +8094,7 @@ public:
         // NOTE: in OCL 2.0 properties MUST be NULL -- so the below code is only being put into place to support future OCL versions where it may be non-NULL
         int num_properties = 0;
 
-        if (properties != NULL)
+        if (nullptr != properties)
         {
             // properties is 0 terminated
             while (properties[0] != 0 && num_properties < SP_MAX_NUM_CONTEXT_PROPERTIES)
@@ -8100,7 +8105,7 @@ public:
             }
         }
 
-        if (num_properties == SP_MAX_NUM_CONTEXT_PROPERTIES)
+        if (SP_MAX_NUM_CONTEXT_PROPERTIES == num_properties)
         {
             //add a dummy value (zero) that tells GetPipePropertiesString that the list has been truncated
             m_vecProperties.push_back(0);
@@ -8108,7 +8113,7 @@ public:
 
         m_errcode_ret = errcode_ret;
 
-        if (errcode_ret != NULL)
+        if (nullptr != errcode_ret)
         {
             m_errcode_retVal = *errcode_ret;
         }
@@ -8124,12 +8129,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clCreatePipe(const CLAPI_clCreatePipe& obj);
+    CLAPI_clCreatePipe(const CLAPI_clCreatePipe& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clCreatePipe& operator = (const CLAPI_clCreatePipe& obj);
+    CLAPI_clCreatePipe& operator = (const CLAPI_clCreatePipe& obj) = delete;
 
     cl_context                m_context;             ///< parameter for CLAPI_clCreatePipe
     cl_mem_flags              m_flags;               ///< parameter for CLAPI_clCreatePipe
@@ -8151,13 +8156,13 @@ public:
     /// Constructor
     CLAPI_clGetPipeInfo()
     {
-        m_param_value = NULL;
+        m_param_value = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clGetPipeInfo()
     {
-        if (m_param_value != NULL)
+        if (nullptr != m_param_value)
         {
             FreeBuffer(m_param_value);
         }
@@ -8165,7 +8170,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -8174,7 +8179,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_pipe) << s_strParamSeparator
@@ -8217,7 +8222,7 @@ public:
         m_replaced_null_param = replaced_null_param;
         m_param_value_size_retVal = *param_value_size_ret;
 
-        if (param_value != NULL)
+        if (nullptr != param_value)
         {
             DeepCopyBuffer(&m_param_value, param_value, RETVALMIN(m_param_value_size_retVal, m_param_value_size));
         }
@@ -8228,12 +8233,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clGetPipeInfo(const CLAPI_clGetPipeInfo& obj);
+    CLAPI_clGetPipeInfo(const CLAPI_clGetPipeInfo& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clGetPipeInfo& operator = (const CLAPI_clGetPipeInfo& obj);
+    CLAPI_clGetPipeInfo& operator = (const CLAPI_clGetPipeInfo& obj) = delete;
 
 private:
     cl_mem           m_pipe;                    ///< parameter for clGetPipeInfo

@@ -145,33 +145,49 @@ cl_int CL_API_CALL CL_API_TRACE_clGetDeviceIDs(
 
     CLAPI_clGetDeviceIDs* pAPIInfo = new(nothrow) CLAPI_clGetDeviceIDs();
 
-    ULONGLONG ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(pAPIInfo);
+    ULONGLONG ullStart = 0UL;
+    ULONGLONG ullEnd = 0UL;
+    cl_int ret = CL_SUCCESS;
 
-    cl_int ret = g_nextDispatchTable.GetDeviceIDs(
-        platform,
-        device_type,
-        num_entries,
-        device_list,
-        num_devices);
-
-    ULONGLONG ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(pAPIInfo);
-
-    if(CL_SUCCESS == ret && GlobalSettings::GetInstance()->m_params.m_bForceSingleGPU && 0u <= GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex)
+    if (((device_type & CL_DEVICE_TYPE_GPU) == CL_DEVICE_TYPE_GPU) &&
+        GlobalSettings::GetInstance()->m_params.m_bForceSingleGPU &&
+        0u <= GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex)
     {
-        ret = CLDeviceReplacer::Instance()->ReplaceDeviceIds(platform, device_type, num_entries, device_list, num_devices, GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex, ret);
+        ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(pAPIInfo);
+        ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(pAPIInfo);
+        ret = CLDeviceReplacer::ReplaceDeviceIdsInclGetDeviceIds(
+                  platform,
+                  device_type,
+                  num_entries,
+                  device_list,
+                  num_devices,
+                  GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex,
+                  &ullStart,
+                  &ullEnd);
+    }
+    else
+    {
+        ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(pAPIInfo);
+        ret = g_nextDispatchTable.GetDeviceIDs(
+                  platform,
+                  device_type,
+                  num_entries,
+                  device_list,
+                  num_devices);
+        ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(pAPIInfo);
     }
 
     SpAssertRet(pAPIInfo != NULL) ret;
 
     pAPIInfo->Create(ullStart,
-        ullEnd,
-        platform,
-        device_type,
-        num_entries,
-        device_list,
-        num_devices,
-        replaced_null_param,
-        ret);
+                     ullEnd,
+                     platform,
+                     device_type,
+                     num_entries,
+                     device_list,
+                     num_devices,
+                     replaced_null_param,
+                     ret);
 
     RECORD_STACK_TRACE_FOR_API(pAPIInfo)
     CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
@@ -371,7 +387,7 @@ cl_int CL_API_CALL CL_API_TRACE_clGetContextInfo(
     void*               param_value ,
     size_t*             param_value_size_ret)
 {
-    bool replaced_null_param = param_value_size_ret == NULL;
+    bool replaced_null_param = param_value_size_ret == nullptr;
 
     size_t substituted_ret;
 
@@ -382,16 +398,38 @@ cl_int CL_API_CALL CL_API_TRACE_clGetContextInfo(
 
     CLAPI_clGetContextInfo* pAPIInfo = new(nothrow) CLAPI_clGetContextInfo();
 
-    ULONGLONG ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(pAPIInfo);
+    ULONGLONG ullStart = 0UL;
+    ULONGLONG ullEnd = 0UL;
 
-    cl_int ret = g_nextDispatchTable.GetContextInfo(
-                     context,
-                     param_name,
-                     param_value_size,
-                     param_value,
-                     param_value_size_ret);
+    cl_int ret = CL_SUCCESS;
 
-    ULONGLONG ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(pAPIInfo);
+    if ((CL_CONTEXT_DEVICES == param_name || CL_CONTEXT_NUM_DEVICES == param_name) &&
+        GlobalSettings::GetInstance()->m_params.m_bForceSingleGPU &&
+        0u <= GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex)
+    {
+        ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(pAPIInfo);
+        ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(pAPIInfo);
+        ret = CLDeviceReplacer::ReplaceDeviceIdsInclGetContextInfo(
+                  context,
+                  param_name,
+                  param_value_size,
+                  param_value,
+                  replaced_null_param ? nullptr : param_value_size_ret,
+                  GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex,
+                  &ullStart,
+                  &ullEnd);
+    }
+    else
+    {
+        ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(pAPIInfo);
+        ret = g_nextDispatchTable.GetContextInfo(
+                  context,
+                  param_name,
+                  param_value_size,
+                  param_value,
+                  param_value_size_ret);
+        ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(pAPIInfo);
+    }
 
     SpAssertRet(pAPIInfo != NULL) ret;
 
@@ -407,6 +445,12 @@ cl_int CL_API_CALL CL_API_TRACE_clGetContextInfo(
 
     RECORD_STACK_TRACE_FOR_API(pAPIInfo)
     CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    if (replaced_null_param)
+    {
+        param_value_size_ret = nullptr;
+    }
+
     return ret;
 }
 

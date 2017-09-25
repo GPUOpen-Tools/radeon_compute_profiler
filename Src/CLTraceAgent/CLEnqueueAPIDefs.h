@@ -109,10 +109,7 @@ class CLAPI_clEnqueueReadBuffer : public CLEnqueueDataTransfer
     FRIENDTESTCASE(clEnqueueReadBuffer);
 public:
     /// Constructor
-    CLAPI_clEnqueueReadBuffer()
-    {
-
-    }
+    CLAPI_clEnqueueReadBuffer() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueReadBuffer()
@@ -122,14 +119,14 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -138,7 +135,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -155,7 +152,7 @@ public:
 
     /// Get data transfer size in byte
     /// \return data transfer size in byte
-    size_t GetDataSize() const
+    size_t GetDataSize() const override
     {
         return m_cb;
     }
@@ -184,14 +181,13 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueReadBuffer(const CLAPI_clEnqueueReadBuffer& obj);
+    CLAPI_clEnqueueReadBuffer(const CLAPI_clEnqueueReadBuffer& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueReadBuffer& operator = (const CLAPI_clEnqueueReadBuffer& obj);
+    CLAPI_clEnqueueReadBuffer& operator = (const CLAPI_clEnqueueReadBuffer& obj) = delete;
 
-private:
     cl_mem   m_buffer;        ///< parameter for clEnqueueReadBuffer
     cl_bool  m_blocking_read; ///< parameter for clEnqueueReadBuffer
     size_t   m_offset;        ///< parameter for clEnqueueReadBuffer
@@ -208,10 +204,7 @@ class CLAPI_clEnqueueReadBufferRect : public CLEnqueueDataTransfer
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueReadBufferRect()
-    {
-
-    }
+    CLAPI_clEnqueueReadBufferRect() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueReadBufferRect()
@@ -221,14 +214,14 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -237,14 +230,14 @@ public:
 
     /// Get data transfer size in byte
     /// \return data transfer size in byte
-    size_t GetDataSize() const
+    size_t GetDataSize() const override
     {
         return m_region[0] * m_region[1] * m_region[2];
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -298,14 +291,13 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueReadBufferRect(const CLAPI_clEnqueueReadBufferRect& obj);
+    CLAPI_clEnqueueReadBufferRect(const CLAPI_clEnqueueReadBufferRect& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueReadBufferRect& operator = (const CLAPI_clEnqueueReadBufferRect& obj);
+    CLAPI_clEnqueueReadBufferRect& operator = (const CLAPI_clEnqueueReadBufferRect& obj) = delete;
 
-private:
     cl_mem   m_buffer;             ///< parameter for clEnqueueReadBufferRect
     cl_bool  m_blocking_read;      ///< parameter for clEnqueueReadBufferRect
     size_t   m_buffer_offset[3];   ///< parameter for clEnqueueReadBufferRect
@@ -330,10 +322,7 @@ class CLAPI_clEnqueueWriteBuffer : public CLEnqueueDataTransfer
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueWriteBuffer()
-    {
-
-    }
+    CLAPI_clEnqueueWriteBuffer() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueWriteBuffer()
@@ -343,21 +332,21 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// Get data transfer size in byte
     /// \return data transfer size in byte
-    size_t GetDataSize() const
+    size_t GetDataSize() const override
     {
         return m_cb;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -366,7 +355,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -405,14 +394,13 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueWriteBuffer(const CLAPI_clEnqueueWriteBuffer& obj);
+    CLAPI_clEnqueueWriteBuffer(const CLAPI_clEnqueueWriteBuffer& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueWriteBuffer& operator = (const CLAPI_clEnqueueWriteBuffer& obj);
+    CLAPI_clEnqueueWriteBuffer& operator = (const CLAPI_clEnqueueWriteBuffer& obj) = delete;
 
-private:
     cl_mem      m_buffer;         ///< parameter for clEnqueueWriteBuffer
     cl_bool     m_blocking_write; ///< parameter for clEnqueueWriteBuffer
     size_t      m_offset;         ///< parameter for clEnqueueWriteBuffer
@@ -429,10 +417,7 @@ class CLAPI_clEnqueueWriteBufferRect : public CLEnqueueDataTransfer
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueWriteBufferRect()
-    {
-
-    }
+    CLAPI_clEnqueueWriteBufferRect() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueWriteBufferRect()
@@ -442,21 +427,21 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// Get data transfer size in byte
     /// \return data transfer size in byte
-    size_t GetDataSize() const
+    size_t GetDataSize() const override
     {
         return m_region[0] * m_region[1] * m_region[2];
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -465,7 +450,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -519,14 +504,13 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueWriteBufferRect(const CLAPI_clEnqueueWriteBufferRect& obj);
+    CLAPI_clEnqueueWriteBufferRect(const CLAPI_clEnqueueWriteBufferRect& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueWriteBufferRect& operator = (const CLAPI_clEnqueueWriteBufferRect& obj);
+    CLAPI_clEnqueueWriteBufferRect& operator = (const CLAPI_clEnqueueWriteBufferRect& obj) = delete;
 
-private:
     cl_mem      m_buffer;             ///< parameter for clEnqueueWriteBufferRect
     cl_bool     m_blocking_read;      ///< parameter for clEnqueueWriteBufferRect
     size_t      m_buffer_offset[3];   ///< parameter for clEnqueueWriteBufferRect
@@ -551,10 +535,7 @@ class CLAPI_clEnqueueCopyBuffer : public CLEnqueueDataTransfer
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueCopyBuffer()
-    {
-
-    }
+    CLAPI_clEnqueueCopyBuffer() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueCopyBuffer()
@@ -564,21 +545,21 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// Get data transfer size in byte
     /// \return data transfer size in byte
-    size_t GetDataSize() const
+    size_t GetDataSize() const override
     {
         return m_cb;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -587,7 +568,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -626,14 +607,13 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueCopyBuffer(const CLAPI_clEnqueueCopyBuffer& obj);
+    CLAPI_clEnqueueCopyBuffer(const CLAPI_clEnqueueCopyBuffer& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueCopyBuffer& operator = (const CLAPI_clEnqueueCopyBuffer& obj);
+    CLAPI_clEnqueueCopyBuffer& operator = (const CLAPI_clEnqueueCopyBuffer& obj) = delete;
 
-private:
     cl_mem   m_src_buffer; ///< parameter for clEnqueueCopyBuffer
     cl_mem   m_dst_buffer; ///< parameter for clEnqueueCopyBuffer
     size_t   m_src_offset; ///< parameter for clEnqueueCopyBuffer
@@ -650,10 +630,7 @@ class CLAPI_clEnqueueCopyBufferRect : public CLEnqueueDataTransfer
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueCopyBufferRect()
-    {
-
-    }
+    CLAPI_clEnqueueCopyBufferRect() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueCopyBufferRect()
@@ -663,21 +640,21 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// Get data transfer size in byte
     /// \return data transfer size in byte
-    size_t GetDataSize() const
+    size_t GetDataSize() const override
     {
         return m_region[0] * m_region[1] * m_region[2];
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -686,7 +663,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -737,14 +714,13 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueCopyBufferRect(const CLAPI_clEnqueueCopyBufferRect& obj);
+    CLAPI_clEnqueueCopyBufferRect(const CLAPI_clEnqueueCopyBufferRect& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueCopyBufferRect& operator = (const CLAPI_clEnqueueCopyBufferRect& obj);
+    CLAPI_clEnqueueCopyBufferRect& operator = (const CLAPI_clEnqueueCopyBufferRect& obj) = delete;
 
-private:
     cl_mem   m_src_buffer;      ///< parameter for clEnqueueCopyBufferRect
     cl_mem   m_dst_buffer;      ///< parameter for clEnqueueCopyBufferRect
     size_t   m_src_origin[3];   ///< parameter for clEnqueueCopyBufferRect
@@ -768,10 +744,7 @@ class CLAPI_clEnqueueReadImage : public CLEnqueueDataTransfer
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueReadImage()
-    {
-
-    }
+    CLAPI_clEnqueueReadImage() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueReadImage()
@@ -781,21 +754,21 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// Get data transfer size in byte
     /// \return data transfer size in byte
-    size_t GetDataSize() const
+    size_t GetDataSize() const override
     {
         return m_region[0] * m_region[1] * m_region[2] * GetImageFormatSizeInByte(m_format);
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -804,7 +777,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -849,14 +822,13 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueReadImage(const CLAPI_clEnqueueReadImage& obj);
+    CLAPI_clEnqueueReadImage(const CLAPI_clEnqueueReadImage& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueReadImage& operator = (const CLAPI_clEnqueueReadImage& obj);
+    CLAPI_clEnqueueReadImage& operator = (const CLAPI_clEnqueueReadImage& obj) = delete;
 
-private:
     cl_mem          m_image;         ///< parameter for clEnqueueReadImage
     cl_bool         m_blocking_read; ///< parameter for clEnqueueReadImage
     size_t          m_origin[3];     ///< parameter for clEnqueueReadImage
@@ -878,10 +850,7 @@ class CLAPI_clEnqueueWriteImage : public CLEnqueueDataTransfer
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueWriteImage()
-    {
-
-    }
+    CLAPI_clEnqueueWriteImage() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueWriteImage()
@@ -891,21 +860,21 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// Get data transfer size in byte
     /// \return data transfer size in byte
-    size_t GetDataSize() const
+    size_t GetDataSize() const override
     {
         return m_region[0] * m_region[1] * m_region[2] * GetImageFormatSizeInByte(m_format);
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -914,7 +883,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -959,14 +928,13 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueWriteImage(const CLAPI_clEnqueueWriteImage& obj);
+    CLAPI_clEnqueueWriteImage(const CLAPI_clEnqueueWriteImage& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueWriteImage& operator = (const CLAPI_clEnqueueWriteImage& obj);
+    CLAPI_clEnqueueWriteImage& operator = (const CLAPI_clEnqueueWriteImage& obj) = delete;
 
-private:
     cl_mem          m_image;             ///< parameter for clEnqueueWriteImage
     cl_bool         m_blocking_write;    ///< parameter for clEnqueueWriteImage
     size_t          m_origin[3];         ///< parameter for clEnqueueWriteImage
@@ -988,10 +956,7 @@ class CLAPI_clEnqueueCopyImage : public CLEnqueueDataTransfer
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueCopyImage()
-    {
-
-    }
+    CLAPI_clEnqueueCopyImage() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueCopyImage()
@@ -1001,21 +966,21 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// Get data transfer size in byte
     /// \return data transfer size in byte
-    size_t GetDataSize() const
+    size_t GetDataSize() const override
     {
         return m_region[0] * m_region[1] * m_region[2] * GetImageFormatSizeInByte(m_format);
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -1024,7 +989,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -1063,14 +1028,13 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueCopyImage(const CLAPI_clEnqueueCopyImage& obj);
+    CLAPI_clEnqueueCopyImage(const CLAPI_clEnqueueCopyImage& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueCopyImage& operator = (const CLAPI_clEnqueueCopyImage& obj);
+    CLAPI_clEnqueueCopyImage& operator = (const CLAPI_clEnqueueCopyImage& obj) = delete;
 
-private:
     cl_mem          m_src_image;       ///< parameter for clEnqueueCopyImage
     cl_mem          m_dst_image;       ///< parameter for clEnqueueCopyImage
     size_t          m_src_origin[3];   ///< parameter for clEnqueueCopyImage
@@ -1091,10 +1055,7 @@ class CLAPI_clEnqueueCopyImageToBuffer : public CLEnqueueDataTransfer
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueCopyImageToBuffer()
-    {
-
-    }
+    CLAPI_clEnqueueCopyImageToBuffer() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueCopyImageToBuffer()
@@ -1104,21 +1065,21 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// Get data transfer size in byte
     /// \return data transfer size in byte
-    size_t GetDataSize() const
+    size_t GetDataSize() const override
     {
         return m_region[0] * m_region[1] * m_region[2] * GetImageFormatSizeInByte(m_format);
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -1127,7 +1088,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -1166,14 +1127,13 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueCopyImageToBuffer(const CLAPI_clEnqueueCopyImageToBuffer& obj);
+    CLAPI_clEnqueueCopyImageToBuffer(const CLAPI_clEnqueueCopyImageToBuffer& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueCopyImageToBuffer& operator = (const CLAPI_clEnqueueCopyImageToBuffer& obj);
+    CLAPI_clEnqueueCopyImageToBuffer& operator = (const CLAPI_clEnqueueCopyImageToBuffer& obj) = delete; 
 
-private:
     cl_mem          m_src_image;       ///< parameter for clEnqueueCopyImageToBuffer
     cl_mem          m_dst_buffer;      ///< parameter for clEnqueueCopyImageToBuffer
     size_t          m_src_origin[3];   ///< parameter for clEnqueueCopyImageToBuffer
@@ -1193,10 +1153,7 @@ class CLAPI_clEnqueueCopyBufferToImage : public CLEnqueueDataTransfer
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueCopyBufferToImage()
-    {
-
-    }
+    CLAPI_clEnqueueCopyBufferToImage() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueCopyBufferToImage()
@@ -1206,21 +1163,21 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// Get data transfer size in byte
     /// \return data transfer size in byte
-    size_t GetDataSize() const
+    size_t GetDataSize() const override
     {
         return m_region[0] * m_region[1] * m_region[2] * GetImageFormatSizeInByte(m_format);
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -1229,7 +1186,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -1268,12 +1225,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueCopyBufferToImage(const CLAPI_clEnqueueCopyBufferToImage& obj);
+    CLAPI_clEnqueueCopyBufferToImage(const CLAPI_clEnqueueCopyBufferToImage& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueCopyBufferToImage& operator = (const CLAPI_clEnqueueCopyBufferToImage& obj);
+    CLAPI_clEnqueueCopyBufferToImage& operator = (const CLAPI_clEnqueueCopyBufferToImage& obj) = delete;
 
 private:
     cl_mem          m_src_buffer;      ///< parameter for clEnqueueCopyBufferToImage
@@ -1442,21 +1399,21 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal != NULL;
+        return nullptr != m_retVal;
     }
 
     /// Get data transfer size in byte
     /// \return data transfer size in byte
-    size_t GetDataSize() const
+    size_t GetDataSize() const override
     {
         return m_cb;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_retVal);
@@ -1465,7 +1422,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -1509,12 +1466,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueMapBuffer(const CLAPI_clEnqueueMapBuffer& obj);
+    CLAPI_clEnqueueMapBuffer(const CLAPI_clEnqueueMapBuffer& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueMapBuffer& operator = (const CLAPI_clEnqueueMapBuffer& obj);
+    CLAPI_clEnqueueMapBuffer& operator = (const CLAPI_clEnqueueMapBuffer& obj) = delete;
 
 private:
     cl_mem       m_buffer;         ///< parameter for clEnqueueMapBuffer
@@ -1549,21 +1506,21 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal != NULL;
+        return nullptr != m_retVal;
     }
 
     /// Get data transfer size in byte
     /// \return data transfer size in byte
-    size_t GetDataSize() const
+    size_t GetDataSize() const override
     {
         return m_region[0] * m_region[1] * m_region[2] * GetImageFormatSizeInByte(m_format);
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_retVal);
@@ -1572,7 +1529,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -1622,14 +1579,13 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueMapImage(const CLAPI_clEnqueueMapImage& obj);
+    CLAPI_clEnqueueMapImage(const CLAPI_clEnqueueMapImage& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueMapImage& operator = (const CLAPI_clEnqueueMapImage& obj);
+    CLAPI_clEnqueueMapImage& operator = (const CLAPI_clEnqueueMapImage& obj) = delete;
 
-private:
     cl_mem          m_image;                ///< parameter for clEnqueueMapImage
     cl_bool         m_blocking_map;         ///< parameter for clEnqueueMapImage
     cl_map_flags    m_map_flags;            ///< parameter for clEnqueueMapImage
@@ -1655,10 +1611,7 @@ class CLAPI_clEnqueueUnmapMemObject : public CLEnqueueOther
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueUnmapMemObject()
-    {
-
-    }
+    CLAPI_clEnqueueUnmapMemObject() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueUnmapMemObject()
@@ -1668,14 +1621,14 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -1684,7 +1637,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -1721,12 +1674,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueUnmapMemObject(const CLAPI_clEnqueueUnmapMemObject& obj);
+    CLAPI_clEnqueueUnmapMemObject(const CLAPI_clEnqueueUnmapMemObject& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueUnmapMemObject& operator = (const CLAPI_clEnqueueUnmapMemObject& obj);
+    CLAPI_clEnqueueUnmapMemObject& operator = (const CLAPI_clEnqueueUnmapMemObject& obj) = delete;
 
 private:
     cl_mem   m_memobj;     ///< parameter for clEnqueueUnmapMemObject
@@ -1744,25 +1697,25 @@ public:
     /// Constructor
     CLAPI_clEnqueueNDRangeKernel()
     {
-        m_global_work_offset = NULL;
-        m_global_work_size = NULL;
-        m_local_work_size = NULL;
+        m_global_work_offset = nullptr;
+        m_global_work_size = nullptr;
+        m_local_work_size = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clEnqueueNDRangeKernel()
     {
-        if (m_global_work_offset != NULL)
+        if (nullptr != m_global_work_offset)
         {
             FreeArray(m_global_work_offset);
         }
 
-        if (m_global_work_size != NULL)
+        if (nullptr != m_global_work_size)
         {
             FreeArray(m_global_work_size);
         }
 
-        if (m_local_work_size != NULL)
+        if (nullptr != m_local_work_size)
         {
             FreeArray(m_local_work_size);
         }
@@ -1770,14 +1723,14 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -1786,7 +1739,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -1847,19 +1800,18 @@ public:
         return m_strKernelName;
     }
 
-    bool WriteTimestampEntry(std::ostream& sout, bool bTimeout);
+    bool WriteTimestampEntry(std::ostream& sout, bool bTimeout) override;
 
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueNDRangeKernel(const CLAPI_clEnqueueNDRangeKernel& obj);
+    CLAPI_clEnqueueNDRangeKernel(const CLAPI_clEnqueueNDRangeKernel& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueNDRangeKernel& operator = (const CLAPI_clEnqueueNDRangeKernel& obj);
+    CLAPI_clEnqueueNDRangeKernel& operator = (const CLAPI_clEnqueueNDRangeKernel& obj) = delete;
 
-private:
     cl_kernel   m_kernel;                        ///< parameter for clEnqueueNDRangeKernel
     cl_uint     m_work_dim;                      ///< parameter for clEnqueueNDRangeKernel
     size_t*     m_global_work_offset;            ///< parameter for clEnqueueNDRangeKernel
@@ -1877,10 +1829,7 @@ class CLAPI_clEnqueueTask : public CLEnqueueAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueTask()
-    {
-
-    }
+    CLAPI_clEnqueueTask() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueTask()
@@ -1890,14 +1839,14 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -1906,7 +1855,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -1935,19 +1884,18 @@ public:
         return m_kernel;
     }
 
-    bool WriteTimestampEntry(std::ostream& sout, bool bTimeout);
+    bool WriteTimestampEntry(std::ostream& sout, bool bTimeout) override;
 
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueTask(const CLAPI_clEnqueueTask& obj);
+    CLAPI_clEnqueueTask(const CLAPI_clEnqueueTask& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueTask& operator = (const CLAPI_clEnqueueTask& obj);
+    CLAPI_clEnqueueTask& operator = (const CLAPI_clEnqueueTask& obj) = delete;
 
-private:
     cl_kernel m_kernel; ///< parameter for clEnqueueTask
     cl_event  m_event;  ///< parameter for clEnqueueTask
     cl_int    m_retVal; ///< return value
@@ -1962,13 +1910,13 @@ public:
     /// Constructor
     CLAPI_clEnqueueNativeKernel()
     {
-        m_mem_list = NULL;
+        m_mem_list = nullptr;
     }
 
     /// Destructor
     ~CLAPI_clEnqueueNativeKernel()
     {
-        if (m_mem_list != NULL)
+        if (nullptr != m_mem_list)
         {
             FreeArray(m_mem_list);
         }
@@ -1976,14 +1924,14 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -1992,7 +1940,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -2036,19 +1984,18 @@ public:
         return (void*)m_user_func;
     }
 
-    bool WriteTimestampEntry(std::ostream& sout, bool bTimeout);
+    bool WriteTimestampEntry(std::ostream& sout, bool bTimeout) override;
 
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueNativeKernel(const CLAPI_clEnqueueNativeKernel& obj);
+    CLAPI_clEnqueueNativeKernel(const CLAPI_clEnqueueNativeKernel& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueNativeKernel& operator = (const CLAPI_clEnqueueNativeKernel& obj);
+    CLAPI_clEnqueueNativeKernel& operator = (const CLAPI_clEnqueueNativeKernel& obj) = delete;
 
-private:
     void (CL_CALLBACK* m_user_func)(void*); ///< parameter for clEnqueueNativeKernel
     void*        m_args;                    ///< parameter for clEnqueueNativeKernel
     size_t       m_cb_args;                 ///< parameter for clEnqueueNativeKernel
@@ -2066,21 +2013,21 @@ class CLAPI_clEnqueueMarker : public CLEnqueueOther
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueMarker() {}
+    CLAPI_clEnqueueMarker() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueMarker() {}
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -2089,7 +2036,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -2114,14 +2061,13 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueMarker(const CLAPI_clEnqueueMarker& obj);
+    CLAPI_clEnqueueMarker(const CLAPI_clEnqueueMarker& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueMarker& operator = (const CLAPI_clEnqueueMarker& obj);
+    CLAPI_clEnqueueMarker& operator = (const CLAPI_clEnqueueMarker& obj) = delete;
 
-private:
     cl_event m_event;  ///< parameter for clEnqueueMarker
     cl_int   m_retVal; ///< return value
 };
@@ -2138,7 +2084,7 @@ public:
     /// Destructor
     ~CLAPI_clEnqueueAcquireGLObjects()
     {
-        if (m_mem_objects != NULL)
+        if (nullptr != m_mem_objects)
         {
             FreeArray(m_mem_objects);
         }
@@ -2146,14 +2092,14 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -2162,7 +2108,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -2193,14 +2139,13 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueAcquireGLObjects(const CLAPI_clEnqueueAcquireGLObjects& obj);
+    CLAPI_clEnqueueAcquireGLObjects(const CLAPI_clEnqueueAcquireGLObjects& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueAcquireGLObjects& operator = (const CLAPI_clEnqueueAcquireGLObjects& obj);
+    CLAPI_clEnqueueAcquireGLObjects& operator = (const CLAPI_clEnqueueAcquireGLObjects& obj) = delete;
 
-private:
     cl_uint  m_num_objects; ///< parameter for clEnqueueNativeKernel
     cl_mem*  m_mem_objects; ///< parameter for clEnqueueNativeKernel
     cl_event m_event;       ///< parameter for clEnqueueNativeKernel
@@ -2214,12 +2159,12 @@ class CLAPI_clEnqueueReleaseGLObjects : public CLEnqueueOther
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueReleaseGLObjects() {}
+    CLAPI_clEnqueueReleaseGLObjects() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueReleaseGLObjects()
     {
-        if (m_mem_objects != NULL)
+        if (nullptr != m_mem_objects)
         {
             FreeArray(m_mem_objects);
         }
@@ -2227,14 +2172,14 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -2243,7 +2188,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -2275,14 +2220,13 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueReleaseGLObjects(const CLAPI_clEnqueueReleaseGLObjects& obj);
+    CLAPI_clEnqueueReleaseGLObjects(const CLAPI_clEnqueueReleaseGLObjects& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueReleaseGLObjects& operator = (const CLAPI_clEnqueueReleaseGLObjects& obj);
+    CLAPI_clEnqueueReleaseGLObjects& operator = (const CLAPI_clEnqueueReleaseGLObjects& obj) = delete;
 
-private:
     cl_uint  m_num_objects; ///< parameter for clEnqueueNativeKernel
     cl_mem*  m_mem_objects; ///< parameter for clEnqueueNativeKernel
     cl_event m_event;       ///< parameter for clEnqueueNativeKernel
@@ -2296,10 +2240,7 @@ class CLAPI_clEnqueueWaitForEvents : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueWaitForEvents()
-    {
-
-    }
+    CLAPI_clEnqueueWaitForEvents() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueWaitForEvents()
@@ -2309,7 +2250,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -2318,7 +2259,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -2345,14 +2286,13 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueWaitForEvents(const CLAPI_clEnqueueWaitForEvents& obj);
+    CLAPI_clEnqueueWaitForEvents(const CLAPI_clEnqueueWaitForEvents& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueWaitForEvents& operator = (const CLAPI_clEnqueueWaitForEvents& obj);
+    CLAPI_clEnqueueWaitForEvents& operator = (const CLAPI_clEnqueueWaitForEvents& obj) = delete;
 
-private:
     cl_command_queue      m_command_queue;   ///< parameter for clEnqueueWaitForEvents
     cl_uint               m_num_events;      ///< parameter for clEnqueueWaitForEvents
     const cl_event*       m_event_wait_list; ///< parameter for clEnqueueWaitForEvents
@@ -2367,14 +2307,14 @@ class CLAPI_clEnqueueBarrier : public CLAPIBase
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueBarrier() {}
+    CLAPI_clEnqueueBarrier() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueBarrier() {}
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue);
@@ -2383,7 +2323,7 @@ public:
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -2404,14 +2344,13 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueBarrier(const CLAPI_clEnqueueBarrier& obj);
+    CLAPI_clEnqueueBarrier(const CLAPI_clEnqueueBarrier& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueBarrier& operator = (const CLAPI_clEnqueueBarrier& obj);
+    CLAPI_clEnqueueBarrier& operator = (const CLAPI_clEnqueueBarrier& obj) = delete;
 
-private:
     cl_command_queue  m_command_queue; ///< parameter for clEnqueueBarrier
     cl_int            m_retVal;        ///< return value
 };
@@ -2424,12 +2363,12 @@ class CLAPI_clEnqueueAcquireD3D10ObjectsKHR : public CLEnqueueOther
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueAcquireD3D10ObjectsKHR() {}
+    CLAPI_clEnqueueAcquireD3D10ObjectsKHR() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueAcquireD3D10ObjectsKHR()
     {
-        if (m_mem_objects != NULL)
+        if (nullptr != m_mem_objects)
         {
             FreeArray(m_mem_objects);
         }
@@ -2437,14 +2376,14 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -2453,7 +2392,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -2483,14 +2422,13 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueAcquireD3D10ObjectsKHR(const CLAPI_clEnqueueAcquireD3D10ObjectsKHR& obj);
+    CLAPI_clEnqueueAcquireD3D10ObjectsKHR(const CLAPI_clEnqueueAcquireD3D10ObjectsKHR& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueAcquireD3D10ObjectsKHR& operator = (const CLAPI_clEnqueueAcquireD3D10ObjectsKHR& obj);
+    CLAPI_clEnqueueAcquireD3D10ObjectsKHR& operator = (const CLAPI_clEnqueueAcquireD3D10ObjectsKHR& obj) = delete;
 
-private:
     cl_uint  m_num_objects; ///< parameter for clEnqueueAcquireD3D10ObjectsKHR
     cl_mem*  m_mem_objects; ///< parameter for clEnqueueAcquireD3D10ObjectsKHR
     cl_event m_event;       ///< parameter for clEnqueueAcquireD3D10ObjectsKHR
@@ -2504,12 +2442,12 @@ class CLAPI_clEnqueueReleaseD3D10ObjectsKHR : public CLEnqueueOther
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueReleaseD3D10ObjectsKHR() {}
+    CLAPI_clEnqueueReleaseD3D10ObjectsKHR() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueReleaseD3D10ObjectsKHR()
     {
-        if (m_mem_objects != NULL)
+        if (nullptr != m_mem_objects)
         {
             FreeArray(m_mem_objects);
         }
@@ -2517,14 +2455,14 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         std::ostringstream ss;
         ss << CLStringUtils::GetErrorString(m_retVal);
@@ -2533,7 +2471,7 @@ public:
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -2563,14 +2501,13 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueReleaseD3D10ObjectsKHR(const CLAPI_clEnqueueReleaseD3D10ObjectsKHR& obj);
+    CLAPI_clEnqueueReleaseD3D10ObjectsKHR(const CLAPI_clEnqueueReleaseD3D10ObjectsKHR& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueReleaseD3D10ObjectsKHR& operator = (const CLAPI_clEnqueueReleaseD3D10ObjectsKHR& obj);
+    CLAPI_clEnqueueReleaseD3D10ObjectsKHR& operator = (const CLAPI_clEnqueueReleaseD3D10ObjectsKHR& obj) = delete;
 
-private:
     cl_uint  m_num_objects; ///< parameter for clEnqueueReleaseD3D10ObjectsKHR
     cl_mem*  m_mem_objects; ///< parameter for clEnqueueReleaseD3D10ObjectsKHR
     cl_event m_event;       ///< parameter for clEnqueueReleaseD3D10ObjectsKHR
@@ -2585,28 +2522,28 @@ class CLAPI_clEnqueueFillBuffer : public CLEnqueueData
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueFillBuffer() { }
+    CLAPI_clEnqueueFillBuffer() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueFillBuffer() { }
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return CLStringUtils::GetErrorString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -2623,7 +2560,7 @@ public:
 
     /// Get data transfer size in byte
     /// \return data transfer size in byte
-    size_t GetDataSize() const
+    size_t GetDataSize() const override
     {
         return m_size;
     }
@@ -2651,12 +2588,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueFillBuffer(const CLAPI_clEnqueueFillBuffer& obj);
+    CLAPI_clEnqueueFillBuffer(const CLAPI_clEnqueueFillBuffer& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueFillBuffer& operator = (const CLAPI_clEnqueueFillBuffer& obj);
+    CLAPI_clEnqueueFillBuffer& operator = (const CLAPI_clEnqueueFillBuffer& obj) = delete;
 
     cl_mem      m_buffer;       ///< parameter for clEnqueueFillBuffer
     const void* m_pattern;      ///< parameter for clEnqueueFillBuffer
@@ -2674,28 +2611,28 @@ class CLAPI_clEnqueueFillImage : public CLEnqueueData
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueFillImage() { }
+    CLAPI_clEnqueueFillImage() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueFillImage() { }
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return CLStringUtils::GetErrorString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -2711,7 +2648,7 @@ public:
 
     /// Get data transfer size in byte
     /// \return data transfer size in byte
-    size_t GetDataSize() const
+    size_t GetDataSize() const override
     {
         return m_region[0] * m_region[1] * m_region[2] * GetImageFormatSizeInByte(m_format);
     }
@@ -2737,12 +2674,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueFillImage(const CLAPI_clEnqueueFillImage& obj);
+    CLAPI_clEnqueueFillImage(const CLAPI_clEnqueueFillImage& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueFillImage& operator = (const CLAPI_clEnqueueFillImage& obj);
+    CLAPI_clEnqueueFillImage& operator = (const CLAPI_clEnqueueFillImage& obj) = delete;
 
     cl_mem          m_image;       ///< parameter for clEnqueueFillImage
     const void*     m_fill_color;  ///< parameter for clEnqueueFillImage
@@ -2764,12 +2701,12 @@ class CLAPI_clEnqueueMigrateMemObjects : public CLEnqueueOther
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueMigrateMemObjects() { }
+    CLAPI_clEnqueueMigrateMemObjects() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueMigrateMemObjects()
     {
-        if (m_mem_objects != NULL)
+        if (nullptr != m_mem_objects)
         {
             FreeArray(m_mem_objects);
         }
@@ -2777,21 +2714,21 @@ public:
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return CLStringUtils::GetErrorString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -2823,12 +2760,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueMigrateMemObjects(const CLAPI_clEnqueueMigrateMemObjects& obj);
+    CLAPI_clEnqueueMigrateMemObjects(const CLAPI_clEnqueueMigrateMemObjects& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueMigrateMemObjects& operator = (const CLAPI_clEnqueueMigrateMemObjects& obj);
+    CLAPI_clEnqueueMigrateMemObjects& operator = (const CLAPI_clEnqueueMigrateMemObjects& obj) = delete;
 
     cl_uint                m_num_mem_objects; ///< parameter for clEnqueueMigrateMemObjects
     cl_mem*                m_mem_objects;     ///< parameter for clEnqueueMigrateMemObjects
@@ -2844,28 +2781,28 @@ class CLAPI_clEnqueueMarkerWithWaitList : public CLEnqueueOther
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueMarkerWithWaitList() { }
+    CLAPI_clEnqueueMarkerWithWaitList() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueMarkerWithWaitList() { }
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return CLStringUtils::GetErrorString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -2889,12 +2826,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueMarkerWithWaitList(const CLAPI_clEnqueueMarkerWithWaitList& obj);
+    CLAPI_clEnqueueMarkerWithWaitList(const CLAPI_clEnqueueMarkerWithWaitList& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueMarkerWithWaitList& operator = (const CLAPI_clEnqueueMarkerWithWaitList& obj);
+    CLAPI_clEnqueueMarkerWithWaitList& operator = (const CLAPI_clEnqueueMarkerWithWaitList& obj) = delete;
 
     cl_event         m_event;  ///< parameter for clEnqueueMarkerWithWaitList
     cl_int           m_retVal; ///< return value of clEnqueueMarkerWithWaitList
@@ -2907,28 +2844,28 @@ class CLAPI_clEnqueueBarrierWithWaitList : public CLEnqueueOther
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueBarrierWithWaitList() { }
+    CLAPI_clEnqueueBarrierWithWaitList() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueBarrierWithWaitList() { }
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return CLStringUtils::GetErrorString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -2951,12 +2888,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueBarrierWithWaitList(const CLAPI_clEnqueueBarrierWithWaitList& obj);
+    CLAPI_clEnqueueBarrierWithWaitList(const CLAPI_clEnqueueBarrierWithWaitList& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueBarrierWithWaitList& operator = (const CLAPI_clEnqueueBarrierWithWaitList& obj);
+    CLAPI_clEnqueueBarrierWithWaitList& operator = (const CLAPI_clEnqueueBarrierWithWaitList& obj) = delete;
 
     cl_event         m_event;  ///< parameter for clEnqueueBarrierWithWaitList
     cl_int           m_retVal; ///< return value of clEnqueueBarrierWithWaitList
@@ -2969,28 +2906,28 @@ class CLAPI_clEnqueueSVMFree : public CLEnqueueOther
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueSVMFree() { }
+    CLAPI_clEnqueueSVMFree() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueSVMFree() { }
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return CLStringUtils::GetErrorString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -3027,12 +2964,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueSVMFree(const CLAPI_clEnqueueSVMFree& obj);
+    CLAPI_clEnqueueSVMFree(const CLAPI_clEnqueueSVMFree& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueSVMFree& operator = (const CLAPI_clEnqueueSVMFree& obj);
+    CLAPI_clEnqueueSVMFree& operator = (const CLAPI_clEnqueueSVMFree& obj) = delete;
 
     cl_uint            m_num_svm_pointers; ///< parameter for clEnqueueSVMFree
     void**             m_svm_pointers;     ///< parameter for clEnqueueSVMFree
@@ -3050,28 +2987,28 @@ class CLAPI_clEnqueueSVMMemcpy : public CLEnqueueData
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueSVMMemcpy() { }
+    CLAPI_clEnqueueSVMMemcpy() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueSVMMemcpy() { }
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return CLStringUtils::GetErrorString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -3107,7 +3044,7 @@ public:
 
     /// Get data transfer size in byte
     /// \return data transfer size in byte
-    size_t GetDataSize() const
+    size_t GetDataSize() const override
     {
         return m_size;
     }
@@ -3116,12 +3053,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueSVMMemcpy(const CLAPI_clEnqueueSVMMemcpy& obj);
+    CLAPI_clEnqueueSVMMemcpy(const CLAPI_clEnqueueSVMMemcpy& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueSVMMemcpy& operator = (const CLAPI_clEnqueueSVMMemcpy& obj);
+    CLAPI_clEnqueueSVMMemcpy& operator = (const CLAPI_clEnqueueSVMMemcpy& obj) = delete;
 
     cl_bool     m_blocking_copy; ///< parameter for clEnqueueSVMMemcpy
     void*       m_dst_ptr;       ///< parameter for clEnqueueSVMMemcpy
@@ -3138,28 +3075,28 @@ class CLAPI_clEnqueueSVMMemFill : public CLEnqueueOther
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueSVMMemFill() { }
+    CLAPI_clEnqueueSVMMemFill() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueSVMMemFill() { }
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return CLStringUtils::GetErrorString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -3203,12 +3140,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueSVMMemFill(const CLAPI_clEnqueueSVMMemFill& obj);
+    CLAPI_clEnqueueSVMMemFill(const CLAPI_clEnqueueSVMMemFill& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueSVMMemFill& operator = (const CLAPI_clEnqueueSVMMemFill& obj);
+    CLAPI_clEnqueueSVMMemFill& operator = (const CLAPI_clEnqueueSVMMemFill& obj) = delete;
 
     void*       m_svm_ptr;       ///< parameter for clEnqueueSVMMemcpy
     const void* m_pattern;       ///< parameter for clEnqueueSVMMemcpy
@@ -3225,28 +3162,28 @@ class CLAPI_clEnqueueSVMMap : public CLEnqueueData
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueSVMMap() { }
+    CLAPI_clEnqueueSVMMap() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueSVMMap() { }
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return CLStringUtils::GetErrorString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -3282,7 +3219,7 @@ public:
 
     /// Get data transfer size in byte
     /// \return data transfer size in byte
-    size_t GetDataSize() const
+    size_t GetDataSize() const override
     {
         return m_size;
     }
@@ -3290,12 +3227,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueSVMMap(const CLAPI_clEnqueueSVMMap& obj);
+    CLAPI_clEnqueueSVMMap(const CLAPI_clEnqueueSVMMap& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueSVMMap& operator = (const CLAPI_clEnqueueSVMMap& obj);
+    CLAPI_clEnqueueSVMMap& operator = (const CLAPI_clEnqueueSVMMap& obj) = delete;
 
     cl_bool      m_blocking_map;  ///< parameter for clEnqueueSVMMap
     cl_map_flags m_flags;         ///< parameter for clEnqueueSVMMap
@@ -3312,28 +3249,28 @@ class CLAPI_clEnqueueSVMUnmap : public CLEnqueueOther
 {
 public:
     /// Constructor
-    CLAPI_clEnqueueSVMUnmap() { }
+    CLAPI_clEnqueueSVMUnmap() = default;
 
     /// Destructor
     ~CLAPI_clEnqueueSVMUnmap() { }
 
     /// Return whether the API succeeded
     /// \return true if the API succeeded (CL_SUCCESS), false otherwise
-    bool GetAPISucceeded() const
+    bool GetAPISucceeded() const override
     {
-        return m_retVal == CL_SUCCESS;
+        return CL_SUCCESS == m_retVal;
     }
 
     /// get return value string
     /// \return string representation of the return value;
-    std::string GetRetString()
+    std::string GetRetString() override
     {
         return CLStringUtils::GetErrorString(m_retVal);
     }
 
     /// To String
     /// \return string representation of the API
-    std::string ToString()
+    std::string ToString() override
     {
         std::ostringstream ss;
         ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
@@ -3368,12 +3305,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPI_clEnqueueSVMUnmap(const CLAPI_clEnqueueSVMUnmap& obj);
+    CLAPI_clEnqueueSVMUnmap(const CLAPI_clEnqueueSVMUnmap& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueSVMUnmap& operator = (const CLAPI_clEnqueueSVMUnmap& obj);
+    CLAPI_clEnqueueSVMUnmap& operator = (const CLAPI_clEnqueueSVMUnmap& obj) = delete;
 
     void*        m_svm_ptr;       ///< parameter for clEnqueueSVMUnmap
     cl_event     m_event;         ///< parameter for clEnqueueSVMUnmap

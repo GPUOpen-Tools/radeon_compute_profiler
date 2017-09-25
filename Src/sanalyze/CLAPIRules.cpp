@@ -12,6 +12,7 @@
 #include "../Common/StringUtils.h"
 #include "../Common/Logger.h"
 #include "../CLCommon/CLFunctionEnumDefs.h"
+#include "ProfilerOutputFileDefs.h"
 
 using namespace std;
 using namespace GPULogger;
@@ -26,7 +27,7 @@ static SimpleCLAPIRuleManager ruleMgr(NULL);
 bool CALLBACK CLAPIRule_BlockingWrite(CLAPIInfo* info, std::string& strMsg, APIAnalyzerMessageType& type)
 {
     vector<string> args;
-    StringUtils::Split(args, info->m_argList, string(";"), true, true);
+    StringUtils::Split(args, info->m_argList, string(ATP_TRACE_ENTRY_ARG_SEPARATOR), true, true);
 
     if (args.size() == 9 || args.size() == 14 || args.size() == 11)   // write buffer || write bufferRect || writeImage
     {

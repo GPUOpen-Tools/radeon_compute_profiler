@@ -11,6 +11,7 @@
 #include "../Common/Logger.h"
 #include "DeviceInfoUtils.h"
 #include "CLDataTransferAnalyzer.h"
+#include "ProfilerOutputFileDefs.h"
 
 using namespace std;
 using namespace GPULogger;
@@ -59,7 +60,7 @@ void CLDataTransferAnalyzer::FlattenedAPIAnalyze(APIInfo* pAPIInfo)
             {
                 // extract mem_flag
                 vector<string> output;
-                StringUtils::Split(output, pCLAPIInfo->m_argList, string(";"));
+                StringUtils::Split(output, pCLAPIInfo->m_argList, string(ATP_TRACE_ENTRY_ARG_SEPARATOR));
                 SpAssert(output.size() == NUM_ARG_CL_CREATE_BUFFER);
 
                 if (output.size() == NUM_ARG_CL_CREATE_BUFFER)
@@ -115,7 +116,7 @@ void CLDataTransferAnalyzer::FlattenedAPIAnalyze(APIInfo* pAPIInfo)
             if (pCLAPIInfo->m_strRet == "CL_SUCCESS")
             {
                 vector<string> output;
-                StringUtils::Split(output, pCLAPIInfo->m_argList, string(";"));
+                StringUtils::Split(output, pCLAPIInfo->m_argList, string(ATP_TRACE_ENTRY_ARG_SEPARATOR));
                 SpAssert(output.size() == NUM_ARG_CL_ENQUEUE_NDRANGE_KERENL);
 
                 if (output.size() == NUM_ARG_CL_ENQUEUE_NDRANGE_KERENL)

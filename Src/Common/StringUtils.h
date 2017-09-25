@@ -141,13 +141,17 @@ std::string ToHexString(T value)
         return "NULL";
     }
 
-    std::ostringstream ss;
-#ifdef _WIN32
-    ss << "0x" << std::hex << std::uppercase << value;
-#else // _LINUX || LINUX
+    std::ostringstream ss(std::stringstream::in | std::stringstream::out);
+    std::string result;
     ss << std::hex << std::uppercase << value;
-#endif
-    return ss.str();
+    result = ss.str();
+
+    if (result[1] != 'x')
+    {
+        result = "0x" + result;
+    }
+
+    return result;
 }
 
 /// Parse string
@@ -185,7 +189,7 @@ std::string NanosecToMillisec(ULONGLONG ullTime);
 /// \param sizeInByte size in byte
 /// \param precision Precision
 /// \return data size in string
-std::string GetDataSizeStr(size_t sizeInByte, int precision);
+std::string GetDataSizeStr(ULONGLONG sizeInByte, int precision);
 
 /// To lower case
 /// \param str input string
@@ -242,19 +246,29 @@ void Split(std::vector<std::string>& output, const std::string& input, const std
 std::string StripBrackets(const std::string& input);
 
 /// Trim  leading white spaces
-/// \param[in,out] input string
+/// \param[in,out] s input string
 /// \return reference to trimmed string
 std::string& TrimLeft(std::string& s);
 
 /// Trim  trailing  white spaces
-/// \param[in,out] input string
+/// \param[in,out] s input string
 /// \return reference to trimmed string
 std::string& TrimRight(std::string& s);
 
 /// Trim  leading  and trailing white spaces
-/// \param[in,out] input string
+/// \param[in,out] s input string
 /// \return reference to trimmed string
 std::string& TrimInPlace(std::string& s);
+
+/// Replaces ASCII symbols (space,&,#,<,>,@) to their HTML symbols
+/// \param[in] inputString input string
+/// \return repalced string
+std::string ReplaceASCIISymbolsToHTMLSymbols(const std::string& inputString);
+
+/// Replaces HTML symbols to their ASCII symbols (space,&,#,<,>,@)
+/// \param[in] inputString input string
+/// \return repalced string
+std::string ReplaceHTMLSymbolsToASCIISymbols(const std::string& inputString);
 
 } // StringUtils
 

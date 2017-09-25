@@ -58,11 +58,11 @@ public:
     void AddAPIInfoEntry(APIBase* en);
 
     /// Release all entries in m_CLAPIInfoMap
-    void Release();
+    void Release() override;
 
     /// Save trace data to tmp file
     /// \param bForceFlush Force to write all data out no matter it's ready or not - used in Detach() only
-    void FlushTraceData(bool bForceFlush = false);
+    void FlushTraceData(bool bForceFlush = false) override;
 
     /// Is API in API filter list
     /// \param type cl function enum
@@ -70,7 +70,7 @@ public:
     bool IsInFilterList(CL_FUNC_TYPE type);
 
     /// Check if the specified API should be intercepted
-    /// \param type HSA function type
+    /// \param strAPIName CL function name
     /// \return true if API should be intercepted
     bool ShouldIntercept(const char* strAPIName);
 
@@ -105,7 +105,7 @@ public:
     std::string& GetKernelName(const cl_kernel kernel);
 
     /// Save to Atp File
-    void SaveToOutputFile();
+    void SaveToOutputFile() override;
 
     /// Query CPU timestamps as well as user PMCs before API call
     /// \param[inout] pEntry API object
@@ -146,12 +146,12 @@ public:
     /// Indicates whether profiler should run after delay or not
     /// \param delayInMilliseconds to return the amount by which profile set to be delayed
     /// \returns true if delay is enabled
-    bool IsProfilerDelayEnabled(unsigned long& delayInMilliseconds);
+    bool IsProfilerDelayEnabled(unsigned long& delayInMilliseconds) const;
 
     /// Indicates whether profiler should run only for set duration or not
     /// \param durationInMilliseconds to return the amount by which profile set to run
     /// \returns true if duration of the profiler is enabled
-    bool IsProfilerDurationEnabled(unsigned long& durationInMilliseconds);
+    bool IsProfilerDurationEnabled(unsigned long& durationInMilliseconds) const;
 
     /// Assigns the call back function
     /// \param timerType type of the timer
@@ -165,12 +165,12 @@ public:
 
     /// Starts the timer
     /// \param timerType Type of the the timer
-    void startTimer(ProfilerTimerType timerType);
+    void startTimer(ProfilerTimerType timerType) const;
 
 protected:
     /// Add the specified api to the list of APIs to filter
     /// \param strAPIName the name of the API to add to the filter
-    void AddAPIToFilter(const std::string& strAPIName);
+    void AddAPIToFilter(const std::string& strAPIName) override;
 
 private:
 
@@ -178,18 +178,17 @@ private:
     CLAPIInfoManager();
 
     /// Update m_ullStart, m_ullEnd from m_APITimeInfoMap
-    void Update();
+    void Update() = delete;
 
     /// Disable copy constructor
     /// \param obj obj
-    CLAPIInfoManager(const CLAPIInfoManager& obj);
+    CLAPIInfoManager(const CLAPIInfoManager& obj) = delete;
 
     /// Disable assignment operator
     /// \param obj obj
     /// \return lhs
-    CLAPIInfoManager& operator = (const CLAPIInfoManager& obj);
+    CLAPIInfoManager& operator = (const CLAPIInfoManager& obj) = delete;
 
-private:
     unsigned int            m_uiLineNum;                         ///< number of lines output to file
     PreviousGEIMap          m_previousGEIMap;                    ///< stl map that contains the previous CLAPI_clGetEventInfo instance for each thread
     CLCommandQueueMap       m_clCommandQueueMap;                 ///< stl map that maps from cl_command_queue to CLAPI_clCreateCommandQueue*

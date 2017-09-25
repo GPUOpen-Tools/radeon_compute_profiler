@@ -72,7 +72,7 @@ void CLContextSummarizer::OnParse(CLAPIInfo* pAPIInfo, bool& stopParsing)
 
         if (pMAPI->m_strCMDType.find("COPY") != string::npos)
         {
-            pItems->uiByteCopy += pMAPI->m_uiTransferSize;
+            pItems->ullByteCopy += pMAPI->m_uiTransferSize;
             ULONGLONG dur = pMAPI->m_ullComplete - pMAPI->m_ullRunning;
             pItems->ullDurationCopy += dur;
             pItems->ullTotalMemDuration += dur;
@@ -81,7 +81,7 @@ void CLContextSummarizer::OnParse(CLAPIInfo* pAPIInfo, bool& stopParsing)
 
         else if (pMAPI->m_strCMDType.find("READ") != string::npos)
         {
-            pItems->uiByteRead += pMAPI->m_uiTransferSize;
+            pItems->ullByteRead += pMAPI->m_uiTransferSize;
             ULONGLONG dur = pMAPI->m_ullComplete - pMAPI->m_ullRunning;
             pItems->ullDurationRead += dur;
             pItems->ullTotalMemDuration += dur;
@@ -90,7 +90,7 @@ void CLContextSummarizer::OnParse(CLAPIInfo* pAPIInfo, bool& stopParsing)
 
         else if (pMAPI->m_strCMDType.find("WRITE") != string::npos)
         {
-            pItems->uiByteWrite += pMAPI->m_uiTransferSize;
+            pItems->ullByteWrite += pMAPI->m_uiTransferSize;
             ULONGLONG dur = pMAPI->m_ullComplete - pMAPI->m_ullRunning;
             pItems->ullDurationWrite += dur;
             pItems->ullTotalMemDuration += dur;
@@ -99,7 +99,7 @@ void CLContextSummarizer::OnParse(CLAPIInfo* pAPIInfo, bool& stopParsing)
 
         else if (pMAPI->m_strCMDType.find("_MAP") != string::npos)
         {
-            pItems->uiByteMap += pMAPI->m_uiTransferSize;
+            pItems->ullByteMap += pMAPI->m_uiTransferSize;
             ULONGLONG dur = pMAPI->m_ullComplete - pMAPI->m_ullRunning;
             pItems->ullDurationMap += dur;
             pItems->ullTotalMemDuration += dur;
@@ -322,16 +322,16 @@ void CLContextSummarizer::GenerateHTMLTable(std::ostream& sout)
         .AddItem(tableIdx + 1, StringUtils::NanosecToMillisec(items.ullTotalMemDuration))
         .AddItem(tableIdx + 2, StringUtils::ToString(items.uiNumRead))
         .AddItem(tableIdx + 3, StringUtils::NanosecToMillisec(items.ullDurationRead))
-        .AddItem(tableIdx + 4, StringUtils::InsertLeadingSpace(StringUtils::GetDataSizeStr(items.uiByteRead, 2), 15))
+        .AddItem(tableIdx + 4, StringUtils::InsertLeadingSpace(StringUtils::GetDataSizeStr(items.ullByteRead, 2), 15))
         .AddItem(tableIdx + 5, StringUtils::ToString(items.uiNumWrite))
         .AddItem(tableIdx + 6, StringUtils::NanosecToMillisec(items.ullDurationWrite))
-        .AddItem(tableIdx + 7, StringUtils::InsertLeadingSpace(StringUtils::GetDataSizeStr(items.uiByteWrite, 2), 15))
+        .AddItem(tableIdx + 7, StringUtils::InsertLeadingSpace(StringUtils::GetDataSizeStr(items.ullByteWrite, 2), 15))
         .AddItem(tableIdx + 8, StringUtils::ToString(items.uiNumMap))
         .AddItem(tableIdx + 9, StringUtils::NanosecToMillisec(items.ullDurationMap))
-        .AddItem(tableIdx + 10, StringUtils::InsertLeadingSpace(StringUtils::GetDataSizeStr(items.uiByteMap, 2), 15))
+        .AddItem(tableIdx + 10, StringUtils::InsertLeadingSpace(StringUtils::GetDataSizeStr(items.ullByteMap, 2), 15))
         .AddItem(tableIdx + 11, StringUtils::ToString(items.uiNumCopy))
         .AddItem(tableIdx + 12, StringUtils::NanosecToMillisec(items.ullDurationCopy))
-        .AddItem(tableIdx + 13, StringUtils::InsertLeadingSpace(StringUtils::GetDataSizeStr(items.uiByteCopy, 2), 15));
+        .AddItem(tableIdx + 13, StringUtils::InsertLeadingSpace(StringUtils::GetDataSizeStr(items.ullByteCopy, 2), 15));
 
         sum += items;
 
@@ -371,16 +371,16 @@ void CLContextSummarizer::GenerateHTMLTable(std::ostream& sout)
         .AddItem(tableIdx + 1, StringUtils::NanosecToMillisec(sum.ullTotalMemDuration))
         .AddItem(tableIdx + 2, StringUtils::ToString(sum.uiNumRead))
         .AddItem(tableIdx + 3, StringUtils::NanosecToMillisec(sum.ullDurationRead))
-        .AddItem(tableIdx + 4, StringUtils::InsertLeadingSpace(StringUtils::GetDataSizeStr(sum.uiByteRead, 2), 15))
+        .AddItem(tableIdx + 4, StringUtils::InsertLeadingSpace(StringUtils::GetDataSizeStr(sum.ullByteRead, 2), 15))
         .AddItem(tableIdx + 5, StringUtils::ToString(sum.uiNumWrite))
         .AddItem(tableIdx + 6, StringUtils::NanosecToMillisec(sum.ullDurationWrite))
-        .AddItem(tableIdx + 7, StringUtils::InsertLeadingSpace(StringUtils::GetDataSizeStr(sum.uiByteWrite, 2), 15))
+        .AddItem(tableIdx + 7, StringUtils::InsertLeadingSpace(StringUtils::GetDataSizeStr(sum.ullByteWrite, 2), 15))
         .AddItem(tableIdx + 8, StringUtils::ToString(sum.uiNumMap))
         .AddItem(tableIdx + 9, StringUtils::NanosecToMillisec(sum.ullDurationMap))
-        .AddItem(tableIdx + 10, StringUtils::InsertLeadingSpace(StringUtils::GetDataSizeStr(sum.uiByteMap, 2), 15))
+        .AddItem(tableIdx + 10, StringUtils::InsertLeadingSpace(StringUtils::GetDataSizeStr(sum.ullByteMap, 2), 15))
         .AddItem(tableIdx + 11, StringUtils::ToString(sum.uiNumCopy))
         .AddItem(tableIdx + 12, StringUtils::NanosecToMillisec(sum.ullDurationCopy))
-        .AddItem(tableIdx + 13, StringUtils::InsertLeadingSpace(StringUtils::GetDataSizeStr(sum.uiByteCopy, 2), 15));
+        .AddItem(tableIdx + 13, StringUtils::InsertLeadingSpace(StringUtils::GetDataSizeStr(sum.ullByteCopy, 2), 15));
 
         table.AddRow(totalRow, true);
     }

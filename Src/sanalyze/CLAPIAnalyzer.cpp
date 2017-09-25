@@ -10,6 +10,7 @@
 #include "CLAPIAnalyzer.h"
 #include "../Common/StringUtils.h"
 #include "../Common/Logger.h"
+#include "ProfilerOutputFileDefs.h"
 
 using namespace GPULogger;
 
@@ -54,7 +55,7 @@ void CLAPIAnalyzerManager::AnalyzeKernelArgSetup(CLAPIInfo* pAPIInfo)
         if (pAPIInfo->m_strRet == "CL_SUCCESS")
         {
             std::vector<std::string> output;
-            StringUtils::Split(output, pAPIInfo->m_argList, std::string(";"));
+            StringUtils::Split(output, pAPIInfo->m_argList, std::string(ATP_TRACE_ENTRY_ARG_SEPARATOR));
             SpAssert(output.size() == NUM_ARG_CL_CREATE_KERNELS_IN_PROGRAM);
 
             if (output.size() == NUM_ARG_CL_CREATE_KERNELS_IN_PROGRAM)
@@ -134,7 +135,7 @@ void CLAPIAnalyzerManager::AnalyzeKernelArgSetup(CLAPIInfo* pAPIInfo)
     {
         // keep track of all setKernelArg
         std::vector<std::string> output;
-        StringUtils::Split(output, pAPIInfo->m_argList, std::string(";"));
+        StringUtils::Split(output, pAPIInfo->m_argList, std::string(ATP_TRACE_ENTRY_ARG_SEPARATOR));
         SpAssert(output.size() == NUM_ARG_CL_SET_KERNEL_ARG);
 
         if (output.size() == NUM_ARG_CL_SET_KERNEL_ARG)

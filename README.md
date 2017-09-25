@@ -1,4 +1,4 @@
-# Radeon Compute Profiler
+﻿# Radeon Compute Profiler
 ---
 
 ## Overview
@@ -10,8 +10,6 @@ and to find ways to optimize the application's performance.
 RCP was formerly delivered as part of CodeXL with the executable name
 "CodeXLGpuProfiler". Prior to its inclusion in CodeXL, it was known as
 "sprofile" and was part of the AMD APP Profiler product.
-
-A subset of RCP is (the portion that supports [ROCm](https://rocm.github.io/)) is automatically installed with ROCm.  Once ROCm is installed, the profiler will appear in the /opt/rocm/profiler directory.
 
 ## Table of Contents
 * [Major Features](#major-features)
@@ -33,11 +31,14 @@ A subset of RCP is (the portion that supports [ROCm](https://rocm.github.io/)) i
 * When used with CodeXL, all profiler data can be visualized in a user-friendly graphical user interface.
 
 ## What's New
-* Version 5.1 (6/28/17)
-  * Adds support for additional GPUs, including Vega series GPUs
-  * ROCm/HSA: Support for ROCm 1.6
-  * Improves display of pointer parameters for some HSA APIs in the ATP file
-  * Fixes an issue with parsing an ATP file which has non-ascii characters (affected Summary page generation and display within CodeXL)
+* Version 5.2 (9/25/17)
+  * Adds support for additional GPUs and APUs.
+  * Improves display of HSA agents in the ATP file and in the HSA Trace Summary pages.
+  * Improves Best Practices/Warnings/Errors Summary page to track and report mismatched memory allocations and frees.
+  * Fixes an issue where incorrect queue index is written to ATP file when profiling an HSA application that dispatches kernels using multiple queues
+  * Fixes incorrect transfer sizes shown in CL Context Summary for applications with total transfers over 4GB.
+  * Fixes an issue where demangled kernel names with commas caused an invalid .csv file to be generated
+  * Adds a speed improvement when profiling HSA applications which dispatch a large number of kernels.
 
 ## System Requirements
 * An AMD Radeon GCN-based GPU or APU
@@ -85,7 +86,7 @@ was included in CodeXL, and the codebase was labelled as version 4.x. Now that R
 is being pulled out of CodeXL and into its own codebase again, we've bumped the
 version number up to 5.x.
 
-## Known Issues
+##Known Issues
 * For the OpenCL™ Profiler
   * Collecting Performance Counters for an OpenCL™ application is not currently working for Vega GPUs on Windows when using a 17.20-based driver. This is due to missing driver support in the 17.20 driver. Future driver versions should provide the support needed.
   * Collecting Performance Counters using --perfcounter for an OpenCL™ application when running OpenCL-on-ROCm is not suported currently. The workaround is to profile using the ROCm profiler (using the --hsapmc command-line switch).

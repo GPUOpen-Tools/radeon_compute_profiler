@@ -10,6 +10,7 @@
 #include "../Common/StringUtils.h"
 #include "CLSyncAnalyzer.h"
 #include "CLObjRefTracker.h"
+#include "ProfilerOutputFileDefs.h"
 
 using namespace std;
 using namespace GPULogger;
@@ -265,7 +266,7 @@ void CLSyncAnalyzer::FlattenedAPIAnalyze(APIInfo* pAPIInfo)
                             case CL_FUNC_TYPE_clWaitForEvents:
                             {
                                 vector<string> output;
-                                StringUtils::Split(output, (*iter)->m_argList, string(";"));
+                                StringUtils::Split(output, (*iter)->m_argList, string(ATP_TRACE_ENTRY_ARG_SEPARATOR));
                                 SpAssert(output.size() == NUM_ARG_CL_WAIT_FOR_EVENTS);
 
                                 if (output.size() == NUM_ARG_CL_WAIT_FOR_EVENTS)

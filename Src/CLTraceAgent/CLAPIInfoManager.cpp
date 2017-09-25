@@ -225,7 +225,11 @@ void CLAPIInfoManager::FlushTraceData(bool bForceFlush)
 
             // don't remove clCreateCommandQueue, clCreateCommandQueueWithProperties, clCreateContext, clCreateContextFromType
             // In time out mode, we keep clCreateCommandQueue API Object so that we can retrieve device name and etc
-            if (item != NULL && item->m_type != CL_FUNC_TYPE_clCreateCommandQueue && item->m_type != CL_FUNC_TYPE_clCreateCommandQueueWithProperties && item->m_type != CL_FUNC_TYPE_clCreateContext && item->m_type != CL_FUNC_TYPE_clCreateContextFromType)
+            if (nullptr != item && 
+                CL_FUNC_TYPE_clCreateCommandQueue != item->m_type &&
+                CL_FUNC_TYPE_clCreateCommandQueueWithProperties != item->m_type &&
+                CL_FUNC_TYPE_clCreateContext != item->m_type &&
+                CL_FUNC_TYPE_clCreateContextFromType != item->m_type)
             {
                 delete item;
             }
@@ -255,11 +259,11 @@ void CLAPIInfoManager::AddAPIInfoEntry(APIBase* api)
     if (IsCapReached())
     {
         // don't free clCreateCommandQueue, clCreateCommandQueueWithProperties, clCreateContext, and clCreateContextFromType since they may be referenced by future enqueue commands (in CLEnqueueAPIBase::GetContextInfo)
-        if (en != NULL &&
-            en->m_type != CL_FUNC_TYPE_clCreateCommandQueue &&
-            en->m_type != CL_FUNC_TYPE_clCreateCommandQueueWithProperties &&
-            en->m_type != CL_FUNC_TYPE_clCreateContext &&
-            en->m_type != CL_FUNC_TYPE_clCreateContextFromType)
+        if (nullptr != en &&
+            CL_FUNC_TYPE_clCreateCommandQueue != en->m_type &&
+            CL_FUNC_TYPE_clCreateCommandQueueWithProperties != en->m_type &&
+            CL_FUNC_TYPE_clCreateContext != en->m_type &&
+            CL_FUNC_TYPE_clCreateContextFromType != en->m_type)
         {
             delete en;
         }
@@ -276,9 +280,9 @@ void CLAPIInfoManager::AddAPIInfoEntry(APIBase* api)
         PreviousGEIMap::iterator iter = m_previousGEIMap.find(en->m_tid);
         bool bThreadFound = iter != m_previousGEIMap.end();
 
-        if (en->m_type == CL_FUNC_TYPE_clGetEventInfo)
+        if (CL_FUNC_TYPE_clGetEventInfo == en->m_type)
         {
-            CLAPI_clGetEventInfo* clGetEventInfoAPI = (CLAPI_clGetEventInfo*)en;
+            CLAPI_clGetEventInfo* clGetEventInfoAPI = static_cast<CLAPI_clGetEventInfo*>(en);
 
             if (bThreadFound)
             {
@@ -494,7 +498,7 @@ void CLAPIInfoManager::Release()
                 CLAPIBase* item = dynamic_cast<CLAPIBase*>(*listIt);
 
                 if ((!m_bTimeOutMode) ||
-                    (item != NULL &&
+                    (nullptr != item &&
                      item->m_type != CL_FUNC_TYPE_clCreateCommandQueue &&
                      item->m_type != CL_FUNC_TYPE_clCreateCommandQueueWithProperties &&
                      item->m_type != CL_FUNC_TYPE_clCreateContext &&
@@ -673,13 +677,13 @@ void CLAPIInfoManager::EnableProfileDuration(bool doEnable, unsigned long durati
     m_durationInMilliseconds = doEnable ? durationInMilliseconds : 0;
 }
 
-bool CLAPIInfoManager::IsProfilerDelayEnabled(unsigned long& delayInMilliseconds)
+bool CLAPIInfoManager::IsProfilerDelayEnabled(unsigned long& delayInMilliseconds) const
 {
     delayInMilliseconds = m_delayInMilliseconds;
     return m_bDelayStartEnabled;
 }
 
-bool CLAPIInfoManager::IsProfilerDurationEnabled(unsigned long& durationInMilliseconds)
+bool CLAPIInfoManager::IsProfilerDurationEnabled(unsigned long& durationInMilliseconds) const
 {
     durationInMilliseconds = m_durationInMilliseconds;
     return m_bProfilerDurationEnabled;
@@ -758,7 +762,7 @@ void CLAPIInfoManager::CreateTimer(ProfilerTimerType timerType, unsigned long ti
 }
 
 
-void CLAPIInfoManager::startTimer(ProfilerTimerType timerType)
+void CLAPIInfoManager::startTimer(ProfilerTimerType timerType) const
 {
     switch (timerType)
     {

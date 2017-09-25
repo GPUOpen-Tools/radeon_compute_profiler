@@ -48,7 +48,7 @@ public:
 
     /// Write API entry
     /// \param sout output stream
-    void WriteAPIEntry(std::ostream& sout)
+    void WriteAPIEntry(std::ostream& sout) override
     {
         m_strName = CLStringUtils::GetCLAPINameString(m_type);
         APIBase::WriteAPIEntry(sout);
@@ -59,9 +59,9 @@ public:
 
     /// Write stack entry
     /// \param sout output stream
-    void WriteStackEntry(std::ostream& sout)
+    void WriteStackEntry(std::ostream& sout) override
     {
-        if (m_pStackEntry == NULL)
+        if (nullptr == m_pStackEntry)
         {
             // Search for OpenCL API call stack frame lazily
             CreateStackEntry();
@@ -74,7 +74,7 @@ public:
     /// \param sout output stream
     /// \param bTimeout a flag indicating output mode
     /// \return True if timestamps are ready
-    virtual bool WriteTimestampEntry(std::ostream& sout, bool bTimeout);
+    virtual bool WriteTimestampEntry(std::ostream& sout, bool bTimeout) override;
 
     CL_FUNC_TYPE m_type;                   ///< api type enum
     CLAPIType m_apiType;                   ///< api type
@@ -86,12 +86,12 @@ public:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLAPIBase(const CLAPIBase& obj);
+    CLAPIBase(const CLAPIBase& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj  the input object
     /// \return a reference of the object
-    CLAPIBase& operator=(const CLAPIBase& obj);
+    CLAPIBase& operator=(const CLAPIBase& obj) = delete;
 
 #ifdef WIN32
     /// Helper function to determine if a stack frame is the one that should be used in the symbol file
@@ -130,7 +130,7 @@ public:
     /// \param sout output stream
     /// \param bTimeout a flag indicating output mode
     /// \return True if timestamps are ready
-    virtual bool WriteTimestampEntry(std::ostream& sout, bool bTimeout);
+    virtual bool WriteTimestampEntry(std::ostream& sout, bool bTimeout) override;
 
     /// Get CLEvent object
     /// \return const ptr to CLEvent object
@@ -146,12 +146,12 @@ protected:
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLEnqueueAPIBase(const CLEnqueueAPIBase& obj);
+    CLEnqueueAPIBase(const CLEnqueueAPIBase& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj  the input object
     /// \return a reference of the object
-    CLEnqueueAPIBase& operator=(const CLEnqueueAPIBase& obj);
+    CLEnqueueAPIBase& operator=(const CLEnqueueAPIBase& obj) = delete;
 
 protected:
     const cl_event* m_event_wait_list;           ///< Wait list passed to the API
@@ -188,17 +188,17 @@ public:
     /// \param sout output stream
     /// \param bTimeout a flag indicating output mode
     /// \return True if timestamps are ready
-    virtual bool WriteTimestampEntry(std::ostream& sout, bool bTimeout);
+    virtual bool WriteTimestampEntry(std::ostream& sout, bool bTimeout) override;
 
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLEnqueueDataTransfer(const CLEnqueueDataTransfer& obj);
+    CLEnqueueDataTransfer(const CLEnqueueDataTransfer& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj  the input object
     /// \return a reference of the object
-    CLEnqueueDataTransfer& operator=(const CLEnqueueDataTransfer& obj);
+    CLEnqueueDataTransfer& operator=(const CLEnqueueDataTransfer& obj) = delete;
 };
 
 
@@ -221,17 +221,17 @@ public:
     /// \param sout output stream
     /// \param bTimeout a flag indicating output mode
     /// \return True if timestamps are ready
-    virtual bool WriteTimestampEntry(std::ostream& sout, bool bTimeout);
+    virtual bool WriteTimestampEntry(std::ostream& sout, bool bTimeout) override;
 
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLEnqueueOther(const CLEnqueueOther& obj);
+    CLEnqueueOther(const CLEnqueueOther& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj  the input object
     /// \return a reference of the object
-    CLEnqueueOther& operator=(const CLEnqueueOther& obj);
+    CLEnqueueOther& operator=(const CLEnqueueOther& obj) = delete;
 };
 
 
@@ -258,17 +258,17 @@ public:
     /// \param sout output stream
     /// \param bTimeout a flag indicating output mode
     /// \return True if timestamps are ready
-    virtual bool WriteTimestampEntry(std::ostream& sout, bool bTimeout);
+    virtual bool WriteTimestampEntry(std::ostream& sout, bool bTimeout) override;
 
 private:
     /// Disable copy constructor
     /// \param[in] obj  the input object
-    CLEnqueueData(const CLEnqueueData& obj);
+    CLEnqueueData(const CLEnqueueData& obj) = delete;
 
     /// Disable assignment operator
     /// \param[in] obj  the input object
     /// \return a reference of the object
-    CLEnqueueData& operator=(const CLEnqueueData& obj);
+    CLEnqueueData& operator=(const CLEnqueueData& obj) = delete;
 };
 
 // @}

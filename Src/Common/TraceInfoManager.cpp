@@ -27,10 +27,11 @@
 #include "OSUtils.h"
 #include "StackTracer.h"
 #include "AMDTMutex.h"
+#include "ProfilerOutputFileDefs.h"
 
 using namespace std;
 
-std::string ITraceEntry::s_strParamSeparator = ";";
+std::string ITraceEntry::s_strParamSeparator = ATP_TRACE_ENTRY_ARG_SEPARATOR;
 
 TraceInfoManager::TraceInfoManager(void) :
     m_iActiveMap(0),

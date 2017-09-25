@@ -8,6 +8,7 @@
 #include <sstream>
 #include "CLRetCodeAnalyzer.h"
 #include "../Common/StringUtils.h"
+#include "ProfilerOutputFileDefs.h"
 
 static const char* s_szSUCCESS = "CL_SUCCESS";
 static const char* s_szNULL = "NULL";
@@ -82,7 +83,7 @@ void CLRetCodeAnalyzer::Analyze(APIInfo* pAPIInfo)
         if (m_retCodeArgMap.count(apiType) > 0)
         {
             std::vector<std::string> apiArgs;
-            StringUtils::Split(apiArgs, pCLApiInfo->m_argList, ";", true);
+            StringUtils::Split(apiArgs, pCLApiInfo->m_argList, ATP_TRACE_ENTRY_ARG_SEPARATOR, true);
             unsigned int argIndex = m_retCodeArgMap[apiType];
 
             if (apiArgs.size() < argIndex)

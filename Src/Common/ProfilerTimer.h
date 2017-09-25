@@ -37,18 +37,18 @@ public:
 
     /// Accessor to the timer type
     /// \return timer type
-    ProfilerTimerType GetTimerType();
+    ProfilerTimerType GetTimerType() const;
 
     /// Sets the Call back function for the end of timer action
-    /// \param timerHandler call back function
+    /// \param timerEndHandler call back function
     void SetTimerFinishHandler(TimerEndHandler timerEndHandler);
 
 protected:
-    virtual void onTimerNotification();
+    virtual void onTimerNotification() override;
 
 private:
     /// Constructor
-    ProfilerTimer();
+    ProfilerTimer() = default;
 
     TimerEndHandler m_timerHandler;         ///< call back function
     ProfilerTimerType m_timerType;          ///< type of the timer

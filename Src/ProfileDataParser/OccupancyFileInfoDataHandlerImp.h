@@ -9,16 +9,12 @@
 #define _OCCUPANCY_FILE_INFO_DATA_HANDLER_IMP_H_
 
 // profiler common
-#include <IParserListener.h>
-#include <CSVFileParser.h>
-
 #include "IOccupancyFileInfoDataHandler.h"
 
 typedef std::map<osThreadId, std::vector<IOccupancyInfoDataHandler*>> OccupancyInfoByThreadId;
 
 /// Occupancy file info data handler class
-class OccupancyFileInfoDataHandler : public IOccupancyFileInfoDataHandler,
-    public IParserListener<CSVRow>
+class OccupancyFileInfoDataHandler : public IOccupancyFileInfoDataHandler
 {
 public:
 
@@ -64,11 +60,6 @@ public:
     /// Releases the data and frees the memory
     void ReleaseData() override;
 
-    /// Override function for CSV Parser Listener
-    /// \param[in] pCsvRow pointer to csv row
-    /// \param[in,out] stopParsing flag indicating to stop parsing or not
-    void OnParse(CSVRow* pCsvRow, bool& stopParsing) override;
-
     /// Virtual Destructor
     ~OccupancyFileInfoDataHandler();
 
@@ -76,6 +67,11 @@ private:
 
     /// Stores the kernel information by thread id
     void GenerateKernelInfoByThreadId();
+
+    /// Parses the occupancy file
+    /// \param[in] pOccupancyFile occupancy file name
+    /// \return true if parsing is successful otherwise false
+    bool Parse(const char* pOccupancyFile);
 
     std::string                                     m_occupancyFileName;                    ///< occupancy file name
     bool                                            m_bIsDataReady;                         ///< flag indicates the data is reday or not after parsing

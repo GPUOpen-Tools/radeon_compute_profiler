@@ -863,7 +863,7 @@ bool CLAtpFilePart::Parse(std::istream& in, std::string& outErrorMsg)
     // Assumption: CL API trace section first then CL timestamp
     bool bError = false;
     bool bTSStart = false;
-    std::string strProgressMessage = "Parsing trace data...";
+    std::string strProgressMessage = "Parsing CL trace data...";
 #if AMDT_BUILD_TARGET == AMDT_WINDOWS_OS
     size_t iterationCounter = 0;
 #endif

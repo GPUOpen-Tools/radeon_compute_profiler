@@ -178,7 +178,7 @@ string StringUtils::NanosecToMillisec(ULONGLONG ullTime)
     }
 }
 
-string StringUtils::GetDataSizeStr(size_t sizeInByte, int precision)
+string StringUtils::GetDataSizeStr(ULONGLONG sizeInByte, int precision)
 {
     if (sizeInByte == 0)
     {
@@ -347,6 +347,32 @@ string& StringUtils::TrimRight(string& s)
 string& StringUtils::TrimInPlace(string& s)
 {
     return TrimLeft(TrimRight(s));
+}
+
+std::string StringUtils::ReplaceASCIISymbolsToHTMLSymbols(const std::string& inputString)
+{
+    std::string tempString = inputString;
+    tempString = Replace(tempString, "&", std::string(AMPERSAND));
+    tempString = Replace(tempString, " ", std::string(SPACE));
+    tempString = Replace(tempString, ",", std::string(COMMA));
+    tempString = Replace(tempString, "#", std::string(NUMSIGN));
+    tempString = Replace(tempString, "<", std::string(LESSTHAN));
+    tempString = Replace(tempString, ">", std::string(GREATERTHAN));
+    tempString = Replace(tempString, "@", std::string(ATSYMBOL));
+    return tempString;
+}
+
+std::string StringUtils::ReplaceHTMLSymbolsToASCIISymbols(const std::string& inputString)
+{
+    std::string tempString = inputString;
+    tempString = Replace(tempString, std::string(SPACE), " ");
+    tempString = Replace(tempString, std::string(COMMA), ",");
+    tempString = Replace(tempString, std::string(AMPERSAND), "&");
+    tempString = Replace(tempString, std::string(NUMSIGN), "#");
+    tempString = Replace(tempString, std::string(LESSTHAN), "<");
+    tempString = Replace(tempString, std::string(GREATERTHAN), ">");
+    tempString = Replace(tempString, std::string(ATSYMBOL), "@");
+    return tempString;
 }
 
 #ifdef _WIN32

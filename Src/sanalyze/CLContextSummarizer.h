@@ -35,10 +35,10 @@ public:
     unsigned int uiNumWrite;            ///< Number of EnqueueWrite*
     unsigned int uiNumRead;             ///< Number of EnqueueRead*
 
-    unsigned int uiByteCopy;            ///< size of data transfer from EnqueueCopy*
-    unsigned int uiByteMap;             ///< size of data transfer from EnqueueMap*
-    unsigned int uiByteWrite;           ///< size of data transfer from EnqueueWrite*
-    unsigned int uiByteRead;            ///< size of data transfer from EnqueueRead*
+    ULONGLONG ullByteCopy;            ///< size of data transfer from EnqueueCopy*
+    ULONGLONG ullByteMap;             ///< size of data transfer from EnqueueMap*
+    ULONGLONG ullByteWrite;           ///< size of data transfer from EnqueueWrite*
+    ULONGLONG ullByteRead;            ///< size of data transfer from EnqueueRead*
 
     ULONGLONG ullDurationCopy;          ///< Ttoal duration for EnqueueCopy*
     ULONGLONG ullDurationMap;           ///< Ttoal duration for EnqueueMap*
@@ -58,10 +58,10 @@ public:
         uiNumMap(0u),
         uiNumWrite(0u),
         uiNumRead(0u),
-        uiByteCopy(0u),
-        uiByteMap(0u),
-        uiByteWrite(0u),
-        uiByteRead(0u),
+        ullByteCopy(0u),
+        ullByteMap(0u),
+        ullByteWrite(0u),
+        ullByteRead(0u),
         ullDurationCopy(0ull),
         ullDurationMap(0ull),
         ullDurationWrite(0ull),
@@ -80,10 +80,10 @@ public:
         uiNumWrite     =  obj.uiNumWrite;
         uiNumRead      =  obj.uiNumRead;
 
-        uiByteCopy     =  obj.uiByteCopy;
-        uiByteMap      =  obj.uiByteMap;
-        uiByteWrite    =  obj.uiByteWrite;
-        uiByteRead     =  obj.uiByteRead;
+        ullByteCopy    =  obj.ullByteCopy;
+        ullByteMap     =  obj.ullByteMap;
+        ullByteWrite   =  obj.ullByteWrite;
+        ullByteRead    =  obj.ullByteRead;
 
         ullDurationCopy =  obj.ullDurationCopy;
         ullDurationMap  =  obj.ullDurationMap;
@@ -116,10 +116,10 @@ public:
             uiNumWrite     =  obj.uiNumWrite;
             uiNumRead      =  obj.uiNumRead;
 
-            uiByteCopy     =  obj.uiByteCopy;
-            uiByteMap      =  obj.uiByteMap;
-            uiByteWrite    =  obj.uiByteWrite;
-            uiByteRead     =  obj.uiByteRead;
+            ullByteCopy    =  obj.ullByteCopy;
+            ullByteMap     =  obj.ullByteMap;
+            ullByteWrite   =  obj.ullByteWrite;
+            ullByteRead    =  obj.ullByteRead;
 
             ullDurationCopy =  obj.ullDurationCopy;
             ullDurationMap  =  obj.ullDurationMap;
@@ -153,10 +153,10 @@ public:
         uiNumWrite     +=  obj.uiNumWrite;
         uiNumRead      +=  obj.uiNumRead;
 
-        uiByteCopy     +=  obj.uiByteCopy;
-        uiByteMap      +=  obj.uiByteMap;
-        uiByteWrite    +=  obj.uiByteWrite;
-        uiByteRead     +=  obj.uiByteRead;
+        ullByteCopy     +=  obj.ullByteCopy;
+        ullByteMap      +=  obj.ullByteMap;
+        ullByteWrite    +=  obj.ullByteWrite;
+        ullByteRead     +=  obj.ullByteRead;
 
         ullDurationCopy +=  obj.ullDurationCopy;
         ullDurationMap  +=  obj.ullDurationMap;

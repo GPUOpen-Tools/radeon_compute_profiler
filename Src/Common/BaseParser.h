@@ -46,7 +46,7 @@ public:
     /// Get parse warning
     /// \param[out] bWarning warning flag
     /// \param[out] strMsg warning msg
-    void GetParseWarning(bool& bWarning, std::string& strMsg)
+    void GetParseWarning(bool& bWarning, std::string& strMsg) const
     {
         bWarning = m_bWarning;
         strMsg = m_strWarningMsg;
@@ -57,7 +57,7 @@ public:
     /// \param pListener Listener object
     void AddListener(IParserListener<T>* pListener)
     {
-        if (pListener != NULL)
+        if (nullptr != pListener)
         {
             m_listenerList.push_back(pListener);
         }
@@ -147,10 +147,10 @@ protected:
 
 private:
     /// Disable copy constructor
-    BaseParser(const BaseParser& rhs);
+    BaseParser(const BaseParser& rhs) = delete;
 
     /// Disable assignment operator
-    BaseParser& operator = (const BaseParser& rhs);
+    BaseParser& operator= (const BaseParser& rhs) = delete;
 };
 
 //------------------------------------------------------------------------------------

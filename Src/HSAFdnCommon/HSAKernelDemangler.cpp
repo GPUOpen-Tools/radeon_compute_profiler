@@ -9,6 +9,8 @@
 
 #include <sstream>
 #include <fstream>
+#include <unordered_map>
+#include <mutex>
 #include "Logger.h"
 #include "GlobalSettings.h"
 #include <cstdio>
@@ -16,60 +18,78 @@
 #include "Defs.h"
 #include "StringUtils.h"
 
+
+static std::unordered_map<std::string, std::string> gs_demangledKernelsMap;
+static std::mutex gs_demanglerMutex;
+
 std::string DemangleKernelName(std::string& kernelName)
 {
-    std::string demangledKernelName = kernelName;
+    std::lock_guard<std::mutex> lock(gs_demanglerMutex);
+    std::string demangledKernelName;
 
-    if (!GlobalSettings::GetInstance()->m_params.m_bDisableKernelDemangling && !system("which c++filt > /dev/null 2>&1"))
+    if (gs_demangledKernelsMap.count(kernelName) > 0)
     {
-        std::string tempMangledKernelNameFile = FileUtils::GetDefaultOutputPath() + "/rcp_mangled_kernel";
-        std::string tempDemangledKernelNameFile = FileUtils::GetDefaultOutputPath() + "/rcp_demangled_kernel";
+        demangledKernelName = gs_demangledKernelsMap[kernelName];
+    }
+    else
+    {
+        demangledKernelName = kernelName;
 
-        if ('Z' == demangledKernelName.at(0))
+        if (!GlobalSettings::GetInstance()->m_params.m_bDisableKernelDemangling && !system("which c++filt > /dev/null 2>&1"))
         {
-            demangledKernelName.insert(demangledKernelName.begin(), '_');
-        }
+            std::string tempMangledKernelNameFile = FileUtils::GetDefaultOutputPath() + "/rcp_mangled_kernel";
+            std::string tempDemangledKernelNameFile = FileUtils::GetDefaultOutputPath() + "/rcp_demangled_kernel";
 
-        std::ofstream fout(tempMangledKernelNameFile);
+            if ('Z' == demangledKernelName.at(0))
+            {
+                demangledKernelName.insert(demangledKernelName.begin(), '_');
+            }
 
-        if (fout.is_open())
-        {
-            fout << demangledKernelName;
-        }
+            std::ofstream fout(tempMangledKernelNameFile);
 
-        fout.close();
+            if (fout.is_open())
+            {
+                fout << demangledKernelName;
+            }
 
-        std::stringstream demanglingCommand;
-        demanglingCommand << "c++filt -p" << " < " << tempMangledKernelNameFile << " > " << tempDemangledKernelNameFile;
-        int retCode = system(demanglingCommand.str().c_str());
+            fout.close();
 
-        if (retCode != 0)
-        {
-            GPULogger::Log(GPULogger::logERROR, "Unable to demangle the kernel Name\n");
-        }
+            std::stringstream demanglingCommand;
+            demanglingCommand << "c++filt -p" << " < " << tempMangledKernelNameFile << " > " << tempDemangledKernelNameFile;
+            int retCode = system(demanglingCommand.str().c_str());
 
-        std::ifstream fin(tempDemangledKernelNameFile);
+            if (retCode != 0)
+            {
+                GPULogger::Log(GPULogger::logERROR, "Unable to demangle the kernel Name\n");
+            }
 
-        if (fin.is_open())
-        {
-            getline(fin, demangledKernelName);
-        }
+            std::ifstream fin(tempDemangledKernelNameFile);
 
-        fin.close();
+            if (fin.is_open())
+            {
+                getline(fin, demangledKernelName);
+            }
+
+            fin.close();
 
 #ifndef _DEBUG
-        bool success = std::remove(tempMangledKernelNameFile.c_str()) == 0 ? true : false;
-        success &= std::remove(tempDemangledKernelNameFile.c_str()) == 0 ? true : false;
+            bool success = std::remove(tempMangledKernelNameFile.c_str()) == 0 ? true : false;
+            success &= std::remove(tempDemangledKernelNameFile.c_str()) == 0 ? true : false;
 
-        if (!success)
-        {
-            GPULogger::Log(GPULogger::logERROR, "Unable to delete the temporary files %s %s", tempMangledKernelNameFile.c_str(), tempDemangledKernelNameFile.c_str());
-        }
+            if (!success)
+            {
+                GPULogger::Log(GPULogger::logERROR, "Unable to delete the temporary files %s %s", tempMangledKernelNameFile.c_str(), tempDemangledKernelNameFile.c_str());
+            }
 
 #endif
 
+        }
+
+        demangledKernelName = StringUtils::Replace(demangledKernelName, " ", std::string(SPACE));
+        demangledKernelName = StringUtils::Replace(demangledKernelName, ",", std::string(COMMA));
+
+        gs_demangledKernelsMap[kernelName] = demangledKernelName;
     }
 
-    demangledKernelName = StringUtils::Replace(demangledKernelName, " ", std::string(SPACE));
     return demangledKernelName;
 }

@@ -117,6 +117,35 @@ CL_OCCUPANCY_API_ENTRY_EnqueueNDRangeKernel(
     if (CL_SUCCESS != occupancy_status)
     {
         Log(logERROR, "Unable to query the gfxip major version\n");
+        return occupancy_status;
+    }
+
+    if (0 == gfxIpMajor)
+    {
+        // workaround failure of CL_DEVICE_GFXIP_MAJOR_AMD on ROCm by extracting the major gfx ip ver from the device name
+        char szDeviceName[SP_MAX_PATH];
+        occupancy_status = g_realDispatchTable.GetDeviceInfo(device, CL_DEVICE_NAME, SP_MAX_PATH, szDeviceName, NULL);
+
+        if (occupancy_status != CL_SUCCESS && (szDeviceName[0] == 'g' && szDeviceName[1] == 'f' && szDeviceName[2] == 'x'))
+        {
+            gfxIpMajor = szDeviceName[3] - '0';
+
+            if (8 > gfxIpMajor)
+            {
+                gfxIpMajor = (10 * gfxIpMajor) + szDeviceName[4] - '0';
+            }
+
+            if (0 == gfxIpMajor)
+            {
+                Log(logERROR, "gfxip major version is zero\n");
+                return CL_INVALID_VALUE;
+            }
+        }
+        else
+        {
+            Log(logERROR, "Unable to query the gfxip major version\n");
+            return CL_INVALID_VALUE;
+        }
     }
 
     pEntry->m_nDeviceGfxIpVer = gfxIpMajor;
@@ -324,17 +353,68 @@ CL_OCCUPANCY_API_ENTRY_GetDeviceIDs(
     cl_device_id*     device_list,
     cl_uint*          num_devices)
 {
-    cl_int ret = g_nextDispatchTable.GetDeviceIDs(
-        platform,
-        device_type,
-        num_entries,
-        device_list,
-        num_devices);
 
-    if (CL_SUCCESS == ret && GlobalSettings::GetInstance()->m_params.m_bForceSingleGPU && 0u <= GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex)
+    cl_int ret = CL_SUCCESS;
+
+    if (((device_type & CL_DEVICE_TYPE_GPU) == CL_DEVICE_TYPE_GPU) &&
+        GlobalSettings::GetInstance()->m_params.m_bForceSingleGPU &&
+        0u <= GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex)
     {
-        ret = CLDeviceReplacer::Instance()->ReplaceDeviceIds(platform, device_type, num_entries, device_list, num_devices, GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex, ret);
+        ret = CLDeviceReplacer::ReplaceDeviceIdsInclGetDeviceIds(
+                  platform,
+                  device_type,
+                  num_entries,
+                  device_list,
+                  num_devices,
+                  GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex);
+    }
+    else
+    {
+        ret = g_nextDispatchTable.GetDeviceIDs(
+                  platform,
+                  device_type,
+                  num_entries,
+                  device_list,
+                  num_devices);
     }
 
     return ret;
 }
+
+
+cl_int CL_API_CALL
+CL_OCCUPANCY_API_ENTRY_GetContextInfo(
+    cl_context          context,
+    cl_context_info     param_name,
+    size_t              param_value_size,
+    void*               param_value,
+    size_t*             param_value_size_ret)
+{
+    cl_int ret = CL_SUCCESS;
+
+    if ((CL_CONTEXT_DEVICES == param_name || CL_CONTEXT_NUM_DEVICES == param_name) &&
+        GlobalSettings::GetInstance()->m_params.m_bForceSingleGPU &&
+        0u <= GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex)
+    {
+        ret = CLDeviceReplacer::ReplaceDeviceIdsInclGetContextInfo(
+                  context,
+                  param_name,
+                  param_value_size,
+                  param_value,
+                  param_value_size_ret,
+                  GlobalSettings::GetInstance()->m_params.m_uiForcedGpuIndex);
+    }
+    else
+    {
+        ret = g_nextDispatchTable.GetContextInfo(
+                  context,
+                  param_name,
+                  param_value_size,
+                  param_value,
+                  param_value_size_ret);
+    }
+
+    return ret;
+}
+
+

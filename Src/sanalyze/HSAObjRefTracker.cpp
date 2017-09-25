@@ -29,37 +29,82 @@ HSAObjRefTracker::HSAObjRefTracker()
 
     m_dependentAPIs.insert(HSA_API_Type_hsa_init);
     m_dependentAPIs.insert(HSA_API_Type_hsa_shut_down);
+
     m_dependentAPIs.insert(HSA_API_Type_hsa_queue_create);
     m_dependentAPIs.insert(HSA_API_Type_hsa_soft_queue_create);
     m_dependentAPIs.insert(HSA_API_Type_hsa_queue_destroy);
-    //m_dependentAPIs.insert(HSA_API_Type_hsa_memory_register);
-    //m_dependentAPIs.insert(HSA_API_Type_hsa_memory_deregister);
-    //m_dependentAPIs.insert(HSA_API_Type_hsa_memory_allocate);
-    //m_dependentAPIs.insert(HSA_API_Type_hsa_memory_free);
+
+    m_dependentAPIs.insert(HSA_API_Type_hsa_memory_register);
+    m_dependentAPIs.insert(HSA_API_Type_hsa_memory_deregister);
+
+    m_dependentAPIs.insert(HSA_API_Type_hsa_amd_memory_pool_allocate);
+    m_dependentAPIs.insert(HSA_API_Type_hsa_amd_memory_pool_free);
+
+    m_dependentAPIs.insert(HSA_API_Type_hsa_amd_memory_lock);
+    m_dependentAPIs.insert(HSA_API_Type_hsa_amd_memory_unlock);
+
+    m_dependentAPIs.insert(HSA_API_Type_hsa_memory_allocate);
+    m_dependentAPIs.insert(HSA_API_Type_hsa_memory_free);
+
     m_dependentAPIs.insert(HSA_API_Type_hsa_signal_create);
     m_dependentAPIs.insert(HSA_API_Type_hsa_signal_destroy);
+
     m_dependentAPIs.insert(HSA_API_Type_hsa_executable_create);
     m_dependentAPIs.insert(HSA_API_Type_hsa_executable_destroy);
+
     m_dependentAPIs.insert(HSA_API_Type_hsa_ext_program_create);
     m_dependentAPIs.insert(HSA_API_Type_hsa_ext_program_destroy);
+
     m_dependentAPIs.insert(HSA_API_Type_hsa_ext_image_create);
     m_dependentAPIs.insert(HSA_API_Type_hsa_ext_image_destroy);
+
     m_dependentAPIs.insert(HSA_API_Type_hsa_ext_sampler_create);
     m_dependentAPIs.insert(HSA_API_Type_hsa_ext_sampler_destroy);
 
+    m_dependentAPIs.insert(HSA_API_Type_hsa_amd_interop_map_buffer);
+    m_dependentAPIs.insert(HSA_API_Type_hsa_amd_interop_unmap_buffer);
+
+    m_dependentAPIs.insert(HSA_API_Type_hsa_amd_ipc_memory_attach);
+    m_dependentAPIs.insert(HSA_API_Type_hsa_amd_ipc_memory_detach);
+
+    // indices are 0-based index of the tracking parameter in the HSA functions
     m_resourceArgMap[HSA_API_Type_hsa_queue_create] = 7;
     m_resourceArgMap[HSA_API_Type_hsa_soft_queue_create] = 5;
     m_resourceArgMap[HSA_API_Type_hsa_queue_destroy] = 0;
+
     m_resourceArgMap[HSA_API_Type_hsa_signal_create] = 3;
     m_resourceArgMap[HSA_API_Type_hsa_signal_destroy] = 0;
+
     m_resourceArgMap[HSA_API_Type_hsa_executable_create] = 3;
     m_resourceArgMap[HSA_API_Type_hsa_executable_destroy] = 0;
+
     m_resourceArgMap[HSA_API_Type_hsa_ext_program_create] = 4;
     m_resourceArgMap[HSA_API_Type_hsa_ext_program_destroy] = 0;
+
     m_resourceArgMap[HSA_API_Type_hsa_ext_image_create] = 4;
     m_resourceArgMap[HSA_API_Type_hsa_ext_image_destroy] = 1;
+
     m_resourceArgMap[HSA_API_Type_hsa_ext_sampler_create] = 2;
     m_resourceArgMap[HSA_API_Type_hsa_ext_sampler_destroy] = 1;
+
+    m_resourceArgMap[HSA_API_Type_hsa_memory_register] = 0;
+    m_resourceArgMap[HSA_API_Type_hsa_memory_deregister] = 0;
+
+    m_resourceArgMap[HSA_API_Type_hsa_memory_allocate] = 2;
+    m_resourceArgMap[HSA_API_Type_hsa_memory_free] = 0;
+
+    m_resourceArgMap[HSA_API_Type_hsa_amd_memory_pool_allocate] = 3;
+    m_resourceArgMap[HSA_API_Type_hsa_amd_memory_pool_free] = 0;
+
+    m_resourceArgMap[HSA_API_Type_hsa_amd_memory_lock] = 0;
+    m_resourceArgMap[HSA_API_Type_hsa_amd_memory_unlock] = 0;
+
+    m_resourceArgMap[HSA_API_Type_hsa_amd_interop_map_buffer] = 5;
+    m_resourceArgMap[HSA_API_Type_hsa_amd_interop_unmap_buffer] = 0;
+
+    m_resourceArgMap[HSA_API_Type_hsa_amd_ipc_memory_attach] = 4;
+    m_resourceArgMap[HSA_API_Type_hsa_amd_ipc_memory_detach] = 0;
+
 }
 
 HSAObjRefTracker::~HSAObjRefTracker(void)
@@ -69,9 +114,9 @@ HSAObjRefTracker::~HSAObjRefTracker(void)
 
 void HSAObjRefTracker::Clear()
 {
-    for (APITraceMap::iterator it = m_objRefHistoryMap.begin() ; it != m_objRefHistoryMap.end(); it++)
+    for (APITraceMap::iterator it = m_objRefHistoryMap.begin() ; it != m_objRefHistoryMap.end(); ++it)
     {
-        if (it->second != NULL)
+        if (nullptr != it->second)
         {
             delete it->second;
         }
@@ -104,6 +149,12 @@ void HSAObjRefTracker::FlattenedAPIAnalyze(APIInfo* pAPIInfo)
             case HSA_API_Type_hsa_ext_program_create:
             case HSA_API_Type_hsa_ext_image_create:
             case HSA_API_Type_hsa_ext_sampler_create:
+            case HSA_API_Type_hsa_memory_register:
+            case HSA_API_Type_hsa_memory_allocate:
+            case HSA_API_Type_hsa_amd_memory_pool_allocate:
+            case HSA_API_Type_hsa_amd_memory_lock:
+            case HSA_API_Type_hsa_amd_interop_map_buffer:
+            case HSA_API_Type_hsa_amd_ipc_memory_attach:
                 RecordResourceCreate(pHSAApiInfo);
                 break;
 
@@ -114,6 +165,12 @@ void HSAObjRefTracker::FlattenedAPIAnalyze(APIInfo* pAPIInfo)
             case HSA_API_Type_hsa_ext_program_destroy:
             case HSA_API_Type_hsa_ext_image_destroy:
             case HSA_API_Type_hsa_ext_sampler_destroy:
+            case HSA_API_Type_hsa_memory_deregister:
+            case HSA_API_Type_hsa_memory_free:
+            case HSA_API_Type_hsa_amd_memory_pool_free:
+            case HSA_API_Type_hsa_amd_memory_unlock:
+            case HSA_API_Type_hsa_amd_interop_unmap_buffer:
+            case HSA_API_Type_hsa_amd_ipc_memory_detach:
                 RecordResourceFree(pHSAApiInfo);
                 break;
 
@@ -132,12 +189,13 @@ std::string HSAObjRefTracker::GetResourceHandle(HSAAPIInfo* pAPIInfo)
     if (m_resourceArgMap.find(pAPIInfo->m_apiID) != m_resourceArgMap.end())
     {
         std::vector<std::string> apiArgs;
-        StringUtils::Split(apiArgs, pAPIInfo->m_argList, std::string(";"));
+        StringUtils::Split(apiArgs, pAPIInfo->m_argList, std::string(ATP_TRACE_ENTRY_ARG_SEPARATOR));
 
-        for(std::vector<std::string>::iterator it = apiArgs.begin(); it!=apiArgs.end(); ++it)
+        for (std::vector<std::string>::iterator it = apiArgs.begin(); it != apiArgs.end(); ++it)
         {
             size_t indexOfEqualSign = it->find('=');
-            if(indexOfEqualSign != std::string::npos)
+
+            if (indexOfEqualSign != std::string::npos)
             {
                 it->erase(0, indexOfEqualSign + 1);
             }
@@ -235,7 +293,7 @@ std::string HSAObjRefTracker::APIObjHistoryListToString(APIObjHistoryList* list)
 {
     std::stringstream ss;
 
-    for (APIObjHistoryList::iterator it = list->begin(); it != list->end(); it++)
+    for (APIObjHistoryList::iterator it = list->begin(); it != list->end(); ++it)
     {
         HSAAPIInfo* pInfo = dynamic_cast<HSAAPIInfo*>(it->m_pAPIInfoObj);
 
@@ -255,7 +313,7 @@ void HSAObjRefTracker::EndAnalyze()
         return;
     }
 
-    for (APITraceMap::iterator it = m_objRefHistoryMap.begin() ; it != m_objRefHistoryMap.end(); it++)
+    for (APITraceMap::iterator it = m_objRefHistoryMap.begin() ; it != m_objRefHistoryMap.end(); ++it)
     {
 #ifdef DEBUG_REF_TRACKER
         m_msgList.push_back(APIObjHistoryListToString(it->second));

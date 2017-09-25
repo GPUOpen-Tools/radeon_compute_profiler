@@ -28,14 +28,14 @@ public:
     /// Write header section
     /// If a AptFilePart wants to output to header section, implement this method
     /// \param sout Output stream
-    void WriteHeaderSection(SP_fileStream& sout);
+    void WriteHeaderSection(SP_fileStream& sout) override;
 
     /// Write content section
     /// \param sout Output stream
     /// \param strTmpFilePath Output fragment files path
     /// \param strPID child process ID
     /// \return true if any contents were written, false otherwise
-    bool WriteContentSection(SP_fileStream& sout, const std::string& strTmpFilePath, const std::string& strPID);
+    bool WriteContentSection(SP_fileStream& sout, const std::string& strTmpFilePath, const std::string& strPID) override;
 
     /// Parse input stream
     /// \param in Input stream
@@ -46,7 +46,7 @@ public:
     /// \param strKey Key name
     /// \param strVal Value
     /// \return True if succeeded
-    bool ParseHeader(const std::string& strKey, const std::string& strVal);
+    bool ParseHeader(const std::string& strKey, const std::string& strVal) override;
 
 protected:
     /// Parse host side timestamp
@@ -114,7 +114,7 @@ private:
     /// specified threadCopyInfoMap
     /// \param strFile the temp file name to check
     /// \param threadCopyInfoMap the map containing the loaded async copy timestamps
-    /// \param[out] the thread id that is found
+    /// \param[out] threadId thread id that is found
     /// \return if the strFile is from a thread that can be found in the threadCopyInfoMap
     bool IsCorrectTidFile(const std::string strFile, ThreadCopyItemMap threadCopyInfoMap, osThreadId& threadId);
 
