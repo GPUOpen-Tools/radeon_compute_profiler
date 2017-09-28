@@ -98,6 +98,11 @@ bool OccupancyFileInfoDataHandler::Parse(const char* pOccupancyFile)
             char lineBuffer[lineSizeBuffer];
             occupancyFileStream.getline(lineBuffer, lineSizeBuffer);
 
+            if (occupancyFileStream.eof())
+            {
+                break;
+            }
+
             if ('#' == lineBuffer[0])
             {
                 // Comments Section of the Occupancy File
