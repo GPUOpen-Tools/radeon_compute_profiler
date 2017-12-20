@@ -3317,6 +3317,191 @@ private:
     cl_int       m_retVal;        ///< return value of clEnqueueSVMUnmap
 };
 
+//------------------------------------------------------------------------------------
+/// clEnqueueReadSsgFileAMD
+//------------------------------------------------------------------------------------
+class CLAPI_clEnqueueReadSsgFileAMD : public CLEnqueueOther
+{
+public:
+    /// Constructor
+    CLAPI_clEnqueueReadSsgFileAMD() = default;
+
+    /// Destructor
+    ~CLAPI_clEnqueueReadSsgFileAMD()
+    {
+
+    }
+
+    /// Return whether the API succeeded
+    /// \return true if the API succeeded (CL_SUCCESS), false otherwise
+    bool GetAPISucceeded() const override
+    {
+        return CL_SUCCESS == m_retVal;
+    }
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString() override
+    {
+        std::ostringstream ss;
+        ss << CLStringUtils::GetErrorString(m_retVal);
+        return ss.str();
+    }
+
+    /// To String
+    /// \return string representation of the API
+    std::string ToString() override
+    {
+        std::ostringstream ss;
+        ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
+           << StringUtils::ToHexString(m_buffer) << s_strParamSeparator
+           << CLStringUtils::GetBoolString(m_blocking_read) << s_strParamSeparator
+           << m_buffer_offset << s_strParamSeparator
+           << m_cb << s_strParamSeparator
+           << StringUtils::ToHexString(m_file) << s_strParamSeparator
+           << m_file_offset << s_strParamSeparator
+           << m_num_events_in_wait_list << s_strParamSeparator
+           << CLStringUtils::GetEventListString(m_event_wait_list, m_vecEvent_wait_list) << s_strParamSeparator
+           << CLStringUtils::GetEventString(m_event);
+        return ss.str();
+    }
+
+    /// Save the parameter values, return value and time stamps of CLAPI_clEnqueueReadSsgFileAMD
+    /// \param command_queue Parameter for CLAPI_clEnqueueReadSsgFileAMD
+    /// \param buffer Parameter for CLAPI_clEnqueueReadSsgFileAMD
+    /// \param blocking_read Parameter for CLAPI_clEnqueueReadSsgFileAMD
+    /// \param buffer_offset Parameter for CLAPI_clEnqueueReadSsgFileAMD
+    /// \param cb Parameter for CLAPI_clEnqueueReadSsgFileAMD
+    /// \param file Parameter for CLAPI_clEnqueueReadSsgFileAMD
+    /// \param file_offset Parameter for CLAPI_clEnqueueReadSsgFileAMD
+    /// \param num_events_in_wait_list Parameter for CLAPI_clEnqueueReadSsgFileAMD
+    /// \param event_wait_list Parameter for CLAPI_clEnqueueReadSsgFileAMD
+    /// \param event Parameter for CLAPI_clEnqueueReadSsgFileAMD
+    cl_int Create(
+        cl_command_queue command_queue,
+        cl_mem buffer,
+        cl_bool blocking_read,
+        size_t buffer_offset,
+        size_t cb,
+        cl_file_amd file,
+        size_t file_offset,
+        cl_uint  num_events_in_wait_list,
+        const cl_event*   event_wait_list,
+        cl_event*   event);
+
+private:
+    /// Disable copy constructor
+    /// \param[in] obj  the input object
+    CLAPI_clEnqueueReadSsgFileAMD(const CLAPI_clEnqueueReadSsgFileAMD& obj) = delete;
+
+    /// Disable assignment operator
+    /// \param[in] obj the input object
+    /// \return a reference of the object
+    CLAPI_clEnqueueReadSsgFileAMD& operator = (const CLAPI_clEnqueueReadSsgFileAMD& obj) = delete;
+
+private:
+    cl_mem      m_buffer;        ///< parameter for clEnqueueReadSsgFileAMD
+    cl_bool     m_blocking_read; ///< parameter for clEnqueueReadSsgFileAMD
+    size_t      m_buffer_offset; ///< parameter for clEnqueueReadSsgFileAMD
+    size_t      m_cb;            ///< parameter for clEnqueueReadSsgFileAMD
+    cl_file_amd m_file;          ///< parameter for clEnqueueReadSsgFileAMD
+    size_t      m_file_offset;   ///< parameter for clEnqueueReadSsgFileAMD
+    cl_event    m_event;         ///< parameter for clEnqueueReadSsgFileAMD
+    cl_int      m_retVal;        ///< return value
+};
+
+//------------------------------------------------------------------------------------
+/// clEnqueueWriteSsgFileAMD
+//------------------------------------------------------------------------------------
+class CLAPI_clEnqueueWriteSsgFileAMD : public CLEnqueueOther
+{
+public:
+    /// Constructor
+    CLAPI_clEnqueueWriteSsgFileAMD() = default;
+
+    /// Destructor
+    ~CLAPI_clEnqueueWriteSsgFileAMD()
+    {
+
+    }
+
+    /// Return whether the API succeeded
+    /// \return true if the API succeeded (CL_SUCCESS), false otherwise
+    bool GetAPISucceeded() const override
+    {
+        return CL_SUCCESS == m_retVal;
+    }
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString() override
+    {
+        std::ostringstream ss;
+        ss << CLStringUtils::GetErrorString(m_retVal);
+        return ss.str();
+    }
+
+    /// To String
+    /// \return string representation of the API
+    std::string ToString() override
+    {
+        std::ostringstream ss;
+        ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
+           << StringUtils::ToHexString(m_buffer) << s_strParamSeparator
+           << CLStringUtils::GetBoolString(m_blocking_write) << s_strParamSeparator
+           << m_buffer_offset << s_strParamSeparator
+           << m_cb << s_strParamSeparator
+           << StringUtils::ToHexString(m_file) << s_strParamSeparator
+           << m_file_offset << s_strParamSeparator
+           << m_num_events_in_wait_list << s_strParamSeparator
+           << CLStringUtils::GetEventListString(m_event_wait_list, m_vecEvent_wait_list) << s_strParamSeparator
+           << CLStringUtils::GetEventString(m_event);
+        return ss.str();
+    }
+
+    /// Save the parameter values, return value and time stamps of CLAPI_clEnqueueWriteSsgFileAMD
+    /// \param command_queue Parameter for CLAPI_clEnqueueWriteSsgFileAMD
+    /// \param buffer Parameter for CLAPI_clEnqueueWriteSsgFileAMD
+    /// \param blocking_write Parameter for CLAPI_clEnqueueWriteSsgFileAMD
+    /// \param buffer_offset Parameter for CLAPI_clEnqueueWriteSsgFileAMD
+    /// \param cb Parameter for CLAPI_clEnqueueWriteSsgFileAMD
+    /// \param file Parameter for CLAPI_clEnqueueWriteSsgFileAMD
+    /// \param file_offset Parameter for CLAPI_clEnqueueWriteSsgFileAMD
+    /// \param num_events_in_wait_list Parameter for CLAPI_clEnqueueWriteSsgFileAMD
+    /// \param event_wait_list Parameter for CLAPI_clEnqueueWriteSsgFileAMD
+    /// \param event Parameter for CLAPI_clEnqueueWriteSsgFileAMD
+    cl_int Create(
+        cl_command_queue command_queue,
+        cl_mem buffer,
+        cl_bool blocking_write,
+        size_t buffer_offset,
+        size_t cb,
+        cl_file_amd file,
+        size_t file_offset,
+        cl_uint  num_events_in_wait_list,
+        const cl_event*   event_wait_list,
+        cl_event*   event);
+
+private:
+    /// Disable copy constructor
+    /// \param[in] obj  the input object
+    CLAPI_clEnqueueWriteSsgFileAMD(const CLAPI_clEnqueueWriteSsgFileAMD& obj) = delete;
+
+    /// Disable assignment operator
+    /// \param[in] obj the input object
+    /// \return a reference of the object
+    CLAPI_clEnqueueWriteSsgFileAMD& operator = (const CLAPI_clEnqueueWriteSsgFileAMD& obj) = delete;
+
+private:
+    cl_mem      m_buffer;         ///< parameter for clEnqueueWriteSsgFileAMD
+    cl_bool     m_blocking_write; ///< parameter for clEnqueueWriteSsgFileAMD
+    size_t      m_buffer_offset;  ///< parameter for clEnqueueWriteSsgFileAMD
+    size_t      m_cb  ;           ///< parameter for clEnqueueWriteSsgFileAMD
+    cl_file_amd m_file;           ///< parameter for clEnqueueWriteSsgFileAMD
+    size_t      m_file_offset;    ///< parameter for clEnqueueWriteSsgFileAMD
+    cl_event    m_event;          ///< parameter for clEnqueueWriteSsgFileAMD
+    cl_int      m_retVal;         ///< return value
+};
 // @}
 
 #endif //_CL_ENQUEUE_API_DEFS_H_

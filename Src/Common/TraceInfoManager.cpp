@@ -14,6 +14,7 @@
 #include <vector>
 #include <sstream>
 #include <iomanip>
+#include <mutex>
 #include <math.h>
 
 #include <AMDTOSWrappers/Include/osThread.h>
@@ -26,7 +27,6 @@
 #include "StringUtils.h"
 #include "OSUtils.h"
 #include "StackTracer.h"
-#include "AMDTMutex.h"
 #include "ProfilerOutputFileDefs.h"
 
 using namespace std;
@@ -62,9 +62,9 @@ void TraceInfoManager::TrySwapBuffer()
         }
     }
 
-    m_mtx.Lock();
+    m_mtx.lock();
     m_iActiveMap = 1 - m_iActiveMap;
-    m_mtx.Unlock();
+    m_mtx.unlock();
 }
 
 bool TraceInfoManager::StartTimer(TimerFunc timerFunc)
@@ -101,7 +101,7 @@ bool TraceInfoManager::ResumeTimer()
 void TraceInfoManager::AddTraceInfoEntry(ITraceEntry* en)
 {
     // lock access to m_TraceInfoMap
-    AMDTScopeLock lock(m_mtxTracemap);
+    std::lock_guard<std::mutex> lock(m_mtxTracemap);
 
     if (m_bStopped)
     {
@@ -114,9 +114,9 @@ void TraceInfoManager::AddTraceInfoEntry(ITraceEntry* en)
     if (m_bTimeOutMode)
     {
         // lock the access to active map
-        m_mtx.Lock();
+        m_mtx.lock();
         activeMap = &m_TraceInfoMap[ m_iActiveMap ];
-        m_mtx.Unlock();
+        m_mtx.unlock();
     }
 
     en->m_tid = osGetUniqueCurrentThreadId();

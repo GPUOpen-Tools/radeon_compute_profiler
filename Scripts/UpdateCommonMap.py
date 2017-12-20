@@ -22,7 +22,6 @@ GitHubMapping = {
     "common-src-AMDTBaseTools"               : "../Common/Src/AMDTBaseTools",
     "common-src-AMDTInterceptor"             : "../Common/Src/AMDTInterceptor",
     "common-src-AMDTOSWrappers"              : "../Common/Src/AMDTOSWrappers",
-    "common-src-AMDTMutex"                   : "../Common/Src/AMDTMutex",
     "common-src-CElf"                        : "../Common/Src/CElf",
     "common-src-DeviceInfo"                  : "../Common/Src/DeviceInfo",
     "common-src-DynamicLibraryModule"        : "../Common/Src/DynamicLibraryModule",

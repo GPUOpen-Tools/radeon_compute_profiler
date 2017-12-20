@@ -74,7 +74,6 @@
     <ClCompile Include="..\..\Src\Common\KernelStats.cpp" />
     <ClCompile Include="..\..\Src\Common\LocaleSetting.cpp" />
     <ClCompile Include="..\..\Src\Common\Logger.cpp" />
-    <ClCompile Include="..\..\..\Common\Src\AMDTMutex\AMDTMutex.cpp" />
     <ClCompile Include="..\..\Src\Common\OSUtils.cpp" />
     <ClCompile Include="..\..\Src\Common\ProfilerTimer.cpp" />
     <ClCompile Include="..\..\Src\Common\StackTracer.cpp" />
@@ -117,7 +116,6 @@
     <ClInclude Include="..\..\Src\Common\LocaleSetting.h" />
     <ClInclude Include="..\..\Src\Common\LocalTSingleton.h" />
     <ClInclude Include="..\..\Src\Common\Logger.h" />
-    <ClInclude Include="..\..\..\Common\Src\AMDTMutex\AMDTMutex.h" />
     <ClInclude Include="..\..\Src\Common\OSUtils.h" />
     <ClInclude Include="..\..\Src\Common\ProfilerTimer.h" />
     <ClInclude Include="..\..\Src\Common\Runnable.h" />

@@ -19,10 +19,12 @@
 
 #include "HSAPMCInterception.h"
 
-CoreApiTable*      g_pRealCoreFunctions         = nullptr;
-FinalizerExtTable* g_pRealFinalizerExtFunctions = nullptr;
-ImageExtTable*     g_pRealImageExtFunctions     = nullptr;
-AmdExtTable*       g_pRealAmdExtFunctions       = nullptr;
+CoreApiTable*                      g_pRealCoreFunctions          = nullptr;
+FinalizerExtTable*                 g_pRealFinalizerExtFunctions  = nullptr;
+ImageExtTable*                     g_pRealImageExtFunctions      = nullptr;
+AmdExtTable*                       g_pRealAmdExtFunctions        = nullptr;
+hsa_ven_amd_aqlprofile_1_00_pfn_t* g_pRealAqlProfileExtFunctions = nullptr;
+hsa_ven_amd_loader_1_01_pfn_t*     g_pRealLoaderExtFunctions     = nullptr;
 
 hsa_status_t HSA_PMC_hsa_agent_get_info(hsa_agent_t agent, hsa_agent_info_t attribute, void* value)
 {

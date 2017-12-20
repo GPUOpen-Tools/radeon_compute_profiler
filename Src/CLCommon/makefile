@@ -13,8 +13,7 @@ INCLUDES = \
 	-I$(CAL_DIR)/include \
 	-I$(DYNAMICLIBRARYMODULE_DIR) \
 	-I$(DEVICEINFO_DIR) \
-	-I$(TSINGLETON_DIR) \
-	-I$(AMDTMUTEX_DIR)
+	-I$(TSINGLETON_DIR)
 
 LIB_OBJS =  \
 	./$(OBJ_DIR)/CLInternalFunctionDefs.o \

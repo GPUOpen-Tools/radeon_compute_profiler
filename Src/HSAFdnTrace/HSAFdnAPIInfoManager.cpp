@@ -29,7 +29,7 @@
 
 using namespace std;
 
-HSAAPIInfoManager::HSAAPIInfoManager(void) : m_tracedApiCount(0)
+HSAAPIInfoManager::HSAAPIInfoManager(void) : m_tracedApiCount(0), m_queueCreationCount(0)
 {
     m_strTraceModuleName = "hsa";
 
@@ -138,8 +138,13 @@ bool HSAAPIInfoManager::WriteKernelTimestampEntry(std::ostream& sout, const hsa_
 
         // queue index
         uint64_t queueId = 0;
-        GetQueueId(record.queue, queueId);
-        sout << std::left << std::setw(6) << StringUtils::ToString(queueId);
+
+        if (!GetQueueId(record.queue, queueId))
+        {
+            queueId = 0;
+        }
+
+        sout << std::left << std::setw(21) << StringUtils::ToString(queueId);
 
         // device index
         unsigned int deviceIndex = 0;
@@ -149,7 +154,7 @@ bool HSAAPIInfoManager::WriteKernelTimestampEntry(std::ostream& sout, const hsa_
             deviceIndex = 0;
         }
 
-        sout << std::left << std::setw(6) << StringUtils::ToString(deviceIndex);
+        sout << std::left << std::setw(10) << StringUtils::ToString(deviceIndex);
     }
 
     return true;
@@ -213,7 +218,7 @@ void HSAAPIInfoManager::FlushNonAPITimestampData(const osProcessId& pid)
         }
 
         {
-            AMDTScopeLock lock(m_asyncTimeStampsMtx);
+            std::lock_guard<std::mutex> lock(m_asyncTimeStampsMtx);
 
             if (m_asyncCopyInfoList.size() > 0)
             {
@@ -239,7 +244,7 @@ void HSAAPIInfoManager::FlushNonAPITimestampData(const osProcessId& pid)
     }
 
     {
-        AMDTScopeLock lock(m_packetTraceMtx);
+        std::lock_guard<std::mutex> lock(m_packetTraceMtx);
 
         string tmpAqlTraceFile = GetTempFileName(pid, 0, TMP_KERNEL_TIME_STAMP_EXT);
         ofstream foutAqlTrace(tmpAqlTraceFile.c_str(), fstream::out | fstream::app);
@@ -300,20 +305,26 @@ void HSAAPIInfoManager::AddQueue(const hsa_queue_t* pQueue)
 {
     if (nullptr != pQueue)
     {
+        std::lock_guard<std::mutex> lock(m_queueMapMtx);
+
         if (m_queueIdMap.end() != m_queueIdMap.find(pQueue))
         {
             Log(logWARNING, "Queue added to map more than once\n");
+            m_queueIdMap[pQueue] = m_queueCreationCount;
         }
         else
         {
-            m_queueIdMap.insert(QueueIdMapPair(pQueue, pQueue->id));
+            m_queueIdMap.insert(QueueIdMapPair(pQueue, m_queueCreationCount));
         }
+
+        m_queueCreationCount++;
     }
 }
 
-bool HSAAPIInfoManager::GetQueueId(const hsa_queue_t* pQueue, uint64_t& queueId) const
+bool HSAAPIInfoManager::GetQueueId(const hsa_queue_t* pQueue, uint64_t& queueId)
 {
     bool retVal = false;
+    std::lock_guard<std::mutex> lock(m_queueMapMtx);
 
     QueueIdMap::const_iterator it = m_queueIdMap.find(pQueue);
 
@@ -367,6 +378,10 @@ bool AsyncSignalHandler(hsa_signal_value_t value, void* pArg)
                     HSASignalPool::Instance()->ReleaseSignal(pAsyncCopyInfo->m_signal);
                     pAsyncCopyInfo->m_signal = origSignal;
                 }
+                else
+                {
+                    GPULogger::Log(GPULogger::logERROR, "Unable to find original async copy signal\n");
+                }
 
                 HSAAPIInfoManager::Instance()->UnlockSignalMap();
             }
@@ -378,12 +393,12 @@ bool AsyncSignalHandler(hsa_signal_value_t value, void* pArg)
 
 void HSAAPIInfoManager::LockSignalMap()
 {
-    m_signalMapMtx.Lock();
+    m_signalMapMtx.lock();
 }
 
 void HSAAPIInfoManager::UnlockSignalMap()
 {
-    m_signalMapMtx.Unlock();
+    m_signalMapMtx.unlock();
 }
 
 void HSAAPIInfoManager::AddAsyncCopyCompletionSignal(const hsa_signal_t& completionSignal)
@@ -398,7 +413,7 @@ void HSAAPIInfoManager::AddAsyncCopyCompletionSignal(const hsa_signal_t& complet
     }
     else
     {
-        AMDTScopeLock lock(m_asyncTimeStampsMtx);
+        std::lock_guard<std::mutex> lock(m_asyncTimeStampsMtx);
 
         m_asyncCopyInfoList.push_back(pAsyncCopyInfo);
 
@@ -413,7 +428,7 @@ void HSAAPIInfoManager::AddAsyncCopyCompletionSignal(const hsa_signal_t& complet
 
 void HSAAPIInfoManager::AddReplacementAsyncCopySignal(const hsa_signal_t& originalSignal, const hsa_signal_t& replacementSignal)
 {
-    AMDTScopeLock lock(m_signalMapMtx);
+    std::lock_guard<std::mutex> lock(m_signalMapMtx);
     m_signalMap[replacementSignal.handle] = originalSignal;
 }
 
@@ -617,7 +632,7 @@ void HSAAPIInfoManager::AddAqlPacketEntry(HSAAqlPacketBase* pPacket)
     }
     else
     {
-        AMDTScopeLock lock(m_packetTraceMtx);
+        std::lock_guard<std::mutex> lock(m_packetTraceMtx);
 
         // TODO Do we need to update m_ullStart and m_ullEnd?
         //      Doing so will ensure m_ullStart and m_ullEnd includes all AQL packet timestamps

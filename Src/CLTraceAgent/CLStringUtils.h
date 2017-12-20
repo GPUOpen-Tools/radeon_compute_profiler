@@ -495,6 +495,12 @@ std::string GetExecutionStatusString(const cl_int param_name);
 /// \return quoted verion of the input string
 std::string GetQuotedString(const std::string& strInput, const char* src);
 
+/// Return a quoted version of the specified string, unless the orginal source pointer is NULL
+/// \param strInput the input string to quote
+/// \param src the original source pointer
+/// \return quoted verion of the input string
+std::string GetQuotedString(const std::wstring& strInput, const wchar_t* src);
+
 /// Convert add quotes to input string and optionally trucate it at most 60 chars
 /// \param src input string
 /// \param truncate flag indicating whether the output should be limited to 60 chars
@@ -692,6 +698,26 @@ std::string GetKernelExecInfoValueString(const cl_kernel_exec_info param_name, c
 /// \param include_brackets flag indicating if '[' and ']' should surround the string
 /// \return string representation of the input
 std::string GetPointerListString(void** pointers, const std::vector<void*>& vecPointers, bool include_brackets = true);
+
+/// Convert cl_file_flags_amd to string
+/// CL_FILE_READ_ONLY_AMD
+/// CL_FILE_WRITE_ONLY_AMD
+/// CL_FILE_READ_WRITE_AMD
+/// \param flags cl_file_flags_amd flags
+/// \return string representation of the input
+std::string GetFileFlagsAMDString(const cl_file_flags_amd flags);
+
+/// Get string representation of a cl_file_info_amd enum
+/// \param param_name the input cl_file_info_amd
+/// \return string representation of the input
+std::string GetFileInfoAMDString(const cl_file_info_amd param_name);
+
+/// Get file info amd value string
+/// \param param_name the name of the parameter
+/// \param param_value the value of the parameter
+/// \param ret_val the return value of API
+/// \return string representation of the input
+std::string GetFileInfoAMDValueString(const cl_file_info_amd param_name, const void* param_value, cl_int ret_val);
 
 }
 

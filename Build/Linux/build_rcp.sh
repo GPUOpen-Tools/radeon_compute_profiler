@@ -18,6 +18,8 @@ bBuildHSAProfiler=true
 # Build OCL Profiler
 bBuildOCLProfiler=true
 
+bBuildDocumentation=false
+
 # Generate zip file
 bZip=false
 
@@ -121,6 +123,8 @@ do
    elif [ "$1" = "additionaldefines" ]; then
       shift
       ADDITIONAL_COMPILER_DEFINES_OVERRIDE="ADDITIONAL_COMPILER_DEFINES_FROM_BUILD_SCRIPT=$1 $SKIP_HSA_BUILD_DEFINE"
+   elif [ "$1" = "doc" ]; then
+      bBuildDocumentation=true
    fi
    shift
 done
@@ -138,7 +142,7 @@ fi
 
 COMMON="$RCPROOT/../Common"
 COMMONSRC="$COMMON/Src"
-DOC="$RCPROOT/Doc"
+DOCS="$RCPROOT/docs"
 BIN="$RCPROOT/bin"
 SRCDIR="$RCPROOT/Src"
 SRCCOMMON="$SRCDIR/Common"
@@ -196,17 +200,15 @@ PRODUCTNAME=RadeonComputeProfiler
 
 VERSION_FILE="$SRCCOMMON/Version.h"
 
-DATE=$(date +"%Y-%m-%d")
-
 VERSION_MAJOR=$(grep -m 1 "RCP_MAJOR_VERSION" $VERSION_FILE | awk '{print $3}')
 VERSION_MINOR=$(grep -m 1 "RCP_MINOR_VERSION" $VERSION_FILE | awk '{print $3}')
 VERSION="$VERSION_MAJOR.$VERSION_MINOR"
-VERSION_STR=$DATE-v$VERSION.$BUILD
+VERSION_STR=v$VERSION.$BUILD
 
-RCP_ARCHIVE_BASE=RadeonComputeProfiler-v$VERSION.$BUILD.tgz
+RCP_ARCHIVE_BASE=RadeonComputeProfiler-$VERSION_STR.tgz
 RCP_ARCHIVE="$BUILD_PATH/$RCP_ARCHIVE_BASE"
 
-RCPPROFILEDATAPARSERARCHIVE="$PROFILEDATAPARSER-v$VERSION.$BUILD.tgz"
+RCPPROFILEDATAPARSERARCHIVE="$PROFILEDATAPARSER-$VERSION_STR.tgz"
 
 if !($bZipOnly) ; then
    # delete log file
@@ -375,6 +377,14 @@ if !($bZipOnly) ; then
       rm -rf "$PROFILER_OUTPUT"
    fi
 
+   if ($bBuildDocumentation); then
+      echo "Build Documentation"
+      if ! make -C "$DOCS" html >> "$LOGFILE" 2>&1; then
+         echo "Failed to build Documentation"
+         exit 1
+      fi
+   fi
+
    #-----------------------------------------
    #clean up bin folder
    #-----------------------------------------
@@ -449,15 +459,21 @@ if $bZip || $bZipOnly ; then
    # pack x64 version
    echo "Creating public build tarball..." | tee -a "$LOGFILE"
    mkdir -p "$BUILD_PATH/$PRODUCTNAME-$VERSION/bin"
+   if $bBuildDocumentation ; then
+      mkdir -p "$BUILD_PATH/$PRODUCTNAME-$VERSION/docs"
+   fi
 
    cp "$BIN/"* "$BUILD_PATH/$PRODUCTNAME-$VERSION/bin"
    cp -R "$BIN/$ACTIVITYLOGGER" "$BUILD_PATH/$PRODUCTNAME-$VERSION"
    cp -R "$BIN/jqPlot" "$BUILD_PATH/$PRODUCTNAME-$VERSION"
+   if $bBuildDocumentation ; then
+      cp -R "$DOCS/build/html/"* "$BUILD_PATH/$PRODUCTNAME-$VERSION/docs"
+   fi
    chmod -R 755 "$BUILD_PATH/$PRODUCTNAME-$VERSION"
 
    # create artifact for CodeXL
    cd "$BUILD_PATH/$PRODUCTNAME-$VERSION"
-   tar cvzf "$RCP_ARCHIVE" bin/ jqPlot/ "$ACTIVITYLOGGER/"
+   tar cvzf "$RCP_ARCHIVE" bin/ jqPlot/ "$ACTIVITYLOGGER/" docs/
    chmod 755 "$RCP_ARCHIVE"
    cd "$BUILD_PATH"
 

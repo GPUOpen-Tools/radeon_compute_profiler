@@ -54,6 +54,10 @@ CLAPIType GetType(const std::string& strAPIName)
         {
             return CL_ENQUEUE_KERNEL;
         }
+        else if (strAPIName.find("SsgFile") != string::npos)
+        {
+            return CL_ENQUEUE_OTHER_OPERATIONS;
+        }
         else if ((strAPIName.find("Read") != string::npos || strAPIName.find("Write") != string::npos || strAPIName.find("Map") != string::npos || strAPIName.find("Copy") != string::npos) && strAPIName.find("SVM") == string::npos)
         {
             return CL_ENQUEUE_MEM;
@@ -110,6 +114,7 @@ CLAPIInfo* CreateAPIInfo(const std::string& strAPIName)
         {
             retObj = new CLOtherEnqueueAPIInfo();
         }
+        break;
 
         case CL_ENQUEUE_DATA_OPERATIONS:
         {
@@ -291,7 +296,7 @@ bool ParseTimestamp(const char* buf, CLAPIInfo* pAPIInfo, bool bTimeoutMode)
         }
         // CL_COMMAND_FILL_BUFFER, CL_COMMAND_FILL_IMAGE, CL_COMMAND_SVM_MEMCPY, CL_COMMAND_SVM_MAP
         else if (uiCmdType == CL_COMMAND_FILL_BUFFER || uiCmdType == CL_COMMAND_FILL_IMAGE ||
-                 uiCmdType == CL_COMMAND_SVM_MEMCPY || uiCmdType == CL_COMMAND_SVM_MAP)
+                 uiCmdType == CL_COMMAND_SVM_MEMCPY || uiCmdType == CL_COMMAND_SVM_UNMAP)
         {
             CLDataEnqueueAPIInfo* pMAPI = (CLDataEnqueueAPIInfo*)pAPIInfo;
             ss >> pMAPI->m_uiDataSize;

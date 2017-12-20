@@ -23,7 +23,7 @@ StackTracer::StackTracer(void)
     m_pSymbolSize = (SP_MAX_PATH + sizeof(PIMAGEHLP_SYMBOL));
     m_pSymbol = (PIMAGEHLP_SYMBOL64)malloc(m_pSymbolSize);
     m_hProcess = GetCurrentProcess();
-    m_pMtx = new(nothrow) AMDTMutex("stackTracer");
+    m_pMtx = new(nothrow) std::mutex();
     SpAssert(m_pMtx != NULL);
 #endif
     m_bInit = false;
@@ -322,7 +322,7 @@ bool StackTracer::GetSymbolName(Address dwAddress, StackEntry& en)
         return false;
     }
 
-    AMDTScopeLock lock(m_pMtx);
+    std::lock_guard<std::mutex> lock(*m_pMtx);
 
     en.m_strSymAddr = StringUtils::ToHexString(dwAddress);
     en.m_dwAddress = dwAddress;
@@ -397,7 +397,7 @@ bool StackTracer::GetStackTrace(std::vector<StackEntry>& stackTrace, bool bGetSy
         return false;
     }
 
-    AMDTScopeLock lock(m_pMtx);
+    std::lock_guard<std::mutex> lock(*m_pMtx);
 
     bool bSuspend = false;
 

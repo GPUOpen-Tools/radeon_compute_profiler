@@ -11,11 +11,11 @@
 #include <string>
 #include <unordered_map>
 #include <set>
+#include <mutex>
 #include <hsa.h>
 #include "../Common/GPAUtils.h"
 #include "../Common/GlobalSettings.h"
 #include "TSingleton.h"
-#include "AMDTMutex.h"
 #include "../Common/KernelStats.h"
 #include "../Common/ProfilerTimer.h"
 
@@ -171,7 +171,7 @@ private:
 
     std::string             m_strOutputFile;                     ///< Output file
     GPAUtils                m_gpaUtils;                          ///< common GPA utility functions
-    AMDTMutex               m_mtx;                               ///< mutex
+    std::mutex              m_mtx;                               ///< mutex
     QueueSessionMap         m_activeSessionMap;                  ///< map of active session per queue
     unsigned int            m_uiCurKernelCount;                  ///< number of kernels that have been profiled.
     unsigned int            m_uiMaxKernelCount;                  ///< max number of kernels to profile.

@@ -162,6 +162,13 @@ enum CL_FUNC_TYPE
     CL_FUNC_TYPE_clSetKernelArgSVMPointerAMD,              ///< cl function enum for clSetKernelArgSVMPointerAMD
     CL_FUNC_TYPE_clSetKernelExecInfoAMD,                   ///< cl function enum for clSetKernelExecInfoAMD
 
+    CL_FUNC_TYPE_clCreateSsgFileObjectAMD,                 ///< cl function enum for clCreateSsgFileObjectAMD
+    CL_FUNC_TYPE_clGetSsgFileObjectInfoAMD,                ///< cl function enum for clGetSsgFileObjectInfoAMD
+    CL_FUNC_TYPE_clRetainSsgFileObjectAMD,                 ///< cl function enum for clRetainSsgFileObjectAMD
+    CL_FUNC_TYPE_clReleaseSsgFileObjectAMD,                ///< cl function enum for clReleaseSsgFileObjectAMD
+    CL_FUNC_TYPE_clEnqueueReadSsgFileAMD,                  ///< cl function enum for clEnqueueReadSsgFileAMD
+    CL_FUNC_TYPE_clEnqueueWriteSsgFileAMD,                 ///< cl function enum for clEnqueueWriteSsgFileAMD
+
     CL_FUNC_TYPE_Unknown                                   ///< cl unknown function
 };
 

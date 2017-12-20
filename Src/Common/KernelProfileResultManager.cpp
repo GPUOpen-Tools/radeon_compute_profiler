@@ -28,7 +28,7 @@ KernelInfoRow* KernelProfileResultManager::BeginKernelInfo()
 
     WriteHeader();
 
-    AMDTScopeLock lock(&m_mtx);
+    std::lock_guard<std::mutex> lock(m_mtx);
 
     KernelInfoRow* pRow = m_pWriter->AddRow();
 
@@ -39,7 +39,7 @@ KernelInfoRow* KernelProfileResultManager::BeginKernelInfo()
 
 bool KernelProfileResultManager::WriteKernelInfo(const std::string& strColName, const std::string& strValue)
 {
-    AMDTScopeLock lock(&m_mtx);
+    std::lock_guard<std::mutex> lock(m_mtx);
     osThreadId tid = osGetUniqueCurrentThreadId();
 
     deque<CSVRow*>& rowStack = m_pCurrentKernelRow[tid];
@@ -59,7 +59,7 @@ bool KernelProfileResultManager::WriteKernelInfo(const std::string& strColName, 
 
 void KernelProfileResultManager::EndKernelInfo()
 {
-    AMDTScopeLock lock(&m_mtx);
+    std::lock_guard<std::mutex> lock(m_mtx);
     osThreadId tid = osGetUniqueCurrentThreadId();
 
     deque<CSVRow*>& rowStack = m_pCurrentKernelRow[tid];

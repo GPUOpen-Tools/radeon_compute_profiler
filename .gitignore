@@ -256,3 +256,5 @@ Output/
 **/*.o
 
 
+Documentation build files
+docs/build

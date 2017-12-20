@@ -16,6 +16,7 @@
 #include <hsa_ext_image.h>
 #include <hsa_ext_amd.h>
 #include <hsa_ven_amd_loader.h>
+#include <hsa_ven_amd_aqlprofile.h>
 
 namespace HSATraceStringUtils
 {
@@ -965,6 +966,17 @@ std::string Get_hsa_amd_profiling_async_copy_time_t_String(hsa_amd_profiling_asy
 /// \return the string representation of the hsa_amd_profiling_async_copy_time_t
 std::string Get_hsa_amd_profiling_async_copy_time_t_Ptr_String(const hsa_amd_profiling_async_copy_time_t* pInputPtr, hsa_amd_profiling_async_copy_time_t input);
 
+/// Gets the string representation of the hsa_amd_signal_attribute_t type
+/// \param input the input hsa_amd_signal_attribute_t
+/// \return the string representation of the hsa_amd_signal_attribute_t
+std::string Get_hsa_amd_signal_attribute_t_String(hsa_amd_signal_attribute_t input);
+
+/// Gets the string representation of the hsa_amd_signal_attribute_t pointer type
+/// \param pInputPtr the input hsa_amd_signal_attribute_t pointer
+/// \param input the input hsa_amd_signal_attribute_t
+/// \return the string representation of the hsa_amd_signal_attribute_t
+std::string Get_hsa_amd_signal_attribute_t_Ptr_String(const hsa_amd_signal_attribute_t* pInputPtr, hsa_amd_signal_attribute_t input);
+
 /// Gets the string representation of the hsa_amd_segment_t type
 /// \param input the input hsa_amd_segment_t
 /// \return the string representation of the hsa_amd_segment_t
@@ -1097,6 +1109,28 @@ std::string Get_hsa_amd_ipc_memory_t_String(hsa_amd_ipc_memory_t input);
 /// \return the string representation of the hsa_amd_ipc_memory_t
 std::string Get_hsa_amd_ipc_memory_t_Ptr_String(const hsa_amd_ipc_memory_t* pInputPtr, hsa_amd_ipc_memory_t input);
 
+/// Gets the string representation of the hsa_amd_event_t type
+/// \param input the input hsa_amd_event_t
+/// \return the string representation of the hsa_amd_event_t
+std::string Get_hsa_amd_event_t_String(hsa_amd_event_t input);
+
+/// Gets the string representation of the hsa_amd_event_t pointer type
+/// \param pInputPtr the input hsa_amd_event_t pointer
+/// \param input the input hsa_amd_event_t
+/// \return the string representation of the hsa_amd_event_t
+std::string Get_hsa_amd_event_t_Ptr_String(const hsa_amd_event_t* pInputPtr, hsa_amd_event_t input);
+
+/// Gets the string representation of the hsa_amd_gpu_memory_fault_info_t type
+/// \param input the input hsa_amd_gpu_memory_fault_info_t
+/// \return the string representation of the hsa_amd_gpu_memory_fault_info_t
+std::string Get_hsa_amd_gpu_memory_fault_info_t_String(hsa_amd_gpu_memory_fault_info_t input);
+
+/// Gets the string representation of the hsa_amd_gpu_memory_fault_info_t pointer type
+/// \param pInputPtr the input hsa_amd_gpu_memory_fault_info_t pointer
+/// \param input the input hsa_amd_gpu_memory_fault_info_t
+/// \return the string representation of the hsa_amd_gpu_memory_fault_info_t
+std::string Get_hsa_amd_gpu_memory_fault_info_t_Ptr_String(const hsa_amd_gpu_memory_fault_info_t* pInputPtr, hsa_amd_gpu_memory_fault_info_t input);
+
 /// Gets the string representation of the hsa_ven_amd_loader_code_object_storage_type_t type
 /// \param input the input hsa_ven_amd_loader_code_object_storage_type_t
 /// \return the string representation of the hsa_ven_amd_loader_code_object_storage_type_t
@@ -1118,6 +1152,127 @@ std::string Get_hsa_ven_amd_loader_segment_descriptor_t_String(hsa_ven_amd_loade
 /// \param input the input hsa_ven_amd_loader_segment_descriptor_t
 /// \return the string representation of the hsa_ven_amd_loader_segment_descriptor_t
 std::string Get_hsa_ven_amd_loader_segment_descriptor_t_Ptr_String(const hsa_ven_amd_loader_segment_descriptor_t* pInputPtr, hsa_ven_amd_loader_segment_descriptor_t input);
+
+/// Gets the string representation of the hsa_ven_amd_loader_loaded_code_object_kind_t type
+/// \param input the input hsa_ven_amd_loader_loaded_code_object_kind_t
+/// \return the string representation of the hsa_ven_amd_loader_loaded_code_object_kind_t
+std::string Get_hsa_ven_amd_loader_loaded_code_object_kind_t_String(hsa_ven_amd_loader_loaded_code_object_kind_t input);
+
+/// Gets the string representation of the hsa_ven_amd_loader_loaded_code_object_kind_t pointer type
+/// \param pInputPtr the input hsa_ven_amd_loader_loaded_code_object_kind_t pointer
+/// \param input the input hsa_ven_amd_loader_loaded_code_object_kind_t
+/// \return the string representation of the hsa_ven_amd_loader_loaded_code_object_kind_t
+std::string Get_hsa_ven_amd_loader_loaded_code_object_kind_t_Ptr_String(const hsa_ven_amd_loader_loaded_code_object_kind_t* pInputPtr, hsa_ven_amd_loader_loaded_code_object_kind_t input);
+
+/// Gets the string representation of the hsa_ven_amd_loader_loaded_code_object_info_t type
+/// \param input the input hsa_ven_amd_loader_loaded_code_object_info_t
+/// \return the string representation of the hsa_ven_amd_loader_loaded_code_object_info_t
+std::string Get_hsa_ven_amd_loader_loaded_code_object_info_t_String(hsa_ven_amd_loader_loaded_code_object_info_t input);
+
+/// Gets the string representation of the hsa_ven_amd_loader_loaded_code_object_info_t pointer type
+/// \param pInputPtr the input hsa_ven_amd_loader_loaded_code_object_info_t pointer
+/// \param input the input hsa_ven_amd_loader_loaded_code_object_info_t
+/// \return the string representation of the hsa_ven_amd_loader_loaded_code_object_info_t
+std::string Get_hsa_ven_amd_loader_loaded_code_object_info_t_Ptr_String(const hsa_ven_amd_loader_loaded_code_object_info_t* pInputPtr, hsa_ven_amd_loader_loaded_code_object_info_t input);
+
+/// Gets the string representation of the hsa_ven_amd_aqlprofile_event_type_t type
+/// \param input the input hsa_ven_amd_aqlprofile_event_type_t
+/// \return the string representation of the hsa_ven_amd_aqlprofile_event_type_t
+std::string Get_hsa_ven_amd_aqlprofile_event_type_t_String(hsa_ven_amd_aqlprofile_event_type_t input);
+
+/// Gets the string representation of the hsa_ven_amd_aqlprofile_event_type_t pointer type
+/// \param pInputPtr the input hsa_ven_amd_aqlprofile_event_type_t pointer
+/// \param input the input hsa_ven_amd_aqlprofile_event_type_t
+/// \return the string representation of the hsa_ven_amd_aqlprofile_event_type_t
+std::string Get_hsa_ven_amd_aqlprofile_event_type_t_Ptr_String(const hsa_ven_amd_aqlprofile_event_type_t* pInputPtr, hsa_ven_amd_aqlprofile_event_type_t input);
+
+/// Gets the string representation of the hsa_ven_amd_aqlprofile_block_name_t type
+/// \param input the input hsa_ven_amd_aqlprofile_block_name_t
+/// \return the string representation of the hsa_ven_amd_aqlprofile_block_name_t
+std::string Get_hsa_ven_amd_aqlprofile_block_name_t_String(hsa_ven_amd_aqlprofile_block_name_t input);
+
+/// Gets the string representation of the hsa_ven_amd_aqlprofile_block_name_t pointer type
+/// \param pInputPtr the input hsa_ven_amd_aqlprofile_block_name_t pointer
+/// \param input the input hsa_ven_amd_aqlprofile_block_name_t
+/// \return the string representation of the hsa_ven_amd_aqlprofile_block_name_t
+std::string Get_hsa_ven_amd_aqlprofile_block_name_t_Ptr_String(const hsa_ven_amd_aqlprofile_block_name_t* pInputPtr, hsa_ven_amd_aqlprofile_block_name_t input);
+
+/// Gets the string representation of the hsa_ven_amd_aqlprofile_event_t type
+/// \param input the input hsa_ven_amd_aqlprofile_event_t
+/// \return the string representation of the hsa_ven_amd_aqlprofile_event_t
+std::string Get_hsa_ven_amd_aqlprofile_event_t_String(hsa_ven_amd_aqlprofile_event_t input);
+
+/// Gets the string representation of the hsa_ven_amd_aqlprofile_event_t pointer type
+/// \param pInputPtr the input hsa_ven_amd_aqlprofile_event_t pointer
+/// \param input the input hsa_ven_amd_aqlprofile_event_t
+/// \return the string representation of the hsa_ven_amd_aqlprofile_event_t
+std::string Get_hsa_ven_amd_aqlprofile_event_t_Ptr_String(const hsa_ven_amd_aqlprofile_event_t* pInputPtr, hsa_ven_amd_aqlprofile_event_t input);
+
+/// Gets the string representation of the hsa_ven_amd_aqlprofile_parameter_name_t type
+/// \param input the input hsa_ven_amd_aqlprofile_parameter_name_t
+/// \return the string representation of the hsa_ven_amd_aqlprofile_parameter_name_t
+std::string Get_hsa_ven_amd_aqlprofile_parameter_name_t_String(hsa_ven_amd_aqlprofile_parameter_name_t input);
+
+/// Gets the string representation of the hsa_ven_amd_aqlprofile_parameter_name_t pointer type
+/// \param pInputPtr the input hsa_ven_amd_aqlprofile_parameter_name_t pointer
+/// \param input the input hsa_ven_amd_aqlprofile_parameter_name_t
+/// \return the string representation of the hsa_ven_amd_aqlprofile_parameter_name_t
+std::string Get_hsa_ven_amd_aqlprofile_parameter_name_t_Ptr_String(const hsa_ven_amd_aqlprofile_parameter_name_t* pInputPtr, hsa_ven_amd_aqlprofile_parameter_name_t input);
+
+/// Gets the string representation of the hsa_ven_amd_aqlprofile_parameter_t type
+/// \param input the input hsa_ven_amd_aqlprofile_parameter_t
+/// \return the string representation of the hsa_ven_amd_aqlprofile_parameter_t
+std::string Get_hsa_ven_amd_aqlprofile_parameter_t_String(hsa_ven_amd_aqlprofile_parameter_t input);
+
+/// Gets the string representation of the hsa_ven_amd_aqlprofile_parameter_t pointer type
+/// \param pInputPtr the input hsa_ven_amd_aqlprofile_parameter_t pointer
+/// \param input the input hsa_ven_amd_aqlprofile_parameter_t
+/// \return the string representation of the hsa_ven_amd_aqlprofile_parameter_t
+std::string Get_hsa_ven_amd_aqlprofile_parameter_t_Ptr_String(const hsa_ven_amd_aqlprofile_parameter_t* pInputPtr, hsa_ven_amd_aqlprofile_parameter_t input);
+
+/// Gets the string representation of the hsa_ven_amd_aqlprofile_descriptor_t type
+/// \param input the input hsa_ven_amd_aqlprofile_descriptor_t
+/// \return the string representation of the hsa_ven_amd_aqlprofile_descriptor_t
+std::string Get_hsa_ven_amd_aqlprofile_descriptor_t_String(hsa_ven_amd_aqlprofile_descriptor_t input);
+
+/// Gets the string representation of the hsa_ven_amd_aqlprofile_descriptor_t pointer type
+/// \param pInputPtr the input hsa_ven_amd_aqlprofile_descriptor_t pointer
+/// \param input the input hsa_ven_amd_aqlprofile_descriptor_t
+/// \return the string representation of the hsa_ven_amd_aqlprofile_descriptor_t
+std::string Get_hsa_ven_amd_aqlprofile_descriptor_t_Ptr_String(const hsa_ven_amd_aqlprofile_descriptor_t* pInputPtr, hsa_ven_amd_aqlprofile_descriptor_t input);
+
+/// Gets the string representation of the hsa_ven_amd_aqlprofile_profile_t type
+/// \param input the input hsa_ven_amd_aqlprofile_profile_t
+/// \return the string representation of the hsa_ven_amd_aqlprofile_profile_t
+std::string Get_hsa_ven_amd_aqlprofile_profile_t_String(hsa_ven_amd_aqlprofile_profile_t input);
+
+/// Gets the string representation of the hsa_ven_amd_aqlprofile_profile_t pointer type
+/// \param pInputPtr the input hsa_ven_amd_aqlprofile_profile_t pointer
+/// \param input the input hsa_ven_amd_aqlprofile_profile_t
+/// \return the string representation of the hsa_ven_amd_aqlprofile_profile_t
+std::string Get_hsa_ven_amd_aqlprofile_profile_t_Ptr_String(const hsa_ven_amd_aqlprofile_profile_t* pInputPtr, hsa_ven_amd_aqlprofile_profile_t input);
+
+/// Gets the string representation of the hsa_ext_amd_aql_pm4_packet_t type
+/// \param input the input hsa_ext_amd_aql_pm4_packet_t
+/// \return the string representation of the hsa_ext_amd_aql_pm4_packet_t
+std::string Get_hsa_ext_amd_aql_pm4_packet_t_String(hsa_ext_amd_aql_pm4_packet_t input);
+
+/// Gets the string representation of the hsa_ext_amd_aql_pm4_packet_t pointer type
+/// \param pInputPtr the input hsa_ext_amd_aql_pm4_packet_t pointer
+/// \param input the input hsa_ext_amd_aql_pm4_packet_t
+/// \return the string representation of the hsa_ext_amd_aql_pm4_packet_t
+std::string Get_hsa_ext_amd_aql_pm4_packet_t_Ptr_String(const hsa_ext_amd_aql_pm4_packet_t* pInputPtr, hsa_ext_amd_aql_pm4_packet_t input);
+
+/// Gets the string representation of the hsa_ven_amd_aqlprofile_info_type_t type
+/// \param input the input hsa_ven_amd_aqlprofile_info_type_t
+/// \return the string representation of the hsa_ven_amd_aqlprofile_info_type_t
+std::string Get_hsa_ven_amd_aqlprofile_info_type_t_String(hsa_ven_amd_aqlprofile_info_type_t input);
+
+/// Gets the string representation of the hsa_ven_amd_aqlprofile_info_type_t pointer type
+/// \param pInputPtr the input hsa_ven_amd_aqlprofile_info_type_t pointer
+/// \param input the input hsa_ven_amd_aqlprofile_info_type_t
+/// \return the string representation of the hsa_ven_amd_aqlprofile_info_type_t
+std::string Get_hsa_ven_amd_aqlprofile_info_type_t_Ptr_String(const hsa_ven_amd_aqlprofile_info_type_t* pInputPtr, hsa_ven_amd_aqlprofile_info_type_t input);
 
 }
 

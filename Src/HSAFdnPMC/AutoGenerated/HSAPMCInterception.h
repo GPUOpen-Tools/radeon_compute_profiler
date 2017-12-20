@@ -9,11 +9,15 @@
 #define _HSAPMCINTERCEPTION_H_
 
 #include <hsa_api_trace.h>
+#include <hsa_ven_amd_loader.h>
+#include <hsa_ven_amd_aqlprofile.h>
 
 extern CoreApiTable* g_pRealCoreFunctions;    ///< table of real core functions
 extern FinalizerExtTable* g_pRealFinalizerExtFunctions; ///< table of real finalizer extension functions
 extern ImageExtTable* g_pRealImageExtFunctions; ///< table of real image extension functions
 extern AmdExtTable* g_pRealAmdExtFunctions; ///< table of real AMD extension functions
+extern hsa_ven_amd_aqlprofile_1_00_pfn_t* g_pRealAqlProfileExtFunctions; ///< table of real AQL Profile extension functions
+extern hsa_ven_amd_loader_1_01_pfn_t* g_pRealLoaderExtFunctions; ///< table of real Loader extension functions
 
 /// Intercepts HSA APIs for this HSA Profiler agent
 void InitHSAAPIInterceptPMC(HsaApiTable* pTable);

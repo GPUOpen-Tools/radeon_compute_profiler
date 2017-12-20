@@ -55,8 +55,13 @@ bool HSAAqlPacketBase::WritePacketEntry(std::ostream& sout)
 
     // queue index
     uint64_t queueId = 0;
-    HSAAPIInfoManager::Instance()->GetQueueId(m_pQueue, queueId);
-    sout << std::left << std::setw(6) << StringUtils::ToString(queueId);
+
+    if (!HSAAPIInfoManager::Instance()->GetQueueId(m_pQueue, queueId))
+    {
+        queueId = 0;
+    }
+
+    sout << std::left << std::setw(21) << StringUtils::ToString(queueId);
 
     // device index
     unsigned int deviceIndex = 0;
@@ -66,7 +71,7 @@ bool HSAAqlPacketBase::WritePacketEntry(std::ostream& sout)
         deviceIndex = 0;
     }
 
-    sout << std::left << std::setw(6) << StringUtils::ToString(deviceIndex);
+    sout << std::left << std::setw(10) << StringUtils::ToString(deviceIndex);
 
     // packet type
     sout << std::left << std::setw(35) << HSATraceStringUtils::Get_hsa_packet_type_t_String(m_type);

@@ -227,7 +227,7 @@ OccupancyInfoManager::~OccupancyInfoManager()
 void OccupancyInfoManager::FlushTraceData(bool bForceFlush)
 {
     SP_UNREFERENCED_PARAMETER(bForceFlush);
-    m_mtxFlush.Lock();
+    m_mtxFlush.lock();
     osProcessId pid = osGetCurrentProcessId();
     TraceInfoMap& nonActiveMap = m_TraceInfoMap[ 1 - m_iActiveMap ];
 
@@ -271,7 +271,7 @@ void OccupancyInfoManager::FlushTraceData(bool bForceFlush)
         foutTrace.close();
     }
 
-    m_mtxFlush.Unlock();
+    m_mtxFlush.unlock();
 }
 
 void OccupancyInfoManager::SetOutputFile(const string& strFileName)

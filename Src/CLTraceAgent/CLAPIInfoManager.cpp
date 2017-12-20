@@ -12,6 +12,7 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+#include <mutex>
 #include <math.h>
 
 #include <AMDTOSWrappers/Include/osProcess.h>
@@ -27,7 +28,6 @@
 #include "../Common/Version.h"
 #include "../Common/OSUtils.h"
 #include "../Common/StackTracer.h"
-#include "AMDTMutex.h"
 #include "../CLCommon/CLFunctionEnumDefs.h"
 #include "../CLCommon/CLUtils.h"
 #include <ProfilerOutputFileDefs.h>
@@ -114,7 +114,7 @@ CLAPIInfoManager::~CLAPIInfoManager(void)
 void CLAPIInfoManager::FlushTraceData(bool bForceFlush)
 {
     SP_UNREFERENCED_PARAMETER(bForceFlush);
-    m_mtxFlush.Lock();
+    m_mtxFlush.lock();
     osProcessId pid = osGetCurrentProcessId();
     TraceInfoMap& nonActiveMap = m_TraceInfoMap[ 1 - m_iActiveMap ];
 
@@ -167,7 +167,7 @@ void CLAPIInfoManager::FlushTraceData(bool bForceFlush)
         {
             CLAPIBase* item = dynamic_cast<CLAPIBase*>(mapIt->second.front());
 
-            m_mtxPreviousGEI.Lock();
+            m_mtxPreviousGEI.lock();
 
             // don't flush an item if it is the previous clGetEventInfo item for this thread
             // this is necessary so that consecutive api collapsing/accumulating works
@@ -175,11 +175,11 @@ void CLAPIInfoManager::FlushTraceData(bool bForceFlush)
 
             if (iter != m_previousGEIMap.end() && (iter->second == item))
             {
-                m_mtxPreviousGEI.Unlock();
+                m_mtxPreviousGEI.unlock();
                 break;
             }
 
-            m_mtxPreviousGEI.Unlock();
+            m_mtxPreviousGEI.unlock();
 
 #ifdef NON_BLOCKING_TIMEOUT
             item->WriteTimestampEntry(foutTS, m_bTimeOutMode);
@@ -244,7 +244,7 @@ void CLAPIInfoManager::FlushTraceData(bool bForceFlush)
         }
     }
 
-    m_mtxFlush.Unlock();
+    m_mtxFlush.unlock();
 }
 
 void CLAPIInfoManager::AddAPIInfoEntry(APIBase* api)
@@ -276,7 +276,7 @@ void CLAPIInfoManager::AddAPIInfoEntry(APIBase* api)
     // if the user has asked to collapse clGetEventInfo calls, track the previous API called and special case the clGetEventInfo calls
     if (CLAPI_clGetEventInfo::ms_collapseCalls)
     {
-        AMDTScopeLock lock(m_mtxPreviousGEI);
+        std::lock_guard<std::mutex> lock(m_mtxPreviousGEI);
         PreviousGEIMap::iterator iter = m_previousGEIMap.find(en->m_tid);
         bool bThreadFound = iter != m_previousGEIMap.end();
 
@@ -620,13 +620,13 @@ ULONGLONG CLAPIInfoManager::GetTimeNanosEnd(CLAPIBase* pEntry)
 
 void CLAPIInfoManager::AddEnqueuedTask(const cl_kernel kernel)
 {
-    AMDTScopeLock lock(m_mtxEnqueuedTask);
+    std::lock_guard<std::mutex> lock(m_mtxEnqueuedTask);
     m_enqueuedTasks.push_back(kernel);
 }
 
 bool CLAPIInfoManager::CheckEnqueuedTask(const cl_kernel kernel)
 {
-    AMDTScopeLock lock(m_mtxEnqueuedTask);
+    std::lock_guard<std::mutex> lock(m_mtxEnqueuedTask);
     bool retVal = false;
     EnqueuedTaskList::iterator iter = std::find(m_enqueuedTasks.begin(), m_enqueuedTasks.end(), kernel);
 

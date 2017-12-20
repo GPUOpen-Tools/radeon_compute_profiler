@@ -2325,8 +2325,6 @@ cl_int CL_API_CALL CL_API_TRACE_clEnqueueReadImage(
     const cl_event*       event_wait_list ,
     cl_event*             event)
 {
-
-
     CLAPI_clEnqueueReadImage* pAPIInfo = new(nothrow) CLAPI_clEnqueueReadImage();
 
     if (pAPIInfo == NULL)
@@ -2375,7 +2373,6 @@ cl_int CL_API_CALL CL_API_TRACE_clEnqueueWriteImage(
     const cl_event*      event_wait_list ,
     cl_event*            event)
 {
-
     CLAPI_clEnqueueWriteImage* pAPIInfo = new(nothrow) CLAPI_clEnqueueWriteImage();
 
     if (pAPIInfo == NULL)
@@ -2422,7 +2419,6 @@ cl_int CL_API_CALL CL_API_TRACE_clEnqueueCopyImage(
     const cl_event*       event_wait_list ,
     cl_event*             event)
 {
-
     CLAPI_clEnqueueCopyImage* pAPIInfo = new(nothrow) CLAPI_clEnqueueCopyImage();
 
     if (pAPIInfo == NULL)
@@ -4779,6 +4775,221 @@ cl_int CL_API_CALL CL_API_TRACE_clGetPipeInfo(
     return ret;
 }
 
+cl_file_amd CL_API_CALL CL_API_TRACE_clCreateSsgFileObjectAMD(
+    cl_context context,
+    cl_file_flags_amd flags,
+    const wchar_t* file_name,
+    cl_int* errcode_ret)
+{
+    REPLACE_IF_NULL(errcode_ret)
+
+    CLAPI_clCreateSsgFileObjectAMD* pAPIInfo = new(nothrow) CLAPI_clCreateSsgFileObjectAMD();
+
+    ULONGLONG ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(pAPIInfo);
+
+    cl_file_amd ret = g_realExtensionFunctionTable.CreateSsgFileObjectAMD(context,
+                                                                          flags,
+                                                                          file_name,
+                                                                          errcode_ret);
+
+    ULONGLONG ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(pAPIInfo);
+
+    SpAssertRet(pAPIInfo != NULL) ret;
+
+    pAPIInfo->Create(ullStart,
+                     ullEnd,
+                     context,
+                     flags,
+                     file_name,
+                     errcode_ret,
+                     ret);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo)
+    CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+    return ret;
+
+}
+
+cl_int CL_API_CALL CL_API_TRACE_clGetSsgFileObjectInfoAMD(
+    cl_file_amd file,
+    cl_file_info_amd param_name,
+    size_t param_value_size,
+    void* param_value,
+    size_t* param_value_size_ret)
+{
+    bool replaced_null_param = param_value_size_ret == NULL;
+
+    size_t substituted_ret;
+
+    if (replaced_null_param)
+    {
+        param_value_size_ret = &substituted_ret;
+    }
+
+    CLAPI_clGetSsgFileObjectInfoAMD* pAPIInfo = new(nothrow) CLAPI_clGetSsgFileObjectInfoAMD();
+
+    ULONGLONG ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(pAPIInfo);
+
+    cl_int ret = g_realExtensionFunctionTable.GetSsgFileObjectInfoAMD(file,
+                                                                      param_name,
+                                                                      param_value_size,
+                                                                      param_value,
+                                                                      param_value_size_ret);
+
+    ULONGLONG ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(pAPIInfo);
+
+    SpAssertRet(pAPIInfo != NULL) ret;
+
+    pAPIInfo->Create(ullStart,
+                     ullEnd,
+                     file,
+                     param_name,
+                     param_value_size,
+                     param_value,
+                     param_value_size_ret,
+                     replaced_null_param,
+                     ret);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo)
+    CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+    return ret;
+}
+
+cl_int CL_API_CALL CL_API_TRACE_clRetainSsgFileObjectAMD(
+    cl_file_amd file)
+{
+    CLAPI_clRetainSsgFileObjectAMD* pAPIInfo = new(nothrow) CLAPI_clRetainSsgFileObjectAMD();
+
+    ULONGLONG ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(pAPIInfo);
+
+    cl_int ret = g_realExtensionFunctionTable.RetainSsgFileObjectAMD(file);
+
+    ULONGLONG ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(pAPIInfo);
+
+    SpAssertRet(pAPIInfo != NULL) ret;
+
+    pAPIInfo->Create(ullStart,
+                     ullEnd,
+                     file,
+                     ret);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo)
+    CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+    return ret;
+}
+
+cl_int CL_API_CALL CL_API_TRACE_clReleaseSsgFileObjectAMD(
+    cl_file_amd file)
+{
+    CLAPI_clReleaseSsgFileObjectAMD* pAPIInfo = new(nothrow) CLAPI_clReleaseSsgFileObjectAMD();
+
+    ULONGLONG ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(pAPIInfo);
+
+    cl_int ret = g_realExtensionFunctionTable.ReleaseSsgFileObjectAMD(file);
+
+    ULONGLONG ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(pAPIInfo);
+
+    SpAssertRet(pAPIInfo != NULL) ret;
+
+    pAPIInfo->Create(ullStart,
+                     ullEnd,
+                     file,
+                     ret);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo)
+    CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+    return ret;
+
+}
+
+cl_int CL_API_CALL CL_API_TRACE_clEnqueueReadSsgFileAMD(
+    cl_command_queue command_queue,
+    cl_mem buffer,
+    cl_bool blocking_read,
+    size_t buffer_offset,
+    size_t cb,
+    cl_file_amd file,
+    size_t file_offset,
+    cl_uint num_events_in_wait_list,
+    const cl_event* event_wait_list,
+    cl_event* event)
+{
+    CLAPI_clEnqueueReadSsgFileAMD* pAPIInfo = new(nothrow) CLAPI_clEnqueueReadSsgFileAMD();
+
+    if (pAPIInfo == NULL)
+    {
+        return g_realExtensionFunctionTable.EnqueueReadSsgFileAMD(command_queue,
+                                                                  buffer,
+                                                                  blocking_read,
+                                                                  buffer_offset,
+                                                                  cb,
+                                                                  file,
+                                                                  file_offset,
+                                                                  num_events_in_wait_list,
+                                                                  event_wait_list,
+                                                                  event);
+    }
+
+    cl_int ret = pAPIInfo->Create(command_queue,
+                                  buffer,
+                                  blocking_read,
+                                  buffer_offset,
+                                  cb,
+                                  file,
+                                  file_offset,
+                                  num_events_in_wait_list,
+                                  event_wait_list,
+                                  event);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo)
+    CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+    return ret;
+}
+
+cl_int CL_API_CALL CL_API_TRACE_clEnqueueWriteSsgFileAMD(
+    cl_command_queue command_queue,
+    cl_mem buffer,
+    cl_bool blocking_write,
+    size_t buffer_offset,
+    size_t cb,
+    cl_file_amd file,
+    size_t file_offset,
+    cl_uint num_events_in_wait_list,
+    const cl_event* event_wait_list,
+    cl_event* event)
+{
+    CLAPI_clEnqueueWriteSsgFileAMD* pAPIInfo = new(nothrow) CLAPI_clEnqueueWriteSsgFileAMD();
+
+    if (pAPIInfo == NULL)
+    {
+        return g_realExtensionFunctionTable.EnqueueWriteSsgFileAMD(command_queue,
+                                                     buffer,
+                                                     blocking_write,
+                                                     buffer_offset,
+                                                     cb,
+                                                     file,
+                                                     file_offset,
+                                                     num_events_in_wait_list,
+                                                     event_wait_list,
+                                                     event);
+    }
+
+    cl_int ret = pAPIInfo->Create(command_queue,
+                                  buffer,
+                                  blocking_write,
+                                  buffer_offset,
+                                  cb,
+                                  file,
+                                  file_offset,
+                                  num_events_in_wait_list,
+                                  event_wait_list,
+                                  event);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo)
+    CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+    return ret;
+}
+
 #define SetFuncPtr(func) \
     if (CLAPIInfoManager::Instance()->ShouldIntercept("cl"#func)){ \
         dispatchTable.func                 = CL_API_TRACE_cl##func; \
@@ -4970,6 +5181,30 @@ void* AssignExtensionFunctionPointer(const char* pFuncName, void* pRealFuncPtr)
 
             case CL_FUNC_TYPE_clSetKernelExecInfoAMD:
                 pRetVal = (void*)CL_API_TRACE_clSetKernelExecInfoAMD;
+                break;
+
+            case CL_FUNC_TYPE_clCreateSsgFileObjectAMD:
+                pRetVal = (void*)CL_API_TRACE_clCreateSsgFileObjectAMD;
+                break;
+
+            case CL_FUNC_TYPE_clGetSsgFileObjectInfoAMD:
+                pRetVal = (void*)CL_API_TRACE_clGetSsgFileObjectInfoAMD;
+                break;
+
+            case CL_FUNC_TYPE_clRetainSsgFileObjectAMD:
+                pRetVal = (void*)CL_API_TRACE_clRetainSsgFileObjectAMD;
+                break;
+
+            case CL_FUNC_TYPE_clReleaseSsgFileObjectAMD:
+                pRetVal = (void*)CL_API_TRACE_clReleaseSsgFileObjectAMD;
+                break;
+
+            case CL_FUNC_TYPE_clEnqueueReadSsgFileAMD:
+                pRetVal = (void*)CL_API_TRACE_clEnqueueReadSsgFileAMD;
+                break;
+
+            case CL_FUNC_TYPE_clEnqueueWriteSsgFileAMD:
+                pRetVal = (void*)CL_API_TRACE_clEnqueueWriteSsgFileAMD;
                 break;
 
             default:

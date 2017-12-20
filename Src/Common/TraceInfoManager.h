@@ -20,12 +20,12 @@
 #include <list>
 #include <map>
 #include <set>
+#include <mutex>
 
 #include <AMDTOSWrappers/Include/osOSDefinitions.h>
 
 #include "Defs.h"
 #include "OSUtils.h"
-#include "AMDTMutex.h"
 #include "LocaleSetting.h"
 #include "StackTracer.h"
 
@@ -150,18 +150,18 @@ protected:
     TraceInfoManager& operator = (const TraceInfoManager& obj) = delete;
 
 protected:
-    TraceInfoMap m_TraceInfoMap[2];  ///< stl map that maintains all captured apis
-    int m_iActiveMap;                ///< active map index
-    AMDTMutex m_mtx;                 ///< mutex used to lock APIInfoMap
-    AMDTMutex m_mtxFlush;            ///< mutex used to lock flush()
-    AMDTMutex m_mtxTracemap;         ///< mutex used to lock AddTraceInfoEntry
-    bool m_bTimeOutMode;             ///< Is time out mode
-    bool m_bIsRunning;               ///< Is app running
-    unsigned int m_uiInterval;       ///< Timer interval
-    char m_cListSeparator;           ///< the list separator for the current locale
-    THREADHANDLE m_tidTimer;         ///< ThreadID of timer thread
-    bool m_bStopped;                 ///< A flag indicating whether trace is stopped or not
-    TimerFunc m_timerFunc;           ///< The timer function used for flushing data
+    TraceInfoMap m_TraceInfoMap[2];     ///< stl map that maintains all captured apis
+    int m_iActiveMap;                   ///< active map index
+    std::mutex m_mtx;                   ///< mutex used to lock APIInfoMap
+    std::mutex m_mtxFlush;              ///< mutex used to lock flush()
+    std::mutex m_mtxTracemap;           ///< mutex used to lock AddTraceInfoEntry
+    bool m_bTimeOutMode;                ///< Is time out mode
+    bool m_bIsRunning;                  ///< Is app running
+    unsigned int m_uiInterval;          ///< Timer interval
+    char m_cListSeparator;              ///< the list separator for the current locale
+    THREADHANDLE m_tidTimer;            ///< ThreadID of timer thread
+    bool m_bStopped;                    ///< A flag indicating whether trace is stopped or not
+    TimerFunc m_timerFunc;              ///< The timer function used for flushing data
 };
 
 // @}

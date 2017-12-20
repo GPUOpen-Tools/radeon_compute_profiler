@@ -324,6 +324,67 @@ void HSA_APITrace_hsa_amd_profiling_convert_tick_to_system_domain::Create(
 }
 
 ///////////////////////////////////////////////////
+/// Class HSA_APITrace_hsa_amd_signal_create
+///////////////////////////////////////////////////
+
+HSA_APITrace_hsa_amd_signal_create::HSA_APITrace_hsa_amd_signal_create()
+{
+}
+
+HSA_APITrace_hsa_amd_signal_create::~HSA_APITrace_hsa_amd_signal_create()
+{
+}
+
+std::string HSA_APITrace_hsa_amd_signal_create::GetRetString()
+{
+    return HSATraceStringUtils::Get_hsa_status_t_String(m_retVal);
+}
+
+std::string HSA_APITrace_hsa_amd_signal_create::ToString()
+{
+    std::ostringstream ss;
+    ss << "initial_value=" << StringUtils::ToString(m_initial_value) << s_strParamSeparator;
+    ss << "num_consumers=" << StringUtils::ToString(m_num_consumers) << s_strParamSeparator;
+    ss << "consumers=" << HSATraceStringUtils::Get_hsa_agent_t_Ptr_String(m_consumers, m_consumersVal) << s_strParamSeparator;
+    ss << "attributes=" << StringUtils::ToString(m_attributes) << s_strParamSeparator;
+    ss << "signal=" << HSATraceStringUtils::Get_hsa_signal_t_Ptr_String(m_signal, m_signalVal);
+    return ss.str();
+}
+
+void HSA_APITrace_hsa_amd_signal_create::Create(
+    ULONGLONG ullStartTime,
+    ULONGLONG ullEndTime,
+    hsa_signal_value_t initial_value,
+    uint32_t num_consumers,
+    const hsa_agent_t* consumers,
+    uint64_t attributes,
+    hsa_signal_t* signal,
+    hsa_status_t retVal)
+{
+    m_ullStart = ullStartTime;
+    m_ullEnd = ullEndTime;
+    m_type = HSA_API_Type_hsa_amd_signal_create;
+    m_initial_value = initial_value;
+    m_num_consumers = num_consumers;
+    m_consumers = consumers;
+
+    if (nullptr != m_consumers)
+    {
+        m_consumersVal = *m_consumers;
+    }
+
+    m_attributes = attributes;
+    m_signal = signal;
+
+    if (nullptr != m_signal)
+    {
+        m_signalVal = *m_signal;
+    }
+
+    m_retVal = retVal;
+}
+
+///////////////////////////////////////////////////
 /// Class HSA_APITrace_hsa_amd_signal_async_handler
 ///////////////////////////////////////////////////
 
@@ -1599,6 +1660,104 @@ void HSA_APITrace_hsa_amd_ipc_memory_detach::Create(
     m_ullEnd = ullEndTime;
     m_type = HSA_API_Type_hsa_amd_ipc_memory_detach;
     m_mapped_ptr = mapped_ptr;
+    m_retVal = retVal;
+}
+
+///////////////////////////////////////////////////
+/// Class HSA_APITrace_hsa_amd_ipc_signal_create
+///////////////////////////////////////////////////
+
+HSA_APITrace_hsa_amd_ipc_signal_create::HSA_APITrace_hsa_amd_ipc_signal_create()
+{
+}
+
+HSA_APITrace_hsa_amd_ipc_signal_create::~HSA_APITrace_hsa_amd_ipc_signal_create()
+{
+}
+
+std::string HSA_APITrace_hsa_amd_ipc_signal_create::GetRetString()
+{
+    return HSATraceStringUtils::Get_hsa_status_t_String(m_retVal);
+}
+
+std::string HSA_APITrace_hsa_amd_ipc_signal_create::ToString()
+{
+    std::ostringstream ss;
+    ss << "signal=" << HSATraceStringUtils::Get_hsa_signal_t_String(m_signal) << s_strParamSeparator;
+    ss << "handle=" << HSATraceStringUtils::Get_hsa_amd_ipc_memory_t_Ptr_String(m_handle, m_handleVal);
+    return ss.str();
+}
+
+void HSA_APITrace_hsa_amd_ipc_signal_create::Create(
+    ULONGLONG ullStartTime,
+    ULONGLONG ullEndTime,
+    hsa_signal_t signal,
+    hsa_amd_ipc_signal_t* handle,
+    hsa_status_t retVal)
+{
+    m_ullStart = ullStartTime;
+    m_ullEnd = ullEndTime;
+    m_type = HSA_API_Type_hsa_amd_ipc_signal_create;
+    m_signal = signal;
+    m_handle = handle;
+
+    if (nullptr != m_handle)
+    {
+        m_handleVal = *m_handle;
+    }
+
+    m_retVal = retVal;
+}
+
+///////////////////////////////////////////////////
+/// Class HSA_APITrace_hsa_amd_ipc_signal_attach
+///////////////////////////////////////////////////
+
+HSA_APITrace_hsa_amd_ipc_signal_attach::HSA_APITrace_hsa_amd_ipc_signal_attach()
+{
+}
+
+HSA_APITrace_hsa_amd_ipc_signal_attach::~HSA_APITrace_hsa_amd_ipc_signal_attach()
+{
+}
+
+std::string HSA_APITrace_hsa_amd_ipc_signal_attach::GetRetString()
+{
+    return HSATraceStringUtils::Get_hsa_status_t_String(m_retVal);
+}
+
+std::string HSA_APITrace_hsa_amd_ipc_signal_attach::ToString()
+{
+    std::ostringstream ss;
+    ss << "handle=" << HSATraceStringUtils::Get_hsa_amd_ipc_memory_t_Ptr_String(m_handle, m_handleVal) << s_strParamSeparator;
+    ss << "signal=" << HSATraceStringUtils::Get_hsa_signal_t_Ptr_String(m_signal, m_signalVal);
+    return ss.str();
+}
+
+void HSA_APITrace_hsa_amd_ipc_signal_attach::Create(
+    ULONGLONG ullStartTime,
+    ULONGLONG ullEndTime,
+    const hsa_amd_ipc_signal_t* handle,
+    hsa_signal_t* signal,
+    hsa_status_t retVal)
+{
+    m_ullStart = ullStartTime;
+    m_ullEnd = ullEndTime;
+    m_type = HSA_API_Type_hsa_amd_ipc_signal_attach;
+    m_handle = handle;
+
+    if (nullptr != m_handle)
+    {
+        m_handleVal = *m_handle;
+    }
+
+    m_signal = signal;
+
+    if (nullptr != m_signal)
+    {
+        m_signalVal = *m_signal;
+    }
+
     m_retVal = retVal;
 }
 

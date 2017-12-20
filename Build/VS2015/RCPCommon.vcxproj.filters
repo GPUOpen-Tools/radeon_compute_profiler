@@ -67,9 +67,6 @@
     <ClCompile Include="..\..\..\Common\Src\ADLUtil\ADLUtil.cpp">
       <Filter>ADLUtil</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\Src\AMDTMutex\AMDTMutex.cpp">
-      <Filter>AMDTMutex</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Common\Src\DeviceInfo-Internal\DeviceInfoInternal.cpp">
       <Filter>DeviceInfo</Filter>
     </ClCompile>
@@ -183,9 +180,6 @@
     <ClInclude Include="..\..\..\Common\Src\ADLUtil\ADLUtil.h">
       <Filter>ADLUtil</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\Src\AMDTMutex\AMDTMutex.h">
-      <Filter>AMDTMutex</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Common\Src\DeviceInfo\DeviceInfo.h">
       <Filter>DeviceInfo</Filter>
     </ClInclude>
@@ -232,9 +226,6 @@
     </Filter>
     <Filter Include="Windows">
       <UniqueIdentifier>{c413e142-1ca7-440f-a36f-8b0a5010fed5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="AMDTMutex">
-      <UniqueIdentifier>{e1cc8e03-7b53-411e-942a-ae38a544e6e6}</UniqueIdentifier>
     </Filter>
     <Filter Include="ADLUtil">
       <UniqueIdentifier>{3f25ee92-f719-421f-86f4-09ba71c4a4dd}</UniqueIdentifier>

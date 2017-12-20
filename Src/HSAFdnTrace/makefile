@@ -17,7 +17,6 @@ INCLUDES = \
 	-I$(HSA_DIR)/include/hsa \
 	-I$(DYNAMICLIBRARYMODULE_DIR) \
 	-I$(TSINGLETON_DIR) \
-	-I$(AMDTMUTEX_DIR) \
 	-I$(DEVICEINFO_DIR)
 
 LIBS = \
@@ -37,7 +36,9 @@ SO_OBJS =  \
 	./$(OBJ_DIR)/HSATraceInterception.o \
 	./$(OBJ_DIR)/HSACoreAPITraceClasses.o \
 	./$(OBJ_DIR)/HSAFinalizerExtensionAPITraceClasses.o \
+	./$(OBJ_DIR)/HSAAMDAQLProfileExtensionAPITraceClasses.o \
 	./$(OBJ_DIR)/HSAAMDExtensionAPITraceClasses.o \
+	./$(OBJ_DIR)/HSAAMDLoaderExtensionAPITraceClasses.o \
 	./$(OBJ_DIR)/HSAImageExtensionAPITraceClasses.o \
 	./$(OBJ_DIR)/HSATraceStringOutput.o \
 	./$(OBJ_DIR)/HSATraceInterceptionTable1_0.o \

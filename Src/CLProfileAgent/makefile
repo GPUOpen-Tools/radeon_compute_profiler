@@ -24,7 +24,6 @@ INCLUDES = \
 	-I$(ACL_DIR)/include \
 	-I$(ADL_DIR)/include \
 	-I$(ADLUTIL_DIR) \
-	-I$(AMDTMUTEX_DIR) \
 	-I$(ACLMODULEMANAGER_DIR) \
 
 LIBS = \

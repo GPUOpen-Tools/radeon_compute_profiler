@@ -45,11 +45,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_status_string(const HSA_APITrace_hsa_status_string& rhs);
+    HSA_APITrace_hsa_status_string(const HSA_APITrace_hsa_status_string& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_status_string& operator = (const HSA_APITrace_hsa_status_string& rhs);
+    HSA_APITrace_hsa_status_string& operator= (const HSA_APITrace_hsa_status_string& rhs) = delete;
 
     hsa_status_t m_status; ///< Parameter passed to hsa_status_string
     const char** m_status_string; ///< Parameter passed to hsa_status_string
@@ -88,11 +88,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_init(const HSA_APITrace_hsa_init& rhs);
+    HSA_APITrace_hsa_init(const HSA_APITrace_hsa_init& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_init& operator = (const HSA_APITrace_hsa_init& rhs);
+    HSA_APITrace_hsa_init& operator= (const HSA_APITrace_hsa_init& rhs) = delete;
 
     hsa_status_t m_retVal; ///< Parameter passed to hsa_init
 };
@@ -128,11 +128,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_shut_down(const HSA_APITrace_hsa_shut_down& rhs);
+    HSA_APITrace_hsa_shut_down(const HSA_APITrace_hsa_shut_down& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_shut_down& operator = (const HSA_APITrace_hsa_shut_down& rhs);
+    HSA_APITrace_hsa_shut_down& operator= (const HSA_APITrace_hsa_shut_down& rhs) = delete;
 
     hsa_status_t m_retVal; ///< Parameter passed to hsa_shut_down
 };
@@ -172,11 +172,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_system_get_info(const HSA_APITrace_hsa_system_get_info& rhs);
+    HSA_APITrace_hsa_system_get_info(const HSA_APITrace_hsa_system_get_info& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_system_get_info& operator = (const HSA_APITrace_hsa_system_get_info& rhs);
+    HSA_APITrace_hsa_system_get_info& operator= (const HSA_APITrace_hsa_system_get_info& rhs) = delete;
 
     hsa_system_info_t m_attribute; ///< Parameter passed to hsa_system_get_info
     void* m_value; ///< Parameter passed to hsa_system_get_info
@@ -218,11 +218,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_extension_get_name(const HSA_APITrace_hsa_extension_get_name& rhs);
+    HSA_APITrace_hsa_extension_get_name(const HSA_APITrace_hsa_extension_get_name& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_extension_get_name& operator = (const HSA_APITrace_hsa_extension_get_name& rhs);
+    HSA_APITrace_hsa_extension_get_name& operator= (const HSA_APITrace_hsa_extension_get_name& rhs) = delete;
 
     uint16_t m_extension; ///< Parameter passed to hsa_extension_get_name
     const char** m_name; ///< Parameter passed to hsa_extension_get_name
@@ -269,11 +269,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_system_extension_supported(const HSA_APITrace_hsa_system_extension_supported& rhs);
+    HSA_APITrace_hsa_system_extension_supported(const HSA_APITrace_hsa_system_extension_supported& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_system_extension_supported& operator = (const HSA_APITrace_hsa_system_extension_supported& rhs);
+    HSA_APITrace_hsa_system_extension_supported& operator= (const HSA_APITrace_hsa_system_extension_supported& rhs) = delete;
 
     uint16_t m_extension; ///< Parameter passed to hsa_system_extension_supported
     uint16_t m_version_major; ///< Parameter passed to hsa_system_extension_supported
@@ -322,11 +322,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_system_major_extension_supported(const HSA_APITrace_hsa_system_major_extension_supported& rhs);
+    HSA_APITrace_hsa_system_major_extension_supported(const HSA_APITrace_hsa_system_major_extension_supported& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_system_major_extension_supported& operator = (const HSA_APITrace_hsa_system_major_extension_supported& rhs);
+    HSA_APITrace_hsa_system_major_extension_supported& operator= (const HSA_APITrace_hsa_system_major_extension_supported& rhs) = delete;
 
     uint16_t m_extension; ///< Parameter passed to hsa_system_major_extension_supported
     uint16_t m_version_major; ///< Parameter passed to hsa_system_major_extension_supported
@@ -376,11 +376,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_system_get_extension_table(const HSA_APITrace_hsa_system_get_extension_table& rhs);
+    HSA_APITrace_hsa_system_get_extension_table(const HSA_APITrace_hsa_system_get_extension_table& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_system_get_extension_table& operator = (const HSA_APITrace_hsa_system_get_extension_table& rhs);
+    HSA_APITrace_hsa_system_get_extension_table& operator= (const HSA_APITrace_hsa_system_get_extension_table& rhs) = delete;
 
     uint16_t m_extension; ///< Parameter passed to hsa_system_get_extension_table
     uint16_t m_version_major; ///< Parameter passed to hsa_system_get_extension_table
@@ -428,11 +428,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_system_get_major_extension_table(const HSA_APITrace_hsa_system_get_major_extension_table& rhs);
+    HSA_APITrace_hsa_system_get_major_extension_table(const HSA_APITrace_hsa_system_get_major_extension_table& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_system_get_major_extension_table& operator = (const HSA_APITrace_hsa_system_get_major_extension_table& rhs);
+    HSA_APITrace_hsa_system_get_major_extension_table& operator= (const HSA_APITrace_hsa_system_get_major_extension_table& rhs) = delete;
 
     uint16_t m_extension; ///< Parameter passed to hsa_system_get_major_extension_table
     uint16_t m_version_major; ///< Parameter passed to hsa_system_get_major_extension_table
@@ -478,11 +478,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_agent_get_info(const HSA_APITrace_hsa_agent_get_info& rhs);
+    HSA_APITrace_hsa_agent_get_info(const HSA_APITrace_hsa_agent_get_info& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_agent_get_info& operator = (const HSA_APITrace_hsa_agent_get_info& rhs);
+    HSA_APITrace_hsa_agent_get_info& operator= (const HSA_APITrace_hsa_agent_get_info& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_agent_get_info
     hsa_agent_info_t m_attribute; ///< Parameter passed to hsa_agent_get_info
@@ -525,11 +525,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_iterate_agents(const HSA_APITrace_hsa_iterate_agents& rhs);
+    HSA_APITrace_hsa_iterate_agents(const HSA_APITrace_hsa_iterate_agents& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_iterate_agents& operator = (const HSA_APITrace_hsa_iterate_agents& rhs);
+    HSA_APITrace_hsa_iterate_agents& operator= (const HSA_APITrace_hsa_iterate_agents& rhs) = delete;
 
     hsa_status_t (*m_callback)(hsa_agent_t agent, void* data); ///< Parameter passed to hsa_iterate_agents
     void* m_data; ///< Parameter passed to hsa_iterate_agents
@@ -573,11 +573,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_agent_get_exception_policies(const HSA_APITrace_hsa_agent_get_exception_policies& rhs);
+    HSA_APITrace_hsa_agent_get_exception_policies(const HSA_APITrace_hsa_agent_get_exception_policies& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_agent_get_exception_policies& operator = (const HSA_APITrace_hsa_agent_get_exception_policies& rhs);
+    HSA_APITrace_hsa_agent_get_exception_policies& operator= (const HSA_APITrace_hsa_agent_get_exception_policies& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_agent_get_exception_policies
     hsa_profile_t m_profile; ///< Parameter passed to hsa_agent_get_exception_policies
@@ -623,11 +623,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_cache_get_info(const HSA_APITrace_hsa_cache_get_info& rhs);
+    HSA_APITrace_hsa_cache_get_info(const HSA_APITrace_hsa_cache_get_info& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_cache_get_info& operator = (const HSA_APITrace_hsa_cache_get_info& rhs);
+    HSA_APITrace_hsa_cache_get_info& operator= (const HSA_APITrace_hsa_cache_get_info& rhs) = delete;
 
     hsa_cache_t m_cache; ///< Parameter passed to hsa_cache_get_info
     hsa_cache_info_t m_attribute; ///< Parameter passed to hsa_cache_get_info
@@ -672,11 +672,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_agent_iterate_caches(const HSA_APITrace_hsa_agent_iterate_caches& rhs);
+    HSA_APITrace_hsa_agent_iterate_caches(const HSA_APITrace_hsa_agent_iterate_caches& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_agent_iterate_caches& operator = (const HSA_APITrace_hsa_agent_iterate_caches& rhs);
+    HSA_APITrace_hsa_agent_iterate_caches& operator= (const HSA_APITrace_hsa_agent_iterate_caches& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_agent_iterate_caches
     hsa_status_t (*m_callback)(hsa_cache_t cache, void* data); ///< Parameter passed to hsa_agent_iterate_caches
@@ -725,11 +725,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_agent_extension_supported(const HSA_APITrace_hsa_agent_extension_supported& rhs);
+    HSA_APITrace_hsa_agent_extension_supported(const HSA_APITrace_hsa_agent_extension_supported& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_agent_extension_supported& operator = (const HSA_APITrace_hsa_agent_extension_supported& rhs);
+    HSA_APITrace_hsa_agent_extension_supported& operator= (const HSA_APITrace_hsa_agent_extension_supported& rhs) = delete;
 
     uint16_t m_extension; ///< Parameter passed to hsa_agent_extension_supported
     hsa_agent_t m_agent; ///< Parameter passed to hsa_agent_extension_supported
@@ -781,11 +781,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_agent_major_extension_supported(const HSA_APITrace_hsa_agent_major_extension_supported& rhs);
+    HSA_APITrace_hsa_agent_major_extension_supported(const HSA_APITrace_hsa_agent_major_extension_supported& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_agent_major_extension_supported& operator = (const HSA_APITrace_hsa_agent_major_extension_supported& rhs);
+    HSA_APITrace_hsa_agent_major_extension_supported& operator= (const HSA_APITrace_hsa_agent_major_extension_supported& rhs) = delete;
 
     uint16_t m_extension; ///< Parameter passed to hsa_agent_major_extension_supported
     hsa_agent_t m_agent; ///< Parameter passed to hsa_agent_major_extension_supported
@@ -836,11 +836,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_create(const HSA_APITrace_hsa_signal_create& rhs);
+    HSA_APITrace_hsa_signal_create(const HSA_APITrace_hsa_signal_create& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_create& operator = (const HSA_APITrace_hsa_signal_create& rhs);
+    HSA_APITrace_hsa_signal_create& operator= (const HSA_APITrace_hsa_signal_create& rhs) = delete;
 
     hsa_signal_value_t m_initial_value; ///< Parameter passed to hsa_signal_create
     uint32_t m_num_consumers; ///< Parameter passed to hsa_signal_create
@@ -884,11 +884,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_destroy(const HSA_APITrace_hsa_signal_destroy& rhs);
+    HSA_APITrace_hsa_signal_destroy(const HSA_APITrace_hsa_signal_destroy& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_destroy& operator = (const HSA_APITrace_hsa_signal_destroy& rhs);
+    HSA_APITrace_hsa_signal_destroy& operator= (const HSA_APITrace_hsa_signal_destroy& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_destroy
     hsa_status_t m_retVal; ///< Parameter passed to hsa_signal_destroy
@@ -927,11 +927,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_load_scacquire(const HSA_APITrace_hsa_signal_load_scacquire& rhs);
+    HSA_APITrace_hsa_signal_load_scacquire(const HSA_APITrace_hsa_signal_load_scacquire& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_load_scacquire& operator = (const HSA_APITrace_hsa_signal_load_scacquire& rhs);
+    HSA_APITrace_hsa_signal_load_scacquire& operator= (const HSA_APITrace_hsa_signal_load_scacquire& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_load_scacquire
     hsa_signal_value_t m_retVal; ///< Parameter passed to hsa_signal_load_scacquire
@@ -970,11 +970,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_load_relaxed(const HSA_APITrace_hsa_signal_load_relaxed& rhs);
+    HSA_APITrace_hsa_signal_load_relaxed(const HSA_APITrace_hsa_signal_load_relaxed& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_load_relaxed& operator = (const HSA_APITrace_hsa_signal_load_relaxed& rhs);
+    HSA_APITrace_hsa_signal_load_relaxed& operator= (const HSA_APITrace_hsa_signal_load_relaxed& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_load_relaxed
     hsa_signal_value_t m_retVal; ///< Parameter passed to hsa_signal_load_relaxed
@@ -1013,11 +1013,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_store_relaxed(const HSA_APITrace_hsa_signal_store_relaxed& rhs);
+    HSA_APITrace_hsa_signal_store_relaxed(const HSA_APITrace_hsa_signal_store_relaxed& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_store_relaxed& operator = (const HSA_APITrace_hsa_signal_store_relaxed& rhs);
+    HSA_APITrace_hsa_signal_store_relaxed& operator= (const HSA_APITrace_hsa_signal_store_relaxed& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_store_relaxed
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_store_relaxed
@@ -1056,11 +1056,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_store_screlease(const HSA_APITrace_hsa_signal_store_screlease& rhs);
+    HSA_APITrace_hsa_signal_store_screlease(const HSA_APITrace_hsa_signal_store_screlease& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_store_screlease& operator = (const HSA_APITrace_hsa_signal_store_screlease& rhs);
+    HSA_APITrace_hsa_signal_store_screlease& operator= (const HSA_APITrace_hsa_signal_store_screlease& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_store_screlease
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_store_screlease
@@ -1099,11 +1099,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_silent_store_relaxed(const HSA_APITrace_hsa_signal_silent_store_relaxed& rhs);
+    HSA_APITrace_hsa_signal_silent_store_relaxed(const HSA_APITrace_hsa_signal_silent_store_relaxed& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_silent_store_relaxed& operator = (const HSA_APITrace_hsa_signal_silent_store_relaxed& rhs);
+    HSA_APITrace_hsa_signal_silent_store_relaxed& operator= (const HSA_APITrace_hsa_signal_silent_store_relaxed& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_silent_store_relaxed
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_silent_store_relaxed
@@ -1142,11 +1142,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_silent_store_screlease(const HSA_APITrace_hsa_signal_silent_store_screlease& rhs);
+    HSA_APITrace_hsa_signal_silent_store_screlease(const HSA_APITrace_hsa_signal_silent_store_screlease& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_silent_store_screlease& operator = (const HSA_APITrace_hsa_signal_silent_store_screlease& rhs);
+    HSA_APITrace_hsa_signal_silent_store_screlease& operator= (const HSA_APITrace_hsa_signal_silent_store_screlease& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_silent_store_screlease
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_silent_store_screlease
@@ -1187,11 +1187,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_exchange_scacq_screl(const HSA_APITrace_hsa_signal_exchange_scacq_screl& rhs);
+    HSA_APITrace_hsa_signal_exchange_scacq_screl(const HSA_APITrace_hsa_signal_exchange_scacq_screl& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_exchange_scacq_screl& operator = (const HSA_APITrace_hsa_signal_exchange_scacq_screl& rhs);
+    HSA_APITrace_hsa_signal_exchange_scacq_screl& operator= (const HSA_APITrace_hsa_signal_exchange_scacq_screl& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_exchange_scacq_screl
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_exchange_scacq_screl
@@ -1233,11 +1233,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_exchange_scacquire(const HSA_APITrace_hsa_signal_exchange_scacquire& rhs);
+    HSA_APITrace_hsa_signal_exchange_scacquire(const HSA_APITrace_hsa_signal_exchange_scacquire& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_exchange_scacquire& operator = (const HSA_APITrace_hsa_signal_exchange_scacquire& rhs);
+    HSA_APITrace_hsa_signal_exchange_scacquire& operator= (const HSA_APITrace_hsa_signal_exchange_scacquire& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_exchange_scacquire
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_exchange_scacquire
@@ -1279,11 +1279,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_exchange_relaxed(const HSA_APITrace_hsa_signal_exchange_relaxed& rhs);
+    HSA_APITrace_hsa_signal_exchange_relaxed(const HSA_APITrace_hsa_signal_exchange_relaxed& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_exchange_relaxed& operator = (const HSA_APITrace_hsa_signal_exchange_relaxed& rhs);
+    HSA_APITrace_hsa_signal_exchange_relaxed& operator= (const HSA_APITrace_hsa_signal_exchange_relaxed& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_exchange_relaxed
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_exchange_relaxed
@@ -1325,11 +1325,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_exchange_screlease(const HSA_APITrace_hsa_signal_exchange_screlease& rhs);
+    HSA_APITrace_hsa_signal_exchange_screlease(const HSA_APITrace_hsa_signal_exchange_screlease& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_exchange_screlease& operator = (const HSA_APITrace_hsa_signal_exchange_screlease& rhs);
+    HSA_APITrace_hsa_signal_exchange_screlease& operator= (const HSA_APITrace_hsa_signal_exchange_screlease& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_exchange_screlease
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_exchange_screlease
@@ -1373,11 +1373,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_cas_scacq_screl(const HSA_APITrace_hsa_signal_cas_scacq_screl& rhs);
+    HSA_APITrace_hsa_signal_cas_scacq_screl(const HSA_APITrace_hsa_signal_cas_scacq_screl& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_cas_scacq_screl& operator = (const HSA_APITrace_hsa_signal_cas_scacq_screl& rhs);
+    HSA_APITrace_hsa_signal_cas_scacq_screl& operator= (const HSA_APITrace_hsa_signal_cas_scacq_screl& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_cas_scacq_screl
     hsa_signal_value_t m_expected; ///< Parameter passed to hsa_signal_cas_scacq_screl
@@ -1422,11 +1422,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_cas_scacquire(const HSA_APITrace_hsa_signal_cas_scacquire& rhs);
+    HSA_APITrace_hsa_signal_cas_scacquire(const HSA_APITrace_hsa_signal_cas_scacquire& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_cas_scacquire& operator = (const HSA_APITrace_hsa_signal_cas_scacquire& rhs);
+    HSA_APITrace_hsa_signal_cas_scacquire& operator= (const HSA_APITrace_hsa_signal_cas_scacquire& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_cas_scacquire
     hsa_signal_value_t m_expected; ///< Parameter passed to hsa_signal_cas_scacquire
@@ -1471,11 +1471,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_cas_relaxed(const HSA_APITrace_hsa_signal_cas_relaxed& rhs);
+    HSA_APITrace_hsa_signal_cas_relaxed(const HSA_APITrace_hsa_signal_cas_relaxed& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_cas_relaxed& operator = (const HSA_APITrace_hsa_signal_cas_relaxed& rhs);
+    HSA_APITrace_hsa_signal_cas_relaxed& operator= (const HSA_APITrace_hsa_signal_cas_relaxed& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_cas_relaxed
     hsa_signal_value_t m_expected; ///< Parameter passed to hsa_signal_cas_relaxed
@@ -1520,11 +1520,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_cas_screlease(const HSA_APITrace_hsa_signal_cas_screlease& rhs);
+    HSA_APITrace_hsa_signal_cas_screlease(const HSA_APITrace_hsa_signal_cas_screlease& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_cas_screlease& operator = (const HSA_APITrace_hsa_signal_cas_screlease& rhs);
+    HSA_APITrace_hsa_signal_cas_screlease& operator= (const HSA_APITrace_hsa_signal_cas_screlease& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_cas_screlease
     hsa_signal_value_t m_expected; ///< Parameter passed to hsa_signal_cas_screlease
@@ -1565,11 +1565,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_add_scacq_screl(const HSA_APITrace_hsa_signal_add_scacq_screl& rhs);
+    HSA_APITrace_hsa_signal_add_scacq_screl(const HSA_APITrace_hsa_signal_add_scacq_screl& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_add_scacq_screl& operator = (const HSA_APITrace_hsa_signal_add_scacq_screl& rhs);
+    HSA_APITrace_hsa_signal_add_scacq_screl& operator= (const HSA_APITrace_hsa_signal_add_scacq_screl& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_add_scacq_screl
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_add_scacq_screl
@@ -1608,11 +1608,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_add_scacquire(const HSA_APITrace_hsa_signal_add_scacquire& rhs);
+    HSA_APITrace_hsa_signal_add_scacquire(const HSA_APITrace_hsa_signal_add_scacquire& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_add_scacquire& operator = (const HSA_APITrace_hsa_signal_add_scacquire& rhs);
+    HSA_APITrace_hsa_signal_add_scacquire& operator= (const HSA_APITrace_hsa_signal_add_scacquire& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_add_scacquire
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_add_scacquire
@@ -1651,11 +1651,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_add_relaxed(const HSA_APITrace_hsa_signal_add_relaxed& rhs);
+    HSA_APITrace_hsa_signal_add_relaxed(const HSA_APITrace_hsa_signal_add_relaxed& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_add_relaxed& operator = (const HSA_APITrace_hsa_signal_add_relaxed& rhs);
+    HSA_APITrace_hsa_signal_add_relaxed& operator= (const HSA_APITrace_hsa_signal_add_relaxed& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_add_relaxed
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_add_relaxed
@@ -1694,11 +1694,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_add_screlease(const HSA_APITrace_hsa_signal_add_screlease& rhs);
+    HSA_APITrace_hsa_signal_add_screlease(const HSA_APITrace_hsa_signal_add_screlease& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_add_screlease& operator = (const HSA_APITrace_hsa_signal_add_screlease& rhs);
+    HSA_APITrace_hsa_signal_add_screlease& operator= (const HSA_APITrace_hsa_signal_add_screlease& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_add_screlease
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_add_screlease
@@ -1737,11 +1737,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_subtract_scacq_screl(const HSA_APITrace_hsa_signal_subtract_scacq_screl& rhs);
+    HSA_APITrace_hsa_signal_subtract_scacq_screl(const HSA_APITrace_hsa_signal_subtract_scacq_screl& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_subtract_scacq_screl& operator = (const HSA_APITrace_hsa_signal_subtract_scacq_screl& rhs);
+    HSA_APITrace_hsa_signal_subtract_scacq_screl& operator= (const HSA_APITrace_hsa_signal_subtract_scacq_screl& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_subtract_scacq_screl
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_subtract_scacq_screl
@@ -1780,11 +1780,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_subtract_scacquire(const HSA_APITrace_hsa_signal_subtract_scacquire& rhs);
+    HSA_APITrace_hsa_signal_subtract_scacquire(const HSA_APITrace_hsa_signal_subtract_scacquire& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_subtract_scacquire& operator = (const HSA_APITrace_hsa_signal_subtract_scacquire& rhs);
+    HSA_APITrace_hsa_signal_subtract_scacquire& operator= (const HSA_APITrace_hsa_signal_subtract_scacquire& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_subtract_scacquire
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_subtract_scacquire
@@ -1823,11 +1823,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_subtract_relaxed(const HSA_APITrace_hsa_signal_subtract_relaxed& rhs);
+    HSA_APITrace_hsa_signal_subtract_relaxed(const HSA_APITrace_hsa_signal_subtract_relaxed& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_subtract_relaxed& operator = (const HSA_APITrace_hsa_signal_subtract_relaxed& rhs);
+    HSA_APITrace_hsa_signal_subtract_relaxed& operator= (const HSA_APITrace_hsa_signal_subtract_relaxed& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_subtract_relaxed
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_subtract_relaxed
@@ -1866,11 +1866,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_subtract_screlease(const HSA_APITrace_hsa_signal_subtract_screlease& rhs);
+    HSA_APITrace_hsa_signal_subtract_screlease(const HSA_APITrace_hsa_signal_subtract_screlease& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_subtract_screlease& operator = (const HSA_APITrace_hsa_signal_subtract_screlease& rhs);
+    HSA_APITrace_hsa_signal_subtract_screlease& operator= (const HSA_APITrace_hsa_signal_subtract_screlease& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_subtract_screlease
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_subtract_screlease
@@ -1909,11 +1909,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_and_scacq_screl(const HSA_APITrace_hsa_signal_and_scacq_screl& rhs);
+    HSA_APITrace_hsa_signal_and_scacq_screl(const HSA_APITrace_hsa_signal_and_scacq_screl& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_and_scacq_screl& operator = (const HSA_APITrace_hsa_signal_and_scacq_screl& rhs);
+    HSA_APITrace_hsa_signal_and_scacq_screl& operator= (const HSA_APITrace_hsa_signal_and_scacq_screl& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_and_scacq_screl
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_and_scacq_screl
@@ -1952,11 +1952,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_and_scacquire(const HSA_APITrace_hsa_signal_and_scacquire& rhs);
+    HSA_APITrace_hsa_signal_and_scacquire(const HSA_APITrace_hsa_signal_and_scacquire& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_and_scacquire& operator = (const HSA_APITrace_hsa_signal_and_scacquire& rhs);
+    HSA_APITrace_hsa_signal_and_scacquire& operator= (const HSA_APITrace_hsa_signal_and_scacquire& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_and_scacquire
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_and_scacquire
@@ -1995,11 +1995,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_and_relaxed(const HSA_APITrace_hsa_signal_and_relaxed& rhs);
+    HSA_APITrace_hsa_signal_and_relaxed(const HSA_APITrace_hsa_signal_and_relaxed& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_and_relaxed& operator = (const HSA_APITrace_hsa_signal_and_relaxed& rhs);
+    HSA_APITrace_hsa_signal_and_relaxed& operator= (const HSA_APITrace_hsa_signal_and_relaxed& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_and_relaxed
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_and_relaxed
@@ -2038,11 +2038,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_and_screlease(const HSA_APITrace_hsa_signal_and_screlease& rhs);
+    HSA_APITrace_hsa_signal_and_screlease(const HSA_APITrace_hsa_signal_and_screlease& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_and_screlease& operator = (const HSA_APITrace_hsa_signal_and_screlease& rhs);
+    HSA_APITrace_hsa_signal_and_screlease& operator= (const HSA_APITrace_hsa_signal_and_screlease& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_and_screlease
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_and_screlease
@@ -2081,11 +2081,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_or_scacq_screl(const HSA_APITrace_hsa_signal_or_scacq_screl& rhs);
+    HSA_APITrace_hsa_signal_or_scacq_screl(const HSA_APITrace_hsa_signal_or_scacq_screl& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_or_scacq_screl& operator = (const HSA_APITrace_hsa_signal_or_scacq_screl& rhs);
+    HSA_APITrace_hsa_signal_or_scacq_screl& operator= (const HSA_APITrace_hsa_signal_or_scacq_screl& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_or_scacq_screl
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_or_scacq_screl
@@ -2124,11 +2124,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_or_scacquire(const HSA_APITrace_hsa_signal_or_scacquire& rhs);
+    HSA_APITrace_hsa_signal_or_scacquire(const HSA_APITrace_hsa_signal_or_scacquire& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_or_scacquire& operator = (const HSA_APITrace_hsa_signal_or_scacquire& rhs);
+    HSA_APITrace_hsa_signal_or_scacquire& operator= (const HSA_APITrace_hsa_signal_or_scacquire& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_or_scacquire
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_or_scacquire
@@ -2167,11 +2167,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_or_relaxed(const HSA_APITrace_hsa_signal_or_relaxed& rhs);
+    HSA_APITrace_hsa_signal_or_relaxed(const HSA_APITrace_hsa_signal_or_relaxed& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_or_relaxed& operator = (const HSA_APITrace_hsa_signal_or_relaxed& rhs);
+    HSA_APITrace_hsa_signal_or_relaxed& operator= (const HSA_APITrace_hsa_signal_or_relaxed& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_or_relaxed
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_or_relaxed
@@ -2210,11 +2210,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_or_screlease(const HSA_APITrace_hsa_signal_or_screlease& rhs);
+    HSA_APITrace_hsa_signal_or_screlease(const HSA_APITrace_hsa_signal_or_screlease& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_or_screlease& operator = (const HSA_APITrace_hsa_signal_or_screlease& rhs);
+    HSA_APITrace_hsa_signal_or_screlease& operator= (const HSA_APITrace_hsa_signal_or_screlease& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_or_screlease
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_or_screlease
@@ -2253,11 +2253,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_xor_scacq_screl(const HSA_APITrace_hsa_signal_xor_scacq_screl& rhs);
+    HSA_APITrace_hsa_signal_xor_scacq_screl(const HSA_APITrace_hsa_signal_xor_scacq_screl& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_xor_scacq_screl& operator = (const HSA_APITrace_hsa_signal_xor_scacq_screl& rhs);
+    HSA_APITrace_hsa_signal_xor_scacq_screl& operator= (const HSA_APITrace_hsa_signal_xor_scacq_screl& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_xor_scacq_screl
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_xor_scacq_screl
@@ -2296,11 +2296,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_xor_scacquire(const HSA_APITrace_hsa_signal_xor_scacquire& rhs);
+    HSA_APITrace_hsa_signal_xor_scacquire(const HSA_APITrace_hsa_signal_xor_scacquire& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_xor_scacquire& operator = (const HSA_APITrace_hsa_signal_xor_scacquire& rhs);
+    HSA_APITrace_hsa_signal_xor_scacquire& operator= (const HSA_APITrace_hsa_signal_xor_scacquire& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_xor_scacquire
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_xor_scacquire
@@ -2339,11 +2339,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_xor_relaxed(const HSA_APITrace_hsa_signal_xor_relaxed& rhs);
+    HSA_APITrace_hsa_signal_xor_relaxed(const HSA_APITrace_hsa_signal_xor_relaxed& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_xor_relaxed& operator = (const HSA_APITrace_hsa_signal_xor_relaxed& rhs);
+    HSA_APITrace_hsa_signal_xor_relaxed& operator= (const HSA_APITrace_hsa_signal_xor_relaxed& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_xor_relaxed
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_xor_relaxed
@@ -2382,11 +2382,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_xor_screlease(const HSA_APITrace_hsa_signal_xor_screlease& rhs);
+    HSA_APITrace_hsa_signal_xor_screlease(const HSA_APITrace_hsa_signal_xor_screlease& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_xor_screlease& operator = (const HSA_APITrace_hsa_signal_xor_screlease& rhs);
+    HSA_APITrace_hsa_signal_xor_screlease& operator= (const HSA_APITrace_hsa_signal_xor_screlease& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_xor_screlease
     hsa_signal_value_t m_value; ///< Parameter passed to hsa_signal_xor_screlease
@@ -2433,11 +2433,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_wait_scacquire(const HSA_APITrace_hsa_signal_wait_scacquire& rhs);
+    HSA_APITrace_hsa_signal_wait_scacquire(const HSA_APITrace_hsa_signal_wait_scacquire& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_wait_scacquire& operator = (const HSA_APITrace_hsa_signal_wait_scacquire& rhs);
+    HSA_APITrace_hsa_signal_wait_scacquire& operator= (const HSA_APITrace_hsa_signal_wait_scacquire& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_wait_scacquire
     hsa_signal_condition_t m_condition; ///< Parameter passed to hsa_signal_wait_scacquire
@@ -2488,11 +2488,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_wait_relaxed(const HSA_APITrace_hsa_signal_wait_relaxed& rhs);
+    HSA_APITrace_hsa_signal_wait_relaxed(const HSA_APITrace_hsa_signal_wait_relaxed& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_wait_relaxed& operator = (const HSA_APITrace_hsa_signal_wait_relaxed& rhs);
+    HSA_APITrace_hsa_signal_wait_relaxed& operator= (const HSA_APITrace_hsa_signal_wait_relaxed& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_signal_wait_relaxed
     hsa_signal_condition_t m_condition; ///< Parameter passed to hsa_signal_wait_relaxed
@@ -2543,11 +2543,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_group_create(const HSA_APITrace_hsa_signal_group_create& rhs);
+    HSA_APITrace_hsa_signal_group_create(const HSA_APITrace_hsa_signal_group_create& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_group_create& operator = (const HSA_APITrace_hsa_signal_group_create& rhs);
+    HSA_APITrace_hsa_signal_group_create& operator= (const HSA_APITrace_hsa_signal_group_create& rhs) = delete;
 
     uint32_t m_num_signals; ///< Parameter passed to hsa_signal_group_create
     const hsa_signal_t* m_signals; ///< Parameter passed to hsa_signal_group_create
@@ -2593,11 +2593,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_group_destroy(const HSA_APITrace_hsa_signal_group_destroy& rhs);
+    HSA_APITrace_hsa_signal_group_destroy(const HSA_APITrace_hsa_signal_group_destroy& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_group_destroy& operator = (const HSA_APITrace_hsa_signal_group_destroy& rhs);
+    HSA_APITrace_hsa_signal_group_destroy& operator= (const HSA_APITrace_hsa_signal_group_destroy& rhs) = delete;
 
     hsa_signal_group_t m_signal_group; ///< Parameter passed to hsa_signal_group_destroy
     hsa_status_t m_retVal; ///< Parameter passed to hsa_signal_group_destroy
@@ -2646,11 +2646,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_group_wait_any_scacquire(const HSA_APITrace_hsa_signal_group_wait_any_scacquire& rhs);
+    HSA_APITrace_hsa_signal_group_wait_any_scacquire(const HSA_APITrace_hsa_signal_group_wait_any_scacquire& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_group_wait_any_scacquire& operator = (const HSA_APITrace_hsa_signal_group_wait_any_scacquire& rhs);
+    HSA_APITrace_hsa_signal_group_wait_any_scacquire& operator= (const HSA_APITrace_hsa_signal_group_wait_any_scacquire& rhs) = delete;
 
     hsa_signal_group_t m_signal_group; ///< Parameter passed to hsa_signal_group_wait_any_scacquire
     const hsa_signal_condition_t* m_conditions; ///< Parameter passed to hsa_signal_group_wait_any_scacquire
@@ -2708,11 +2708,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_signal_group_wait_any_relaxed(const HSA_APITrace_hsa_signal_group_wait_any_relaxed& rhs);
+    HSA_APITrace_hsa_signal_group_wait_any_relaxed(const HSA_APITrace_hsa_signal_group_wait_any_relaxed& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_signal_group_wait_any_relaxed& operator = (const HSA_APITrace_hsa_signal_group_wait_any_relaxed& rhs);
+    HSA_APITrace_hsa_signal_group_wait_any_relaxed& operator= (const HSA_APITrace_hsa_signal_group_wait_any_relaxed& rhs) = delete;
 
     hsa_signal_group_t m_signal_group; ///< Parameter passed to hsa_signal_group_wait_any_relaxed
     const hsa_signal_condition_t* m_conditions; ///< Parameter passed to hsa_signal_group_wait_any_relaxed
@@ -2774,11 +2774,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_queue_create(const HSA_APITrace_hsa_queue_create& rhs);
+    HSA_APITrace_hsa_queue_create(const HSA_APITrace_hsa_queue_create& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_queue_create& operator = (const HSA_APITrace_hsa_queue_create& rhs);
+    HSA_APITrace_hsa_queue_create& operator= (const HSA_APITrace_hsa_queue_create& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_queue_create
     uint32_t m_size; ///< Parameter passed to hsa_queue_create
@@ -2835,11 +2835,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_soft_queue_create(const HSA_APITrace_hsa_soft_queue_create& rhs);
+    HSA_APITrace_hsa_soft_queue_create(const HSA_APITrace_hsa_soft_queue_create& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_soft_queue_create& operator = (const HSA_APITrace_hsa_soft_queue_create& rhs);
+    HSA_APITrace_hsa_soft_queue_create& operator= (const HSA_APITrace_hsa_soft_queue_create& rhs) = delete;
 
     hsa_region_t m_region; ///< Parameter passed to hsa_soft_queue_create
     uint32_t m_size; ///< Parameter passed to hsa_soft_queue_create
@@ -2884,11 +2884,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_queue_destroy(const HSA_APITrace_hsa_queue_destroy& rhs);
+    HSA_APITrace_hsa_queue_destroy(const HSA_APITrace_hsa_queue_destroy& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_queue_destroy& operator = (const HSA_APITrace_hsa_queue_destroy& rhs);
+    HSA_APITrace_hsa_queue_destroy& operator= (const HSA_APITrace_hsa_queue_destroy& rhs) = delete;
 
     hsa_queue_t* m_queue; ///< Parameter passed to hsa_queue_destroy
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_queue_destroy in queue parameter
@@ -2928,11 +2928,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_queue_inactivate(const HSA_APITrace_hsa_queue_inactivate& rhs);
+    HSA_APITrace_hsa_queue_inactivate(const HSA_APITrace_hsa_queue_inactivate& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_queue_inactivate& operator = (const HSA_APITrace_hsa_queue_inactivate& rhs);
+    HSA_APITrace_hsa_queue_inactivate& operator= (const HSA_APITrace_hsa_queue_inactivate& rhs) = delete;
 
     hsa_queue_t* m_queue; ///< Parameter passed to hsa_queue_inactivate
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_queue_inactivate in queue parameter
@@ -2972,11 +2972,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_queue_load_read_index_scacquire(const HSA_APITrace_hsa_queue_load_read_index_scacquire& rhs);
+    HSA_APITrace_hsa_queue_load_read_index_scacquire(const HSA_APITrace_hsa_queue_load_read_index_scacquire& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_queue_load_read_index_scacquire& operator = (const HSA_APITrace_hsa_queue_load_read_index_scacquire& rhs);
+    HSA_APITrace_hsa_queue_load_read_index_scacquire& operator= (const HSA_APITrace_hsa_queue_load_read_index_scacquire& rhs) = delete;
 
     const hsa_queue_t* m_queue; ///< Parameter passed to hsa_queue_load_read_index_scacquire
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_queue_load_read_index_scacquire in queue parameter
@@ -3016,11 +3016,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_queue_load_read_index_relaxed(const HSA_APITrace_hsa_queue_load_read_index_relaxed& rhs);
+    HSA_APITrace_hsa_queue_load_read_index_relaxed(const HSA_APITrace_hsa_queue_load_read_index_relaxed& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_queue_load_read_index_relaxed& operator = (const HSA_APITrace_hsa_queue_load_read_index_relaxed& rhs);
+    HSA_APITrace_hsa_queue_load_read_index_relaxed& operator= (const HSA_APITrace_hsa_queue_load_read_index_relaxed& rhs) = delete;
 
     const hsa_queue_t* m_queue; ///< Parameter passed to hsa_queue_load_read_index_relaxed
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_queue_load_read_index_relaxed in queue parameter
@@ -3060,11 +3060,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_queue_load_write_index_scacquire(const HSA_APITrace_hsa_queue_load_write_index_scacquire& rhs);
+    HSA_APITrace_hsa_queue_load_write_index_scacquire(const HSA_APITrace_hsa_queue_load_write_index_scacquire& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_queue_load_write_index_scacquire& operator = (const HSA_APITrace_hsa_queue_load_write_index_scacquire& rhs);
+    HSA_APITrace_hsa_queue_load_write_index_scacquire& operator= (const HSA_APITrace_hsa_queue_load_write_index_scacquire& rhs) = delete;
 
     const hsa_queue_t* m_queue; ///< Parameter passed to hsa_queue_load_write_index_scacquire
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_queue_load_write_index_scacquire in queue parameter
@@ -3104,11 +3104,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_queue_load_write_index_relaxed(const HSA_APITrace_hsa_queue_load_write_index_relaxed& rhs);
+    HSA_APITrace_hsa_queue_load_write_index_relaxed(const HSA_APITrace_hsa_queue_load_write_index_relaxed& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_queue_load_write_index_relaxed& operator = (const HSA_APITrace_hsa_queue_load_write_index_relaxed& rhs);
+    HSA_APITrace_hsa_queue_load_write_index_relaxed& operator= (const HSA_APITrace_hsa_queue_load_write_index_relaxed& rhs) = delete;
 
     const hsa_queue_t* m_queue; ///< Parameter passed to hsa_queue_load_write_index_relaxed
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_queue_load_write_index_relaxed in queue parameter
@@ -3148,11 +3148,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_queue_store_write_index_relaxed(const HSA_APITrace_hsa_queue_store_write_index_relaxed& rhs);
+    HSA_APITrace_hsa_queue_store_write_index_relaxed(const HSA_APITrace_hsa_queue_store_write_index_relaxed& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_queue_store_write_index_relaxed& operator = (const HSA_APITrace_hsa_queue_store_write_index_relaxed& rhs);
+    HSA_APITrace_hsa_queue_store_write_index_relaxed& operator= (const HSA_APITrace_hsa_queue_store_write_index_relaxed& rhs) = delete;
 
     const hsa_queue_t* m_queue; ///< Parameter passed to hsa_queue_store_write_index_relaxed
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_queue_store_write_index_relaxed in queue parameter
@@ -3192,11 +3192,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_queue_store_write_index_screlease(const HSA_APITrace_hsa_queue_store_write_index_screlease& rhs);
+    HSA_APITrace_hsa_queue_store_write_index_screlease(const HSA_APITrace_hsa_queue_store_write_index_screlease& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_queue_store_write_index_screlease& operator = (const HSA_APITrace_hsa_queue_store_write_index_screlease& rhs);
+    HSA_APITrace_hsa_queue_store_write_index_screlease& operator= (const HSA_APITrace_hsa_queue_store_write_index_screlease& rhs) = delete;
 
     const hsa_queue_t* m_queue; ///< Parameter passed to hsa_queue_store_write_index_screlease
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_queue_store_write_index_screlease in queue parameter
@@ -3240,11 +3240,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_queue_cas_write_index_scacq_screl(const HSA_APITrace_hsa_queue_cas_write_index_scacq_screl& rhs);
+    HSA_APITrace_hsa_queue_cas_write_index_scacq_screl(const HSA_APITrace_hsa_queue_cas_write_index_scacq_screl& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_queue_cas_write_index_scacq_screl& operator = (const HSA_APITrace_hsa_queue_cas_write_index_scacq_screl& rhs);
+    HSA_APITrace_hsa_queue_cas_write_index_scacq_screl& operator= (const HSA_APITrace_hsa_queue_cas_write_index_scacq_screl& rhs) = delete;
 
     const hsa_queue_t* m_queue; ///< Parameter passed to hsa_queue_cas_write_index_scacq_screl
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_queue_cas_write_index_scacq_screl in queue parameter
@@ -3290,11 +3290,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_queue_cas_write_index_scacquire(const HSA_APITrace_hsa_queue_cas_write_index_scacquire& rhs);
+    HSA_APITrace_hsa_queue_cas_write_index_scacquire(const HSA_APITrace_hsa_queue_cas_write_index_scacquire& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_queue_cas_write_index_scacquire& operator = (const HSA_APITrace_hsa_queue_cas_write_index_scacquire& rhs);
+    HSA_APITrace_hsa_queue_cas_write_index_scacquire& operator= (const HSA_APITrace_hsa_queue_cas_write_index_scacquire& rhs) = delete;
 
     const hsa_queue_t* m_queue; ///< Parameter passed to hsa_queue_cas_write_index_scacquire
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_queue_cas_write_index_scacquire in queue parameter
@@ -3340,11 +3340,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_queue_cas_write_index_relaxed(const HSA_APITrace_hsa_queue_cas_write_index_relaxed& rhs);
+    HSA_APITrace_hsa_queue_cas_write_index_relaxed(const HSA_APITrace_hsa_queue_cas_write_index_relaxed& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_queue_cas_write_index_relaxed& operator = (const HSA_APITrace_hsa_queue_cas_write_index_relaxed& rhs);
+    HSA_APITrace_hsa_queue_cas_write_index_relaxed& operator= (const HSA_APITrace_hsa_queue_cas_write_index_relaxed& rhs) = delete;
 
     const hsa_queue_t* m_queue; ///< Parameter passed to hsa_queue_cas_write_index_relaxed
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_queue_cas_write_index_relaxed in queue parameter
@@ -3390,11 +3390,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_queue_cas_write_index_screlease(const HSA_APITrace_hsa_queue_cas_write_index_screlease& rhs);
+    HSA_APITrace_hsa_queue_cas_write_index_screlease(const HSA_APITrace_hsa_queue_cas_write_index_screlease& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_queue_cas_write_index_screlease& operator = (const HSA_APITrace_hsa_queue_cas_write_index_screlease& rhs);
+    HSA_APITrace_hsa_queue_cas_write_index_screlease& operator= (const HSA_APITrace_hsa_queue_cas_write_index_screlease& rhs) = delete;
 
     const hsa_queue_t* m_queue; ///< Parameter passed to hsa_queue_cas_write_index_screlease
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_queue_cas_write_index_screlease in queue parameter
@@ -3438,11 +3438,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_queue_add_write_index_scacq_screl(const HSA_APITrace_hsa_queue_add_write_index_scacq_screl& rhs);
+    HSA_APITrace_hsa_queue_add_write_index_scacq_screl(const HSA_APITrace_hsa_queue_add_write_index_scacq_screl& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_queue_add_write_index_scacq_screl& operator = (const HSA_APITrace_hsa_queue_add_write_index_scacq_screl& rhs);
+    HSA_APITrace_hsa_queue_add_write_index_scacq_screl& operator= (const HSA_APITrace_hsa_queue_add_write_index_scacq_screl& rhs) = delete;
 
     const hsa_queue_t* m_queue; ///< Parameter passed to hsa_queue_add_write_index_scacq_screl
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_queue_add_write_index_scacq_screl in queue parameter
@@ -3485,11 +3485,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_queue_add_write_index_scacquire(const HSA_APITrace_hsa_queue_add_write_index_scacquire& rhs);
+    HSA_APITrace_hsa_queue_add_write_index_scacquire(const HSA_APITrace_hsa_queue_add_write_index_scacquire& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_queue_add_write_index_scacquire& operator = (const HSA_APITrace_hsa_queue_add_write_index_scacquire& rhs);
+    HSA_APITrace_hsa_queue_add_write_index_scacquire& operator= (const HSA_APITrace_hsa_queue_add_write_index_scacquire& rhs) = delete;
 
     const hsa_queue_t* m_queue; ///< Parameter passed to hsa_queue_add_write_index_scacquire
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_queue_add_write_index_scacquire in queue parameter
@@ -3532,11 +3532,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_queue_add_write_index_relaxed(const HSA_APITrace_hsa_queue_add_write_index_relaxed& rhs);
+    HSA_APITrace_hsa_queue_add_write_index_relaxed(const HSA_APITrace_hsa_queue_add_write_index_relaxed& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_queue_add_write_index_relaxed& operator = (const HSA_APITrace_hsa_queue_add_write_index_relaxed& rhs);
+    HSA_APITrace_hsa_queue_add_write_index_relaxed& operator= (const HSA_APITrace_hsa_queue_add_write_index_relaxed& rhs) = delete;
 
     const hsa_queue_t* m_queue; ///< Parameter passed to hsa_queue_add_write_index_relaxed
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_queue_add_write_index_relaxed in queue parameter
@@ -3579,11 +3579,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_queue_add_write_index_screlease(const HSA_APITrace_hsa_queue_add_write_index_screlease& rhs);
+    HSA_APITrace_hsa_queue_add_write_index_screlease(const HSA_APITrace_hsa_queue_add_write_index_screlease& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_queue_add_write_index_screlease& operator = (const HSA_APITrace_hsa_queue_add_write_index_screlease& rhs);
+    HSA_APITrace_hsa_queue_add_write_index_screlease& operator= (const HSA_APITrace_hsa_queue_add_write_index_screlease& rhs) = delete;
 
     const hsa_queue_t* m_queue; ///< Parameter passed to hsa_queue_add_write_index_screlease
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_queue_add_write_index_screlease in queue parameter
@@ -3624,11 +3624,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_queue_store_read_index_relaxed(const HSA_APITrace_hsa_queue_store_read_index_relaxed& rhs);
+    HSA_APITrace_hsa_queue_store_read_index_relaxed(const HSA_APITrace_hsa_queue_store_read_index_relaxed& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_queue_store_read_index_relaxed& operator = (const HSA_APITrace_hsa_queue_store_read_index_relaxed& rhs);
+    HSA_APITrace_hsa_queue_store_read_index_relaxed& operator= (const HSA_APITrace_hsa_queue_store_read_index_relaxed& rhs) = delete;
 
     const hsa_queue_t* m_queue; ///< Parameter passed to hsa_queue_store_read_index_relaxed
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_queue_store_read_index_relaxed in queue parameter
@@ -3668,11 +3668,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_queue_store_read_index_screlease(const HSA_APITrace_hsa_queue_store_read_index_screlease& rhs);
+    HSA_APITrace_hsa_queue_store_read_index_screlease(const HSA_APITrace_hsa_queue_store_read_index_screlease& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_queue_store_read_index_screlease& operator = (const HSA_APITrace_hsa_queue_store_read_index_screlease& rhs);
+    HSA_APITrace_hsa_queue_store_read_index_screlease& operator= (const HSA_APITrace_hsa_queue_store_read_index_screlease& rhs) = delete;
 
     const hsa_queue_t* m_queue; ///< Parameter passed to hsa_queue_store_read_index_screlease
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_queue_store_read_index_screlease in queue parameter
@@ -3716,11 +3716,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_region_get_info(const HSA_APITrace_hsa_region_get_info& rhs);
+    HSA_APITrace_hsa_region_get_info(const HSA_APITrace_hsa_region_get_info& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_region_get_info& operator = (const HSA_APITrace_hsa_region_get_info& rhs);
+    HSA_APITrace_hsa_region_get_info& operator= (const HSA_APITrace_hsa_region_get_info& rhs) = delete;
 
     hsa_region_t m_region; ///< Parameter passed to hsa_region_get_info
     hsa_region_info_t m_attribute; ///< Parameter passed to hsa_region_get_info
@@ -3765,11 +3765,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_agent_iterate_regions(const HSA_APITrace_hsa_agent_iterate_regions& rhs);
+    HSA_APITrace_hsa_agent_iterate_regions(const HSA_APITrace_hsa_agent_iterate_regions& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_agent_iterate_regions& operator = (const HSA_APITrace_hsa_agent_iterate_regions& rhs);
+    HSA_APITrace_hsa_agent_iterate_regions& operator= (const HSA_APITrace_hsa_agent_iterate_regions& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_agent_iterate_regions
     hsa_status_t (*m_callback)(hsa_region_t region, void* data); ///< Parameter passed to hsa_agent_iterate_regions
@@ -3814,11 +3814,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_memory_allocate(const HSA_APITrace_hsa_memory_allocate& rhs);
+    HSA_APITrace_hsa_memory_allocate(const HSA_APITrace_hsa_memory_allocate& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_memory_allocate& operator = (const HSA_APITrace_hsa_memory_allocate& rhs);
+    HSA_APITrace_hsa_memory_allocate& operator= (const HSA_APITrace_hsa_memory_allocate& rhs) = delete;
 
     hsa_region_t m_region; ///< Parameter passed to hsa_memory_allocate
     size_t m_size; ///< Parameter passed to hsa_memory_allocate
@@ -3860,11 +3860,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_memory_free(const HSA_APITrace_hsa_memory_free& rhs);
+    HSA_APITrace_hsa_memory_free(const HSA_APITrace_hsa_memory_free& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_memory_free& operator = (const HSA_APITrace_hsa_memory_free& rhs);
+    HSA_APITrace_hsa_memory_free& operator= (const HSA_APITrace_hsa_memory_free& rhs) = delete;
 
     void* m_ptr; ///< Parameter passed to hsa_memory_free
     hsa_status_t m_retVal; ///< Parameter passed to hsa_memory_free
@@ -3907,11 +3907,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_memory_copy(const HSA_APITrace_hsa_memory_copy& rhs);
+    HSA_APITrace_hsa_memory_copy(const HSA_APITrace_hsa_memory_copy& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_memory_copy& operator = (const HSA_APITrace_hsa_memory_copy& rhs);
+    HSA_APITrace_hsa_memory_copy& operator= (const HSA_APITrace_hsa_memory_copy& rhs) = delete;
 
     void* m_dst; ///< Parameter passed to hsa_memory_copy
     const void* m_src; ///< Parameter passed to hsa_memory_copy
@@ -3956,11 +3956,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_memory_assign_agent(const HSA_APITrace_hsa_memory_assign_agent& rhs);
+    HSA_APITrace_hsa_memory_assign_agent(const HSA_APITrace_hsa_memory_assign_agent& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_memory_assign_agent& operator = (const HSA_APITrace_hsa_memory_assign_agent& rhs);
+    HSA_APITrace_hsa_memory_assign_agent& operator= (const HSA_APITrace_hsa_memory_assign_agent& rhs) = delete;
 
     void* m_ptr; ///< Parameter passed to hsa_memory_assign_agent
     hsa_agent_t m_agent; ///< Parameter passed to hsa_memory_assign_agent
@@ -4003,11 +4003,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_memory_register(const HSA_APITrace_hsa_memory_register& rhs);
+    HSA_APITrace_hsa_memory_register(const HSA_APITrace_hsa_memory_register& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_memory_register& operator = (const HSA_APITrace_hsa_memory_register& rhs);
+    HSA_APITrace_hsa_memory_register& operator= (const HSA_APITrace_hsa_memory_register& rhs) = delete;
 
     void* m_ptr; ///< Parameter passed to hsa_memory_register
     size_t m_size; ///< Parameter passed to hsa_memory_register
@@ -4049,11 +4049,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_memory_deregister(const HSA_APITrace_hsa_memory_deregister& rhs);
+    HSA_APITrace_hsa_memory_deregister(const HSA_APITrace_hsa_memory_deregister& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_memory_deregister& operator = (const HSA_APITrace_hsa_memory_deregister& rhs);
+    HSA_APITrace_hsa_memory_deregister& operator= (const HSA_APITrace_hsa_memory_deregister& rhs) = delete;
 
     void* m_ptr; ///< Parameter passed to hsa_memory_deregister
     size_t m_size; ///< Parameter passed to hsa_memory_deregister
@@ -4095,11 +4095,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_isa_from_name(const HSA_APITrace_hsa_isa_from_name& rhs);
+    HSA_APITrace_hsa_isa_from_name(const HSA_APITrace_hsa_isa_from_name& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_isa_from_name& operator = (const HSA_APITrace_hsa_isa_from_name& rhs);
+    HSA_APITrace_hsa_isa_from_name& operator= (const HSA_APITrace_hsa_isa_from_name& rhs) = delete;
 
     const char* m_name; ///< Parameter passed to hsa_isa_from_name
     std::string m_nameVal; ///< Member to hold value passed to hsa_isa_from_name in name parameter
@@ -4145,11 +4145,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_agent_iterate_isas(const HSA_APITrace_hsa_agent_iterate_isas& rhs);
+    HSA_APITrace_hsa_agent_iterate_isas(const HSA_APITrace_hsa_agent_iterate_isas& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_agent_iterate_isas& operator = (const HSA_APITrace_hsa_agent_iterate_isas& rhs);
+    HSA_APITrace_hsa_agent_iterate_isas& operator= (const HSA_APITrace_hsa_agent_iterate_isas& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_agent_iterate_isas
     hsa_status_t (*m_callback)(hsa_isa_t isa, void* data); ///< Parameter passed to hsa_agent_iterate_isas
@@ -4196,11 +4196,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_isa_get_info(const HSA_APITrace_hsa_isa_get_info& rhs);
+    HSA_APITrace_hsa_isa_get_info(const HSA_APITrace_hsa_isa_get_info& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_isa_get_info& operator = (const HSA_APITrace_hsa_isa_get_info& rhs);
+    HSA_APITrace_hsa_isa_get_info& operator= (const HSA_APITrace_hsa_isa_get_info& rhs) = delete;
 
     hsa_isa_t m_isa; ///< Parameter passed to hsa_isa_get_info
     hsa_isa_info_t m_attribute; ///< Parameter passed to hsa_isa_get_info
@@ -4246,11 +4246,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_isa_get_info_alt(const HSA_APITrace_hsa_isa_get_info_alt& rhs);
+    HSA_APITrace_hsa_isa_get_info_alt(const HSA_APITrace_hsa_isa_get_info_alt& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_isa_get_info_alt& operator = (const HSA_APITrace_hsa_isa_get_info_alt& rhs);
+    HSA_APITrace_hsa_isa_get_info_alt& operator= (const HSA_APITrace_hsa_isa_get_info_alt& rhs) = delete;
 
     hsa_isa_t m_isa; ///< Parameter passed to hsa_isa_get_info_alt
     hsa_isa_info_t m_attribute; ///< Parameter passed to hsa_isa_get_info_alt
@@ -4295,11 +4295,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_isa_get_exception_policies(const HSA_APITrace_hsa_isa_get_exception_policies& rhs);
+    HSA_APITrace_hsa_isa_get_exception_policies(const HSA_APITrace_hsa_isa_get_exception_policies& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_isa_get_exception_policies& operator = (const HSA_APITrace_hsa_isa_get_exception_policies& rhs);
+    HSA_APITrace_hsa_isa_get_exception_policies& operator= (const HSA_APITrace_hsa_isa_get_exception_policies& rhs) = delete;
 
     hsa_isa_t m_isa; ///< Parameter passed to hsa_isa_get_exception_policies
     hsa_profile_t m_profile; ///< Parameter passed to hsa_isa_get_exception_policies
@@ -4347,11 +4347,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_isa_get_round_method(const HSA_APITrace_hsa_isa_get_round_method& rhs);
+    HSA_APITrace_hsa_isa_get_round_method(const HSA_APITrace_hsa_isa_get_round_method& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_isa_get_round_method& operator = (const HSA_APITrace_hsa_isa_get_round_method& rhs);
+    HSA_APITrace_hsa_isa_get_round_method& operator= (const HSA_APITrace_hsa_isa_get_round_method& rhs) = delete;
 
     hsa_isa_t m_isa; ///< Parameter passed to hsa_isa_get_round_method
     hsa_fp_type_t m_fp_type; ///< Parameter passed to hsa_isa_get_round_method
@@ -4398,11 +4398,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_wavefront_get_info(const HSA_APITrace_hsa_wavefront_get_info& rhs);
+    HSA_APITrace_hsa_wavefront_get_info(const HSA_APITrace_hsa_wavefront_get_info& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_wavefront_get_info& operator = (const HSA_APITrace_hsa_wavefront_get_info& rhs);
+    HSA_APITrace_hsa_wavefront_get_info& operator= (const HSA_APITrace_hsa_wavefront_get_info& rhs) = delete;
 
     hsa_wavefront_t m_wavefront; ///< Parameter passed to hsa_wavefront_get_info
     hsa_wavefront_info_t m_attribute; ///< Parameter passed to hsa_wavefront_get_info
@@ -4447,11 +4447,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_isa_iterate_wavefronts(const HSA_APITrace_hsa_isa_iterate_wavefronts& rhs);
+    HSA_APITrace_hsa_isa_iterate_wavefronts(const HSA_APITrace_hsa_isa_iterate_wavefronts& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_isa_iterate_wavefronts& operator = (const HSA_APITrace_hsa_isa_iterate_wavefronts& rhs);
+    HSA_APITrace_hsa_isa_iterate_wavefronts& operator= (const HSA_APITrace_hsa_isa_iterate_wavefronts& rhs) = delete;
 
     hsa_isa_t m_isa; ///< Parameter passed to hsa_isa_iterate_wavefronts
     hsa_status_t (*m_callback)(hsa_wavefront_t wavefront, void* data); ///< Parameter passed to hsa_isa_iterate_wavefronts
@@ -4496,11 +4496,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_isa_compatible(const HSA_APITrace_hsa_isa_compatible& rhs);
+    HSA_APITrace_hsa_isa_compatible(const HSA_APITrace_hsa_isa_compatible& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_isa_compatible& operator = (const HSA_APITrace_hsa_isa_compatible& rhs);
+    HSA_APITrace_hsa_isa_compatible& operator= (const HSA_APITrace_hsa_isa_compatible& rhs) = delete;
 
     hsa_isa_t m_code_object_isa; ///< Parameter passed to hsa_isa_compatible
     hsa_isa_t m_agent_isa; ///< Parameter passed to hsa_isa_compatible
@@ -4544,11 +4544,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_code_object_reader_create_from_file(const HSA_APITrace_hsa_code_object_reader_create_from_file& rhs);
+    HSA_APITrace_hsa_code_object_reader_create_from_file(const HSA_APITrace_hsa_code_object_reader_create_from_file& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_code_object_reader_create_from_file& operator = (const HSA_APITrace_hsa_code_object_reader_create_from_file& rhs);
+    HSA_APITrace_hsa_code_object_reader_create_from_file& operator= (const HSA_APITrace_hsa_code_object_reader_create_from_file& rhs) = delete;
 
     hsa_file_t m_file; ///< Parameter passed to hsa_code_object_reader_create_from_file
     hsa_code_object_reader_t* m_code_object_reader; ///< Parameter passed to hsa_code_object_reader_create_from_file
@@ -4593,11 +4593,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_code_object_reader_create_from_memory(const HSA_APITrace_hsa_code_object_reader_create_from_memory& rhs);
+    HSA_APITrace_hsa_code_object_reader_create_from_memory(const HSA_APITrace_hsa_code_object_reader_create_from_memory& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_code_object_reader_create_from_memory& operator = (const HSA_APITrace_hsa_code_object_reader_create_from_memory& rhs);
+    HSA_APITrace_hsa_code_object_reader_create_from_memory& operator= (const HSA_APITrace_hsa_code_object_reader_create_from_memory& rhs) = delete;
 
     const void* m_code_object; ///< Parameter passed to hsa_code_object_reader_create_from_memory
     size_t m_size; ///< Parameter passed to hsa_code_object_reader_create_from_memory
@@ -4639,11 +4639,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_code_object_reader_destroy(const HSA_APITrace_hsa_code_object_reader_destroy& rhs);
+    HSA_APITrace_hsa_code_object_reader_destroy(const HSA_APITrace_hsa_code_object_reader_destroy& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_code_object_reader_destroy& operator = (const HSA_APITrace_hsa_code_object_reader_destroy& rhs);
+    HSA_APITrace_hsa_code_object_reader_destroy& operator= (const HSA_APITrace_hsa_code_object_reader_destroy& rhs) = delete;
 
     hsa_code_object_reader_t m_code_object_reader; ///< Parameter passed to hsa_code_object_reader_destroy
     hsa_status_t m_retVal; ///< Parameter passed to hsa_code_object_reader_destroy
@@ -4688,11 +4688,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_executable_create(const HSA_APITrace_hsa_executable_create& rhs);
+    HSA_APITrace_hsa_executable_create(const HSA_APITrace_hsa_executable_create& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_executable_create& operator = (const HSA_APITrace_hsa_executable_create& rhs);
+    HSA_APITrace_hsa_executable_create& operator= (const HSA_APITrace_hsa_executable_create& rhs) = delete;
 
     hsa_profile_t m_profile; ///< Parameter passed to hsa_executable_create
     hsa_executable_state_t m_executable_state; ///< Parameter passed to hsa_executable_create
@@ -4742,11 +4742,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_executable_create_alt(const HSA_APITrace_hsa_executable_create_alt& rhs);
+    HSA_APITrace_hsa_executable_create_alt(const HSA_APITrace_hsa_executable_create_alt& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_executable_create_alt& operator = (const HSA_APITrace_hsa_executable_create_alt& rhs);
+    HSA_APITrace_hsa_executable_create_alt& operator= (const HSA_APITrace_hsa_executable_create_alt& rhs) = delete;
 
     hsa_profile_t m_profile; ///< Parameter passed to hsa_executable_create_alt
     hsa_default_float_rounding_mode_t m_default_float_rounding_mode; ///< Parameter passed to hsa_executable_create_alt
@@ -4790,11 +4790,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_executable_destroy(const HSA_APITrace_hsa_executable_destroy& rhs);
+    HSA_APITrace_hsa_executable_destroy(const HSA_APITrace_hsa_executable_destroy& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_executable_destroy& operator = (const HSA_APITrace_hsa_executable_destroy& rhs);
+    HSA_APITrace_hsa_executable_destroy& operator= (const HSA_APITrace_hsa_executable_destroy& rhs) = delete;
 
     hsa_executable_t m_executable; ///< Parameter passed to hsa_executable_destroy
     hsa_status_t m_retVal; ///< Parameter passed to hsa_executable_destroy
@@ -4839,11 +4839,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_executable_load_program_code_object(const HSA_APITrace_hsa_executable_load_program_code_object& rhs);
+    HSA_APITrace_hsa_executable_load_program_code_object(const HSA_APITrace_hsa_executable_load_program_code_object& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_executable_load_program_code_object& operator = (const HSA_APITrace_hsa_executable_load_program_code_object& rhs);
+    HSA_APITrace_hsa_executable_load_program_code_object& operator= (const HSA_APITrace_hsa_executable_load_program_code_object& rhs) = delete;
 
     hsa_executable_t m_executable; ///< Parameter passed to hsa_executable_load_program_code_object
     hsa_code_object_reader_t m_code_object_reader; ///< Parameter passed to hsa_executable_load_program_code_object
@@ -4895,11 +4895,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_executable_load_agent_code_object(const HSA_APITrace_hsa_executable_load_agent_code_object& rhs);
+    HSA_APITrace_hsa_executable_load_agent_code_object(const HSA_APITrace_hsa_executable_load_agent_code_object& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_executable_load_agent_code_object& operator = (const HSA_APITrace_hsa_executable_load_agent_code_object& rhs);
+    HSA_APITrace_hsa_executable_load_agent_code_object& operator= (const HSA_APITrace_hsa_executable_load_agent_code_object& rhs) = delete;
 
     hsa_executable_t m_executable; ///< Parameter passed to hsa_executable_load_agent_code_object
     hsa_agent_t m_agent; ///< Parameter passed to hsa_executable_load_agent_code_object
@@ -4946,11 +4946,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_executable_freeze(const HSA_APITrace_hsa_executable_freeze& rhs);
+    HSA_APITrace_hsa_executable_freeze(const HSA_APITrace_hsa_executable_freeze& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_executable_freeze& operator = (const HSA_APITrace_hsa_executable_freeze& rhs);
+    HSA_APITrace_hsa_executable_freeze& operator= (const HSA_APITrace_hsa_executable_freeze& rhs) = delete;
 
     hsa_executable_t m_executable; ///< Parameter passed to hsa_executable_freeze
     const char* m_options; ///< Parameter passed to hsa_executable_freeze
@@ -4995,11 +4995,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_executable_get_info(const HSA_APITrace_hsa_executable_get_info& rhs);
+    HSA_APITrace_hsa_executable_get_info(const HSA_APITrace_hsa_executable_get_info& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_executable_get_info& operator = (const HSA_APITrace_hsa_executable_get_info& rhs);
+    HSA_APITrace_hsa_executable_get_info& operator= (const HSA_APITrace_hsa_executable_get_info& rhs) = delete;
 
     hsa_executable_t m_executable; ///< Parameter passed to hsa_executable_get_info
     hsa_executable_info_t m_attribute; ///< Parameter passed to hsa_executable_get_info
@@ -5044,11 +5044,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_executable_global_variable_define(const HSA_APITrace_hsa_executable_global_variable_define& rhs);
+    HSA_APITrace_hsa_executable_global_variable_define(const HSA_APITrace_hsa_executable_global_variable_define& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_executable_global_variable_define& operator = (const HSA_APITrace_hsa_executable_global_variable_define& rhs);
+    HSA_APITrace_hsa_executable_global_variable_define& operator= (const HSA_APITrace_hsa_executable_global_variable_define& rhs) = delete;
 
     hsa_executable_t m_executable; ///< Parameter passed to hsa_executable_global_variable_define
     const char* m_variable_name; ///< Parameter passed to hsa_executable_global_variable_define
@@ -5096,11 +5096,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_executable_agent_global_variable_define(const HSA_APITrace_hsa_executable_agent_global_variable_define& rhs);
+    HSA_APITrace_hsa_executable_agent_global_variable_define(const HSA_APITrace_hsa_executable_agent_global_variable_define& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_executable_agent_global_variable_define& operator = (const HSA_APITrace_hsa_executable_agent_global_variable_define& rhs);
+    HSA_APITrace_hsa_executable_agent_global_variable_define& operator= (const HSA_APITrace_hsa_executable_agent_global_variable_define& rhs) = delete;
 
     hsa_executable_t m_executable; ///< Parameter passed to hsa_executable_agent_global_variable_define
     hsa_agent_t m_agent; ///< Parameter passed to hsa_executable_agent_global_variable_define
@@ -5149,11 +5149,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_executable_readonly_variable_define(const HSA_APITrace_hsa_executable_readonly_variable_define& rhs);
+    HSA_APITrace_hsa_executable_readonly_variable_define(const HSA_APITrace_hsa_executable_readonly_variable_define& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_executable_readonly_variable_define& operator = (const HSA_APITrace_hsa_executable_readonly_variable_define& rhs);
+    HSA_APITrace_hsa_executable_readonly_variable_define& operator= (const HSA_APITrace_hsa_executable_readonly_variable_define& rhs) = delete;
 
     hsa_executable_t m_executable; ///< Parameter passed to hsa_executable_readonly_variable_define
     hsa_agent_t m_agent; ///< Parameter passed to hsa_executable_readonly_variable_define
@@ -5198,11 +5198,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_executable_validate(const HSA_APITrace_hsa_executable_validate& rhs);
+    HSA_APITrace_hsa_executable_validate(const HSA_APITrace_hsa_executable_validate& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_executable_validate& operator = (const HSA_APITrace_hsa_executable_validate& rhs);
+    HSA_APITrace_hsa_executable_validate& operator= (const HSA_APITrace_hsa_executable_validate& rhs) = delete;
 
     hsa_executable_t m_executable; ///< Parameter passed to hsa_executable_validate
     uint32_t* m_result; ///< Parameter passed to hsa_executable_validate
@@ -5247,11 +5247,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_executable_validate_alt(const HSA_APITrace_hsa_executable_validate_alt& rhs);
+    HSA_APITrace_hsa_executable_validate_alt(const HSA_APITrace_hsa_executable_validate_alt& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_executable_validate_alt& operator = (const HSA_APITrace_hsa_executable_validate_alt& rhs);
+    HSA_APITrace_hsa_executable_validate_alt& operator= (const HSA_APITrace_hsa_executable_validate_alt& rhs) = delete;
 
     hsa_executable_t m_executable; ///< Parameter passed to hsa_executable_validate_alt
     const char* m_options; ///< Parameter passed to hsa_executable_validate_alt
@@ -5304,11 +5304,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_executable_get_symbol(const HSA_APITrace_hsa_executable_get_symbol& rhs);
+    HSA_APITrace_hsa_executable_get_symbol(const HSA_APITrace_hsa_executable_get_symbol& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_executable_get_symbol& operator = (const HSA_APITrace_hsa_executable_get_symbol& rhs);
+    HSA_APITrace_hsa_executable_get_symbol& operator= (const HSA_APITrace_hsa_executable_get_symbol& rhs) = delete;
 
     hsa_executable_t m_executable; ///< Parameter passed to hsa_executable_get_symbol
     const char* m_module_name; ///< Parameter passed to hsa_executable_get_symbol
@@ -5361,11 +5361,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_executable_get_symbol_by_name(const HSA_APITrace_hsa_executable_get_symbol_by_name& rhs);
+    HSA_APITrace_hsa_executable_get_symbol_by_name(const HSA_APITrace_hsa_executable_get_symbol_by_name& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_executable_get_symbol_by_name& operator = (const HSA_APITrace_hsa_executable_get_symbol_by_name& rhs);
+    HSA_APITrace_hsa_executable_get_symbol_by_name& operator= (const HSA_APITrace_hsa_executable_get_symbol_by_name& rhs) = delete;
 
     hsa_executable_t m_executable; ///< Parameter passed to hsa_executable_get_symbol_by_name
     const char* m_symbol_name; ///< Parameter passed to hsa_executable_get_symbol_by_name
@@ -5414,11 +5414,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_executable_symbol_get_info(const HSA_APITrace_hsa_executable_symbol_get_info& rhs);
+    HSA_APITrace_hsa_executable_symbol_get_info(const HSA_APITrace_hsa_executable_symbol_get_info& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_executable_symbol_get_info& operator = (const HSA_APITrace_hsa_executable_symbol_get_info& rhs);
+    HSA_APITrace_hsa_executable_symbol_get_info& operator= (const HSA_APITrace_hsa_executable_symbol_get_info& rhs) = delete;
 
     hsa_executable_symbol_t m_executable_symbol; ///< Parameter passed to hsa_executable_symbol_get_info
     hsa_executable_symbol_info_t m_attribute; ///< Parameter passed to hsa_executable_symbol_get_info
@@ -5463,11 +5463,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_executable_iterate_symbols(const HSA_APITrace_hsa_executable_iterate_symbols& rhs);
+    HSA_APITrace_hsa_executable_iterate_symbols(const HSA_APITrace_hsa_executable_iterate_symbols& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_executable_iterate_symbols& operator = (const HSA_APITrace_hsa_executable_iterate_symbols& rhs);
+    HSA_APITrace_hsa_executable_iterate_symbols& operator= (const HSA_APITrace_hsa_executable_iterate_symbols& rhs) = delete;
 
     hsa_executable_t m_executable; ///< Parameter passed to hsa_executable_iterate_symbols
     hsa_status_t (*m_callback)(hsa_executable_t exec, hsa_executable_symbol_t symbol, void* data); ///< Parameter passed to hsa_executable_iterate_symbols
@@ -5514,11 +5514,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_executable_iterate_agent_symbols(const HSA_APITrace_hsa_executable_iterate_agent_symbols& rhs);
+    HSA_APITrace_hsa_executable_iterate_agent_symbols(const HSA_APITrace_hsa_executable_iterate_agent_symbols& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_executable_iterate_agent_symbols& operator = (const HSA_APITrace_hsa_executable_iterate_agent_symbols& rhs);
+    HSA_APITrace_hsa_executable_iterate_agent_symbols& operator= (const HSA_APITrace_hsa_executable_iterate_agent_symbols& rhs) = delete;
 
     hsa_executable_t m_executable; ///< Parameter passed to hsa_executable_iterate_agent_symbols
     hsa_agent_t m_agent; ///< Parameter passed to hsa_executable_iterate_agent_symbols
@@ -5564,11 +5564,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_executable_iterate_program_symbols(const HSA_APITrace_hsa_executable_iterate_program_symbols& rhs);
+    HSA_APITrace_hsa_executable_iterate_program_symbols(const HSA_APITrace_hsa_executable_iterate_program_symbols& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_executable_iterate_program_symbols& operator = (const HSA_APITrace_hsa_executable_iterate_program_symbols& rhs);
+    HSA_APITrace_hsa_executable_iterate_program_symbols& operator= (const HSA_APITrace_hsa_executable_iterate_program_symbols& rhs) = delete;
 
     hsa_executable_t m_executable; ///< Parameter passed to hsa_executable_iterate_program_symbols
     hsa_status_t (*m_callback)(hsa_executable_t exec, hsa_executable_symbol_t symbol, void* data); ///< Parameter passed to hsa_executable_iterate_program_symbols
@@ -5619,11 +5619,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_code_object_serialize(const HSA_APITrace_hsa_code_object_serialize& rhs);
+    HSA_APITrace_hsa_code_object_serialize(const HSA_APITrace_hsa_code_object_serialize& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_code_object_serialize& operator = (const HSA_APITrace_hsa_code_object_serialize& rhs);
+    HSA_APITrace_hsa_code_object_serialize& operator= (const HSA_APITrace_hsa_code_object_serialize& rhs) = delete;
 
     hsa_code_object_t m_code_object; ///< Parameter passed to hsa_code_object_serialize
     hsa_status_t (*m_alloc_callback)(size_t size, hsa_callback_data_t data, void** address); ///< Parameter passed to hsa_code_object_serialize
@@ -5676,11 +5676,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_code_object_deserialize(const HSA_APITrace_hsa_code_object_deserialize& rhs);
+    HSA_APITrace_hsa_code_object_deserialize(const HSA_APITrace_hsa_code_object_deserialize& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_code_object_deserialize& operator = (const HSA_APITrace_hsa_code_object_deserialize& rhs);
+    HSA_APITrace_hsa_code_object_deserialize& operator= (const HSA_APITrace_hsa_code_object_deserialize& rhs) = delete;
 
     void* m_serialized_code_object; ///< Parameter passed to hsa_code_object_deserialize
     size_t m_serialized_code_object_size; ///< Parameter passed to hsa_code_object_deserialize
@@ -5724,11 +5724,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_code_object_destroy(const HSA_APITrace_hsa_code_object_destroy& rhs);
+    HSA_APITrace_hsa_code_object_destroy(const HSA_APITrace_hsa_code_object_destroy& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_code_object_destroy& operator = (const HSA_APITrace_hsa_code_object_destroy& rhs);
+    HSA_APITrace_hsa_code_object_destroy& operator= (const HSA_APITrace_hsa_code_object_destroy& rhs) = delete;
 
     hsa_code_object_t m_code_object; ///< Parameter passed to hsa_code_object_destroy
     hsa_status_t m_retVal; ///< Parameter passed to hsa_code_object_destroy
@@ -5771,11 +5771,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_code_object_get_info(const HSA_APITrace_hsa_code_object_get_info& rhs);
+    HSA_APITrace_hsa_code_object_get_info(const HSA_APITrace_hsa_code_object_get_info& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_code_object_get_info& operator = (const HSA_APITrace_hsa_code_object_get_info& rhs);
+    HSA_APITrace_hsa_code_object_get_info& operator= (const HSA_APITrace_hsa_code_object_get_info& rhs) = delete;
 
     hsa_code_object_t m_code_object; ///< Parameter passed to hsa_code_object_get_info
     hsa_code_object_info_t m_attribute; ///< Parameter passed to hsa_code_object_get_info
@@ -5822,11 +5822,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_executable_load_code_object(const HSA_APITrace_hsa_executable_load_code_object& rhs);
+    HSA_APITrace_hsa_executable_load_code_object(const HSA_APITrace_hsa_executable_load_code_object& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_executable_load_code_object& operator = (const HSA_APITrace_hsa_executable_load_code_object& rhs);
+    HSA_APITrace_hsa_executable_load_code_object& operator= (const HSA_APITrace_hsa_executable_load_code_object& rhs) = delete;
 
     hsa_executable_t m_executable; ///< Parameter passed to hsa_executable_load_code_object
     hsa_agent_t m_agent; ///< Parameter passed to hsa_executable_load_code_object
@@ -5873,11 +5873,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_code_object_get_symbol(const HSA_APITrace_hsa_code_object_get_symbol& rhs);
+    HSA_APITrace_hsa_code_object_get_symbol(const HSA_APITrace_hsa_code_object_get_symbol& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_code_object_get_symbol& operator = (const HSA_APITrace_hsa_code_object_get_symbol& rhs);
+    HSA_APITrace_hsa_code_object_get_symbol& operator= (const HSA_APITrace_hsa_code_object_get_symbol& rhs) = delete;
 
     hsa_code_object_t m_code_object; ///< Parameter passed to hsa_code_object_get_symbol
     const char* m_symbol_name; ///< Parameter passed to hsa_code_object_get_symbol
@@ -5926,11 +5926,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_code_object_get_symbol_from_name(const HSA_APITrace_hsa_code_object_get_symbol_from_name& rhs);
+    HSA_APITrace_hsa_code_object_get_symbol_from_name(const HSA_APITrace_hsa_code_object_get_symbol_from_name& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_code_object_get_symbol_from_name& operator = (const HSA_APITrace_hsa_code_object_get_symbol_from_name& rhs);
+    HSA_APITrace_hsa_code_object_get_symbol_from_name& operator= (const HSA_APITrace_hsa_code_object_get_symbol_from_name& rhs) = delete;
 
     hsa_code_object_t m_code_object; ///< Parameter passed to hsa_code_object_get_symbol_from_name
     const char* m_module_name; ///< Parameter passed to hsa_code_object_get_symbol_from_name
@@ -5979,11 +5979,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_code_symbol_get_info(const HSA_APITrace_hsa_code_symbol_get_info& rhs);
+    HSA_APITrace_hsa_code_symbol_get_info(const HSA_APITrace_hsa_code_symbol_get_info& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_code_symbol_get_info& operator = (const HSA_APITrace_hsa_code_symbol_get_info& rhs);
+    HSA_APITrace_hsa_code_symbol_get_info& operator= (const HSA_APITrace_hsa_code_symbol_get_info& rhs) = delete;
 
     hsa_code_symbol_t m_code_symbol; ///< Parameter passed to hsa_code_symbol_get_info
     hsa_code_symbol_info_t m_attribute; ///< Parameter passed to hsa_code_symbol_get_info
@@ -6028,11 +6028,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_code_object_iterate_symbols(const HSA_APITrace_hsa_code_object_iterate_symbols& rhs);
+    HSA_APITrace_hsa_code_object_iterate_symbols(const HSA_APITrace_hsa_code_object_iterate_symbols& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_code_object_iterate_symbols& operator = (const HSA_APITrace_hsa_code_object_iterate_symbols& rhs);
+    HSA_APITrace_hsa_code_object_iterate_symbols& operator= (const HSA_APITrace_hsa_code_object_iterate_symbols& rhs) = delete;
 
     hsa_code_object_t m_code_object; ///< Parameter passed to hsa_code_object_iterate_symbols
     hsa_status_t (*m_callback)(hsa_code_object_t code_object, hsa_code_symbol_t symbol, void* data); ///< Parameter passed to hsa_code_object_iterate_symbols

@@ -3053,3 +3053,135 @@ cl_int CLAPI_clEnqueueSVMUnmap::Create(cl_command_queue command_queue,
 
     return m_retVal;
 }
+
+cl_int CLAPI_clEnqueueReadSsgFileAMD::Create(cl_command_queue command_queue,
+                                             cl_mem buffer,
+                                             cl_bool blocking_read,
+                                             size_t buffer_offset,
+                                             size_t cb,
+                                             cl_file_amd file,
+                                             size_t file_offset,
+                                             cl_uint  num_events_in_wait_list,
+                                             const cl_event*   event_wait_list,
+                                             cl_event*   event)
+{
+    cl_event* pTmpEvent = event;
+    cl_event event1;
+
+    bool bUserEvent = true;
+
+    if (pTmpEvent == NULL)
+    {
+        pTmpEvent = &event1;
+        bUserEvent = false;
+    }
+
+    m_ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(this);
+
+    m_retVal = g_realExtensionFunctionTable.EnqueueReadSsgFileAMD(command_queue,
+                                                                  buffer,
+                                                                  blocking_read,
+                                                                  buffer_offset,
+                                                                  cb,
+                                                                  file,
+                                                                  file_offset,
+                                                                  num_events_in_wait_list,
+                                                                  event_wait_list,
+                                                                  pTmpEvent);
+    m_type = CL_FUNC_TYPE_clEnqueueReadSsgFileAMD;
+    m_ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(this);
+    m_command_queue = command_queue;
+    GetContextInfo();
+    m_buffer = buffer;
+    m_blocking_read = blocking_read;
+    m_buffer_offset = buffer_offset;
+    m_cb = cb;
+    m_file = file;
+    m_file_offset = file_offset;
+
+    m_num_events_in_wait_list = num_events_in_wait_list;
+    m_event_wait_list = event_wait_list;
+    CopyEventList(event_wait_list, m_num_events_in_wait_list, m_vecEvent_wait_list);
+
+    if (event != NULL)
+    {
+        m_event = *event;
+    }
+    else
+    {
+        m_event = NULL;
+    }
+
+    if (this->GetAPISucceeded())
+    {
+        m_pEvent = CLEventManager::Instance()->UpdateEvent(*pTmpEvent, bUserEvent, this);
+    }
+
+    return m_retVal;
+}
+
+cl_int CLAPI_clEnqueueWriteSsgFileAMD::Create(cl_command_queue command_queue,
+                                              cl_mem buffer,
+                                              cl_bool blocking_write,
+                                              size_t buffer_offset,
+                                              size_t cb,
+                                              cl_file_amd file,
+                                              size_t file_offset,
+                                              cl_uint  num_events_in_wait_list,
+                                              const cl_event*   event_wait_list,
+                                              cl_event*   event)
+{
+    cl_event* pTmpEvent = event;
+    cl_event event1;
+
+    bool bUserEvent = true;
+
+    if (pTmpEvent == NULL)
+    {
+        pTmpEvent = &event1;
+        bUserEvent = false;
+    }
+
+    m_ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(this);
+
+    m_retVal = g_realExtensionFunctionTable.EnqueueReadSsgFileAMD(command_queue,
+                                                                  buffer,
+                                                                  blocking_write,
+                                                                  buffer_offset,
+                                                                  cb,
+                                                                  file,
+                                                                  file_offset,
+                                                                  num_events_in_wait_list,
+                                                                  event_wait_list,
+                                                                  pTmpEvent);
+    m_type = CL_FUNC_TYPE_clEnqueueWriteSsgFileAMD;
+    m_ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(this);
+    m_command_queue = command_queue;
+    GetContextInfo();
+    m_buffer = buffer;
+    m_blocking_write = blocking_write;
+    m_buffer_offset = buffer_offset;
+    m_cb = cb;
+    m_file = file;
+    m_file_offset = file_offset;
+
+    m_num_events_in_wait_list = num_events_in_wait_list;
+    m_event_wait_list = event_wait_list;
+    CopyEventList(event_wait_list, m_num_events_in_wait_list, m_vecEvent_wait_list);
+
+    if (event != NULL)
+    {
+        m_event = *event;
+    }
+    else
+    {
+        m_event = NULL;
+    }
+
+    if (this->GetAPISucceeded())
+    {
+        m_pEvent = CLEventManager::Instance()->UpdateEvent(*pTmpEvent, bUserEvent, this);
+    }
+
+    return m_retVal;
+}

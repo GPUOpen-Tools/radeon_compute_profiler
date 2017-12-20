@@ -19,10 +19,10 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <mutex>
 #include <CL/opencl.h>
 #include "../Common/Defs.h"
 #include "../Common/LocalTSingleton.h"
-#include "AMDTMutex.h"
 #include "CLAPIDefBase.h"
 #include "TraceInfoManager.h"
 #include "CLTraceAgent.h"
@@ -212,7 +212,7 @@ private:
     CLEventManager& operator= (const CLEventManager& obj) = delete;
 
     CLEventMap m_clEventMap;                  ///< events map
-    AMDTMutex* m_pMtx;                        ///< mutex for m_clEventMap
+    std::recursive_mutex* m_pMtx;             ///< mutex for m_clEventMap
 };
 
 // @}

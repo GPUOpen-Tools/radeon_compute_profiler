@@ -49,11 +49,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_ext_image_get_capability(const HSA_APITrace_hsa_ext_image_get_capability& rhs);
+    HSA_APITrace_hsa_ext_image_get_capability(const HSA_APITrace_hsa_ext_image_get_capability& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_ext_image_get_capability& operator = (const HSA_APITrace_hsa_ext_image_get_capability& rhs);
+    HSA_APITrace_hsa_ext_image_get_capability& operator= (const HSA_APITrace_hsa_ext_image_get_capability& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_ext_image_get_capability
     hsa_ext_image_geometry_t m_geometry; ///< Parameter passed to hsa_ext_image_get_capability
@@ -105,11 +105,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_ext_image_get_capability_with_layout(const HSA_APITrace_hsa_ext_image_get_capability_with_layout& rhs);
+    HSA_APITrace_hsa_ext_image_get_capability_with_layout(const HSA_APITrace_hsa_ext_image_get_capability_with_layout& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_ext_image_get_capability_with_layout& operator = (const HSA_APITrace_hsa_ext_image_get_capability_with_layout& rhs);
+    HSA_APITrace_hsa_ext_image_get_capability_with_layout& operator= (const HSA_APITrace_hsa_ext_image_get_capability_with_layout& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_ext_image_get_capability_with_layout
     hsa_ext_image_geometry_t m_geometry; ///< Parameter passed to hsa_ext_image_get_capability_with_layout
@@ -160,11 +160,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_ext_image_data_get_info(const HSA_APITrace_hsa_ext_image_data_get_info& rhs);
+    HSA_APITrace_hsa_ext_image_data_get_info(const HSA_APITrace_hsa_ext_image_data_get_info& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_ext_image_data_get_info& operator = (const HSA_APITrace_hsa_ext_image_data_get_info& rhs);
+    HSA_APITrace_hsa_ext_image_data_get_info& operator= (const HSA_APITrace_hsa_ext_image_data_get_info& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_ext_image_data_get_info
     const hsa_ext_image_descriptor_t* m_image_descriptor; ///< Parameter passed to hsa_ext_image_data_get_info
@@ -220,11 +220,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_ext_image_data_get_info_with_layout(const HSA_APITrace_hsa_ext_image_data_get_info_with_layout& rhs);
+    HSA_APITrace_hsa_ext_image_data_get_info_with_layout(const HSA_APITrace_hsa_ext_image_data_get_info_with_layout& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_ext_image_data_get_info_with_layout& operator = (const HSA_APITrace_hsa_ext_image_data_get_info_with_layout& rhs);
+    HSA_APITrace_hsa_ext_image_data_get_info_with_layout& operator= (const HSA_APITrace_hsa_ext_image_data_get_info_with_layout& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_ext_image_data_get_info_with_layout
     const hsa_ext_image_descriptor_t* m_image_descriptor; ///< Parameter passed to hsa_ext_image_data_get_info_with_layout
@@ -279,11 +279,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_ext_image_create(const HSA_APITrace_hsa_ext_image_create& rhs);
+    HSA_APITrace_hsa_ext_image_create(const HSA_APITrace_hsa_ext_image_create& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_ext_image_create& operator = (const HSA_APITrace_hsa_ext_image_create& rhs);
+    HSA_APITrace_hsa_ext_image_create& operator= (const HSA_APITrace_hsa_ext_image_create& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_ext_image_create
     const hsa_ext_image_descriptor_t* m_image_descriptor; ///< Parameter passed to hsa_ext_image_create
@@ -342,11 +342,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_ext_image_create_with_layout(const HSA_APITrace_hsa_ext_image_create_with_layout& rhs);
+    HSA_APITrace_hsa_ext_image_create_with_layout(const HSA_APITrace_hsa_ext_image_create_with_layout& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_ext_image_create_with_layout& operator = (const HSA_APITrace_hsa_ext_image_create_with_layout& rhs);
+    HSA_APITrace_hsa_ext_image_create_with_layout& operator= (const HSA_APITrace_hsa_ext_image_create_with_layout& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_ext_image_create_with_layout
     const hsa_ext_image_descriptor_t* m_image_descriptor; ///< Parameter passed to hsa_ext_image_create_with_layout
@@ -396,11 +396,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_ext_image_destroy(const HSA_APITrace_hsa_ext_image_destroy& rhs);
+    HSA_APITrace_hsa_ext_image_destroy(const HSA_APITrace_hsa_ext_image_destroy& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_ext_image_destroy& operator = (const HSA_APITrace_hsa_ext_image_destroy& rhs);
+    HSA_APITrace_hsa_ext_image_destroy& operator= (const HSA_APITrace_hsa_ext_image_destroy& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_ext_image_destroy
     hsa_ext_image_t m_image; ///< Parameter passed to hsa_ext_image_destroy
@@ -450,11 +450,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_ext_image_copy(const HSA_APITrace_hsa_ext_image_copy& rhs);
+    HSA_APITrace_hsa_ext_image_copy(const HSA_APITrace_hsa_ext_image_copy& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_ext_image_copy& operator = (const HSA_APITrace_hsa_ext_image_copy& rhs);
+    HSA_APITrace_hsa_ext_image_copy& operator= (const HSA_APITrace_hsa_ext_image_copy& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_ext_image_copy
     hsa_ext_image_t m_src_image; ///< Parameter passed to hsa_ext_image_copy
@@ -511,11 +511,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_ext_image_import(const HSA_APITrace_hsa_ext_image_import& rhs);
+    HSA_APITrace_hsa_ext_image_import(const HSA_APITrace_hsa_ext_image_import& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_ext_image_import& operator = (const HSA_APITrace_hsa_ext_image_import& rhs);
+    HSA_APITrace_hsa_ext_image_import& operator= (const HSA_APITrace_hsa_ext_image_import& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_ext_image_import
     const void* m_src_memory; ///< Parameter passed to hsa_ext_image_import
@@ -570,11 +570,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_ext_image_export(const HSA_APITrace_hsa_ext_image_export& rhs);
+    HSA_APITrace_hsa_ext_image_export(const HSA_APITrace_hsa_ext_image_export& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_ext_image_export& operator = (const HSA_APITrace_hsa_ext_image_export& rhs);
+    HSA_APITrace_hsa_ext_image_export& operator= (const HSA_APITrace_hsa_ext_image_export& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_ext_image_export
     hsa_ext_image_t m_src_image; ///< Parameter passed to hsa_ext_image_export
@@ -625,11 +625,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_ext_image_clear(const HSA_APITrace_hsa_ext_image_clear& rhs);
+    HSA_APITrace_hsa_ext_image_clear(const HSA_APITrace_hsa_ext_image_clear& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_ext_image_clear& operator = (const HSA_APITrace_hsa_ext_image_clear& rhs);
+    HSA_APITrace_hsa_ext_image_clear& operator= (const HSA_APITrace_hsa_ext_image_clear& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_ext_image_clear
     hsa_ext_image_t m_image; ///< Parameter passed to hsa_ext_image_clear
@@ -676,11 +676,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_ext_sampler_create(const HSA_APITrace_hsa_ext_sampler_create& rhs);
+    HSA_APITrace_hsa_ext_sampler_create(const HSA_APITrace_hsa_ext_sampler_create& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_ext_sampler_create& operator = (const HSA_APITrace_hsa_ext_sampler_create& rhs);
+    HSA_APITrace_hsa_ext_sampler_create& operator= (const HSA_APITrace_hsa_ext_sampler_create& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_ext_sampler_create
     const hsa_ext_sampler_descriptor_t* m_sampler_descriptor; ///< Parameter passed to hsa_ext_sampler_create
@@ -725,11 +725,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_ext_sampler_destroy(const HSA_APITrace_hsa_ext_sampler_destroy& rhs);
+    HSA_APITrace_hsa_ext_sampler_destroy(const HSA_APITrace_hsa_ext_sampler_destroy& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_ext_sampler_destroy& operator = (const HSA_APITrace_hsa_ext_sampler_destroy& rhs);
+    HSA_APITrace_hsa_ext_sampler_destroy& operator= (const HSA_APITrace_hsa_ext_sampler_destroy& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_ext_sampler_destroy
     hsa_ext_sampler_t m_sampler; ///< Parameter passed to hsa_ext_sampler_destroy

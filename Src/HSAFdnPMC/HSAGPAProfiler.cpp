@@ -294,7 +294,7 @@ bool HSAGPAProfiler::Init(const Parameters& params, std::string& strErrorOut)
                 {
                     CounterList counterNames;
                     // TODO: need to get revision id from HSA runtime (SWDEV-79571)
-                    m_gpaUtils.GetAvailableCountersForDevice(deviceId, REVISION_ID_ANY, nMaxPass, counterNames, true);
+                    m_gpaUtils.GetAvailableCountersForDevice(deviceId, REVISION_ID_ANY, nMaxPass, counterNames);
                     tempCounters.insert(tempCounters.end(), counterNames.begin(), counterNames.end());
                 }
 
@@ -563,7 +563,7 @@ bool HSAGPAProfiler::Begin(const hsa_agent_t             device,
         WaitForCompletedSessions();
         SpAssertRet(m_activeSessionMap.empty()) false; // there should be no active sessions at this point
 
-        m_mtx.Lock();
+        m_mtx.lock();
         SpAssertRet(pQueue != NULL) false;
 
         //TODO: If we ever want to support opening more than one context at a
@@ -633,7 +633,7 @@ bool HSAGPAProfiler::End(const hsa_agent_t  device,
         stat += m_gpaUtils.StatusCheck(m_gpaUtils.GetGPALoader().GPA_EndPass());
         stat += m_gpaUtils.StatusCheck(m_gpaUtils.GetGPALoader().GPA_EndSession());
 
-        m_mtx.Unlock();
+        m_mtx.unlock();
         retVal = (stat == static_cast<int>(GPA_STATUS_OK));
     }
 

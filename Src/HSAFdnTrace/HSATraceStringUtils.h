@@ -322,6 +322,29 @@ unsigned int Get_hsa_wavefront_get_info_AttributeSize(hsa_wavefront_info_t attri
 /// \return the string representation of the specified wavefront data
 std::string Get_hsa_wavefront_get_info_AttributeString(void* value, hsa_wavefront_info_t attribute, hsa_status_t retVal);
 
+/// Gets the size of the underlying data for the specified aqlprofile attribute
+/// \param attribute the attribute whose size is needed
+/// \return the size of the underlying data for the specified aqlprofile attribute (0 for unsupported/unknown attributes)
+unsigned int Get_hsa_ven_amd_aqlprofile_get_info_AttributeSize(hsa_ven_amd_aqlprofile_info_type_t attribute);
+
+/// Gets the string representation of the specified aqlprofile data
+/// \param value the value whose string representation is needed
+/// \param attribute the attribute type
+/// \param retVal the return value of the hsa_ven_amd_aqlprofile_get_info call
+/// \return the string representation of the specified aqlprofile data
+std::string Get_hsa_ven_amd_aqlprofile_get_info_AttributeString(void* value, hsa_ven_amd_aqlprofile_info_type_t attribute, hsa_status_t retVal);
+
+/// Gets the size of the underlying data for the specified loaded code object attribute
+/// \param attribute the attribute whose size is needed
+/// \return the size of the underlying data for the specified loaded code object attribute (0 for unsupported/unknown attributes)
+unsigned int Get_hsa_ven_amd_loader_loaded_code_object_get_info_AttributeSize(hsa_ven_amd_loader_loaded_code_object_info_t attribute);
+
+/// Gets the string representation of the specified loaded code object data
+/// \param value the value whose string representation is needed
+/// \param attribute the attribute type
+/// \param retVal the return value of the hsa_ven_amd_loader_loaded_code_object_get_info call
+/// \return the string representation of the specified loaded code object data
+std::string Get_hsa_ven_amd_loader_loaded_code_object_get_info_AttributeString(void* value, hsa_ven_amd_loader_loaded_code_object_info_t attribute, hsa_status_t retVal);
 }
 
 #endif //_HSA_TRACE_STRING_UTILS_H_

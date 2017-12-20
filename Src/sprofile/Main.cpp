@@ -116,7 +116,7 @@ static bool PrintLastError(wchar_t* szPre)
                   NULL);
 
     std::cout << szPre << ": "
-              << dwError << ": " << szError << std::endl;
+         << dwError << ": " << szError << std::endl;
 
     return true;
 }

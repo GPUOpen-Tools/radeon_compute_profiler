@@ -143,6 +143,7 @@ std::string CLStringUtils::GetErrorString(const cl_int errcode)
             CASE(CL_D3D10_RESOURCE_ALREADY_ACQUIRED_KHR);
             CASE(CL_D3D10_RESOURCE_NOT_ACQUIRED_KHR);
 #endif
+            CASE(CL_INVALID_FILE_OBJECT_AMD);
 
         default: return StringUtils::ToString(errcode);
     }
@@ -1408,6 +1409,12 @@ std::string CLStringUtils::GetDeviceInfoString(const cl_device_info param_name)
             CASE(CL_DEVICE_LOCAL_MEM_SIZE_PER_COMPUTE_UNIT_AMD);
             CASE(CL_DEVICE_LOCAL_MEM_BANKS_AMD);
             CASE(CL_DEVICE_THREAD_TRACE_SUPPORTED_AMD);
+            CASE(CL_DEVICE_GFXIP_MAJOR_AMD);
+            CASE(CL_DEVICE_GFXIP_MINOR_AMD);
+            CASE(CL_DEVICE_AVAILABLE_ASYNC_QUEUES_AMD);
+            CASE(CL_DEVICE_PREFERRED_WORK_GROUP_SIZE_AMD);
+            CASE(CL_DEVICE_MAX_WORK_GROUP_SIZE_AMD);
+            CASE(CL_DEVICE_PREFERRED_CONSTANT_BUFFER_SIZE_AMD);
 
         default: return StringUtils::ToString(param_name);
     }
@@ -2040,6 +2047,19 @@ std::string CLStringUtils::GetQuotedString(const std::string& strInput, const ch
     return ss.str();
 }
 
+std::string CLStringUtils::GetQuotedString(const std::wstring& strInput, const wchar_t* src)
+{
+    if (src == NULL)
+    {
+        return "NULL";
+    }
+
+    std::ostringstream ss;
+    std::string input(strInput.begin(), strInput.end());
+    ss << '"' << input << '"';
+    return ss.str();
+}
+
 std::string CLStringUtils::GetStringString(const char* src, bool truncate)
 {
     if (src == NULL)
@@ -2520,6 +2540,24 @@ std::string CLStringUtils::GetCLAPINameString(const CL_FUNC_TYPE type)
         case CL_FUNC_TYPE_clEnqueueSVMUnmapAMD:
             return std::string("clEnqueueSVMUnmapAMD");
 
+        case CL_FUNC_TYPE_clCreateSsgFileObjectAMD:
+            return std::string("clCreateSsgFileObjectAMD");
+
+        case CL_FUNC_TYPE_clGetSsgFileObjectInfoAMD:
+            return std::string("clGetSsgFileObjectInfoAMD");
+
+        case CL_FUNC_TYPE_clRetainSsgFileObjectAMD:
+            return std::string("clRetainSsgFileObjectAMD");
+
+        case CL_FUNC_TYPE_clReleaseSsgFileObjectAMD:
+            return std::string("clReleaseSsgFileObjectAMD");
+
+        case CL_FUNC_TYPE_clEnqueueReadSsgFileAMD:
+            return std::string("clEnqueueReadSsgFileAMD");
+
+        case CL_FUNC_TYPE_clEnqueueWriteSsgFileAMD:
+            return std::string("clEnqueueWriteSsgFileAMD");
+
         default:
             return std::string("Unknown_function_type");
     }
@@ -2619,6 +2657,8 @@ std::string CLStringUtils::GetCommandTypeString(const cl_command_type type)
             CASE(CL_COMMAND_WAIT_SIGNAL_AMD);
             CASE(CL_COMMAND_WRITE_SIGNAL_AMD);
             CASE(CL_COMMAND_MAKE_BUFFERS_RESIDENT_AMD);
+            CASE(CL_COMMAND_READ_SSG_FILE_AMD);
+            CASE(CL_COMMAND_WRITE_SSG_FILE_AMD);
 
         default: return StringUtils::ToString(type);
     }
@@ -2774,6 +2814,9 @@ std::string CLStringUtils::GetDeviceInfoValueString(const cl_device_info param_n
                 case CL_DEVICE_LOCAL_MEM_BANKS_AMD               :
                 case CL_DEVICE_IMAGE_PITCH_ALIGNMENT             :
                 case CL_DEVICE_IMAGE_BASE_ADDRESS_ALIGNMENT      :
+                case CL_DEVICE_GFXIP_MAJOR_AMD                   :
+                case CL_DEVICE_GFXIP_MINOR_AMD                   :
+                case CL_DEVICE_AVAILABLE_ASYNC_QUEUES_AMD        :
                 {
                     cl_uint* val = (cl_uint*)param_value;
                     ss << StringUtils::ToString(*val);
@@ -2791,6 +2834,8 @@ std::string CLStringUtils::GetDeviceInfoValueString(const cl_device_info param_n
                 case CL_DEVICE_IMAGE_MAX_BUFFER_SIZE             :
                 case CL_DEVICE_IMAGE_MAX_ARRAY_SIZE              :
                 case CL_DEVICE_PRINTF_BUFFER_SIZE                :
+                case CL_DEVICE_PREFERRED_WORK_GROUP_SIZE_AMD     :
+                case CL_DEVICE_MAX_WORK_GROUP_SIZE_AMD           :
                 {
                     size_t* val = (size_t*)param_value;
                     ss << StringUtils::ToString(*val);
@@ -2803,6 +2848,7 @@ std::string CLStringUtils::GetDeviceInfoValueString(const cl_device_info param_n
                 case CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE          :
                 case CL_DEVICE_LOCAL_MEM_SIZE                    :
                 case CL_DEVICE_PROFILING_TIMER_OFFSET_AMD        :
+                case CL_DEVICE_PREFERRED_CONSTANT_BUFFER_SIZE_AMD:
                 {
                     cl_ulong* val = (cl_ulong*)param_value;
                     ss << StringUtils::ToString(*val);
@@ -3870,3 +3916,90 @@ std::string CLStringUtils::GetPointerListString(void** pointers, const std::vect
     }
 }
 
+std::string CLStringUtils::GetFileFlagsAMDString(const cl_file_flags_amd flags)
+{
+    if (flags == 0)
+    {
+        return "0";
+    }
+
+    std::ostringstream ss;
+    cl_file_flags_amd tmpFlag = flags;
+
+    while (tmpFlag)
+    {
+        if (tmpFlag & CL_FILE_READ_ONLY_AMD)
+        {
+            ss << "CL_FILE_READ_ONLY_AMD";
+            tmpFlag &= ~CL_FILE_READ_ONLY_AMD;
+        }
+        else if (tmpFlag & CL_FILE_WRITE_ONLY_AMD)
+        {
+            ss << "CL_FILE_WRITE_ONLY_AMD";
+            tmpFlag &= ~CL_FILE_WRITE_ONLY_AMD;
+        }
+        else if (tmpFlag & CL_FILE_READ_WRITE_AMD)
+        {
+            ss << "CL_FILE_READ_WRITE_AMD";
+            tmpFlag &= ~CL_FILE_READ_WRITE_AMD;
+        }
+        else
+        {
+            ss << StringUtils::ToString(tmpFlag);
+            tmpFlag = 0;
+        }
+
+        if (tmpFlag != 0)
+        {
+            ss << '|';
+        }
+    }
+
+    return ss.str();
+}
+
+std::string CLStringUtils::GetFileInfoAMDString(const cl_file_info_amd param_name)
+{
+    switch (param_name)
+    {
+        CASE(CL_FILE_BLOCK_SIZE_AMD);
+        CASE(CL_FILE_SIZE_AMD);
+
+    default: return StringUtils::ToString(param_name);
+    }
+}
+
+std::string CLStringUtils::GetFileInfoAMDValueString(const cl_file_info_amd param_name, const void* param_value, cl_int ret_val)
+{
+    if (param_value != NULL)
+    {
+        std::ostringstream ss;
+        ss << '[';
+
+        if (CL_SUCCESS == ret_val)
+        {
+
+            switch (param_name)
+            {
+            case CL_FILE_BLOCK_SIZE_AMD:
+                ss << *((cl_uint*)param_value);
+                break;
+
+            case CL_FILE_SIZE_AMD:
+                ss << *((cl_ulong*)param_value);
+                break;
+
+            default:
+                ss << StringUtils::ToString(*((int*)param_value));
+                break;
+            }
+        }
+
+        ss << ']';
+        return ss.str();
+    }
+    else
+    {
+        return "NULL";
+    }
+}

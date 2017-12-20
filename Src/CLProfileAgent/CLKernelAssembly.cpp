@@ -413,7 +413,7 @@ bool KernelAssembly::GenerateKernelFiles(std::vector<char>& vBinary,
                                          const std::string& strOutputDir,
                                          bool               isGPU)
 {
-    bool bRet = true;
+    bool kernelFilesGenerated = true;
 
     ACLModule* pAclModuleHSAIL = nullptr;
     aclCompiler* pAclCompilerHSAIL = nullptr;
@@ -421,21 +421,44 @@ bool KernelAssembly::GenerateKernelFiles(std::vector<char>& vBinary,
     aclCompiler* pAclCompilerAMDIL = nullptr;
 
     // attempt to load the HSAIL-based ACL module
-    bool hsailACLLoaded = ACLModuleManager::Instance()->GetACLModule(true, pAclModuleHSAIL, pAclCompilerHSAIL);
+    bool aclLoaded = ACLModuleManager::Instance()->GetACLModule(true, pAclModuleHSAIL, pAclCompilerHSAIL);
 
     // if the HSAIL ACL module was loaded, then try to use it to extract the kernel files.
-    if (hsailACLLoaded)
+    if (aclLoaded)
     {
-        bRet = GenerateKernelFilesFromACLModule(pAclModuleHSAIL, pAclCompilerHSAIL, vBinary, strKernelFunction, strKernelHandle, strOutputDir, isGPU, true);
+        kernelFilesGenerated = GenerateKernelFilesFromACLModule(pAclModuleHSAIL,
+                                                                pAclCompilerHSAIL,
+                                                                vBinary,
+                                                                strKernelFunction,
+                                                                strKernelHandle,
+                                                                strOutputDir,
+                                                                isGPU,
+                                                                true);
     }
 
     // if using the HSAIL ACL module failed for one of the following reasons, then try the AMDIL ACL module:
-    //   1) the HSAIL ACL module failed to load (as indicated by "hsailACLLoaded == false")
-    //   2) the HSAIL ACL module failed to extract the kernel files (as indicated by "bRet == false")
-    if (!hsailACLLoaded || !bRet)
+    //   1) the HSAIL ACL module failed to load (as indicated by "aclLoaded == false")
+    //   2) the HSAIL ACL module failed to extract the kernel files (as indicated by "kernelFilesGenerated == false")
+    if (!aclLoaded || !kernelFilesGenerated)
     {
-        ACLModuleManager::Instance()->GetACLModule(false, pAclModuleAMDIL, pAclCompilerAMDIL);
-        bRet = GenerateKernelFilesFromACLModule(pAclModuleAMDIL, pAclCompilerAMDIL, vBinary, strKernelFunction, strKernelHandle, strOutputDir, isGPU, false);
+        aclLoaded = ACLModuleManager::Instance()->GetACLModule(false, pAclModuleAMDIL, pAclCompilerAMDIL);
+
+        if (aclLoaded)
+        {
+             kernelFilesGenerated = GenerateKernelFilesFromACLModule(pAclModuleAMDIL,
+                                                                     pAclCompilerAMDIL,
+                                                                     vBinary,
+                                                                     strKernelFunction,
+                                                                     strKernelHandle,
+                                                                     strOutputDir,
+                                                                     isGPU,
+                                                                     false);
+        }
+    }
+
+    if (!aclLoaded || !kernelFilesGenerated)
+    {
+        Log(logWARNING, "Unable to generate kernel files using ACL Module\n");
     }
 
     return true;
@@ -570,7 +593,7 @@ const KernelInfo& KernelAssembly::GetKernelInfo(std::string& strKernelName) cons
     }
     else
     {
-        Log(logWARNING, "Default SCStat used\n");
+        Log(logWARNING, "Default kernel info used\n");
         return m_kernelInfoDefault;
     }
 }

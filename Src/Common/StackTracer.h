@@ -11,11 +11,11 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <mutex>
 
 #include <AMDTOSWrappers/Include/osOSDefinitions.h>
 
 #include "OSUtils.h"
-#include "AMDTMutex.h"
 
 #ifdef _WIN32
     #pragma warning( push )
@@ -150,7 +150,7 @@ private:
     PIMAGEHLP_SYMBOL64 m_pSymbol;                                  ///< pre-allocated symbol object
     unsigned int m_pSymbolSize;                                    ///< Size of symbol object
     HANDLE m_hProcess;                                             ///< Process handle
-    AMDTMutex* m_pMtx;                                             ///< Mutex to protect non-thread-safe win32 APIs
+    std::mutex* m_pMtx;                                            ///< Mutex to protect non-thread-safe win32 APIs
     HMODULE m_hDbgHelp;                                            ///< A handle to the DbgHelp.dll library.
     StackWalk64Proc m_pStackWalk64;                                ///< Function pointer to StackWalk64.
     SymInitializeProc m_pSymInitialize;                            ///< Function pointer to SymInitialize.

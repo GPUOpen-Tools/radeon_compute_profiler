@@ -10,8 +10,10 @@
 #include "../Common/StringUtils.h"
 #include "ProfilerOutputFileDefs.h"
 
-static const char* s_szSUCCESS = "CL_SUCCESS";
-static const char* s_szNULL = "NULL";
+static const char* s_szSUCCESS = "CL_SUCCESS";  ///< string representing CL API success
+static const char* s_szNULL = "NULL";           ///< string representing NULL return
+
+static const unsigned int s_NO_RET_CODE_ARG_INDEX = static_cast<unsigned int>(-1);  ///< arg index representing no return code
 
 using namespace GPULogger;
 
@@ -52,6 +54,15 @@ CLRetCodeAnalyzer::CLRetCodeAnalyzer(CLAPIAnalyzerManager* pManager) : CLAPIAnal
     m_retCodeArgMap[CL_FUNC_TYPE_clCreateSamplerWithProperties] = 2;
     m_retCodeArgMap[CL_FUNC_TYPE_clCreatePipe] = 5;
     m_retCodeArgMap[CL_FUNC_TYPE_clCreateUserEvent] = 1;
+    m_retCodeArgMap[CL_FUNC_TYPE_clCreateSsgFileObjectAMD] = 3;
+
+    // the following are the OCL APIs that do not provide a return code at all
+    m_retCodeArgMap[CL_FUNC_TYPE_clGetExtensionFunctionAddress] = s_NO_RET_CODE_ARG_INDEX;
+    m_retCodeArgMap[CL_FUNC_TYPE_clGetExtensionFunctionAddressForPlatform] = s_NO_RET_CODE_ARG_INDEX;
+    m_retCodeArgMap[CL_FUNC_TYPE_clSVMAlloc] = s_NO_RET_CODE_ARG_INDEX;
+    m_retCodeArgMap[CL_FUNC_TYPE_clSVMFree] = s_NO_RET_CODE_ARG_INDEX;
+    m_retCodeArgMap[CL_FUNC_TYPE_clSVMAllocAMD] = s_NO_RET_CODE_ARG_INDEX;
+    m_retCodeArgMap[CL_FUNC_TYPE_clSVMFreeAMD] = s_NO_RET_CODE_ARG_INDEX;
 }
 
 CLRetCodeAnalyzer::~CLRetCodeAnalyzer(void)
@@ -85,6 +96,11 @@ void CLRetCodeAnalyzer::Analyze(APIInfo* pAPIInfo)
             std::vector<std::string> apiArgs;
             StringUtils::Split(apiArgs, pCLApiInfo->m_argList, ATP_TRACE_ENTRY_ARG_SEPARATOR, true);
             unsigned int argIndex = m_retCodeArgMap[apiType];
+
+            if (s_NO_RET_CODE_ARG_INDEX == argIndex)
+            {
+                return;
+            }
 
             if (apiArgs.size() < argIndex)
             {

@@ -15,13 +15,13 @@
 #include <iostream>
 #include <algorithm>
 #include <functional>
-#include "AMDTMutex.h"
+#include <mutex>
 #include "OSUtils.h"
 
 using namespace std;
 using namespace GPULogger;
 
-AMDTMutex mtx("GPAMutex");
+std::mutex mtx;
 
 GPAUtils::GPAUtils()
 {
@@ -36,7 +36,7 @@ GPAUtils::GPAUtils()
 bool GPAUtils::Open(void* context)
 {
     // Remove this lock when GPA is threadsafe
-    AMDTScopeLock lock(mtx);
+    std::lock_guard<std::mutex> lock(mtx);
 
     if (!m_GPALoader.Loaded())
     {
@@ -537,7 +537,7 @@ CounterList& GPAUtils::GetCounters(GPA_HW_GENERATION generation, const bool shou
     return list;
 }
 
-CounterList& GPAUtils::GetCountersForDevice(gpa_uint32 uDeviceid, gpa_uint32 uRevisionid, size_t nMaxPass, bool applyGfx9SinglePassWorkaround)
+CounterList& GPAUtils::GetCountersForDevice(gpa_uint32 uDeviceid, gpa_uint32 uRevisionid, size_t nMaxPass)
 {
     CounterList& list = m_HWCounterDeviceMap[uDeviceid];
 
@@ -560,9 +560,6 @@ CounterList& GPAUtils::GetCountersForDevice(gpa_uint32 uDeviceid, gpa_uint32 uRe
 
         gpa_uint32 uRequiredPass;
 
-        gpa_uint32 lastEnabledCounterIndex = 0;
-        bool anyCounterDisabled = false;
-
         for (gpa_uint32 i = 0; i < nCounters; ++i)
         {
             pScheduler->EnableCounter(i);
@@ -570,24 +567,13 @@ CounterList& GPAUtils::GetCountersForDevice(gpa_uint32 uDeviceid, gpa_uint32 uRe
 
             if (uRequiredPass <= nMaxPass)
             {
-                lastEnabledCounterIndex = i;
                 list.push_back(pAccessor->GetCounterName(i));
             }
             else
             {
-                anyCounterDisabled = true;
                 pScheduler->DisableCounter(i);
                 continue;
             }
-        }
-
-        GDT_HW_GENERATION generation = GDT_HW_GENERATION_NONE;
-        AMDTDeviceInfoUtils::Instance()->GetHardwareGeneration(uDeviceid, generation);
-
-        if (applyGfx9SinglePassWorkaround && anyCounterDisabled && GDT_HW_GENERATION_GFX9 == generation)
-        {
-            pScheduler->DisableCounter(lastEnabledCounterIndex);
-            list.pop_back();
         }
     }
 
@@ -643,9 +629,9 @@ bool GPAUtils::GetAvailableCountersGdt(GDT_HW_GENERATION generation, CounterList
     return retVal;
 }
 
-bool GPAUtils::GetAvailableCountersForDevice(gpa_uint32 deviceId, gpa_uint32 revisionId, size_t nMaxPass, CounterList& availableCounters, bool applyGfx9SinglePassWorkaround)
+bool GPAUtils::GetAvailableCountersForDevice(gpa_uint32 deviceId, gpa_uint32 revisionId, size_t nMaxPass, CounterList& availableCounters)
 {
-    availableCounters = GetCountersForDevice(deviceId, revisionId, nMaxPass, applyGfx9SinglePassWorkaround);
+    availableCounters = GetCountersForDevice(deviceId, revisionId, nMaxPass);
     return true;
 }
 

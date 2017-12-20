@@ -359,10 +359,8 @@ bool FileUtils::GetParametersFromFile(Parameters& params)
                     if (pidPos != string::npos)
                     {
                         osProcessId pid = osGetCurrentProcessId();
-                        time_t timeElapsed;
-                        time(&timeElapsed);
-                        params.m_strOutputFile.replace(pidPos, 9, "%d_%d");
-                        params.m_strOutputFile = StringUtils::FormatString(params.m_strOutputFile.c_str(), pid, timeElapsed);
+                        params.m_strOutputFile.replace(pidPos, 9, "%d_%llu");
+                        params.m_strOutputFile = StringUtils::FormatString(params.m_strOutputFile.c_str(), pid, OSUtils::Instance()->GetTimeNanos());
                     }
                 }
                 else if (opStr.find("SessionName") != std::string::npos)
@@ -1196,7 +1194,7 @@ bool FileUtils::MergeTmpTraceFiles(SP_outStream& sout,
         int cumulativeAPICount = 0;
         std::string cumulativeStrFileContent;
 
-        for (gtList<osFilePath>::iterator it = files.begin(); it != files.end(); it++)
+        for (gtList<osFilePath>::iterator it = files.begin(); it != files.end(); ++it)
         {
             strFileAsFilePath = (*it);
             strFileAsFilePath.getFileNameAndExtension(strFileName);

@@ -13,10 +13,10 @@
 #include <vector>
 #include <sstream>
 #include <iomanip>
+#include <mutex>
 #include <math.h>
 
 #include <AMDTOSWrappers/Include/osProcess.h>
-#include <AMDTMutex.h>
 
 #include "Defs.h"
 #include "FileUtils.h"
@@ -124,7 +124,7 @@ std::string APIInfoManagerBase::GetTempFileName(const osProcessId& pid, const os
 void APIInfoManagerBase::FlushTraceData(bool bForceFlush)
 {
     SP_UNREFERENCED_PARAMETER(bForceFlush);
-    m_mtxFlush.Lock();
+    m_mtxFlush.lock();
     osProcessId pid = osGetCurrentProcessId();
     TraceInfoMap& nonActiveMap = m_TraceInfoMap[ 1 - m_iActiveMap ];
 
@@ -191,7 +191,7 @@ void APIInfoManagerBase::FlushTraceData(bool bForceFlush)
 
     FlushNonAPITimestampData(pid);
 
-    m_mtxFlush.Unlock();
+    m_mtxFlush.unlock();
 }
 
 void APIInfoManagerBase::SaveToOutputFile()

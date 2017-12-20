@@ -17,6 +17,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <cstring> //memcpy
+#include <mutex>
 #ifdef _WIN32
     #include <CL\cl_d3d11.h>
     #include <CL\cl_d3d10.h>
@@ -450,9 +451,9 @@ public:
     CLAPI_clCreateContextBase()
     {
         m_uiContextID = ms_NumInstance;
-        ms_mtx.Lock();
+        ms_mtx.lock();
         ms_NumInstance++;
-        ms_mtx.Unlock();
+        ms_mtx.unlock();
     }
 
     /// Virtual destructor
@@ -502,8 +503,8 @@ private:
     /// \return a reference of the object
     CLAPI_clCreateContextBase& operator = (const CLAPI_clCreateContextBase& obj) = delete;
 
-    static cl_uint   ms_NumInstance; ///< number of instances created
-    static AMDTMutex ms_mtx;         ///< mutex to protect ms_NumInstance
+    static cl_uint   ms_NumInstance;    ///< number of instances created
+    static std::mutex ms_mtx;           ///< mutex to protect ms_NumInstance
 };
 
 //------------------------------------------------------------------------------------
@@ -983,9 +984,9 @@ public:
     CLAPI_clCreateCommandQueueBase()
     {
         m_uiQueueID = ms_NumInstance;
-        ms_mtx.Lock();
+        ms_mtx.lock();
         ms_NumInstance++;
-        ms_mtx.Unlock();
+        ms_mtx.unlock();
         m_bUserSetProfileFlag = false;
     }
 
@@ -1092,7 +1093,7 @@ protected:
     cl_device_type              m_dtype;                           ///< device type
     char                        m_szDevice[MAX_DEVICE_NAME_STR];   ///< device name
     static cl_uint              ms_NumInstance;                    ///< number of instance created
-    static AMDTMutex            ms_mtx;                            ///< mutex to protect m_sNumInstance
+    static std::mutex           ms_mtx;                            ///< mutex to protect m_sNumInstance
     cl_uint                     m_uiQueueID;                       ///< queue id
     const CLAPI_clCreateContextBase* m_createContextAPIObj;        ///< CreateContextAPIObject pointer
     bool                        m_bUserSetProfileFlag;             ///< A flag indicating whether or not user set CL_QUEUE_PROFILING_ENABLE when creating cmd queue
@@ -8249,6 +8250,331 @@ private:
     size_t           m_param_value_size_retVal; ///< dereferenced value of m_param_value_size_ret
     bool             m_replaced_null_param;     ///< flag indicating that we've provided a replacement for a NULL m_param_value_size_ret value
     cl_int           m_retVal;                  ///< return value
+};
+
+//------------------------------------------------------------------------------------
+/// clCreateSsgFileObjectAMD
+//------------------------------------------------------------------------------------
+class CLAPI_clCreateSsgFileObjectAMD : public CLAPIBase
+{
+public:
+    /// Constructor
+    CLAPI_clCreateSsgFileObjectAMD()
+    {
+    }
+
+    /// Destructor
+    ~CLAPI_clCreateSsgFileObjectAMD()
+    {
+    }
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString() override
+    {
+        return StringUtils::ToHexString(m_retVal);
+    }
+
+    /// To String
+    /// \return string representation of the API
+    std::string ToString() override
+    {
+        std::ostringstream ss;
+        ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
+           << CLStringUtils::GetFileFlagsAMDString(m_flags) << s_strParamSeparator
+           << CLStringUtils::GetQuotedString(m_str_file_name, m_file_name) << s_strParamSeparator
+           << CLStringUtils::GetErrorString(m_errcode_ret, m_errcode_retVal);
+
+        return ss.str();
+    }
+
+    /// Save the parameter values, return value and time stamps of CLAPI_clCreateSsgFileObjectAMD
+    /// \param ullStartTime start api call time stamp
+    /// \param ullEndTime end api call time stamp
+    /// \param context Parameter for CLAPI_clCreateSsgFileObjectAMD
+    /// \param flags Parameter for CLAPI_clCreateSsgFileObjectAMD
+    /// \param file_name Parameter for CLAPI_clCreateSsgFileObjectAMD
+    /// \param errcode_ret Parameter for CLAPI_clCreateSsgFileObjectAMD
+    /// \param retVal return value
+    void Create(
+        ULONGLONG ullStartTime,
+        ULONGLONG ullEndTime,
+        cl_context context,
+        cl_file_flags_amd flags,
+        const wchar_t* file_name,
+        cl_int* errcode_ret,
+        cl_file_amd retVal)
+    {
+        m_ullStart = ullStartTime;
+        m_ullEnd = ullEndTime;
+        m_type = CL_FUNC_TYPE_clCreateSsgFileObjectAMD;
+        m_context = context;
+        m_flags = flags;
+        m_file_name = file_name;
+        m_str_file_name = std::wstring(m_file_name);
+
+        m_errcode_ret = errcode_ret;
+
+        if (nullptr != errcode_ret)
+        {
+            m_errcode_retVal = *errcode_ret;
+        }
+        else
+        {
+            m_errcode_retVal = 0;
+        }
+
+        m_retVal = retVal;
+    }
+
+private:
+    /// Disable copy constructor
+    /// \param[in] obj  the input object
+    CLAPI_clCreateSsgFileObjectAMD(const CLAPI_clCreateSsgFileObjectAMD& obj) = delete;
+
+    /// Disable assignment operator
+    /// \param[in] obj the input object
+    /// \return a reference of the object
+    CLAPI_clCreateSsgFileObjectAMD& operator = (const CLAPI_clCreateSsgFileObjectAMD& obj) = delete;
+
+private:
+    cl_context       m_context;         ///< parameter for clCreateSsgFileObjectAMD
+    cl_pipe_info     m_flags;           ///< parameter for clCreateSsgFileObjectAMD
+    const wchar_t*   m_file_name;       ///< parameter for clCreateSsgFileObjectAMD
+    std::wstring     m_str_file_name;   ///< parameter for clCreateSsgFileObjectAMD
+    cl_int*          m_errcode_ret;     ///< parameter for clCreateSsgFileObjectAMD
+    cl_int           m_errcode_retVal;  ///< parameter for clCreateSsgFileObjectAMD
+    cl_file_amd      m_retVal;          ///< return value
+};
+
+//------------------------------------------------------------------------------------
+/// clGetSsgFileObjectInfoAMD
+//------------------------------------------------------------------------------------
+class CLAPI_clGetSsgFileObjectInfoAMD : public CLAPIBase
+{
+public:
+    /// Constructor
+    CLAPI_clGetSsgFileObjectInfoAMD()
+    {
+        m_param_value = nullptr;
+    }
+
+    /// Destructor
+    ~CLAPI_clGetSsgFileObjectInfoAMD()
+    {
+        if (nullptr != m_param_value)
+        {
+            FreeBuffer(m_param_value);
+        }
+    }
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString() override
+    {
+        std::ostringstream ss;
+        ss << CLStringUtils::GetErrorString(m_retVal);
+        return ss.str();
+    }
+
+    /// To String
+    /// \return string representation of the API
+    std::string ToString() override
+    {
+        std::ostringstream ss;
+        ss << StringUtils::ToHexString(m_file) << s_strParamSeparator
+           << CLStringUtils::GetFileInfoAMDString(m_param_name) << s_strParamSeparator
+           << m_param_value_size << s_strParamSeparator
+           << CLStringUtils::GetFileInfoAMDValueString(m_param_name, m_param_value, m_retVal) << s_strParamSeparator
+           << CLStringUtils::GetSizeString(REPLACEDNULLVAL(m_replaced_null_param, m_param_value_size_ret), m_param_value_size_retVal);
+
+        return ss.str();
+    }
+
+    /// Save the parameter values, return value and time stamps of clGetSsgFileObjectInfoAMD
+    /// \param ullStartTime start api call time stamp
+    /// \param ullEndTime end api call time stamp
+    /// \param file Parameter for CLAPI_clGetSsgFileObjectInfoAMD
+    /// \param param_name Parameter for CLAPI_clGetSsgFileObjectInfoAMD
+    /// \param param_value_size Parameter for CLAPI_clGetSsgFileObjectInfoAMD
+    /// \param param_value Parameter for CLAPI_clGetSsgFileObjectInfoAMD
+    /// \param param_value_size_ret Parameter for CLAPI_clGetSsgFileObjectInfoAMD
+    /// \param replaced_null_param flag indicating if the user app passed null to param_value_size_ret
+    /// \param retVal return value
+    void Create(
+        ULONGLONG ullStartTime,
+        ULONGLONG ullEndTime,
+        cl_file_amd file,
+        cl_device_info param_name,
+        size_t param_value_size,
+        void* param_value,
+        size_t* param_value_size_ret,
+        bool replaced_null_param,
+        cl_int retVal)
+    {
+        m_ullStart = ullStartTime;
+        m_ullEnd = ullEndTime;
+        m_type = CL_FUNC_TYPE_clGetSsgFileObjectInfoAMD;
+        m_file = file;
+        m_param_name = param_name;
+        m_param_value_size = param_value_size;
+        m_param_value_size_ret = param_value_size_ret;
+        m_replaced_null_param = replaced_null_param;
+        m_param_value_size_retVal = *param_value_size_ret;
+
+        if (nullptr != param_value)
+        {
+            DeepCopyBuffer(&m_param_value, param_value, RETVALMIN(m_param_value_size_retVal, m_param_value_size));
+        }
+
+        m_retVal = retVal;
+    }
+
+private:
+    /// Disable copy constructor
+    /// \param[in] obj  the input object
+    CLAPI_clGetSsgFileObjectInfoAMD(const CLAPI_clGetSsgFileObjectInfoAMD& obj) = delete;
+
+    /// Disable assignment operator
+    /// \param[in] obj the input object
+    /// \return a reference of the object
+    CLAPI_clGetSsgFileObjectInfoAMD& operator = (const CLAPI_clGetSsgFileObjectInfoAMD& obj) = delete;
+
+private:
+    cl_file_amd      m_file;                    ///< parameter for clGetSsgFileObjectInfoAMD
+    cl_file_info_amd m_param_name;              ///< parameter for clGetSsgFileObjectInfoAMD
+    size_t           m_param_value_size;        ///< parameter for clGetSsgFileObjectInfoAMD
+    void*            m_param_value;             ///< parameter for clGetSsgFileObjectInfoAMD
+    size_t*          m_param_value_size_ret;    ///< parameter for clGetSsgFileObjectInfoAMD
+    size_t           m_param_value_size_retVal; ///< dereferenced value of m_param_value_size_ret
+    bool             m_replaced_null_param;     ///< flag indicating that we've provided a replacement for a NULL m_param_value_size_ret value
+    cl_int           m_retVal;                  ///< return value
+};
+
+//------------------------------------------------------------------------------------
+/// clRetainSsgFileObjectAMD
+//------------------------------------------------------------------------------------
+class CLAPI_clRetainSsgFileObjectAMD : public CLAPIBase
+{
+public:
+    /// Constructor
+    CLAPI_clRetainSsgFileObjectAMD() = default;
+
+    /// Destructor
+    ~CLAPI_clRetainSsgFileObjectAMD() {}
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString() override
+    {
+        std::ostringstream ss;
+        ss << CLStringUtils::GetErrorString(m_retVal);
+        return ss.str();
+    }
+
+    /// To String
+    /// \return string representation of the API
+    std::string ToString() override
+    {
+        std::ostringstream ss;
+        ss << StringUtils::ToHexString(m_file);
+        return ss.str();
+    }
+
+    /// Save the parameter values, return value and time stamps of clRetainSsgFileObjectAMD
+    /// \param ullStartTime start api call time stamp
+    /// \param ullEndTime end api call time stamp
+    /// \param file Parameter for CLAPI_clRetainSsgFileObjectAMD
+    /// \param retVal return value
+    void Create(
+        ULONGLONG ullStartTime,
+        ULONGLONG ullEndTime,
+        cl_file_amd file,
+        cl_int retVal)
+    {
+        m_ullStart = ullStartTime;
+        m_ullEnd = ullEndTime;
+        m_type = CL_FUNC_TYPE_clRetainSsgFileObjectAMD;
+        m_file = file;
+        m_retVal = retVal;
+    }
+
+private:
+    /// Disable copy constructor
+    /// \param[in] obj  the input object
+    CLAPI_clRetainSsgFileObjectAMD(const CLAPI_clRetainSsgFileObjectAMD& obj) = delete;
+
+    /// Disable assignment operator
+    /// \param[in] obj the input object
+    /// \return a reference of the object
+    CLAPI_clRetainSsgFileObjectAMD& operator = (const CLAPI_clRetainSsgFileObjectAMD& obj) = delete;
+
+private:
+    cl_file_amd   m_file;   ///< parameter for clRetainSsgFileObjectAMD
+    cl_int        m_retVal; ///< return value
+};
+
+//------------------------------------------------------------------------------------
+/// clReleaseSsgFileObjectAMD
+//------------------------------------------------------------------------------------
+class CLAPI_clReleaseSsgFileObjectAMD : public CLAPIBase
+{
+public:
+    /// Constructor
+    CLAPI_clReleaseSsgFileObjectAMD() = default;
+
+    /// Destructor
+    ~CLAPI_clReleaseSsgFileObjectAMD() {}
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString() override
+    {
+        std::ostringstream ss;
+        ss << CLStringUtils::GetErrorString(m_retVal);
+        return ss.str();
+    }
+
+    /// To String
+    /// \return string representation of the API
+    std::string ToString() override
+    {
+        std::ostringstream ss;
+        ss << StringUtils::ToHexString(m_file);
+        return ss.str();
+    }
+
+    /// Save the parameter values, return value and time stamps of clReleaseSsgFileObjectAMD
+    /// \param ullStartTime start api call time stamp
+    /// \param ullEndTime end api call time stamp
+    /// \param file Parameter for CLAPI_clReleaseSsgFileObjectAMD
+    /// \param retVal return value
+    void Create(
+        ULONGLONG ullStartTime,
+        ULONGLONG ullEndTime,
+        cl_file_amd file,
+        cl_int retVal)
+    {
+        m_ullStart = ullStartTime;
+        m_ullEnd = ullEndTime;
+        m_type = CL_FUNC_TYPE_clReleaseSsgFileObjectAMD;
+        m_file = file;
+        m_retVal = retVal;
+    }
+
+private:
+    /// Disable copy constructor
+    /// \param[in] obj  the input object
+    CLAPI_clReleaseSsgFileObjectAMD(const CLAPI_clReleaseSsgFileObjectAMD& obj) = delete;
+
+    /// Disable assignment operator
+    /// \param[in] obj the input object
+    /// \return a reference of the object
+    CLAPI_clReleaseSsgFileObjectAMD& operator = (const CLAPI_clReleaseSsgFileObjectAMD& obj) = delete;
+
+private:
+    cl_file_amd  m_file;   ///< parameter for clReleaseSsgFileObjectAMD
+    cl_int       m_retVal; ///< return value
 };
 
 // @}

@@ -43,7 +43,7 @@ bool HSASignalPool::AcquireSignal(hsa_signal_value_t initialValue, hsa_signal_t&
     }
 
     {
-        AMDTScopeLock lock(m_signalPoolMtx);
+        std::lock_guard<std::mutex> lock(m_signalPoolMtx);
 
         if (0 == m_signalPool.size())
         {
@@ -69,7 +69,7 @@ bool HSASignalPool::ReleaseSignal(hsa_signal_t signal)
     }
     else
     {
-        AMDTScopeLock lock(m_signalPoolMtx);
+        std::lock_guard<std::mutex> lock(m_signalPoolMtx);
         m_signalPool.push(signal);
     }
 

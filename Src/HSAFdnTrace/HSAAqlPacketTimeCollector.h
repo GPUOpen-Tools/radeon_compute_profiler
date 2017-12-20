@@ -19,6 +19,7 @@
 #include <stack>
 #include <queue>
 #include <unordered_map>
+#include <mutex>
 
 #include "hsa.h"
 
@@ -28,7 +29,6 @@
 #include <AMDTOSWrappers/Include/osCondition.h>
 #endif
 
-#include <AMDTMutex.h>
 #include <TSingleton.h>
 
 #include "HSAAqlPacketInfo.h"
@@ -107,7 +107,7 @@ public:
 
 private:
     std::queue<HSAPacketSignalReplacer> m_signalQueue;    ///< Queue holding the signal replacers
-    AMDTMutex                           m_signalQueueMtx; ///< Mutex protecting access to m_signalList
+    std::mutex                m_signalQueueMtx;           ///< Mutex protecting access to m_signalList
 };
 
 /// Thread to collect timestamps for kernel dispatch packets.

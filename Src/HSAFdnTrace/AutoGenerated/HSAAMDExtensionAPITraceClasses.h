@@ -45,11 +45,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_coherency_get_type(const HSA_APITrace_hsa_amd_coherency_get_type& rhs);
+    HSA_APITrace_hsa_amd_coherency_get_type(const HSA_APITrace_hsa_amd_coherency_get_type& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_coherency_get_type& operator = (const HSA_APITrace_hsa_amd_coherency_get_type& rhs);
+    HSA_APITrace_hsa_amd_coherency_get_type& operator= (const HSA_APITrace_hsa_amd_coherency_get_type& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_amd_coherency_get_type
     hsa_amd_coherency_type_t* m_type_; ///< Parameter passed to hsa_amd_coherency_get_type
@@ -92,11 +92,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_coherency_set_type(const HSA_APITrace_hsa_amd_coherency_set_type& rhs);
+    HSA_APITrace_hsa_amd_coherency_set_type(const HSA_APITrace_hsa_amd_coherency_set_type& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_coherency_set_type& operator = (const HSA_APITrace_hsa_amd_coherency_set_type& rhs);
+    HSA_APITrace_hsa_amd_coherency_set_type& operator= (const HSA_APITrace_hsa_amd_coherency_set_type& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_amd_coherency_set_type
     hsa_amd_coherency_type_t m_type_; ///< Parameter passed to hsa_amd_coherency_set_type
@@ -138,11 +138,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_profiling_set_profiler_enabled(const HSA_APITrace_hsa_amd_profiling_set_profiler_enabled& rhs);
+    HSA_APITrace_hsa_amd_profiling_set_profiler_enabled(const HSA_APITrace_hsa_amd_profiling_set_profiler_enabled& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_profiling_set_profiler_enabled& operator = (const HSA_APITrace_hsa_amd_profiling_set_profiler_enabled& rhs);
+    HSA_APITrace_hsa_amd_profiling_set_profiler_enabled& operator= (const HSA_APITrace_hsa_amd_profiling_set_profiler_enabled& rhs) = delete;
 
     hsa_queue_t* m_queue; ///< Parameter passed to hsa_amd_profiling_set_profiler_enabled
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_amd_profiling_set_profiler_enabled in queue parameter
@@ -183,11 +183,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_profiling_async_copy_enable(const HSA_APITrace_hsa_amd_profiling_async_copy_enable& rhs);
+    HSA_APITrace_hsa_amd_profiling_async_copy_enable(const HSA_APITrace_hsa_amd_profiling_async_copy_enable& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_profiling_async_copy_enable& operator = (const HSA_APITrace_hsa_amd_profiling_async_copy_enable& rhs);
+    HSA_APITrace_hsa_amd_profiling_async_copy_enable& operator= (const HSA_APITrace_hsa_amd_profiling_async_copy_enable& rhs) = delete;
 
     bool m_enable; ///< Parameter passed to hsa_amd_profiling_async_copy_enable
     hsa_status_t m_retVal; ///< Parameter passed to hsa_amd_profiling_async_copy_enable
@@ -230,11 +230,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_profiling_get_dispatch_time(const HSA_APITrace_hsa_amd_profiling_get_dispatch_time& rhs);
+    HSA_APITrace_hsa_amd_profiling_get_dispatch_time(const HSA_APITrace_hsa_amd_profiling_get_dispatch_time& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_profiling_get_dispatch_time& operator = (const HSA_APITrace_hsa_amd_profiling_get_dispatch_time& rhs);
+    HSA_APITrace_hsa_amd_profiling_get_dispatch_time& operator= (const HSA_APITrace_hsa_amd_profiling_get_dispatch_time& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_amd_profiling_get_dispatch_time
     hsa_signal_t m_signal; ///< Parameter passed to hsa_amd_profiling_get_dispatch_time
@@ -278,11 +278,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_profiling_get_async_copy_time(const HSA_APITrace_hsa_amd_profiling_get_async_copy_time& rhs);
+    HSA_APITrace_hsa_amd_profiling_get_async_copy_time(const HSA_APITrace_hsa_amd_profiling_get_async_copy_time& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_profiling_get_async_copy_time& operator = (const HSA_APITrace_hsa_amd_profiling_get_async_copy_time& rhs);
+    HSA_APITrace_hsa_amd_profiling_get_async_copy_time& operator= (const HSA_APITrace_hsa_amd_profiling_get_async_copy_time& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_amd_profiling_get_async_copy_time
     hsa_amd_profiling_async_copy_time_t* m_time; ///< Parameter passed to hsa_amd_profiling_get_async_copy_time
@@ -327,17 +327,74 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_profiling_convert_tick_to_system_domain(const HSA_APITrace_hsa_amd_profiling_convert_tick_to_system_domain& rhs);
+    HSA_APITrace_hsa_amd_profiling_convert_tick_to_system_domain(const HSA_APITrace_hsa_amd_profiling_convert_tick_to_system_domain& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_profiling_convert_tick_to_system_domain& operator = (const HSA_APITrace_hsa_amd_profiling_convert_tick_to_system_domain& rhs);
+    HSA_APITrace_hsa_amd_profiling_convert_tick_to_system_domain& operator= (const HSA_APITrace_hsa_amd_profiling_convert_tick_to_system_domain& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_amd_profiling_convert_tick_to_system_domain
     uint64_t m_agent_tick; ///< Parameter passed to hsa_amd_profiling_convert_tick_to_system_domain
     uint64_t* m_system_tick; ///< Parameter passed to hsa_amd_profiling_convert_tick_to_system_domain
     uint64_t m_system_tickVal; ///< Member to hold value passed to hsa_amd_profiling_convert_tick_to_system_domain in system_tick parameter
     hsa_status_t m_retVal; ///< Parameter passed to hsa_amd_profiling_convert_tick_to_system_domain
+};
+
+///////////////////////////////////////////////////
+/// Class used to trace hsa_amd_signal_create
+///////////////////////////////////////////////////
+class HSA_APITrace_hsa_amd_signal_create : public HSAAPIBase
+{
+public:
+    /// Constructor
+    HSA_APITrace_hsa_amd_signal_create();
+
+    /// Destructor
+    ~HSA_APITrace_hsa_amd_signal_create();
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString();
+
+    /// Returns the API's arguments formatted as strings
+    /// \return string representation of the API's arguments
+    std::string ToString();
+
+    /// Assigns the API's various parameter values
+    /// \param ullStartTime the start timestamp for hsa_amd_signal_create
+    /// \param ullEndTime the end timestamp for hsa_amd_signal_create
+    /// \param initial_value Parameter passed to hsa_amd_signal_create
+    /// \param num_consumers Parameter passed to hsa_amd_signal_create
+    /// \param consumers Parameter passed to hsa_amd_signal_create
+    /// \param attributes Parameter passed to hsa_amd_signal_create
+    /// \param signal Parameter passed to hsa_amd_signal_create
+    /// \param retVal the return value for hsa_amd_signal_create
+    void Create(ULONGLONG ullStartTime,
+                ULONGLONG ullEndTime,
+                hsa_signal_value_t initial_value,
+                uint32_t num_consumers,
+                const hsa_agent_t* consumers,
+                uint64_t attributes,
+                hsa_signal_t* signal,
+                hsa_status_t retVal);
+
+private:
+    /// Disabled copy constructor
+    /// \rhs item being copied
+    HSA_APITrace_hsa_amd_signal_create(const HSA_APITrace_hsa_amd_signal_create& rhs) = delete;
+
+    /// Disabled assignment operator
+    /// \rhs item being assigned
+    HSA_APITrace_hsa_amd_signal_create& operator= (const HSA_APITrace_hsa_amd_signal_create& rhs) = delete;
+
+    hsa_signal_value_t m_initial_value; ///< Parameter passed to hsa_amd_signal_create
+    uint32_t m_num_consumers; ///< Parameter passed to hsa_amd_signal_create
+    const hsa_agent_t* m_consumers; ///< Parameter passed to hsa_amd_signal_create
+    hsa_agent_t m_consumersVal; ///< Member to hold value passed to hsa_amd_signal_create in consumers parameter
+    uint64_t m_attributes; ///< Parameter passed to hsa_amd_signal_create
+    hsa_signal_t* m_signal; ///< Parameter passed to hsa_amd_signal_create
+    hsa_signal_t m_signalVal; ///< Member to hold value passed to hsa_amd_signal_create in signal parameter
+    hsa_status_t m_retVal; ///< Parameter passed to hsa_amd_signal_create
 };
 
 ///////////////////////////////////////////////////
@@ -381,11 +438,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_signal_async_handler(const HSA_APITrace_hsa_amd_signal_async_handler& rhs);
+    HSA_APITrace_hsa_amd_signal_async_handler(const HSA_APITrace_hsa_amd_signal_async_handler& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_signal_async_handler& operator = (const HSA_APITrace_hsa_amd_signal_async_handler& rhs);
+    HSA_APITrace_hsa_amd_signal_async_handler& operator= (const HSA_APITrace_hsa_amd_signal_async_handler& rhs) = delete;
 
     hsa_signal_t m_signal; ///< Parameter passed to hsa_amd_signal_async_handler
     hsa_signal_condition_t m_cond; ///< Parameter passed to hsa_amd_signal_async_handler
@@ -430,11 +487,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_async_function(const HSA_APITrace_hsa_amd_async_function& rhs);
+    HSA_APITrace_hsa_amd_async_function(const HSA_APITrace_hsa_amd_async_function& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_async_function& operator = (const HSA_APITrace_hsa_amd_async_function& rhs);
+    HSA_APITrace_hsa_amd_async_function& operator= (const HSA_APITrace_hsa_amd_async_function& rhs) = delete;
 
     void (*m_callback)(void* arg); ///< Parameter passed to hsa_amd_async_function
     void* m_arg; ///< Parameter passed to hsa_amd_async_function
@@ -486,11 +543,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_signal_wait_any(const HSA_APITrace_hsa_amd_signal_wait_any& rhs);
+    HSA_APITrace_hsa_amd_signal_wait_any(const HSA_APITrace_hsa_amd_signal_wait_any& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_signal_wait_any& operator = (const HSA_APITrace_hsa_amd_signal_wait_any& rhs);
+    HSA_APITrace_hsa_amd_signal_wait_any& operator= (const HSA_APITrace_hsa_amd_signal_wait_any& rhs) = delete;
 
     uint32_t m_signal_count; ///< Parameter passed to hsa_amd_signal_wait_any
     hsa_signal_t* m_signals; ///< Parameter passed to hsa_amd_signal_wait_any
@@ -543,11 +600,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_queue_cu_set_mask(const HSA_APITrace_hsa_amd_queue_cu_set_mask& rhs);
+    HSA_APITrace_hsa_amd_queue_cu_set_mask(const HSA_APITrace_hsa_amd_queue_cu_set_mask& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_queue_cu_set_mask& operator = (const HSA_APITrace_hsa_amd_queue_cu_set_mask& rhs);
+    HSA_APITrace_hsa_amd_queue_cu_set_mask& operator= (const HSA_APITrace_hsa_amd_queue_cu_set_mask& rhs) = delete;
 
     const hsa_queue_t* m_queue; ///< Parameter passed to hsa_amd_queue_cu_set_mask
     hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_amd_queue_cu_set_mask in queue parameter
@@ -594,11 +651,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_memory_pool_get_info(const HSA_APITrace_hsa_amd_memory_pool_get_info& rhs);
+    HSA_APITrace_hsa_amd_memory_pool_get_info(const HSA_APITrace_hsa_amd_memory_pool_get_info& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_memory_pool_get_info& operator = (const HSA_APITrace_hsa_amd_memory_pool_get_info& rhs);
+    HSA_APITrace_hsa_amd_memory_pool_get_info& operator= (const HSA_APITrace_hsa_amd_memory_pool_get_info& rhs) = delete;
 
     hsa_amd_memory_pool_t m_memory_pool; ///< Parameter passed to hsa_amd_memory_pool_get_info
     hsa_amd_memory_pool_info_t m_attribute; ///< Parameter passed to hsa_amd_memory_pool_get_info
@@ -643,11 +700,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_agent_iterate_memory_pools(const HSA_APITrace_hsa_amd_agent_iterate_memory_pools& rhs);
+    HSA_APITrace_hsa_amd_agent_iterate_memory_pools(const HSA_APITrace_hsa_amd_agent_iterate_memory_pools& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_agent_iterate_memory_pools& operator = (const HSA_APITrace_hsa_amd_agent_iterate_memory_pools& rhs);
+    HSA_APITrace_hsa_amd_agent_iterate_memory_pools& operator= (const HSA_APITrace_hsa_amd_agent_iterate_memory_pools& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_amd_agent_iterate_memory_pools
     hsa_status_t (*m_callback)(hsa_amd_memory_pool_t memory_pool, void* data); ///< Parameter passed to hsa_amd_agent_iterate_memory_pools
@@ -694,11 +751,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_memory_pool_allocate(const HSA_APITrace_hsa_amd_memory_pool_allocate& rhs);
+    HSA_APITrace_hsa_amd_memory_pool_allocate(const HSA_APITrace_hsa_amd_memory_pool_allocate& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_memory_pool_allocate& operator = (const HSA_APITrace_hsa_amd_memory_pool_allocate& rhs);
+    HSA_APITrace_hsa_amd_memory_pool_allocate& operator= (const HSA_APITrace_hsa_amd_memory_pool_allocate& rhs) = delete;
 
     hsa_amd_memory_pool_t m_memory_pool; ///< Parameter passed to hsa_amd_memory_pool_allocate
     size_t m_size; ///< Parameter passed to hsa_amd_memory_pool_allocate
@@ -741,11 +798,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_memory_pool_free(const HSA_APITrace_hsa_amd_memory_pool_free& rhs);
+    HSA_APITrace_hsa_amd_memory_pool_free(const HSA_APITrace_hsa_amd_memory_pool_free& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_memory_pool_free& operator = (const HSA_APITrace_hsa_amd_memory_pool_free& rhs);
+    HSA_APITrace_hsa_amd_memory_pool_free& operator= (const HSA_APITrace_hsa_amd_memory_pool_free& rhs) = delete;
 
     void* m_ptr; ///< Parameter passed to hsa_amd_memory_pool_free
     hsa_status_t m_retVal; ///< Parameter passed to hsa_amd_memory_pool_free
@@ -798,11 +855,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_memory_async_copy(const HSA_APITrace_hsa_amd_memory_async_copy& rhs);
+    HSA_APITrace_hsa_amd_memory_async_copy(const HSA_APITrace_hsa_amd_memory_async_copy& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_memory_async_copy& operator = (const HSA_APITrace_hsa_amd_memory_async_copy& rhs);
+    HSA_APITrace_hsa_amd_memory_async_copy& operator= (const HSA_APITrace_hsa_amd_memory_async_copy& rhs) = delete;
 
     void* m_dst; ///< Parameter passed to hsa_amd_memory_async_copy
     hsa_agent_t m_dst_agent; ///< Parameter passed to hsa_amd_memory_async_copy
@@ -855,11 +912,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_agent_memory_pool_get_info(const HSA_APITrace_hsa_amd_agent_memory_pool_get_info& rhs);
+    HSA_APITrace_hsa_amd_agent_memory_pool_get_info(const HSA_APITrace_hsa_amd_agent_memory_pool_get_info& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_agent_memory_pool_get_info& operator = (const HSA_APITrace_hsa_amd_agent_memory_pool_get_info& rhs);
+    HSA_APITrace_hsa_amd_agent_memory_pool_get_info& operator= (const HSA_APITrace_hsa_amd_agent_memory_pool_get_info& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_amd_agent_memory_pool_get_info
     hsa_amd_memory_pool_t m_memory_pool; ///< Parameter passed to hsa_amd_agent_memory_pool_get_info
@@ -907,11 +964,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_agents_allow_access(const HSA_APITrace_hsa_amd_agents_allow_access& rhs);
+    HSA_APITrace_hsa_amd_agents_allow_access(const HSA_APITrace_hsa_amd_agents_allow_access& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_agents_allow_access& operator = (const HSA_APITrace_hsa_amd_agents_allow_access& rhs);
+    HSA_APITrace_hsa_amd_agents_allow_access& operator= (const HSA_APITrace_hsa_amd_agents_allow_access& rhs) = delete;
 
     uint32_t m_num_agents; ///< Parameter passed to hsa_amd_agents_allow_access
     const hsa_agent_t* m_agents; ///< Parameter passed to hsa_amd_agents_allow_access
@@ -959,11 +1016,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_memory_pool_can_migrate(const HSA_APITrace_hsa_amd_memory_pool_can_migrate& rhs);
+    HSA_APITrace_hsa_amd_memory_pool_can_migrate(const HSA_APITrace_hsa_amd_memory_pool_can_migrate& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_memory_pool_can_migrate& operator = (const HSA_APITrace_hsa_amd_memory_pool_can_migrate& rhs);
+    HSA_APITrace_hsa_amd_memory_pool_can_migrate& operator= (const HSA_APITrace_hsa_amd_memory_pool_can_migrate& rhs) = delete;
 
     hsa_amd_memory_pool_t m_src_memory_pool; ///< Parameter passed to hsa_amd_memory_pool_can_migrate
     hsa_amd_memory_pool_t m_dst_memory_pool; ///< Parameter passed to hsa_amd_memory_pool_can_migrate
@@ -1009,11 +1066,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_memory_migrate(const HSA_APITrace_hsa_amd_memory_migrate& rhs);
+    HSA_APITrace_hsa_amd_memory_migrate(const HSA_APITrace_hsa_amd_memory_migrate& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_memory_migrate& operator = (const HSA_APITrace_hsa_amd_memory_migrate& rhs);
+    HSA_APITrace_hsa_amd_memory_migrate& operator= (const HSA_APITrace_hsa_amd_memory_migrate& rhs) = delete;
 
     const void* m_ptr; ///< Parameter passed to hsa_amd_memory_migrate
     hsa_amd_memory_pool_t m_memory_pool; ///< Parameter passed to hsa_amd_memory_migrate
@@ -1062,11 +1119,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_memory_lock(const HSA_APITrace_hsa_amd_memory_lock& rhs);
+    HSA_APITrace_hsa_amd_memory_lock(const HSA_APITrace_hsa_amd_memory_lock& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_memory_lock& operator = (const HSA_APITrace_hsa_amd_memory_lock& rhs);
+    HSA_APITrace_hsa_amd_memory_lock& operator= (const HSA_APITrace_hsa_amd_memory_lock& rhs) = delete;
 
     void* m_host_ptr; ///< Parameter passed to hsa_amd_memory_lock
     size_t m_size; ///< Parameter passed to hsa_amd_memory_lock
@@ -1111,11 +1168,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_memory_unlock(const HSA_APITrace_hsa_amd_memory_unlock& rhs);
+    HSA_APITrace_hsa_amd_memory_unlock(const HSA_APITrace_hsa_amd_memory_unlock& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_memory_unlock& operator = (const HSA_APITrace_hsa_amd_memory_unlock& rhs);
+    HSA_APITrace_hsa_amd_memory_unlock& operator= (const HSA_APITrace_hsa_amd_memory_unlock& rhs) = delete;
 
     void* m_host_ptr; ///< Parameter passed to hsa_amd_memory_unlock
     hsa_status_t m_retVal; ///< Parameter passed to hsa_amd_memory_unlock
@@ -1158,11 +1215,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_memory_fill(const HSA_APITrace_hsa_amd_memory_fill& rhs);
+    HSA_APITrace_hsa_amd_memory_fill(const HSA_APITrace_hsa_amd_memory_fill& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_memory_fill& operator = (const HSA_APITrace_hsa_amd_memory_fill& rhs);
+    HSA_APITrace_hsa_amd_memory_fill& operator= (const HSA_APITrace_hsa_amd_memory_fill& rhs) = delete;
 
     void* m_ptr; ///< Parameter passed to hsa_amd_memory_fill
     uint32_t m_value; ///< Parameter passed to hsa_amd_memory_fill
@@ -1217,11 +1274,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_interop_map_buffer(const HSA_APITrace_hsa_amd_interop_map_buffer& rhs);
+    HSA_APITrace_hsa_amd_interop_map_buffer(const HSA_APITrace_hsa_amd_interop_map_buffer& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_interop_map_buffer& operator = (const HSA_APITrace_hsa_amd_interop_map_buffer& rhs);
+    HSA_APITrace_hsa_amd_interop_map_buffer& operator= (const HSA_APITrace_hsa_amd_interop_map_buffer& rhs) = delete;
 
     uint32_t m_num_agents; ///< Parameter passed to hsa_amd_interop_map_buffer
     hsa_agent_t* m_agents; ///< Parameter passed to hsa_amd_interop_map_buffer
@@ -1272,11 +1329,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_interop_unmap_buffer(const HSA_APITrace_hsa_amd_interop_unmap_buffer& rhs);
+    HSA_APITrace_hsa_amd_interop_unmap_buffer(const HSA_APITrace_hsa_amd_interop_unmap_buffer& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_interop_unmap_buffer& operator = (const HSA_APITrace_hsa_amd_interop_unmap_buffer& rhs);
+    HSA_APITrace_hsa_amd_interop_unmap_buffer& operator= (const HSA_APITrace_hsa_amd_interop_unmap_buffer& rhs) = delete;
 
     void* m_ptr; ///< Parameter passed to hsa_amd_interop_unmap_buffer
     hsa_status_t m_retVal; ///< Parameter passed to hsa_amd_interop_unmap_buffer
@@ -1325,11 +1382,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_image_create(const HSA_APITrace_hsa_amd_image_create& rhs);
+    HSA_APITrace_hsa_amd_image_create(const HSA_APITrace_hsa_amd_image_create& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_image_create& operator = (const HSA_APITrace_hsa_amd_image_create& rhs);
+    HSA_APITrace_hsa_amd_image_create& operator= (const HSA_APITrace_hsa_amd_image_create& rhs) = delete;
 
     hsa_agent_t m_agent; ///< Parameter passed to hsa_amd_image_create
     const hsa_ext_image_descriptor_t* m_image_descriptor; ///< Parameter passed to hsa_amd_image_create
@@ -1384,11 +1441,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_pointer_info(const HSA_APITrace_hsa_amd_pointer_info& rhs);
+    HSA_APITrace_hsa_amd_pointer_info(const HSA_APITrace_hsa_amd_pointer_info& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_pointer_info& operator = (const HSA_APITrace_hsa_amd_pointer_info& rhs);
+    HSA_APITrace_hsa_amd_pointer_info& operator= (const HSA_APITrace_hsa_amd_pointer_info& rhs) = delete;
 
     void* m_ptr; ///< Parameter passed to hsa_amd_pointer_info
     hsa_amd_pointer_info_t* m_info; ///< Parameter passed to hsa_amd_pointer_info
@@ -1436,11 +1493,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_pointer_info_set_userdata(const HSA_APITrace_hsa_amd_pointer_info_set_userdata& rhs);
+    HSA_APITrace_hsa_amd_pointer_info_set_userdata(const HSA_APITrace_hsa_amd_pointer_info_set_userdata& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_pointer_info_set_userdata& operator = (const HSA_APITrace_hsa_amd_pointer_info_set_userdata& rhs);
+    HSA_APITrace_hsa_amd_pointer_info_set_userdata& operator= (const HSA_APITrace_hsa_amd_pointer_info_set_userdata& rhs) = delete;
 
     void* m_ptr; ///< Parameter passed to hsa_amd_pointer_info_set_userdata
     void* m_userdata; ///< Parameter passed to hsa_amd_pointer_info_set_userdata
@@ -1484,11 +1541,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_ipc_memory_create(const HSA_APITrace_hsa_amd_ipc_memory_create& rhs);
+    HSA_APITrace_hsa_amd_ipc_memory_create(const HSA_APITrace_hsa_amd_ipc_memory_create& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_ipc_memory_create& operator = (const HSA_APITrace_hsa_amd_ipc_memory_create& rhs);
+    HSA_APITrace_hsa_amd_ipc_memory_create& operator= (const HSA_APITrace_hsa_amd_ipc_memory_create& rhs) = delete;
 
     void* m_ptr; ///< Parameter passed to hsa_amd_ipc_memory_create
     size_t m_len; ///< Parameter passed to hsa_amd_ipc_memory_create
@@ -1538,11 +1595,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_ipc_memory_attach(const HSA_APITrace_hsa_amd_ipc_memory_attach& rhs);
+    HSA_APITrace_hsa_amd_ipc_memory_attach(const HSA_APITrace_hsa_amd_ipc_memory_attach& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_ipc_memory_attach& operator = (const HSA_APITrace_hsa_amd_ipc_memory_attach& rhs);
+    HSA_APITrace_hsa_amd_ipc_memory_attach& operator= (const HSA_APITrace_hsa_amd_ipc_memory_attach& rhs) = delete;
 
     const hsa_amd_ipc_memory_t* m_handle; ///< Parameter passed to hsa_amd_ipc_memory_attach
     hsa_amd_ipc_memory_t m_handleVal; ///< Member to hold value passed to hsa_amd_ipc_memory_attach in handle parameter
@@ -1588,14 +1645,109 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_amd_ipc_memory_detach(const HSA_APITrace_hsa_amd_ipc_memory_detach& rhs);
+    HSA_APITrace_hsa_amd_ipc_memory_detach(const HSA_APITrace_hsa_amd_ipc_memory_detach& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_amd_ipc_memory_detach& operator = (const HSA_APITrace_hsa_amd_ipc_memory_detach& rhs);
+    HSA_APITrace_hsa_amd_ipc_memory_detach& operator= (const HSA_APITrace_hsa_amd_ipc_memory_detach& rhs) = delete;
 
     void* m_mapped_ptr; ///< Parameter passed to hsa_amd_ipc_memory_detach
     hsa_status_t m_retVal; ///< Parameter passed to hsa_amd_ipc_memory_detach
+};
+
+///////////////////////////////////////////////////
+/// Class used to trace hsa_amd_ipc_signal_create
+///////////////////////////////////////////////////
+class HSA_APITrace_hsa_amd_ipc_signal_create : public HSAAPIBase
+{
+public:
+    /// Constructor
+    HSA_APITrace_hsa_amd_ipc_signal_create();
+
+    /// Destructor
+    ~HSA_APITrace_hsa_amd_ipc_signal_create();
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString();
+
+    /// Returns the API's arguments formatted as strings
+    /// \return string representation of the API's arguments
+    std::string ToString();
+
+    /// Assigns the API's various parameter values
+    /// \param ullStartTime the start timestamp for hsa_amd_ipc_signal_create
+    /// \param ullEndTime the end timestamp for hsa_amd_ipc_signal_create
+    /// \param signal Parameter passed to hsa_amd_ipc_signal_create
+    /// \param handle Parameter passed to hsa_amd_ipc_signal_create
+    /// \param retVal the return value for hsa_amd_ipc_signal_create
+    void Create(ULONGLONG ullStartTime,
+                ULONGLONG ullEndTime,
+                hsa_signal_t signal,
+                hsa_amd_ipc_signal_t* handle,
+                hsa_status_t retVal);
+
+private:
+    /// Disabled copy constructor
+    /// \rhs item being copied
+    HSA_APITrace_hsa_amd_ipc_signal_create(const HSA_APITrace_hsa_amd_ipc_signal_create& rhs) = delete;
+
+    /// Disabled assignment operator
+    /// \rhs item being assigned
+    HSA_APITrace_hsa_amd_ipc_signal_create& operator= (const HSA_APITrace_hsa_amd_ipc_signal_create& rhs) = delete;
+
+    hsa_signal_t m_signal; ///< Parameter passed to hsa_amd_ipc_signal_create
+    hsa_amd_ipc_signal_t* m_handle; ///< Parameter passed to hsa_amd_ipc_signal_create
+    hsa_amd_ipc_signal_t m_handleVal; ///< Member to hold value passed to hsa_amd_ipc_signal_create in handle parameter
+    hsa_status_t m_retVal; ///< Parameter passed to hsa_amd_ipc_signal_create
+};
+
+///////////////////////////////////////////////////
+/// Class used to trace hsa_amd_ipc_signal_attach
+///////////////////////////////////////////////////
+class HSA_APITrace_hsa_amd_ipc_signal_attach : public HSAAPIBase
+{
+public:
+    /// Constructor
+    HSA_APITrace_hsa_amd_ipc_signal_attach();
+
+    /// Destructor
+    ~HSA_APITrace_hsa_amd_ipc_signal_attach();
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString();
+
+    /// Returns the API's arguments formatted as strings
+    /// \return string representation of the API's arguments
+    std::string ToString();
+
+    /// Assigns the API's various parameter values
+    /// \param ullStartTime the start timestamp for hsa_amd_ipc_signal_attach
+    /// \param ullEndTime the end timestamp for hsa_amd_ipc_signal_attach
+    /// \param handle Parameter passed to hsa_amd_ipc_signal_attach
+    /// \param signal Parameter passed to hsa_amd_ipc_signal_attach
+    /// \param retVal the return value for hsa_amd_ipc_signal_attach
+    void Create(ULONGLONG ullStartTime,
+                ULONGLONG ullEndTime,
+                const hsa_amd_ipc_signal_t* handle,
+                hsa_signal_t* signal,
+                hsa_status_t retVal);
+
+private:
+    /// Disabled copy constructor
+    /// \rhs item being copied
+    HSA_APITrace_hsa_amd_ipc_signal_attach(const HSA_APITrace_hsa_amd_ipc_signal_attach& rhs) = delete;
+
+    /// Disabled assignment operator
+    /// \rhs item being assigned
+    HSA_APITrace_hsa_amd_ipc_signal_attach& operator= (const HSA_APITrace_hsa_amd_ipc_signal_attach& rhs) = delete;
+
+    const hsa_amd_ipc_signal_t* m_handle; ///< Parameter passed to hsa_amd_ipc_signal_attach
+    hsa_amd_ipc_signal_t m_handleVal; ///< Member to hold value passed to hsa_amd_ipc_signal_attach in handle parameter
+    hsa_signal_t* m_signal; ///< Parameter passed to hsa_amd_ipc_signal_attach
+    hsa_signal_t m_signalVal; ///< Member to hold value passed to hsa_amd_ipc_signal_attach in signal parameter
+    hsa_status_t m_retVal; ///< Parameter passed to hsa_amd_ipc_signal_attach
 };
 
 

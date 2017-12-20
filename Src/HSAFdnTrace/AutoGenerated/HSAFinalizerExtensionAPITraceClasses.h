@@ -51,11 +51,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_ext_program_create(const HSA_APITrace_hsa_ext_program_create& rhs);
+    HSA_APITrace_hsa_ext_program_create(const HSA_APITrace_hsa_ext_program_create& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_ext_program_create& operator = (const HSA_APITrace_hsa_ext_program_create& rhs);
+    HSA_APITrace_hsa_ext_program_create& operator= (const HSA_APITrace_hsa_ext_program_create& rhs) = delete;
 
     hsa_machine_model_t m_machine_model; ///< Parameter passed to hsa_ext_program_create
     hsa_profile_t m_profile; ///< Parameter passed to hsa_ext_program_create
@@ -100,11 +100,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_ext_program_destroy(const HSA_APITrace_hsa_ext_program_destroy& rhs);
+    HSA_APITrace_hsa_ext_program_destroy(const HSA_APITrace_hsa_ext_program_destroy& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_ext_program_destroy& operator = (const HSA_APITrace_hsa_ext_program_destroy& rhs);
+    HSA_APITrace_hsa_ext_program_destroy& operator= (const HSA_APITrace_hsa_ext_program_destroy& rhs) = delete;
 
     hsa_ext_program_t m_program; ///< Parameter passed to hsa_ext_program_destroy
     hsa_status_t m_retVal; ///< Parameter passed to hsa_ext_program_destroy
@@ -145,11 +145,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_ext_program_add_module(const HSA_APITrace_hsa_ext_program_add_module& rhs);
+    HSA_APITrace_hsa_ext_program_add_module(const HSA_APITrace_hsa_ext_program_add_module& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_ext_program_add_module& operator = (const HSA_APITrace_hsa_ext_program_add_module& rhs);
+    HSA_APITrace_hsa_ext_program_add_module& operator= (const HSA_APITrace_hsa_ext_program_add_module& rhs) = delete;
 
     hsa_ext_program_t m_program; ///< Parameter passed to hsa_ext_program_add_module
     hsa_ext_module_t m_module; ///< Parameter passed to hsa_ext_program_add_module
@@ -193,11 +193,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_ext_program_iterate_modules(const HSA_APITrace_hsa_ext_program_iterate_modules& rhs);
+    HSA_APITrace_hsa_ext_program_iterate_modules(const HSA_APITrace_hsa_ext_program_iterate_modules& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_ext_program_iterate_modules& operator = (const HSA_APITrace_hsa_ext_program_iterate_modules& rhs);
+    HSA_APITrace_hsa_ext_program_iterate_modules& operator= (const HSA_APITrace_hsa_ext_program_iterate_modules& rhs) = delete;
 
     hsa_ext_program_t m_program; ///< Parameter passed to hsa_ext_program_iterate_modules
     hsa_status_t (*m_callback)(hsa_ext_program_t program, hsa_ext_module_t module, void* data); ///< Parameter passed to hsa_ext_program_iterate_modules
@@ -242,11 +242,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_ext_program_get_info(const HSA_APITrace_hsa_ext_program_get_info& rhs);
+    HSA_APITrace_hsa_ext_program_get_info(const HSA_APITrace_hsa_ext_program_get_info& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_ext_program_get_info& operator = (const HSA_APITrace_hsa_ext_program_get_info& rhs);
+    HSA_APITrace_hsa_ext_program_get_info& operator= (const HSA_APITrace_hsa_ext_program_get_info& rhs) = delete;
 
     hsa_ext_program_t m_program; ///< Parameter passed to hsa_ext_program_get_info
     hsa_ext_program_info_t m_attribute; ///< Parameter passed to hsa_ext_program_get_info
@@ -299,11 +299,11 @@ public:
 private:
     /// Disabled copy constructor
     /// \rhs item being copied
-    HSA_APITrace_hsa_ext_program_finalize(const HSA_APITrace_hsa_ext_program_finalize& rhs);
+    HSA_APITrace_hsa_ext_program_finalize(const HSA_APITrace_hsa_ext_program_finalize& rhs) = delete;
 
     /// Disabled assignment operator
     /// \rhs item being assigned
-    HSA_APITrace_hsa_ext_program_finalize& operator = (const HSA_APITrace_hsa_ext_program_finalize& rhs);
+    HSA_APITrace_hsa_ext_program_finalize& operator= (const HSA_APITrace_hsa_ext_program_finalize& rhs) = delete;
 
     hsa_ext_program_t m_program; ///< Parameter passed to hsa_ext_program_finalize
     hsa_isa_t m_isa; ///< Parameter passed to hsa_ext_program_finalize

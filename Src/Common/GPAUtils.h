@@ -80,9 +80,8 @@ public:
     /// \param uRevisionId Revision Id
     /// \param nMaxPass Maximum number of passes allowed
     /// \param availableCounters Output list of counters
-    /// \param applyGfx9SinglePassWorkaround flag indicating if we need to apply the single pass workaround for Gfx9
     /// \return true if successful
-    bool GetAvailableCountersForDevice(gpa_uint32 uDeviceId, gpa_uint32 uRevisionId, size_t nMaxPass, CounterList& availableCounters, bool applyGfx9SinglePassWorkaround = false);
+    bool GetAvailableCountersForDevice(gpa_uint32 uDeviceId, gpa_uint32 uRevisionId, size_t nMaxPass, CounterList& availableCounters);
 
     /// Sets the list of enabled counters. Can be called after InitGPA to modify the set of enabled counters
     /// \param countersToEnable list of counters to enable
@@ -157,9 +156,8 @@ private:
     /// \param uDeviceid the device id to get counters for
     /// \param uRevisionid the revision id to get counters for
     /// \param nMaxPass Maximum number of passes allowed
-    /// \param applyGfx9SinglePassWorkaround flag indicating if we need to apply the single pass workaround for Gfx9
     /// \return the list of counters for thie specified device
-    CounterList& GetCountersForDevice(gpa_uint32 uDeviceid, gpa_uint32 uRevisionid, size_t nMaxPass, bool applyGfx9SinglePassWorkaround);
+    CounterList& GetCountersForDevice(gpa_uint32 uDeviceid, gpa_uint32 uRevisionid, size_t nMaxPass);
 
     /// Helper function to enable list of counters
     /// \param selectedCounterNames Selected counter names

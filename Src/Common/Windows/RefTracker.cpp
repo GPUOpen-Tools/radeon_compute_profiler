@@ -13,7 +13,7 @@
 RefTrackerCounter::RefTrackerCounter()
 {
     m_IsUsingExternalMutex = false;
-    m_pmutex = new AMDTMutex();
+    m_pmutex = new std::mutex();
 }
 
 RefTrackerCounter::~RefTrackerCounter()
@@ -24,14 +24,14 @@ RefTrackerCounter::~RefTrackerCounter()
     }
 }
 
-RefTrackerCounter::RefTrackerCounter(AMDTMutex* pM)
+RefTrackerCounter::RefTrackerCounter(std::mutex* pM)
 {
     m_IsUsingExternalMutex = true;
     assert(pM);
     m_pmutex = pM;
 }
 
-void RefTrackerCounter::UseExternalMutex(AMDTMutex* pM)
+void RefTrackerCounter::UseExternalMutex(std::mutex* pM)
 {
     if (m_IsUsingExternalMutex == false)
     {
@@ -55,7 +55,7 @@ static DWORD GetThreadsID()
 
 void RefTrackerCounter::operator++(int)
 {
-    AMDTScopeLock lock(m_pmutex);
+    std::lock_guard<std::mutex> lock(*m_pmutex);
 
     DWORD dwThreadId = GetThreadsID();
     std::map<DWORD, int>::iterator it = m_mapInsideWrapper.find(dwThreadId);
@@ -72,7 +72,7 @@ void RefTrackerCounter::operator++(int)
 
 void RefTrackerCounter::operator--(int)
 {
-    AMDTScopeLock lock(m_pmutex);
+    std::lock_guard<std::mutex> lock(*m_pmutex);
 
     DWORD dwThreadId = GetThreadsID();
     std::map<DWORD, int>::iterator it = m_mapInsideWrapper.find(dwThreadId);
@@ -90,7 +90,7 @@ void RefTrackerCounter::operator--(int)
 
 bool RefTrackerCounter::operator==(DWORD v)
 {
-    AMDTScopeLock lock(m_pmutex);
+    std::lock_guard<std::mutex> lock(*m_pmutex);
 
     DWORD dwThreadId = GetThreadsID();
     std::map<DWORD, int>::iterator it = m_mapInsideWrapper.find(dwThreadId);
@@ -106,7 +106,7 @@ bool RefTrackerCounter::operator==(DWORD v)
 
 bool RefTrackerCounter::operator>(DWORD v)
 {
-    AMDTScopeLock lock(m_pmutex);
+    std::lock_guard<std::mutex> lock(*m_pmutex);
 
     DWORD dwThreadId = GetThreadsID();
     std::map<DWORD, int>::iterator it = m_mapInsideWrapper.find(dwThreadId);
@@ -121,7 +121,7 @@ bool RefTrackerCounter::operator>(DWORD v)
 
 DWORD RefTrackerCounter::GetRef()
 {
-    AMDTScopeLock lock(m_pmutex);
+    std::lock_guard<std::mutex> lock(*m_pmutex);
 
     DWORD dwThreadId = GetThreadsID();
     std::map<DWORD, int>::iterator it = m_mapInsideWrapper.find(dwThreadId);

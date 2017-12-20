@@ -12,7 +12,6 @@ INCLUDES = \
 	-I$(DYNAMICLIBRARYMODULE_DIR) \
 	-I$(DEVICEINFO_DIR) \
 	-I$(TSINGLETON_DIR) \
-	-I$(AMDTMUTEX_DIR) \
 	-I$(UTF8CPP_DIR) \
 	-I$(GPU_PERF_API_DIR) \
 	-I$(GPUPERFAPIUTILS_DIR) \
@@ -25,7 +24,6 @@ LIB_OBJS =  \
 	./$(OBJ_DIR)/ATPFileUtils.o \
 	./$(OBJ_DIR)/TraceInfoManager.o \
 	./$(OBJ_DIR)/OSUtils.o \
-	./$(OBJ_DIR)/AMDTMutex.o \
 	./$(OBJ_DIR)/FileUtils.o \
 	./$(OBJ_DIR)/GlobalSettings.o \
 	./$(OBJ_DIR)/Logger.o \

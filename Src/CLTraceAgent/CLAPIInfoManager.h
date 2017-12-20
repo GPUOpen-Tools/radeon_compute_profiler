@@ -195,8 +195,8 @@ private:
     CLContextMap            m_clContextMap;                      ///< stl map that maps from cl_context to CLAPI_clCreateContextBase*
     CLKernelMap             m_clKernelMap;                       ///< stl map that maps from cl_kernel to string
     EnqueuedTaskList        m_enqueuedTasks;                     ///< stl vector containing the clEnqueueTask apis
-    AMDTMutex               m_mtxPreviousGEI;                    ///< mutex used to lock access to m_PreviousGEIMap
-    AMDTMutex               m_mtxEnqueuedTask;                   ///< mutex used to lock access to m_enqueuedTasks
+    std::mutex              m_mtxPreviousGEI;                    ///< mutex used to lock access to m_PreviousGEIMap
+    std::mutex              m_mtxEnqueuedTask;                   ///< mutex used to lock access to m_enqueuedTasks
     std::set<CL_FUNC_TYPE>  m_filterAPIs;                        ///< OpenCL APIs that are disabled in the trace, if API is not in m_MustInterceptAPIs list, the API will not be intercept,
                                                                  ///< otherwise, API is intercepted but it won't show up in trace file.
     std::set<CL_FUNC_TYPE>  m_mustInterceptAPIs;                 ///< Some of the APIs like clCreateContext, clCreateCommandQueue and etc are not able to be disabled.

@@ -152,6 +152,12 @@ CL_FUNC_TYPE ToCLFuncType(const std::string& strName)
         s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clEnqueueSVMUnmapAMD"), CL_FUNC_TYPE_clEnqueueSVMUnmapAMD));
         s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clSetKernelArgSVMPointerAMD"), CL_FUNC_TYPE_clSetKernelArgSVMPointerAMD));
         s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clSetKernelExecInfoAMD"), CL_FUNC_TYPE_clSetKernelExecInfoAMD));
+        s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clCreateSsgFileObjectAMD"), CL_FUNC_TYPE_clCreateSsgFileObjectAMD));
+        s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clGetSsgFileObjectInfoAMD"), CL_FUNC_TYPE_clGetSsgFileObjectInfoAMD));
+        s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clRetainSsgFileObjectAMD"), CL_FUNC_TYPE_clRetainSsgFileObjectAMD));
+        s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clReleaseSsgFileObjectAMD"), CL_FUNC_TYPE_clReleaseSsgFileObjectAMD));
+        s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clEnqueueReadSsgFileAMD"), CL_FUNC_TYPE_clEnqueueReadSsgFileAMD));
+        s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clEnqueueWriteSsgFileAMD"), CL_FUNC_TYPE_clEnqueueWriteSsgFileAMD));
     }
 
     map<string, CL_FUNC_TYPE>::iterator it = s_CLAPIMap.find(strName);
@@ -172,5 +178,6 @@ bool IsEnqueueAPI(const unsigned int uiAPIId)
     return (uiAPIId >= CL_FUNC_TYPE_clEnqueueReadBuffer && uiAPIId <= CL_FUNC_TYPE_clEnqueueMarker) ||
            (uiAPIId >= CL_FUNC_TYPE_clEnqueueFillBuffer && uiAPIId <= CL_FUNC_TYPE_clEnqueueBarrierWithWaitList) ||
            (uiAPIId >= CL_FUNC_TYPE_clEnqueueSVMFree && uiAPIId <= CL_FUNC_TYPE_clEnqueueSVMUnmap) ||
-           (uiAPIId >= CL_FUNC_TYPE_clEnqueueSVMFreeAMD && uiAPIId <= CL_FUNC_TYPE_clEnqueueSVMUnmapAMD);
+           (uiAPIId >= CL_FUNC_TYPE_clEnqueueSVMFreeAMD && uiAPIId <= CL_FUNC_TYPE_clEnqueueSVMUnmapAMD) ||
+           (uiAPIId >= CL_FUNC_TYPE_clEnqueueReadSsgFileAMD && uiAPIId <= CL_FUNC_TYPE_clEnqueueWriteSsgFileAMD);
 }

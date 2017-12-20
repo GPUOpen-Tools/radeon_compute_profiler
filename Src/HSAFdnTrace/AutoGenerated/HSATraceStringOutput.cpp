@@ -263,6 +263,7 @@ std::string HSATraceStringUtils::Get_hsa_extension_t_String(hsa_extension_t inpu
             CASE(HSA_EXTENSION_PROFILING_EVENTS);
             CASE(HSA_AMD_FIRST_EXTENSION);
             CASE(HSA_EXTENSION_AMD_LOADER);
+            CASE(HSA_EXTENSION_AMD_AQLPROFILE);
 
         default:
             ss << input;
@@ -2576,6 +2577,35 @@ std::string HSATraceStringUtils::Get_hsa_amd_profiling_async_copy_time_t_Ptr_Str
     }
 }
 
+std::string HSATraceStringUtils::Get_hsa_amd_signal_attribute_t_String(hsa_amd_signal_attribute_t input)
+{
+    std::ostringstream ss;
+
+    switch (static_cast<int>(input))
+    {
+            CASE(HSA_AMD_SIGNAL_AMD_GPU_ONLY);
+            CASE(HSA_AMD_SIGNAL_IPC);
+
+        default:
+            ss << input;
+            break;
+    }
+
+    return ss.str();
+}
+
+std::string HSATraceStringUtils::Get_hsa_amd_signal_attribute_t_Ptr_String(const hsa_amd_signal_attribute_t* pInputPtr, hsa_amd_signal_attribute_t input)
+{
+    if (nullptr == pInputPtr)
+    {
+        return "NULL";
+    }
+    else
+    {
+        return SurroundWithDeRef(Get_hsa_amd_signal_attribute_t_String(input));
+    }
+}
+
 std::string HSATraceStringUtils::Get_hsa_amd_segment_t_String(hsa_amd_segment_t input)
 {
     std::ostringstream ss;
@@ -2764,7 +2794,8 @@ std::string HSATraceStringUtils::Get_hsa_amd_memory_pool_link_info_t_String(hsa_
     ss << StringUtils::ToString(input.atomic_support_32bit) << s_pFieldSeparator;
     ss << StringUtils::ToString(input.atomic_support_64bit) << s_pFieldSeparator;
     ss << StringUtils::ToString(input.coherent_support) << s_pFieldSeparator;
-    ss << HSATraceStringUtils::Get_hsa_amd_link_info_type_t_String(input.link_type);
+    ss << HSATraceStringUtils::Get_hsa_amd_link_info_type_t_String(input.link_type) << s_pFieldSeparator;
+    ss << StringUtils::ToString(input.numa_distance);
 
     return SurroundWithStruct(ss.str());
 }
@@ -2914,6 +2945,57 @@ std::string HSATraceStringUtils::Get_hsa_amd_ipc_memory_t_Ptr_String(const hsa_a
     }
 }
 
+std::string HSATraceStringUtils::Get_hsa_amd_event_t_String(hsa_amd_event_t input)
+{
+    std::ostringstream ss;
+
+    switch (static_cast<int>(input))
+    {
+            CASE(GPU_MEMORY_FAULT_EVENT);
+
+        default:
+            ss << input;
+            break;
+    }
+
+    return ss.str();
+}
+
+std::string HSATraceStringUtils::Get_hsa_amd_event_t_Ptr_String(const hsa_amd_event_t* pInputPtr, hsa_amd_event_t input)
+{
+    if (nullptr == pInputPtr)
+    {
+        return "NULL";
+    }
+    else
+    {
+        return SurroundWithDeRef(Get_hsa_amd_event_t_String(input));
+    }
+}
+
+std::string HSATraceStringUtils::Get_hsa_amd_gpu_memory_fault_info_t_String(hsa_amd_gpu_memory_fault_info_t input)
+{
+    std::ostringstream ss;
+
+    ss << HSATraceStringUtils::Get_hsa_agent_t_String(input.agent) << s_pFieldSeparator;
+    ss << StringUtils::ToString(input.virtual_address) << s_pFieldSeparator;
+    ss << StringUtils::ToString(input.fault_reason_mask);
+
+    return SurroundWithStruct(ss.str());
+}
+
+std::string HSATraceStringUtils::Get_hsa_amd_gpu_memory_fault_info_t_Ptr_String(const hsa_amd_gpu_memory_fault_info_t* pInputPtr, hsa_amd_gpu_memory_fault_info_t input)
+{
+    if (nullptr == pInputPtr)
+    {
+        return "NULL";
+    }
+    else
+    {
+        return SurroundWithDeRef(Get_hsa_amd_gpu_memory_fault_info_t_String(input));
+    }
+}
+
 std::string HSATraceStringUtils::Get_hsa_ven_amd_loader_code_object_storage_type_t_String(hsa_ven_amd_loader_code_object_storage_type_t input)
 {
     std::ostringstream ss;
@@ -2969,6 +3051,335 @@ std::string HSATraceStringUtils::Get_hsa_ven_amd_loader_segment_descriptor_t_Ptr
     else
     {
         return SurroundWithDeRef(Get_hsa_ven_amd_loader_segment_descriptor_t_String(input));
+    }
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_loader_loaded_code_object_kind_t_String(hsa_ven_amd_loader_loaded_code_object_kind_t input)
+{
+    std::ostringstream ss;
+
+    switch (static_cast<int>(input))
+    {
+            CASE(HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_KIND_PROGRAM);
+            CASE(HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_KIND_AGENT);
+
+        default:
+            ss << input;
+            break;
+    }
+
+    return ss.str();
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_loader_loaded_code_object_kind_t_Ptr_String(const hsa_ven_amd_loader_loaded_code_object_kind_t* pInputPtr, hsa_ven_amd_loader_loaded_code_object_kind_t input)
+{
+    if (nullptr == pInputPtr)
+    {
+        return "NULL";
+    }
+    else
+    {
+        return SurroundWithDeRef(Get_hsa_ven_amd_loader_loaded_code_object_kind_t_String(input));
+    }
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_loader_loaded_code_object_info_t_String(hsa_ven_amd_loader_loaded_code_object_info_t input)
+{
+    std::ostringstream ss;
+
+    switch (static_cast<int>(input))
+    {
+            CASE(HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_EXECUTABLE);
+            CASE(HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_KIND);
+            CASE(HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_AGENT);
+            CASE(HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_CODE_OBJECT_STORAGE_TYPE);
+            CASE(HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_CODE_OBJECT_STORAGE_MEMORY_BASE);
+            CASE(HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_CODE_OBJECT_STORAGE_MEMORY_SIZE);
+            CASE(HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_CODE_OBJECT_STORAGE_FILE);
+            CASE(HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_LOAD_DELTA);
+            CASE(HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_LOAD_BASE);
+            CASE(HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_LOAD_SIZE);
+
+        default:
+            ss << input;
+            break;
+    }
+
+    return ss.str();
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_loader_loaded_code_object_info_t_Ptr_String(const hsa_ven_amd_loader_loaded_code_object_info_t* pInputPtr, hsa_ven_amd_loader_loaded_code_object_info_t input)
+{
+    if (nullptr == pInputPtr)
+    {
+        return "NULL";
+    }
+    else
+    {
+        return SurroundWithDeRef(Get_hsa_ven_amd_loader_loaded_code_object_info_t_String(input));
+    }
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_event_type_t_String(hsa_ven_amd_aqlprofile_event_type_t input)
+{
+    std::ostringstream ss;
+
+    switch (static_cast<int>(input))
+    {
+            CASE(HSA_VEN_AMD_AQLPROFILE_EVENT_TYPE_PMC);
+            CASE(HSA_VEN_AMD_AQLPROFILE_EVENT_TYPE_SQTT);
+
+        default:
+            ss << input;
+            break;
+    }
+
+    return ss.str();
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_event_type_t_Ptr_String(const hsa_ven_amd_aqlprofile_event_type_t* pInputPtr, hsa_ven_amd_aqlprofile_event_type_t input)
+{
+    if (nullptr == pInputPtr)
+    {
+        return "NULL";
+    }
+    else
+    {
+        return SurroundWithDeRef(Get_hsa_ven_amd_aqlprofile_event_type_t_String(input));
+    }
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_block_name_t_String(hsa_ven_amd_aqlprofile_block_name_t input)
+{
+    std::ostringstream ss;
+
+    switch (static_cast<int>(input))
+    {
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_CPC);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_CPF);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_GDS);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_GRBM);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_GRBMSE);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_SPI);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_SQ);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_SQCS);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_SRBM);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_SX);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_TA);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_TCA);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_TCC);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_TCP);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_TD);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_MCARB);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_MCHUB);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_MCMCBVM);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_MCSEQ);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_MCVML2);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_MCXBAR);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_ATC);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_ATCL2);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_GCEA);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCK_NAME_RPB);
+            CASE(HSA_VEN_AMD_AQLPROFILE_BLOCKS_NUMBER);
+
+        default:
+            ss << input;
+            break;
+    }
+
+    return ss.str();
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_block_name_t_Ptr_String(const hsa_ven_amd_aqlprofile_block_name_t* pInputPtr, hsa_ven_amd_aqlprofile_block_name_t input)
+{
+    if (nullptr == pInputPtr)
+    {
+        return "NULL";
+    }
+    else
+    {
+        return SurroundWithDeRef(Get_hsa_ven_amd_aqlprofile_block_name_t_String(input));
+    }
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_event_t_String(hsa_ven_amd_aqlprofile_event_t input)
+{
+    std::ostringstream ss;
+
+    ss << HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_block_name_t_String(input.block_name) << s_pFieldSeparator;
+    ss << StringUtils::ToString(input.block_index) << s_pFieldSeparator;
+    ss << StringUtils::ToString(input.counter_id);
+
+    return SurroundWithStruct(ss.str());
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_event_t_Ptr_String(const hsa_ven_amd_aqlprofile_event_t* pInputPtr, hsa_ven_amd_aqlprofile_event_t input)
+{
+    if (nullptr == pInputPtr)
+    {
+        return "NULL";
+    }
+    else
+    {
+        return SurroundWithDeRef(Get_hsa_ven_amd_aqlprofile_event_t_String(input));
+    }
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_parameter_name_t_String(hsa_ven_amd_aqlprofile_parameter_name_t input)
+{
+    std::ostringstream ss;
+
+    switch (static_cast<int>(input))
+    {
+            CASE(HSA_VEN_AMD_AQLPROFILE_PARAMETER_NAME_COMPUTE_UNIT_TARGET);
+            CASE(HSA_VEN_AMD_AQLPROFILE_PARAMETER_NAME_VM_ID_MASK);
+            CASE(HSA_VEN_AMD_AQLPROFILE_PARAMETER_NAME_MASK);
+            CASE(HSA_VEN_AMD_AQLPROFILE_PARAMETER_NAME_TOKEN_MASK);
+            CASE(HSA_VEN_AMD_AQLPROFILE_PARAMETER_NAME_TOKEN_MASK2);
+
+        default:
+            ss << input;
+            break;
+    }
+
+    return ss.str();
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_parameter_name_t_Ptr_String(const hsa_ven_amd_aqlprofile_parameter_name_t* pInputPtr, hsa_ven_amd_aqlprofile_parameter_name_t input)
+{
+    if (nullptr == pInputPtr)
+    {
+        return "NULL";
+    }
+    else
+    {
+        return SurroundWithDeRef(Get_hsa_ven_amd_aqlprofile_parameter_name_t_String(input));
+    }
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_parameter_t_String(hsa_ven_amd_aqlprofile_parameter_t input)
+{
+    std::ostringstream ss;
+
+    ss << HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_parameter_name_t_String(input.parameter_name) << s_pFieldSeparator;
+    ss << StringUtils::ToString(input.value);
+
+    return SurroundWithStruct(ss.str());
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_parameter_t_Ptr_String(const hsa_ven_amd_aqlprofile_parameter_t* pInputPtr, hsa_ven_amd_aqlprofile_parameter_t input)
+{
+    if (nullptr == pInputPtr)
+    {
+        return "NULL";
+    }
+    else
+    {
+        return SurroundWithDeRef(Get_hsa_ven_amd_aqlprofile_parameter_t_String(input));
+    }
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_descriptor_t_String(hsa_ven_amd_aqlprofile_descriptor_t input)
+{
+    std::ostringstream ss;
+
+    ss << StringUtils::ToString(input.ptr) << s_pFieldSeparator;
+    ss << StringUtils::ToString(input.size);
+
+    return SurroundWithStruct(ss.str());
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_descriptor_t_Ptr_String(const hsa_ven_amd_aqlprofile_descriptor_t* pInputPtr, hsa_ven_amd_aqlprofile_descriptor_t input)
+{
+    if (nullptr == pInputPtr)
+    {
+        return "NULL";
+    }
+    else
+    {
+        return SurroundWithDeRef(Get_hsa_ven_amd_aqlprofile_descriptor_t_String(input));
+    }
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_profile_t_String(hsa_ven_amd_aqlprofile_profile_t input)
+{
+    std::ostringstream ss;
+
+    ss << HSATraceStringUtils::Get_hsa_agent_t_String(input.agent) << s_pFieldSeparator;
+    ss << HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_event_type_t_String(input.type) << s_pFieldSeparator;
+    ss << StringUtils::ToString(input.events) << s_pFieldSeparator;
+    ss << StringUtils::ToString(input.event_count) << s_pFieldSeparator;
+    ss << StringUtils::ToString(input.parameters) << s_pFieldSeparator;
+    ss << StringUtils::ToString(input.parameter_count) << s_pFieldSeparator;
+    ss << HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_descriptor_t_String(input.output_buffer) << s_pFieldSeparator;
+    ss << HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_descriptor_t_String(input.command_buffer);
+
+    return SurroundWithStruct(ss.str());
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_profile_t_Ptr_String(const hsa_ven_amd_aqlprofile_profile_t* pInputPtr, hsa_ven_amd_aqlprofile_profile_t input)
+{
+    if (nullptr == pInputPtr)
+    {
+        return "NULL";
+    }
+    else
+    {
+        return SurroundWithDeRef(Get_hsa_ven_amd_aqlprofile_profile_t_String(input));
+    }
+}
+
+std::string HSATraceStringUtils::Get_hsa_ext_amd_aql_pm4_packet_t_String(hsa_ext_amd_aql_pm4_packet_t input)
+{
+    std::ostringstream ss;
+
+    ss << StringUtils::ToString(input.header) << s_pFieldSeparator;
+    ss << HSATraceStringUtils::GetArrayString(input.pm4_command, 27, StringUtils::ToString) << s_pFieldSeparator;
+    ss << HSATraceStringUtils::Get_hsa_signal_t_String(input.completion_signal);
+
+    return SurroundWithStruct(ss.str());
+}
+
+std::string HSATraceStringUtils::Get_hsa_ext_amd_aql_pm4_packet_t_Ptr_String(const hsa_ext_amd_aql_pm4_packet_t* pInputPtr, hsa_ext_amd_aql_pm4_packet_t input)
+{
+    if (nullptr == pInputPtr)
+    {
+        return "NULL";
+    }
+    else
+    {
+        return SurroundWithDeRef(Get_hsa_ext_amd_aql_pm4_packet_t_String(input));
+    }
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_info_type_t_String(hsa_ven_amd_aqlprofile_info_type_t input)
+{
+    std::ostringstream ss;
+
+    switch (static_cast<int>(input))
+    {
+            CASE(HSA_VEN_AMD_AQLPROFILE_INFO_COMMAND_BUFFER_SIZE);
+            CASE(HSA_VEN_AMD_AQLPROFILE_INFO_PMC_DATA_SIZE);
+            CASE(HSA_VEN_AMD_AQLPROFILE_INFO_PMC_DATA);
+            CASE(HSA_VEN_AMD_AQLPROFILE_INFO_SQTT_DATA);
+
+        default:
+            ss << input;
+            break;
+    }
+
+    return ss.str();
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_info_type_t_Ptr_String(const hsa_ven_amd_aqlprofile_info_type_t* pInputPtr, hsa_ven_amd_aqlprofile_info_type_t input)
+{
+    if (nullptr == pInputPtr)
+    {
+        return "NULL";
+    }
+    else
+    {
+        return SurroundWithDeRef(Get_hsa_ven_amd_aqlprofile_info_type_t_String(input));
     }
 }
 

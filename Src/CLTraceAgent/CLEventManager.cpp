@@ -46,7 +46,7 @@ void CLEvent::Unmap()
 
 CLEventManager::CLEventManager(void)
 {
-    m_pMtx = new(nothrow) AMDTMutex("CLEventManagerMutex");
+    m_pMtx = new(nothrow) std::recursive_mutex();
     SpAssert(m_pMtx != NULL);
 }
 
@@ -58,7 +58,7 @@ CLEventManager::~CLEventManager(void)
 void CLEventManager::FlushTraceData(bool bForceFlush)
 {
     SP_UNREFERENCED_PARAMETER(bForceFlush);
-    m_mtxFlush.Lock();
+    m_mtxFlush.lock();
     osProcessId pid = osGetCurrentProcessId();
     TraceInfoMap& nonActiveMap = m_TraceInfoMap[ 1 - m_iActiveMap ];
 
@@ -92,7 +92,7 @@ void CLEventManager::FlushTraceData(bool bForceFlush)
     }
 
     fout.close();
-    m_mtxFlush.Unlock();
+    m_mtxFlush.unlock();
 }
 
 CLEventRawInfo* CLEventManager::AddEventRawInfo(cl_event event, cl_int status, cl_long ts)
@@ -116,7 +116,7 @@ CLEventRawInfo* CLEventManager::AddEventRawInfo(cl_event event, cl_int status, c
 
 CLEventPtr CLEventManager::AddEvent(cl_event event)
 {
-    AMDTScopeLock lock(m_pMtx);
+    std::lock_guard<std::recursive_mutex> lock(*m_pMtx);
 
     if (nullptr != event)
     {
@@ -151,7 +151,7 @@ CLEventPtr CLEventManager::AddEvent(cl_event event)
 
 void CLEventManager::RemoveEvent(cl_event event)
 {
-    AMDTScopeLock lock(m_pMtx);
+    std::lock_guard<std::recursive_mutex> lock(*m_pMtx);
 
     CLEventMap::iterator eventIter = m_clEventMap.find(event);
 
@@ -164,7 +164,7 @@ void CLEventManager::RemoveEvent(cl_event event)
 
 CLEventPtr CLEventManager::UpdateEvent(cl_event event, bool isUserEvent, CLEnqueueAPIBase* owner)
 {
-    AMDTScopeLock lock(m_pMtx);
+    std::lock_guard<std::recursive_mutex> lock(*m_pMtx);
 
     CLEventPtr clEvent(nullptr);
 
@@ -223,7 +223,7 @@ CLEventPtr CLEventManager::UpdateEvent(cl_event event, bool isUserEvent, CLEnque
 
 CLEventPtr CLEventManager::GetCLEvent(cl_event event)
 {
-    AMDTScopeLock lock(m_pMtx);
+    std::lock_guard<std::recursive_mutex> lock(*m_pMtx);
 
     CLEventMap::iterator it = m_clEventMap.find(event);
 

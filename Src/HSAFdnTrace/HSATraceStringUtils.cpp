@@ -1344,3 +1344,158 @@ std::string HSATraceStringUtils::Get_hsa_wavefront_get_info_AttributeString(void
     }
 }
 
+unsigned int HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_get_info_AttributeSize(hsa_ven_amd_aqlprofile_info_type_t attribute)
+{
+    switch (attribute)
+    {
+        // uint32_t
+        case HSA_VEN_AMD_AQLPROFILE_INFO_COMMAND_BUFFER_SIZE:
+        case HSA_VEN_AMD_AQLPROFILE_INFO_PMC_DATA_SIZE:
+            return sizeof(uint32_t);
+
+        case HSA_VEN_AMD_AQLPROFILE_INFO_PMC_DATA:
+        case HSA_VEN_AMD_AQLPROFILE_INFO_SQTT_DATA:
+            return sizeof(uint64_t);
+
+    default:
+        return 0;
+    }
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_get_info_AttributeString(void* value, hsa_ven_amd_aqlprofile_info_type_t attribute, hsa_status_t retVal)
+{
+    if (NULL == value)
+    {
+        return "NULL";
+    }
+    else
+    {
+        std::ostringstream ss;
+
+        if (HSA_STATUS_SUCCESS == retVal)
+        {
+            switch (attribute)
+            {
+
+                // uint32_t
+                case HSA_VEN_AMD_AQLPROFILE_INFO_COMMAND_BUFFER_SIZE:
+                case HSA_VEN_AMD_AQLPROFILE_INFO_PMC_DATA_SIZE:
+                    ss << (*(static_cast<uint32_t*>(value)));
+                    break;
+
+                // uint64_t
+                case HSA_VEN_AMD_AQLPROFILE_INFO_PMC_DATA:
+                case HSA_VEN_AMD_AQLPROFILE_INFO_SQTT_DATA:
+                    ss << (*(static_cast<uint64_t*>(value)));
+                    break;
+
+                default:
+                    ss << StringUtils::ToString(*(static_cast<int*>(value)));
+                    break;
+            }
+        }
+
+        return SurroundWithDeRef(ss.str());
+    }
+}
+
+unsigned int HSATraceStringUtils::Get_hsa_ven_amd_loader_loaded_code_object_get_info_AttributeSize(hsa_ven_amd_loader_loaded_code_object_info_t attribute)
+{
+    switch (attribute)
+    {
+        // hsa_executable_t
+        case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_EXECUTABLE:
+            return sizeof(hsa_executable_t);
+
+        // hsa_ven_amd_loader_loaded_code_object_kind_t
+        case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_KIND:
+            return sizeof(hsa_ven_amd_loader_loaded_code_object_kind_t);
+
+        // hsa_agent_t
+        case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_AGENT:
+            return sizeof(hsa_agent_t);
+
+        // hsa_ven_amd_loader_code_object_storage_type_t
+        case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_CODE_OBJECT_STORAGE_TYPE:
+            return sizeof(hsa_ven_amd_loader_code_object_storage_type_t);
+
+        // uint64_t
+        case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_CODE_OBJECT_STORAGE_MEMORY_BASE:
+        case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_CODE_OBJECT_STORAGE_MEMORY_SIZE:
+        case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_LOAD_BASE:
+        case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_LOAD_SIZE:
+            return sizeof(uint64_t);
+
+        // int
+        case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_CODE_OBJECT_STORAGE_FILE:
+            return sizeof(int);
+
+        // int64_t
+        case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_LOAD_DELTA:
+            return sizeof(int64_t);
+
+    default:
+        return 0;
+    }
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_loader_loaded_code_object_get_info_AttributeString(void* value, hsa_ven_amd_loader_loaded_code_object_info_t attribute, hsa_status_t retVal)
+{
+    if (NULL == value)
+    {
+        return "NULL";
+    }
+    else
+    {
+        std::ostringstream ss;
+
+        if (HSA_STATUS_SUCCESS == retVal)
+        {
+            switch (attribute)
+            {
+                case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_EXECUTABLE:
+                    ss << HSATraceStringUtils::Get_hsa_executable_t_String(*(static_cast<hsa_executable_t*>(value)));
+                    break;
+
+                // hsa_ven_amd_loader_loaded_code_object_kind_t
+                case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_KIND:
+                    ss << HSATraceStringUtils::Get_hsa_ven_amd_loader_loaded_code_object_kind_t_String(*(static_cast<hsa_ven_amd_loader_loaded_code_object_kind_t*>(value)));
+                    break;
+
+                // hsa_agent_t
+                case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_AGENT:
+                    ss << HSATraceStringUtils::Get_hsa_agent_t_String(*(static_cast<hsa_agent_t*>(value)));
+                    break;
+
+                // hsa_ven_amd_loader_code_object_storage_type_t
+                case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_CODE_OBJECT_STORAGE_TYPE:
+                    ss << HSATraceStringUtils::Get_hsa_ven_amd_loader_code_object_storage_type_t_String(*(static_cast<hsa_ven_amd_loader_code_object_storage_type_t*>(value)));                    
+                    break;
+
+                // uint64_t
+                case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_CODE_OBJECT_STORAGE_MEMORY_BASE:
+                case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_CODE_OBJECT_STORAGE_MEMORY_SIZE:
+                case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_LOAD_BASE:
+                case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_LOAD_SIZE:
+                    ss << (*(static_cast<uint64_t*>(value)));
+                    break;
+
+                // int
+                case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_CODE_OBJECT_STORAGE_FILE:
+                    ss << (*(static_cast<int*>(value)));
+                    break;
+
+                // int64_t
+                case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_LOAD_DELTA:
+                    ss << (*(static_cast<int64_t*>(value)));
+                    break;
+
+                default:
+                    ss << StringUtils::ToString(*(static_cast<int*>(value)));
+                    break;
+            }
+        }
+
+        return SurroundWithDeRef(ss.str());
+    }
+}

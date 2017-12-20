@@ -9,6 +9,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <algorithm>
+#include <mutex>
 #include "CLProfilerMineCLEntry.h"
 #include "CLFunctionDefs.h"
 #include "CLProfilerMineCLMemory.h"
@@ -21,13 +22,12 @@
 #include "DeviceInfoUtils.h"
 
 #include "../Common/SeqIDGenerator.h"
-#include "AMDTMutex.h"
 #include "CLDeviceReplacer.h"
 
 using std::cout;
 
 CLGPAProfiler g_Profiler;
-static AMDTMutex s_mtx("CLProfile");
+static std::mutex s_mtx;
 
 /// Assigns a real function pointer to an entry in g_realExtensionFunctionTable and
 /// returns the Mine_* version
@@ -175,8 +175,8 @@ Mine_clCreateKernel(cl_program  program,
 /// \return index of the item added or removed.  -1 in requested to remove a kernel that was not in the list
 static int AddOrRemoveKernel(cl_kernel kernel, bool doAdd)
 {
-    static AMDTMutex s_Mutex("AddOrRemoveKernel mutex");
-    AMDTScopeLock sl(s_Mutex);
+    static std::mutex s_mutex;
+    std::lock_guard<std::mutex> sl(s_mutex);
 
     // map a kernel to a unique id
     static std::map<cl_kernel, unsigned int> s_kernelMap;
@@ -221,8 +221,8 @@ static int AddOrRemoveKernel(cl_kernel kernel, bool doAdd)
 /// \return string suffix that can be appended to a kernel name to uniquely identify the kernel instance
 static std::string GetKernelSuffix(cl_kernel kernel, cl_device_id device)
 {
-    static AMDTMutex s_Mutex("GetKernelSuffix mutex");
-    AMDTScopeLock sl(s_Mutex);
+    static std::mutex s_mutex;
+    std::lock_guard<std::mutex> sl(s_mutex);
     // map a device to a unique id
     static std::map<cl_device_id, unsigned int> s_deviceMap;
 
@@ -318,7 +318,7 @@ Mine_clEnqueueNDRangeKernel(cl_command_queue commandQueue,
     osThreadId tid;
     unsigned int seqid = 0;
     SeqIDGenerator::Instance()->GenerateID(&tid, &seqid);
-    AMDTScopeLock lock(s_mtx);
+    std::lock_guard<std::mutex> lock(s_mtx);
 
     CLUserEvent* userEvent = g_Profiler.HasUserEvent(pEventWaitList, uEventWaitList);
 
@@ -2174,6 +2174,97 @@ Mine_clEnqueueSVMUnmapAMD(cl_command_queue command_queue,
                                                            event);
 }
 
+cl_file_amd CL_API_CALL
+Mine_clCreateSsgFileObjectAMD(cl_context        context,
+                              cl_file_flags_amd flags,
+                              const wchar_t*    file_name,
+                              cl_int*           errcode_ret)
+{
+    SeqIDGenerator::Instance()->GenerateID();
+    return g_realExtensionFunctionTable.CreateSsgFileObjectAMD(context,
+                                                               flags,
+                                                               file_name,
+                                                               errcode_ret);
+}
+
+cl_int CL_API_CALL
+Mine_clGetSsgFileObjectInfoAMD(cl_file_amd      file,
+                               cl_file_info_amd param_name,
+                               size_t           param_value_size,
+                               void*            param_value,
+                               size_t*          param_value_size_ret)
+{
+    SeqIDGenerator::Instance()->GenerateID();
+    return g_realExtensionFunctionTable.GetSsgFileObjectInfoAMD(file,
+                                                                param_name,
+                                                                param_value_size,
+                                                                param_value,
+                                                                param_value_size_ret);
+}
+
+cl_int CL_API_CALL
+Mine_clRetainSsgFileObjectAMD(cl_file_amd file)
+{
+    SeqIDGenerator::Instance()->GenerateID();
+    return g_realExtensionFunctionTable.RetainSsgFileObjectAMD(file);
+}
+
+cl_int CL_API_CALL
+Mine_clReleaseSsgFileObjectAMD(cl_file_amd file)
+{
+    SeqIDGenerator::Instance()->GenerateID();
+    return g_realExtensionFunctionTable.ReleaseSsgFileObjectAMD(file);
+}
+
+cl_int CL_API_CALL
+Mine_clEnqueueReadSsgFileAMD(cl_command_queue command_queue,
+                             cl_mem           buffer,
+                             cl_bool          blocking_read,
+                             size_t           buffer_offset,
+                             size_t           cb,
+                             cl_file_amd      file,
+                             size_t           file_offset,
+                             cl_uint          num_events_in_wait_list,
+                             const cl_event*  event_wait_list,
+                             cl_event*        event)
+{
+    SeqIDGenerator::Instance()->GenerateID();
+    return g_realExtensionFunctionTable.EnqueueReadSsgFileAMD(command_queue,
+                                                              buffer,
+                                                              blocking_read,
+                                                              buffer_offset,
+                                                              cb,
+                                                              file,
+                                                              file_offset,
+                                                              num_events_in_wait_list,
+                                                              event_wait_list,
+                                                              event);
+}
+
+cl_int CL_API_CALL
+Mine_clEnqueueWriteSsgFileAMD(cl_command_queue command_queue,
+                              cl_mem           buffer,
+                              cl_bool          blocking_write,
+                              size_t           buffer_offset,
+                              size_t           cb,
+                              cl_file_amd      file,
+                              size_t           file_offset,
+                              cl_uint          num_events_in_wait_list,
+                              const cl_event*  event_wait_list,
+                              cl_event*        event)
+{
+    SeqIDGenerator::Instance()->GenerateID();
+    return g_realExtensionFunctionTable.EnqueueWriteSsgFileAMD(command_queue,
+                                                               buffer,
+                                                               blocking_write,
+                                                               buffer_offset,
+                                                               cb,
+                                                               file,
+                                                               file_offset,
+                                                               num_events_in_wait_list,
+                                                               event_wait_list,
+                                                               event);
+}
 
 //******End of Seq track*********************//
 
@@ -2359,6 +2450,30 @@ void* AssignExtensionFunctionPointer(const char* pFuncName, void* pRealFuncPtr)
 
             case CL_FUNC_TYPE_clSetKernelExecInfoAMD:
                 pRetVal = (void*)Mine_clSetKernelExecInfoAMD;
+                break;
+
+            case CL_FUNC_TYPE_clCreateSsgFileObjectAMD:
+                pRetVal = (void*)Mine_clCreateSsgFileObjectAMD;
+                break;
+
+            case CL_FUNC_TYPE_clGetSsgFileObjectInfoAMD:
+                pRetVal = (void*)Mine_clGetSsgFileObjectInfoAMD;
+                break;
+
+            case CL_FUNC_TYPE_clRetainSsgFileObjectAMD:
+                pRetVal = (void*)Mine_clRetainSsgFileObjectAMD;
+                break;
+
+            case CL_FUNC_TYPE_clReleaseSsgFileObjectAMD:
+                pRetVal = (void*)Mine_clReleaseSsgFileObjectAMD;
+                break;
+
+            case CL_FUNC_TYPE_clEnqueueReadSsgFileAMD:
+                pRetVal = (void*)Mine_clEnqueueReadSsgFileAMD;
+                break;
+
+            case CL_FUNC_TYPE_clEnqueueWriteSsgFileAMD:
+                pRetVal = (void*)Mine_clEnqueueWriteSsgFileAMD;
                 break;
 
             default:

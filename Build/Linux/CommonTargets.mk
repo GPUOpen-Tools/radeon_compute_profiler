@@ -79,9 +79,6 @@ $(OBJ_DIR)/%.o: $(DEVICEINFO_DIR)/%.cpp
 $(OBJ_DIR)/%.o: $(DEVICEINFO_INTERNAL_DIR)/%.cpp
 	$(BUILD_SRC)
 
-$(OBJ_DIR)/%.o: $(AMDTMUTEX_DIR)/%.cpp
-	$(BUILD_SRC)
-
 $(OBJ_DIR)/%.o: $(ACLMODULEMANAGER_DIR)/%.cpp
 	$(BUILD_SRC)
 

@@ -23,13 +23,13 @@ HSATimeCollectorGlobals::HSATimeCollectorGlobals() :
 
 void HSASignalQueue::AddSignalToBack(const HSAPacketSignalReplacer& signal)
 {
-    AMDTScopeLock lock(m_signalQueueMtx);
+    std::lock_guard<std::mutex> lock(m_signalQueueMtx);
     m_signalQueue.push(signal);
 }
 
 void HSASignalQueue::GetSignalFromFront(HSAPacketSignalReplacer& outSignal)
 {
-    AMDTScopeLock lock(m_signalQueueMtx);
+    std::lock_guard<std::mutex> lock(m_signalQueueMtx);
     outSignal = m_signalQueue.front();
     m_signalQueue.pop();
 }

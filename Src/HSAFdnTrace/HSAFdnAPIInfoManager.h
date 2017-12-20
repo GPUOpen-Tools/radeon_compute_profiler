@@ -11,10 +11,9 @@
 #include <hsa_ext_profiler.h>
 
 #include <unordered_map>
+#include <mutex>
 
 #include <AMDTOSWrappers/Include/osThread.h>
-
-#include <AMDTMutex.h>
 
 #include "../Common/APIInfoManagerBase.h"
 #include "HSAAPIBase.h"
@@ -99,7 +98,7 @@ public:
     /// \param pQueue the queue whose index is needed
     /// \param[out] queueId the id of the specified queue (if found)
     /// \return true if the queue is known, false otherwise
-    bool GetQueueId(const hsa_queue_t* pQueue, uint64_t& queueId) const;
+    bool GetQueueId(const hsa_queue_t* pQueue, uint64_t& queueId);
 
     /// Adds the specified signal to the list of async copy signals that need to be tracked.
     /// \param completionSignal the signal that should be tracked
@@ -202,10 +201,12 @@ private:
     std::set<HSA_API_Type> m_filterAPIs;                    ///< HSA APIs that are not traced due to API filtering
     std::set<HSA_API_Type> m_mustInterceptAPIs;             ///< HSA APIs that must be intercepted (even when they are filtered out and not traced)
     QueueIdMap             m_queueIdMap;                    ///< map of a queue to that queue's index (basically creation order)
+    uint64_t               m_queueCreationCount;            ///< count of queues created
+    std::mutex             m_queueMapMtx;                   ///< mutex to guard access to m_queueIdMap
     AsyncCopyInfoList      m_asyncCopyInfoList;             ///< list of async copy information
     PacketList             m_packetList;                    ///< list of packets
-    AMDTMutex              m_asyncTimeStampsMtx;            ///< mutex to guard access to m_asyncCopyInfoList
-    AMDTMutex              m_packetTraceMtx;                ///< mutex to guard access to m_packetList
+    std::mutex             m_asyncTimeStampsMtx;            ///< mutex to guard access to m_asyncCopyInfoList
+    std::mutex             m_packetTraceMtx;                ///< mutex to guard access to m_packetList
     bool                   m_bDelayStartEnabled;            ///< flag indicating whether or not the profiler should start with delay or not
     bool                   m_bProfilerDurationEnabled;      ///< flag indiacating whether profiler should only run for certain duration
     unsigned long          m_delayInMilliseconds;           ///< millieconds to delay for profiler to start
@@ -213,7 +214,7 @@ private:
     ProfilerTimer*         m_pDelayTimer;                   ///< timer for handling delay timer for the profile agent
     ProfilerTimer*         m_pDurationTimer;                ///< timer for handling duration timer for the profile agent
     ReplacementSignalMap   m_signalMap;                     ///< map of replacement signal handle to the original signal
-    AMDTMutex              m_signalMapMtx;                  ///< mutex to guard access to m_signalMap
+    std::mutex             m_signalMapMtx;                  ///< mutex to guard access to m_signalMap
 };
 
 #endif // _HSA_FDN_API_INFO_MANAGER_H_

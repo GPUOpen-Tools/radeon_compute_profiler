@@ -96,6 +96,11 @@ CLObjRefTracker::CLObjRefTracker(CLAPIAnalyzerManager* p) : CLAPIAnalyzer(p)
     m_dependentAPIs.insert(CL_FUNC_TYPE_clSVMAllocAMD);
     m_dependentAPIs.insert(CL_FUNC_TYPE_clSVMFreeAMD);
     m_dependentAPIs.insert(CL_FUNC_TYPE_clCreatePipe);
+    m_dependentAPIs.insert(CL_FUNC_TYPE_clCreateSsgFileObjectAMD);
+    m_dependentAPIs.insert(CL_FUNC_TYPE_clRetainSsgFileObjectAMD);
+    m_dependentAPIs.insert(CL_FUNC_TYPE_clReleaseSsgFileObjectAMD);
+    m_dependentAPIs.insert(CL_FUNC_TYPE_clEnqueueReadSsgFileAMD);
+    m_dependentAPIs.insert(CL_FUNC_TYPE_clEnqueueWriteSsgFileAMD);
 }
 
 CLObjRefTracker::~CLObjRefTracker(void)
@@ -147,6 +152,8 @@ std::string CLObjRefTracker::GetEventHandle(CLAPIInfo* pAPIInfo)
         case CL_FUNC_TYPE_clEnqueueSVMMemFill:
         case CL_FUNC_TYPE_clEnqueueSVMMap:
         case CL_FUNC_TYPE_clEnqueueSVMUnmap:
+        case CL_FUNC_TYPE_clEnqueueReadSsgFileAMD:
+        case CL_FUNC_TYPE_clEnqueueWriteSsgFileAMD:
         {
             // cl_event object is the last arg
             std::string strHandle;
@@ -257,6 +264,7 @@ void CLObjRefTracker::FlattenedAPIAnalyze(APIInfo* pAPIInfo)
             case CL_FUNC_TYPE_clCreatePipe:
             case CL_FUNC_TYPE_clSVMAlloc:
             case CL_FUNC_TYPE_clSVMAllocAMD:
+            case CL_FUNC_TYPE_clCreateSsgFileObjectAMD:
             {
                 std::string strHandle = pCLApiInfo->m_strRet;
 
@@ -367,6 +375,7 @@ void CLObjRefTracker::FlattenedAPIAnalyze(APIInfo* pAPIInfo)
             case  CL_FUNC_TYPE_clRetainEvent:
             case  CL_FUNC_TYPE_clRetainDeviceEXT:
             case  CL_FUNC_TYPE_clRetainDevice:
+            case  CL_FUNC_TYPE_clRetainSsgFileObjectAMD:
             {
                 std::string strHandle = pCLApiInfo->m_argList;
 
@@ -389,6 +398,7 @@ void CLObjRefTracker::FlattenedAPIAnalyze(APIInfo* pAPIInfo)
             case CL_FUNC_TYPE_clReleaseEvent:
             case CL_FUNC_TYPE_clReleaseDeviceEXT:
             case CL_FUNC_TYPE_clReleaseDevice:
+            case  CL_FUNC_TYPE_clReleaseSsgFileObjectAMD:
             {
                 std::string strHandle = pCLApiInfo->m_argList;
 
@@ -456,6 +466,8 @@ void CLObjRefTracker::FlattenedAPIAnalyze(APIInfo* pAPIInfo)
             case CL_FUNC_TYPE_clEnqueueSVMMemFill:
             case CL_FUNC_TYPE_clEnqueueSVMMap:
             case CL_FUNC_TYPE_clEnqueueSVMUnmap:
+            case CL_FUNC_TYPE_clEnqueueReadSsgFileAMD:
+            case CL_FUNC_TYPE_clEnqueueWriteSsgFileAMD:
             {
                 std::string eventHandle = GetEventHandle(pCLApiInfo);
 

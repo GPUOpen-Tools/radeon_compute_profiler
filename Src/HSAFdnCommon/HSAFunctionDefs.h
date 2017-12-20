@@ -196,6 +196,27 @@ enum HSA_API_Type
     HSA_API_Type_hsa_ext_image_data_get_info_with_layout,
     HSA_API_Type_hsa_ext_image_create_with_layout,
 
+    // new for ROCm 1.7
+    HSA_API_Type_hsa_amd_signal_create,
+    HSA_API_Type_hsa_amd_ipc_signal_create,
+    HSA_API_Type_hsa_amd_ipc_signal_attach,
+
+    // AQL Profile extension
+    HSA_API_Type_hsa_ven_amd_aqlprofile_validate_event,
+    HSA_API_Type_hsa_ven_amd_aqlprofile_start,
+    HSA_API_Type_hsa_ven_amd_aqlprofile_stop,
+    HSA_API_Type_hsa_ven_amd_aqlprofile_legacy_get_pm4,
+    HSA_API_Type_hsa_ven_amd_aqlprofile_get_info,
+    HSA_API_Type_hsa_ven_amd_aqlprofile_iterate_data,
+    HSA_API_Type_hsa_ven_amd_aqlprofile_error_string,
+
+    // Loader extension
+    HSA_API_Type_hsa_ven_amd_loader_query_segment_descriptors,
+    HSA_API_Type_hsa_ven_amd_loader_query_host_address,
+    HSA_API_Type_hsa_ven_amd_loader_query_executable,
+    HSA_API_Type_hsa_ven_amd_loader_executable_iterate_loaded_code_objects,
+    HSA_API_Type_hsa_ven_amd_loader_loaded_code_object_get_info,
+
     // HSA tools library entrypoints
     HSA_API_Type_Init,
     HSA_API_Type_Unload,

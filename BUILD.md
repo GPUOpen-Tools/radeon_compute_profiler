@@ -4,6 +4,7 @@
 * [Cloning/Updating Dependent Repositories](#cloningupdating-dependent-repositories)
 * [Windows Build Information](#windows-build-information)
 * [Linux Build Information](#linux-build-information)
+* [Building the Documentation](#building-the-documentation)
 
 ## Cloning/Updating Dependent Repositories
 RCP no longer uses git submodules to reference dependent repositories. Instead, you need to follow these instructions in
@@ -71,9 +72,11 @@ this script every time you pull new changes from RCP repository.
    * `hsadir`: overrides the location of the ROCm/HSA header files (by default they are expected to be in /opt/rocm/hsa)
    * `boostlibdir`: overrides the location of the Boost libraries
    * `boostlibdir32`: overrides the location of the 32-bit Boost libraries
- * When building on Ubuntu 16.04, you will need to use the following boostlibdir arguments:
+   * `doc`: build the documentation using Sphinx (see below for prerequisites)
+ * By default, the boostlibdir and boostlibdir32 paths are defined to the the following values which are required when building on Ubuntu 16.04:
    * boostlibdir /usr/lib/x86_64-linux-gnu
    * boostlibdir32 /usr/lib/i386-linux-gnu
+   * For other systems, you may need to override these paths to point to the correct location of the boost libraries
  * After a successful build, the RCP binaries can be found in __RCP\Output\bin__
  * Example build command line (builds the debug versions of the binaries, skipping the ROCm/HSA profiler):
    * ./build_rcp.sh debug skip-hsaprofiler
@@ -98,3 +101,22 @@ this script every time you pull new changes from RCP repository.
    * Src/sprofile
  * When using __make__ to build the ROCm/HSA agents, by default the HSA headers are expected to be in /opt/rocm/hsa. You can override this by specifying "HSA_DIR=<dir>" on the make command line:
    * Example: `make Dbg HSA_DIR=/home/user/hsa_dir`
+
+## Building the Documentation
+
+##### Prerequisites
+ * A working python installation is required
+ * Install Sphinx:
+   * `pip install Sphinx`
+ * Install Sphinx Read The Docs theme:
+   * `pip install sphinx-rtd-theme` (read the docs theme is not installed by default)
+ * Install spelling checker (optional)
+  * `pip install pyenchant`
+  * `pip install sphinxcontrib-spelling`
+
+##### Building
+ * Once you have Sphinx installed, simply run the following command from the "docs" subdirectory:
+   * `make html`
+ * To run the spelling checker:
+   * edit conf.py and uncomment the line adding in the `sphinxcontrib.spelling` extension
+   * `make spelling`

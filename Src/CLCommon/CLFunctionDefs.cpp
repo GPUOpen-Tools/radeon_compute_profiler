@@ -265,6 +265,36 @@ CL_FUNC_TYPE InitExtensionFunction(const char* pFuncName, void* pFuncPtr)
         retVal = CL_FUNC_TYPE_clSetKernelExecInfoAMD;
         g_realExtensionFunctionTable.SetKernelExecInfoAMD = (clSetKernelExecInfoAMD_fn)pFuncPtr;
     }
+    else if (strcmp(pFuncName, "clCreateSsgFileObjectAMD") == 0)
+    {
+        retVal = CL_FUNC_TYPE_clCreateSsgFileObjectAMD;
+        g_realExtensionFunctionTable.CreateSsgFileObjectAMD = (clCreateSsgFileObjectAMD_fn)pFuncPtr;
+    }
+    else if (strcmp(pFuncName, "clGetSsgFileObjectInfoAMD") == 0)
+    {
+        retVal = CL_FUNC_TYPE_clGetSsgFileObjectInfoAMD;
+        g_realExtensionFunctionTable.GetSsgFileObjectInfoAMD = (clGetSsgFileObjectInfoAMD_fn)pFuncPtr;
+    }
+    else if (strcmp(pFuncName, "clRetainSsgFileObjectAMD") == 0)
+    {
+        retVal = CL_FUNC_TYPE_clRetainSsgFileObjectAMD;
+        g_realExtensionFunctionTable.RetainSsgFileObjectAMD = (clRetainSsgFileObjectAMD_fn)pFuncPtr;
+    }
+    else if (strcmp(pFuncName, "clReleaseSsgFileObjectAMD") == 0)
+    {
+        retVal = CL_FUNC_TYPE_clReleaseSsgFileObjectAMD;
+        g_realExtensionFunctionTable.ReleaseSsgFileObjectAMD = (clReleaseSsgFileObjectAMD_fn)pFuncPtr;
+    }
+    else if (strcmp(pFuncName, "clEnqueueReadSsgFileAMD") == 0)
+    {
+        retVal = CL_FUNC_TYPE_clEnqueueReadSsgFileAMD;
+        g_realExtensionFunctionTable.EnqueueReadSsgFileAMD = (clEnqueueReadSsgFileAMD_fn)pFuncPtr;
+    }
+    else if (strcmp(pFuncName, "clEnqueueWriteSsgFileAMD") == 0)
+    {
+        retVal = CL_FUNC_TYPE_clEnqueueWriteSsgFileAMD;
+        g_realExtensionFunctionTable.EnqueueWriteSsgFileAMD = (clEnqueueWriteSsgFileAMD_fn)pFuncPtr;
+    }
 
     return retVal;
 }

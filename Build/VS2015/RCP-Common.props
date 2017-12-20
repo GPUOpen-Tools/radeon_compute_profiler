@@ -9,7 +9,6 @@
   </PropertyGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="$(CommonSrcDir)\Vsprops\Global-Common.props" />
-    <Import Project="$(CommonSrcDir)\AMDTMutex\Global-AMDTMutex.props" />
     <Import Project="$(CommonSrcDir)\DeviceInfo\Global-DeviceInfo.props" />
     <Import Project="$(CommonSrcDir)\GPUPerfAPIUtils\Global-GPUPerfAPIUtils.props" />
     <Import Project="$(CommonSrcDir)\DynamicLibraryModule\Global-DynamicLibraryModule.props" />

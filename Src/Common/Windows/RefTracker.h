@@ -9,7 +9,8 @@
 #define _REF_TRACKER_H_
 
 #include <map>
-#include "AMDTMutex.h"
+#include <mutex>
+#include <windows.h>
 
 /// \addtogroup Common
 // @{
@@ -20,7 +21,7 @@
 class RefTrackerCounter
 {
     bool m_IsUsingExternalMutex;             ///< set to true if using an external mutex, false otherwise
-    AMDTMutex* m_pmutex;                     ///< a mutex (can be a handle to an external mutex)
+    std::mutex* m_pmutex;                    ///< a mutex (can be a handle to an external mutex)
     std::map<DWORD, int> m_mapInsideWrapper; ///< holds a mapping of a thread id and reference count
 
 public:
@@ -32,11 +33,11 @@ public:
 
     /// Constructor
     /// \param[in] pM  an input mutex
-    RefTrackerCounter(AMDTMutex* pM);
+    RefTrackerCounter(std::mutex* pM);
 
     /// Specify to use an external mutex
     /// \param[in] pM  the input external mutex
-    void UseExternalMutex(AMDTMutex* pM);
+    void UseExternalMutex(std::mutex* pM);
 
     /// Increment the reference count
     void operator++(int);

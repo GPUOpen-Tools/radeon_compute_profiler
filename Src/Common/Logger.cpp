@@ -6,13 +6,13 @@
 //==============================================================================
 
 #include <cstdio> // for snprintf
+#include <mutex>
 #ifdef _WIN32
     #include <windows.h>
 #else
     #include <string.h> // strcpy
     #include <stdarg.h>
 #endif
-#include "AMDTMutex.h"
 #include "Logger.h"
 #include "OSUtils.h"
 #include "StringUtils.h"
@@ -30,7 +30,7 @@ static bool s_ConsoleAttached = false;
 #endif
 // *INDENT-ON*
 
-static AMDTMutex sMutex;
+static std::mutex s_mutex;
 
 
 namespace GPULogger
@@ -187,7 +187,7 @@ void Log(enum LogType type, const char* fmt, ...)
     return;
 #else
 
-    AMDTScopeLock s(&sMutex);
+    std::lock_guard<std::mutex> s(s_mutex);
 
     bool s_LogConsole = false;
 
@@ -475,7 +475,7 @@ void LogW(enum LogType type, const wchar_t* fmt, ...)
     return;
 #else
 
-    AMDTScopeLock s(&sMutex);
+    std::lock_guard<std::mutex> s(s_mutex);
 
     bool s_LogConsole = false;
 

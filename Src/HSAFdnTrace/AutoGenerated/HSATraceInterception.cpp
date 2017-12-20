@@ -7,6 +7,8 @@
 
 #include <algorithm>
 #include <hsa_ext_profiler.h>
+#include <hsa_ven_amd_loader.h>
+#include <hsa_ven_amd_aqlprofile.h>
 
 #include "Logger.h"
 #include "GlobalSettings.h"
@@ -21,13 +23,17 @@
 #include "HSAImageExtensionAPITraceClasses.h"
 #include "HSAFinalizerExtensionAPITraceClasses.h"
 #include "HSAAMDExtensionAPITraceClasses.h"
+#include "HSAAMDLoaderExtensionAPITraceClasses.h"
+#include "HSAAMDAQLProfileExtensionAPITraceClasses.h"
 
 #include "HSATraceInterception.h"
 
-CoreApiTable*      g_pRealCoreFunctions         = nullptr;
-FinalizerExtTable* g_pRealFinalizerExtFunctions = nullptr;
-ImageExtTable*     g_pRealImageExtFunctions     = nullptr;
-AmdExtTable*       g_pRealAmdExtFunctions       = nullptr;
+CoreApiTable*                      g_pRealCoreFunctions          = nullptr;
+FinalizerExtTable*                 g_pRealFinalizerExtFunctions  = nullptr;
+ImageExtTable*                     g_pRealImageExtFunctions      = nullptr;
+AmdExtTable*                       g_pRealAmdExtFunctions        = nullptr;
+hsa_ven_amd_aqlprofile_1_00_pfn_t* g_pRealAqlProfileExtFunctions = nullptr;
+hsa_ven_amd_loader_1_01_pfn_t*     g_pRealLoaderExtFunctions     = nullptr;
 
 hsa_status_t HSA_API_Trace_hsa_status_string(hsa_status_t status, const char** status_string)
 {
@@ -3438,6 +3444,31 @@ hsa_status_t HSA_API_Trace_hsa_amd_profiling_convert_tick_to_system_domain(hsa_a
     return retVal;
 }
 
+hsa_status_t HSA_API_Trace_hsa_amd_signal_create(hsa_signal_value_t initial_value, uint32_t num_consumers, const hsa_agent_t* consumers, uint64_t attributes, hsa_signal_t* signal)
+{
+    ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
+    hsa_status_t retVal = g_pRealAmdExtFunctions->hsa_amd_signal_create_fn(initial_value, num_consumers, consumers, attributes, signal);
+    ULONGLONG ullEnd = OSUtils::Instance()->GetTimeNanos();
+
+    HSA_APITrace_hsa_amd_signal_create* pAPIInfo = new(std::nothrow) HSA_APITrace_hsa_amd_signal_create();
+    SpAssertRet(nullptr != pAPIInfo) retVal;
+
+    pAPIInfo->Create(
+        ullStart,
+        ullEnd,
+        initial_value,
+        num_consumers,
+        consumers,
+        attributes,
+        signal,
+        retVal);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo);
+    HSAAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return retVal;
+}
+
 hsa_status_t HSA_API_Trace_hsa_amd_signal_async_handler(hsa_signal_t signal, hsa_signal_condition_t cond, hsa_signal_value_t value, hsa_amd_signal_handler handler, void* arg)
 {
     ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
@@ -4002,6 +4033,319 @@ hsa_status_t HSA_API_Trace_hsa_amd_ipc_memory_detach(void* mapped_ptr)
         ullStart,
         ullEnd,
         mapped_ptr,
+        retVal);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo);
+    HSAAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return retVal;
+}
+
+hsa_status_t HSA_API_Trace_hsa_amd_ipc_signal_create(hsa_signal_t signal, hsa_amd_ipc_signal_t* handle)
+{
+    ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
+    hsa_status_t retVal = g_pRealAmdExtFunctions->hsa_amd_ipc_signal_create_fn(signal, handle);
+    ULONGLONG ullEnd = OSUtils::Instance()->GetTimeNanos();
+
+    HSA_APITrace_hsa_amd_ipc_signal_create* pAPIInfo = new(std::nothrow) HSA_APITrace_hsa_amd_ipc_signal_create();
+    SpAssertRet(nullptr != pAPIInfo) retVal;
+
+    pAPIInfo->Create(
+        ullStart,
+        ullEnd,
+        signal,
+        handle,
+        retVal);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo);
+    HSAAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return retVal;
+}
+
+hsa_status_t HSA_API_Trace_hsa_amd_ipc_signal_attach(const hsa_amd_ipc_signal_t* handle, hsa_signal_t* signal)
+{
+    ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
+    hsa_status_t retVal = g_pRealAmdExtFunctions->hsa_amd_ipc_signal_attach_fn(handle, signal);
+    ULONGLONG ullEnd = OSUtils::Instance()->GetTimeNanos();
+
+    HSA_APITrace_hsa_amd_ipc_signal_attach* pAPIInfo = new(std::nothrow) HSA_APITrace_hsa_amd_ipc_signal_attach();
+    SpAssertRet(nullptr != pAPIInfo) retVal;
+
+    pAPIInfo->Create(
+        ullStart,
+        ullEnd,
+        handle,
+        signal,
+        retVal);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo);
+    HSAAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return retVal;
+}
+
+hsa_status_t HSA_API_Trace_hsa_ven_amd_loader_query_host_address(const void* device_address, const void** host_address)
+{
+    ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
+    hsa_status_t retVal = g_pRealLoaderExtFunctions->hsa_ven_amd_loader_query_host_address(device_address, host_address);
+    ULONGLONG ullEnd = OSUtils::Instance()->GetTimeNanos();
+
+    HSA_APITrace_hsa_ven_amd_loader_query_host_address* pAPIInfo = new(std::nothrow) HSA_APITrace_hsa_ven_amd_loader_query_host_address();
+    SpAssertRet(nullptr != pAPIInfo) retVal;
+
+    pAPIInfo->Create(
+        ullStart,
+        ullEnd,
+        device_address,
+        host_address,
+        retVal);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo);
+    HSAAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return retVal;
+}
+
+hsa_status_t HSA_API_Trace_hsa_ven_amd_loader_query_segment_descriptors(hsa_ven_amd_loader_segment_descriptor_t* segment_descriptors, size_t* num_segment_descriptors)
+{
+    ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
+    hsa_status_t retVal = g_pRealLoaderExtFunctions->hsa_ven_amd_loader_query_segment_descriptors(segment_descriptors, num_segment_descriptors);
+    ULONGLONG ullEnd = OSUtils::Instance()->GetTimeNanos();
+
+    HSA_APITrace_hsa_ven_amd_loader_query_segment_descriptors* pAPIInfo = new(std::nothrow) HSA_APITrace_hsa_ven_amd_loader_query_segment_descriptors();
+    SpAssertRet(nullptr != pAPIInfo) retVal;
+
+    pAPIInfo->Create(
+        ullStart,
+        ullEnd,
+        segment_descriptors,
+        num_segment_descriptors,
+        retVal);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo);
+    HSAAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return retVal;
+}
+
+hsa_status_t HSA_API_Trace_hsa_ven_amd_loader_query_executable(const void* device_address, hsa_executable_t* executable)
+{
+    ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
+    hsa_status_t retVal = g_pRealLoaderExtFunctions->hsa_ven_amd_loader_query_executable(device_address, executable);
+    ULONGLONG ullEnd = OSUtils::Instance()->GetTimeNanos();
+
+    HSA_APITrace_hsa_ven_amd_loader_query_executable* pAPIInfo = new(std::nothrow) HSA_APITrace_hsa_ven_amd_loader_query_executable();
+    SpAssertRet(nullptr != pAPIInfo) retVal;
+
+    pAPIInfo->Create(
+        ullStart,
+        ullEnd,
+        device_address,
+        executable,
+        retVal);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo);
+    HSAAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return retVal;
+}
+
+hsa_status_t HSA_API_Trace_hsa_ven_amd_loader_executable_iterate_loaded_code_objects(hsa_executable_t executable, hsa_status_t (*callback)(
+    hsa_executable_t executable, hsa_loaded_code_object_t loaded_code_object, void* data), void* data)
+{
+    ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
+    hsa_status_t retVal = g_pRealLoaderExtFunctions->hsa_ven_amd_loader_executable_iterate_loaded_code_objects(executable, callback, data);
+    ULONGLONG ullEnd = OSUtils::Instance()->GetTimeNanos();
+
+    HSA_APITrace_hsa_ven_amd_loader_executable_iterate_loaded_code_objects* pAPIInfo = new(std::nothrow) HSA_APITrace_hsa_ven_amd_loader_executable_iterate_loaded_code_objects();
+    SpAssertRet(nullptr != pAPIInfo) retVal;
+
+    pAPIInfo->Create(
+        ullStart,
+        ullEnd,
+        executable,
+        callback,
+        data,
+        retVal);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo);
+    HSAAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return retVal;
+}
+
+hsa_status_t HSA_API_Trace_hsa_ven_amd_loader_loaded_code_object_get_info(hsa_loaded_code_object_t loaded_code_object, hsa_ven_amd_loader_loaded_code_object_info_t attribute, void* value)
+{
+    ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
+    hsa_status_t retVal = g_pRealLoaderExtFunctions->hsa_ven_amd_loader_loaded_code_object_get_info(loaded_code_object, attribute, value);
+    ULONGLONG ullEnd = OSUtils::Instance()->GetTimeNanos();
+
+    HSA_APITrace_hsa_ven_amd_loader_loaded_code_object_get_info* pAPIInfo = new(std::nothrow) HSA_APITrace_hsa_ven_amd_loader_loaded_code_object_get_info();
+    SpAssertRet(nullptr != pAPIInfo) retVal;
+
+    pAPIInfo->Create(
+        ullStart,
+        ullEnd,
+        loaded_code_object,
+        attribute,
+        value,
+        retVal);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo);
+    HSAAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return retVal;
+}
+
+hsa_status_t HSA_API_Trace_hsa_ven_amd_aqlprofile_validate_event(hsa_agent_t agent, const hsa_ven_amd_aqlprofile_event_t* event, bool* result)
+{
+    ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
+    hsa_status_t retVal = g_pRealAqlProfileExtFunctions->hsa_ven_amd_aqlprofile_validate_event(agent, event, result);
+    ULONGLONG ullEnd = OSUtils::Instance()->GetTimeNanos();
+
+    HSA_APITrace_hsa_ven_amd_aqlprofile_validate_event* pAPIInfo = new(std::nothrow) HSA_APITrace_hsa_ven_amd_aqlprofile_validate_event();
+    SpAssertRet(nullptr != pAPIInfo) retVal;
+
+    pAPIInfo->Create(
+        ullStart,
+        ullEnd,
+        agent,
+        event,
+        result,
+        retVal);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo);
+    HSAAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return retVal;
+}
+
+hsa_status_t HSA_API_Trace_hsa_ven_amd_aqlprofile_start(hsa_ven_amd_aqlprofile_profile_t* profile, hsa_ext_amd_aql_pm4_packet_t* aql_start_packet)
+{
+    ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
+    hsa_status_t retVal = g_pRealAqlProfileExtFunctions->hsa_ven_amd_aqlprofile_start(profile, aql_start_packet);
+    ULONGLONG ullEnd = OSUtils::Instance()->GetTimeNanos();
+
+    HSA_APITrace_hsa_ven_amd_aqlprofile_start* pAPIInfo = new(std::nothrow) HSA_APITrace_hsa_ven_amd_aqlprofile_start();
+    SpAssertRet(nullptr != pAPIInfo) retVal;
+
+    pAPIInfo->Create(
+        ullStart,
+        ullEnd,
+        profile,
+        aql_start_packet,
+        retVal);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo);
+    HSAAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return retVal;
+}
+
+hsa_status_t HSA_API_Trace_hsa_ven_amd_aqlprofile_stop(const hsa_ven_amd_aqlprofile_profile_t* profile, hsa_ext_amd_aql_pm4_packet_t* aql_stop_packet)
+{
+    ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
+    hsa_status_t retVal = g_pRealAqlProfileExtFunctions->hsa_ven_amd_aqlprofile_stop(profile, aql_stop_packet);
+    ULONGLONG ullEnd = OSUtils::Instance()->GetTimeNanos();
+
+    HSA_APITrace_hsa_ven_amd_aqlprofile_stop* pAPIInfo = new(std::nothrow) HSA_APITrace_hsa_ven_amd_aqlprofile_stop();
+    SpAssertRet(nullptr != pAPIInfo) retVal;
+
+    pAPIInfo->Create(
+        ullStart,
+        ullEnd,
+        profile,
+        aql_stop_packet,
+        retVal);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo);
+    HSAAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return retVal;
+}
+
+hsa_status_t HSA_API_Trace_hsa_ven_amd_aqlprofile_legacy_get_pm4(const hsa_ext_amd_aql_pm4_packet_t* aql_packet, void* data)
+{
+    ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
+    hsa_status_t retVal = g_pRealAqlProfileExtFunctions->hsa_ven_amd_aqlprofile_legacy_get_pm4(aql_packet, data);
+    ULONGLONG ullEnd = OSUtils::Instance()->GetTimeNanos();
+
+    HSA_APITrace_hsa_ven_amd_aqlprofile_legacy_get_pm4* pAPIInfo = new(std::nothrow) HSA_APITrace_hsa_ven_amd_aqlprofile_legacy_get_pm4();
+    SpAssertRet(nullptr != pAPIInfo) retVal;
+
+    pAPIInfo->Create(
+        ullStart,
+        ullEnd,
+        aql_packet,
+        data,
+        retVal);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo);
+    HSAAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return retVal;
+}
+
+hsa_status_t HSA_API_Trace_hsa_ven_amd_aqlprofile_get_info(const hsa_ven_amd_aqlprofile_profile_t* profile, hsa_ven_amd_aqlprofile_info_type_t attribute, void* value)
+{
+    ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
+    hsa_status_t retVal = g_pRealAqlProfileExtFunctions->hsa_ven_amd_aqlprofile_get_info(profile, attribute, value);
+    ULONGLONG ullEnd = OSUtils::Instance()->GetTimeNanos();
+
+    HSA_APITrace_hsa_ven_amd_aqlprofile_get_info* pAPIInfo = new(std::nothrow) HSA_APITrace_hsa_ven_amd_aqlprofile_get_info();
+    SpAssertRet(nullptr != pAPIInfo) retVal;
+
+    pAPIInfo->Create(
+        ullStart,
+        ullEnd,
+        profile,
+        attribute,
+        value,
+        retVal);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo);
+    HSAAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return retVal;
+}
+
+hsa_status_t HSA_API_Trace_hsa_ven_amd_aqlprofile_iterate_data(const hsa_ven_amd_aqlprofile_profile_t* profile, hsa_ven_amd_aqlprofile_data_callback_t callback, void* data)
+{
+    ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
+    hsa_status_t retVal = g_pRealAqlProfileExtFunctions->hsa_ven_amd_aqlprofile_iterate_data(profile, callback, data);
+    ULONGLONG ullEnd = OSUtils::Instance()->GetTimeNanos();
+
+    HSA_APITrace_hsa_ven_amd_aqlprofile_iterate_data* pAPIInfo = new(std::nothrow) HSA_APITrace_hsa_ven_amd_aqlprofile_iterate_data();
+    SpAssertRet(nullptr != pAPIInfo) retVal;
+
+    pAPIInfo->Create(
+        ullStart,
+        ullEnd,
+        profile,
+        callback,
+        data,
+        retVal);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo);
+    HSAAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return retVal;
+}
+
+hsa_status_t HSA_API_Trace_hsa_ven_amd_aqlprofile_error_string(const char** str)
+{
+    ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
+    hsa_status_t retVal = g_pRealAqlProfileExtFunctions->hsa_ven_amd_aqlprofile_error_string(str);
+    ULONGLONG ullEnd = OSUtils::Instance()->GetTimeNanos();
+
+    HSA_APITrace_hsa_ven_amd_aqlprofile_error_string* pAPIInfo = new(std::nothrow) HSA_APITrace_hsa_ven_amd_aqlprofile_error_string();
+    SpAssertRet(nullptr != pAPIInfo) retVal;
+
+    pAPIInfo->Create(
+        ullStart,
+        ullEnd,
+        str,
         retVal);
 
     RECORD_STACK_TRACE_FOR_API(pAPIInfo);
@@ -4785,6 +5129,11 @@ void InitHSAAPIInterceptTrace(HsaApiTable* pTable)
         pTable->amd_ext_->hsa_amd_profiling_convert_tick_to_system_domain_fn = HSA_API_Trace_hsa_amd_profiling_convert_tick_to_system_domain;
     }
 
+    if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_amd_signal_create))
+    {
+        pTable->amd_ext_->hsa_amd_signal_create_fn = HSA_API_Trace_hsa_amd_signal_create;
+    }
+
     if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_amd_signal_async_handler))
     {
         pTable->amd_ext_->hsa_amd_signal_async_handler_fn = HSA_API_Trace_hsa_amd_signal_async_handler;
@@ -4903,6 +5252,16 @@ void InitHSAAPIInterceptTrace(HsaApiTable* pTable)
     if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_amd_ipc_memory_detach))
     {
         pTable->amd_ext_->hsa_amd_ipc_memory_detach_fn = HSA_API_Trace_hsa_amd_ipc_memory_detach;
+    }
+
+    if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_amd_ipc_signal_create))
+    {
+        pTable->amd_ext_->hsa_amd_ipc_signal_create_fn = HSA_API_Trace_hsa_amd_ipc_signal_create;
+    }
+
+    if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_amd_ipc_signal_attach))
+    {
+        pTable->amd_ext_->hsa_amd_ipc_signal_attach_fn = HSA_API_Trace_hsa_amd_ipc_signal_attach;
     }
 
 }

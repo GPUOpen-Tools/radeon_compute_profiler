@@ -85,7 +85,7 @@ void PrintCounterList(CounterList counterList);
 std::vector<DeviceInfo> GetDeviceInfoList(GPA_API_Type);
 std::vector<CounterPassInfo> GetNumberOfPassForAPI(GPA_API_Type apiType, CounterList counterList, bool forceSinglePassForHSA = true);
 std::vector<CounterPassInfo> GetNumberOfPassFromGPUPerfAPI(GPA_API_Type apiType, CounterList counterList, std::vector<DeviceInfo> deviceInfoList, bool forceSinglePassForHSA = true);
-std::vector<CounterList> GetCounterListsByMaxPassForEachDevice(GPA_API_Type apiType, CounterPassInfo counterPassInfo, unsigned int maxPass, CounterList& leftCounterList, bool applySinglePassWorkaroundForGfx9);
+std::vector<CounterList> GetCounterListsByMaxPassForEachDevice(GPA_API_Type apiType, CounterPassInfo counterPassInfo, unsigned int maxPass, CounterList& leftCounterList);
 void ListCounterToFileForMaxPass(CounterList counterList, std::string counterOutputFile, unsigned int maxPass);
 
 pair<string, string> Parser(const string& strOptionToParse);
@@ -1754,8 +1754,6 @@ std::vector<CounterPassInfo> GetNumberOfPassFromGPUPerfAPI(GPA_API_Type apiType,
                     ppCounterScheduler->DisableAllCounters();
                 }
 
-                gpa_uint32 lastCounterEnabled = 0;
-
                 for (std::vector<std::string>::const_iterator availableCountersIter = computeCounterList.begin(); availableCountersIter != computeCounterList.end(); ++availableCountersIter)
                 {
                     gpa_uint32 index = 0;
@@ -1771,7 +1769,6 @@ std::vector<CounterPassInfo> GetNumberOfPassFromGPUPerfAPI(GPA_API_Type apiType,
                         {
                             if (tempNumberPass == numPass)
                             {
-                                lastCounterEnabled = index;
                                 counterListForHSA.push_back(availableCountersIter->c_str());
                             }
                             else
@@ -1788,13 +1785,6 @@ std::vector<CounterPassInfo> GetNumberOfPassFromGPUPerfAPI(GPA_API_Type apiType,
                 }
                 else
                 {
-                    // applySinglePassWorkaroundForGfx9
-                    if (GPA_API_HSA == apiType && GDT_HW_GENERATION_GFX9 == i->m_generation)
-                    {
-                        counterListForHSA.pop_back();
-                        ppCounterScheduler->DisableCounter(lastCounterEnabled);
-                    }
-
                     computeCounterList.clear();
                     computeCounterList = counterListForHSA;
                 }
@@ -1826,14 +1816,14 @@ void ListCounterToFileForMaxPass(CounterList counterList, std::string counterOut
     std::vector<CounterPassInfo> counterPassInfoList;
     std::string apiTypeString;
 
-    auto CounterToFileForMaxPassLambda = [&](bool applySinglePassWorkaroundForGfx9)
+    auto CounterToFileForMaxPassLambda = [&]()
     {
         counterPassInfoList = GetNumberOfPassForAPI(apiType, counterList, false);
 
         for (unsigned int i = 0; i < counterPassInfoList.size(); ++i)
         {
             std::string deviceNameWithPass = counterPassInfoList[i].m_deviceInfo.m_deviceCALName + "_pass";
-            counterListByEachPass = GetCounterListsByMaxPassForEachDevice(apiType, counterPassInfoList[i], maxPass, leftCounterList, applySinglePassWorkaroundForGfx9);
+            counterListByEachPass = GetCounterListsByMaxPassForEachDevice(apiType, counterPassInfoList[i], maxPass, leftCounterList);
 
             for (unsigned int j = 0; j < counterListByEachPass.size(); ++j)
             {
@@ -1857,20 +1847,20 @@ void ListCounterToFileForMaxPass(CounterList counterList, std::string counterOut
     apiType = GPA_API_OPENCL;
     apiTypeString = "OpenCL";
 
-    CounterToFileForMaxPassLambda(false);
+    CounterToFileForMaxPassLambda();
 
 #if defined (_LINUX) || defined (LINUX)
     // HSA
     apiType = GPA_API_HSA;
     apiTypeString = "HSA";
 
-    CounterToFileForMaxPassLambda(true);
+    CounterToFileForMaxPassLambda();
 
 #endif
 }
 
 
-std::vector<CounterList> GetCounterListsByMaxPassForEachDevice(GPA_API_Type apiType, CounterPassInfo counterPassInfo, unsigned int maxPass, CounterList& leftCounterList, bool applySinglePassWorkaroundForGfx9)
+std::vector<CounterList> GetCounterListsByMaxPassForEachDevice(GPA_API_Type apiType, CounterPassInfo counterPassInfo, unsigned int maxPass, CounterList& leftCounterList)
 {
     std::vector<CounterList> counterListEachPass;
     gtString strDirPath = FileUtils::GetExePathAsUnicode();
@@ -1909,7 +1899,6 @@ std::vector<CounterList> GetCounterListsByMaxPassForEachDevice(GPA_API_Type apiT
                 CounterList excludeCountersInThisPass;
 
                 bool succeed = false;
-                unsigned int lastCounterInPass = 0;
 
                 for (unsigned int k = 0; k < handleCounters.size(); ++k)
                 {
@@ -1931,25 +1920,7 @@ std::vector<CounterList> GetCounterListsByMaxPassForEachDevice(GPA_API_Type apiT
                     }
                     else
                     {
-                        lastCounterInPass = k;
                         includeCountersInThisPass.push_back(handleCounters[k]);
-                    }
-                }
-
-                if (applySinglePassWorkaroundForGfx9)
-                {
-                    GDT_HW_GENERATION generation;
-
-                    if (AMDTDeviceInfoUtils::Instance()->GetHardwareGeneration(counterPassInfo.m_deviceInfo.m_deviceId, generation))
-                    {
-                        if (GDT_HW_GENERATION_GFX9 == generation)
-                        {
-                            if (!excludeCountersInThisPass.empty())
-                            {
-                                includeCountersInThisPass.pop_back();
-                                excludeCountersInThisPass.push_back(handleCounters[lastCounterInPass]);
-                            }
-                        }
                     }
                 }
 

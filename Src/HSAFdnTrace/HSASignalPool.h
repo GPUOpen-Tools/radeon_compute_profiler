@@ -9,10 +9,10 @@
 #define _HSA_SIGNAL_POOL_H_
 
 #include <stack>
+#include <mutex>
 
 #include "hsa.h"
 
-#include <AMDTMutex.h>
 #include <TSingleton.h>
 
 /// Singleton class to manage hsa signals (allows recycling of no-longer used
@@ -53,7 +53,7 @@ private:
     const HSASignalPool& operator=(const HSASignalPool&) = delete;
 
     std::stack<hsa_signal_t> m_signalPool;    ///< stack of created-and-no-longer-used signals
-    AMDTMutex                m_signalPoolMtx; ///< mutex to protect access to m_signalPool
+    std::mutex     m_signalPoolMtx;           ///< mutex to protect access to m_signalPool
 };
 
 #endif // _HSA_SIGNAL_POOL_H_

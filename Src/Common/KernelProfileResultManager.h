@@ -15,6 +15,7 @@
 #include <list>
 #include <map>
 #include <deque>
+#include <mutex>
 
 // common
 #include <AMDTOSWrappers/Include/osOSDefinitions.h>
@@ -23,7 +24,6 @@
 #include "Logger.h"
 #include "StringUtils.h"
 #include "TSingleton.h"
-#include "AMDTMutex.h"
 
 typedef CSVRow KernelInfoRow;
 
@@ -121,7 +121,7 @@ protected:
     std::map<osThreadId, std::deque<CSVRow*> > m_pCurrentKernelRow; ///< Per thread kernel info
     bool m_bWriteHeader;                                            ///< Flag indicating whether or not header has been written
     std::string m_strOutputFile;                                    ///< Output file
-    AMDTMutex m_mtx;                                                ///< Mutex object
+    std::mutex m_mtx;                                               ///< Mutex object
 };
 
 #endif //_KERNEL_PROFILE_RESULT_MANAGER_H_

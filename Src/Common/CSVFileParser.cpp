@@ -8,9 +8,9 @@
 // std
 #include <iostream>
 #include <algorithm>
+#include <mutex>
 
 // common
-#include <AMDTMutex.h>
 
 #include "CSVFileParser.h"
 #include "Defs.h"
@@ -21,7 +21,7 @@
 
 using namespace std;
 
-static AMDTMutex g_mtx;
+static std::mutex g_mtx;
 
 #define TRY_READ( fin, buf ) memset( buf, 0, BUFSIZE );       \
     fin.getline ( buf, BUFSIZE );    \
@@ -164,7 +164,7 @@ bool CSVFileWriter::Close()
 
 bool CSVFileWriter::Flush()
 {
-    AMDTScopeLock lock(&g_mtx);
+    std::lock_guard<std::mutex> lock(g_mtx);
 
     ofstream fout;
     fout.open(m_strFilename.c_str(), fstream::out | ios::app);

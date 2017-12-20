@@ -31,20 +31,17 @@ RCP was formerly delivered as part of CodeXL with the executable name
 * When used with CodeXL, all profiler data can be visualized in a user-friendly graphical user interface.
 
 ## What's New
-* Version 5.2 (9/25/17)
-  * Adds support for additional GPUs and APUs.
-  * Improves display of HSA agents in the ATP file and in the HSA Trace Summary pages.
-  * Improves Best Practices/Warnings/Errors Summary page to track and report mismatched memory allocations and frees.
-  * Fixes an issue where incorrect queue index is written to ATP file when profiling an HSA application that dispatches kernels using multiple queues
-  * Fixes incorrect transfer sizes shown in CL Context Summary for applications with total transfers over 4GB.
-  * Fixes an issue where demangled kernel names with commas caused an invalid .csv file to be generated
-  * Adds a speed improvement when profiling HSA applications which dispatch a large number of kernels.
+* Version 5.3 (12/20/17)
+ * OpenCL: Support for tracing SSG extension APIs.
+ * ROCm/HSA: Support for ROCm 1.7.
+ * Documentation now included for RCP (previously RCP documentation was only available in CodeXL).
+ * Fixes an issue with incorrect error reporting in the BestPractices Summary Page for OpenCL APIs that do not return a cl_int error code.
 
 ## System Requirements
 * An AMD Radeon GCN-based GPU or APU
 * Radeon Software Crimson ReLive Edition 17.4.3 or later (Driver Packaging Version 17.10 or later).
-  * For Vega support, a driver with Driver Packaging Version 17.20 or later is required
-* ROCm 1.6. See system requirements for ROCm: https://rocm.github.io/install.html and https://rocm.github.io/hardware.html.
+  * For Vega support, a driver with Driver Packaging Version 17.30 or later is required
+* ROCm 1.7. See system requirements for ROCm: https://rocm.github.io/install.html and https://rocm.github.io/hardware.html.
 * Windows 7, 8.1, and 10
   * For Windows, the `Visual C++ Redistributable for Visual Studio 2015` is required. It can be downloaded from https://www.microsoft.com/en-us/download/details.aspx?id=48145
 * Ubuntu (14.04 and later, 16.04 or later for ROCm support) and RHEL (7 and later) distributions
@@ -88,7 +85,6 @@ version number up to 5.x.
 
 ## Known Issues
 * For the OpenCL™ Profiler
-  * Collecting Performance Counters for an OpenCL™ application is not currently working for Vega GPUs on Windows when using a 17.20-based driver. This is due to missing driver support in the 17.20 driver. Future driver versions should provide the support needed.
   * Collecting Performance Counters using --perfcounter for an OpenCL™ application when running OpenCL-on-ROCm is not suported currently. The workaround is to profile using the ROCm profiler (using the --hsapmc command-line switch).
 * For the ROCm Profiler
   * API Trace and Perf Counter data may be truncated or missing if the application being profiled does not call hsa_shut_down

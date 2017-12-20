@@ -13,9 +13,10 @@
 using namespace GPULogger;
 
 cl_uint CLAPI_clCreateContextBase::ms_NumInstance = 0;
-AMDTMutex CLAPI_clCreateContextBase::ms_mtx;
+std::mutex CLAPI_clCreateContextBase::ms_mtx;
 cl_uint CLAPI_clCreateCommandQueueBase::ms_NumInstance = 0;
-AMDTMutex CLAPI_clCreateCommandQueueBase::ms_mtx;
+std::mutex CLAPI_clCreateCommandQueueBase::ms_mtx;
+
 bool CLAPI_clGetEventInfo::ms_collapseCalls = true;
 
 void CLAPI_clCreateContextBase::AddToInfoManager(cl_context context)

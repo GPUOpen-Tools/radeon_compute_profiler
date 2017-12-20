@@ -35,7 +35,12 @@ typedef struct _CLExtensionFunctionTable
     clEnqueueSVMUnmapAMD_fn                    EnqueueSVMUnmapAMD;
     clSetKernelArgSVMPointerAMD_fn             SetKernelArgSVMPointerAMD;
     clSetKernelExecInfoAMD_fn                  SetKernelExecInfoAMD;
-
+    clCreateSsgFileObjectAMD_fn                CreateSsgFileObjectAMD;
+    clGetSsgFileObjectInfoAMD_fn               GetSsgFileObjectInfoAMD;
+    clRetainSsgFileObjectAMD_fn                RetainSsgFileObjectAMD;
+    clReleaseSsgFileObjectAMD_fn               ReleaseSsgFileObjectAMD;
+    clEnqueueReadSsgFileAMD_fn                 EnqueueReadSsgFileAMD;
+    clEnqueueWriteSsgFileAMD_fn                EnqueueWriteSsgFileAMD;
 } CLExtensionFunctionTable;
 
 #define OPENCL_FISSION_EXT_SUPPORT ///< undefine this line to remove Device Fission Extension support
