@@ -39,6 +39,8 @@ this script every time you pull new changes from RCP repository.
 ## Linux Build Information
 
 ##### Prerequisites
+ * RCP uses some shared components which are built using scons. You will need to install scons as follows:
+   * `sudo apt-get install scons`
  * In order to build the 32-bit version of RCP, you will need to install the following libraries:
    * `sudo apt-get install gcc-multilib g++-multilib`
  * When building on Ubuntu 16.04, you will need to install the compatible Boost libraries:
