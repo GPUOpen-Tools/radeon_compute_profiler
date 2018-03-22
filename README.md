@@ -77,7 +77,7 @@ UpdateCommon.py has replaced the use of git submodules in the CodeXL repository
 * [Src/sprofile](Src/sprofile) -- contains source code for the main profiler executable
 
 ## Documentation
-The documentation for GPUPerfAPI can be found in each [GitHub release](https://github.com/GPUOpen-Tools/RCP/releases). In the release RadeonComputeProfiler-v*.zip file or RadeonComputeProfiler-v*.tgz file, there
+The documentation for the Radeon Compute Profiler can be found in each [GitHub release](https://github.com/GPUOpen-Tools/RCP/releases). In the release RadeonComputeProfiler-v*.zip file or RadeonComputeProfiler-v*.tgz file, there
 will be a "docs" directory. Simply open the index.html file in a web browser to view the documentation.
 
 The documentation is hosted publicly at: http://radeon-compute-profiler-rcp.readthedocs.io/en/latest/
