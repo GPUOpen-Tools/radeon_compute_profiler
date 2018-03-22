@@ -1,3 +1,4 @@
+.. Copyright (c) 2017-2018 Advanced Micro Devices, Inc. All rights reserved.
 .. Radeon Compute Profiler Performance Counters
 
 .. _supported-perf-counters:

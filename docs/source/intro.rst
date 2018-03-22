@@ -1,4 +1,5 @@
-.. Radeon Compute Profiler introduction
+.. Copyright (c) 2017-2018 Advanced Micro Devices, Inc. All rights reserved.
+.. Radeon Compute Profiler Introduction
 
 Introduction
 ------------
