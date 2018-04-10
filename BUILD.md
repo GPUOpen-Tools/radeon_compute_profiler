@@ -55,8 +55,8 @@ this script every time you pull new changes from RCP repository.
      * `sudo apt-get install libboost-wave-dev:i386`
 
 ##### Building the HSA/ROCm Profiler
-* In order to build the HSA/ROCm profiler, the rocm package needs to be installed (so that the ROCR header files are available at build time).
-* The ROCm packages are available at https://github.com/RadeonOpenCompute. Please see the ROCm install instructions at [https://radeonopencompute.github.io/install.html](https://radeonopencompute.github.io/install.html).
+* In order to build the HSA/ROCm profiler, the rocm packages need to be installed (so that the ROCR header files are available at build time).
+* Please see the ROCm install instructions at [https://rocm.github.io/ROCmInstall.html](https://rocm.github.io/ROCmInstall.html).
 * If the ROCR header files are not available on the build system (i.e. if the build system is not supported by ROCm), you can skip this part of the build. See the Build Instructions section below for information on how to do this.
 
 ##### Build Instructions
