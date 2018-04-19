@@ -5,10 +5,12 @@
 /// \brief  This file contains implementation to CLDevice Replacer functions
 //==============================================================================
 
+#include <algorithm>
+#include <vector>
+
 #include "CLDeviceReplacer.h"
 #include "CLFunctionDefs.h"
 #include "OSUtils.h"
-#include <algorithm>
 
 #define AMD_VENDOR_NAME "Advanced Micro Devices"
 
