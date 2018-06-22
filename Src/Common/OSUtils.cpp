@@ -345,7 +345,6 @@ PROCESSID OSUtils::ExecProcess(const char* szExe,
                                bool bCreateConsole)
 {
     SP_UNREFERENCED_PARAMETER(bCreateSuspended);
-    SP_UNREFERENCED_PARAMETER(bCreateConsole);
     PROCESSID processId = fork();
 
     if (processId == 0)
@@ -354,8 +353,9 @@ PROCESSID OSUtils::ExecProcess(const char* szExe,
 
         if (!bCreateConsole)
         {
-            freopen("/dev/null", "w", stdout);
-            freopen("/dev/null", "w", stderr);
+            FILE* fFile = freopen("/dev/null", "w", stdout);
+            fFile = freopen("/dev/null", "w", stderr);
+            SP_UNREFERENCED_PARAMETER(fFile);
         }
 
         // change working directory
