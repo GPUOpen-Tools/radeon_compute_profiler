@@ -38,10 +38,10 @@ public:
     static bool GetAgentGPUIndex(uint64_t agentHandle, unsigned int& gpuIndex);
 
 private:
-     static HSAAgentIteratorCallback                   m_userSepcifiedIterateAgentsCallback; ///< the user-supplied iterator callback
-     static unsigned int                               m_gpuAgentCount;                      ///< the number of agents
-     static CoreApiTable*                              m_pRealCoreFunctions;                 ///< the real core function pointer table
-     static std::unordered_map<uint64_t, unsigned int> m_agentHandleToGPUIndexMap;           ///< map of agent handles to profiler-defined gpu index
+    static HSAAgentIteratorCallback                   m_userSepcifiedIterateAgentsCallback; ///< the user-supplied iterator callback
+    static unsigned int                               m_gpuAgentCount;                      ///< the number of agents
+    static CoreApiTable*                              m_pRealCoreFunctions;                 ///< the real core function pointer table
+    static std::unordered_map<uint64_t, unsigned int> m_agentHandleToGPUIndexMap;           ///< map of agent handles to profiler-defined gpu index
 };
 
 #endif // _HSA_AGENT_ITERATE_REPLACER_H

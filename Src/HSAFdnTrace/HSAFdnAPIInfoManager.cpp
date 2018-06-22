@@ -39,6 +39,7 @@ HSAAPIInfoManager::HSAAPIInfoManager(void) : m_tracedApiCount(0), m_queueCreatio
     m_mustInterceptAPIs.insert(HSA_API_Type_hsa_executable_symbol_get_info); // needed to extract kernel name
     m_pDelayTimer = nullptr;
     m_pDurationTimer = nullptr;
+    m_bNoHSATransferTime = false;
 }
 
 HSAAPIInfoManager::~HSAAPIInfoManager(void)
@@ -640,4 +641,14 @@ void HSAAPIInfoManager::AddAqlPacketEntry(HSAAqlPacketBase* pPacket)
 
         m_packetList.push_back(pPacket);
     }
+}
+
+void HSAAPIInfoManager::DisableHsaTransferTime()
+{
+    m_bNoHSATransferTime = true;
+}
+
+bool HSAAPIInfoManager::IsHsaTransferTimeDisabled()
+{
+    return m_bNoHSATransferTime;
 }

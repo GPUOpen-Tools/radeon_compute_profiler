@@ -57,7 +57,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Common\Src\ADLUtil\ADLUtil.cpp" />
-    <ClCompile Include="..\..\..\Common\Src\GPUPerfAPIUtils\GPUPerfAPIRegistry.cpp" />
     <ClCompile Include="..\..\Src\Common\APIInfoManagerBase.cpp" />
     <ClCompile Include="..\..\Src\Common\APITraceUtils.cpp" />
     <ClCompile Include="..\..\Src\Common\ATPFileUtils.cpp" />
@@ -66,7 +65,6 @@
     <ClCompile Include="..\..\Src\Common\FileUtils.cpp" />
     <ClCompile Include="..\..\Src\Common\GlobalSettings.cpp" />
     <ClCompile Include="..\..\Src\Common\GPAUtils.cpp" />
-    <ClCompile Include="..\..\..\Common\Src\GPUPerfAPIUtils\GPUPerfAPILoader.cpp" />
     <ClCompile Include="..\..\Src\Common\GPUPerfAPICounterLoader.cpp" />
     <ClCompile Include="..\..\Src\Common\HTMLTable.cpp" />
     <ClCompile Include="..\..\Src\Common\jqPlotChart.cpp" />
@@ -88,7 +86,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Common\Src\ADLUtil\ADLUtil.h" />
-    <ClInclude Include="..\..\..\Common\Src\GPUPerfAPIUtils\GPUPerfAPIRegistry.h" />
     <ClInclude Include="..\..\Src\Common\APIInfo.h" />
     <ClInclude Include="..\..\Src\Common\APIInfoManagerBase.h" />
     <ClInclude Include="..\..\Src\Common\APITraceUtils.h" />
@@ -104,7 +101,6 @@
     <ClInclude Include="..\..\Src\Common\FileUtils.h" />
     <ClInclude Include="..\..\Src\Common\GlobalSettings.h" />
     <ClInclude Include="..\..\Src\Common\GPAUtils.h" />
-    <ClInclude Include="..\..\..\Common\Src\GPUPerfAPIUtils\GPUPerfAPILoader.h" />
     <ClInclude Include="..\..\Src\Common\GPUPerfAPICounterLoader.h" />
     <ClInclude Include="..\..\Src\Common\HTMLTable.h" />
     <ClInclude Include="..\..\Src\Common\IParserListener.h" />

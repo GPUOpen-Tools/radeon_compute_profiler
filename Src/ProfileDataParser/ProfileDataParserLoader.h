@@ -91,6 +91,7 @@ inline LocaleString GetWorkingDirectoryPath()
     {
         selfModuleName[len] = '\0';
     }
+
     path = LocaleString(selfModuleName);
 #endif
 
@@ -158,7 +159,7 @@ public:
             if (nullptr != parserLibraryHandle)
             {
                 m_pAtpDataHandlerFunc = reinterpret_cast<AtpDataHandlerFunc>(GetProcAddress(parserLibraryHandle, GET_ATP_DATA_HANDLER_FUNC_NAME));
-                m_pAtpPArserFunc = reinterpret_cast<AtpParserFunc>(GetProcAddress(parserLibraryHandle, PARSE_ATP_FILE_FUNC_NAME));
+                m_pAtpParserFunc = reinterpret_cast<AtpParserFunc>(GetProcAddress(parserLibraryHandle, PARSE_ATP_FILE_FUNC_NAME));
                 m_pAtpParserGetUUIDFunc = reinterpret_cast<AtpParserGetUUIDFunc>(GetProcAddress(parserLibraryHandle, GET_PARSER_UUID_FUNC_NAME));
             }
 
@@ -168,13 +169,13 @@ public:
             if (nullptr != parserLibraryHandle)
             {
                 m_pAtpDataHandlerFunc = reinterpret_cast<AtpDataHandlerFunc>(dlsym(parserLibraryHandle, GET_ATP_DATA_HANDLER_FUNC_NAME));
-                m_pAtpPArserFunc = reinterpret_cast<AtpParserFunc>(dlsym(parserLibraryHandle, PARSE_ATP_FILE_FUNC_NAME));
+                m_pAtpParserFunc = reinterpret_cast<AtpParserFunc>(dlsym(parserLibraryHandle, PARSE_ATP_FILE_FUNC_NAME));
                 m_pAtpParserGetUUIDFunc = reinterpret_cast<AtpParserGetUUIDFunc>(dlsym(parserLibraryHandle, GET_PARSER_UUID_FUNC_NAME));
             }
 
 #endif
 
-            if (nullptr != m_pAtpPArserFunc && nullptr != m_pAtpDataHandlerFunc && nullptr != m_pAtpParserGetUUIDFunc)
+            if (nullptr != m_pAtpParserFunc && nullptr != m_pAtpDataHandlerFunc && nullptr != m_pAtpParserGetUUIDFunc)
             {
                 if (m_pAtpParserGetUUIDFunc() == RCP_PROFILE_DATA_PARSER_UUID_VAL)
                 {
@@ -203,7 +204,7 @@ public:
     /// \return function pointer of the AtpParserFunc from the library
     AtpParserFunc GetAtpParserFunctionPointer() const
     {
-        return m_pAtpPArserFunc;
+        return m_pAtpParserFunc;
     }
 
     /// Get the AtpDataHandlerFunctionPointer
@@ -224,14 +225,14 @@ private:
 
     /// private constructor
     ProfileDataParserLoader(): m_isLoaded(false),
-        m_pAtpPArserFunc(nullptr),
+        m_pAtpParserFunc(nullptr),
         m_pAtpDataHandlerFunc(nullptr),
         m_pAtpParserGetUUIDFunc(nullptr)
     {}
 
     static ProfileDataParserLoader* m_pParserInterfaceLoader; ///< static instance of the profile data parser loader class
     bool                            m_isLoaded;               ///< flag indicating library is loaded or not
-    AtpParserFunc                   m_pAtpPArserFunc;         ///< ATP parser function pointer
+    AtpParserFunc                   m_pAtpParserFunc;         ///< ATP parser function pointer
     AtpDataHandlerFunc              m_pAtpDataHandlerFunc;    ///< ATP parsed data handler function pointer
     AtpParserGetUUIDFunc            m_pAtpParserGetUUIDFunc;  ///< Profile data parser GetUUID function pointer
 };

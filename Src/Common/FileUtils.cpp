@@ -214,6 +214,7 @@ void FileUtils::PassParametersByFile(Parameters params)
     fout << "ForcedGpuIndex=" << params.m_uiForcedGpuIndex << endl;
     fout << "AqlPacketTracing=" << (params.m_bAqlPacketTracing ? "True" : "False") << endl;
     fout << "HSADisableKernelDemangle=" << (params.m_bDisableKernelDemangling ? "True" : "False") << endl;
+    fout << "NoHSATransferTime=" << (params.m_bNoHSATransferTime ? "True" : "False") << endl;
 
     for (EnvVarMap::const_iterator it = params.m_mapEnvVars.begin(); it != params.m_mapEnvVars.end(); ++it)
     {
@@ -605,6 +606,10 @@ bool FileUtils::GetParametersFromFile(Parameters& params)
                 else if (opStr.find("HSADisableKernelDemangle") != std::string::npos)
                 {
                     params.m_bDisableKernelDemangling = (valStr.find("True") != std::string::npos);
+                }
+                else if (opStr.find("NoHSATransferTime") != std::string::npos)
+                {
+                    params.m_bNoHSATransferTime = (valStr.find("True") != std::string::npos);
                 }
             }
         }

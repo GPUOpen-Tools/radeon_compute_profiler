@@ -28,6 +28,7 @@ HSAAgentIterateReplacer::HSAAgentIteratorCallback HSAAgentIterateReplacer::GetAg
 hsa_status_t HSAAgentIterateReplacer::ReplacedIterateAgentsCallback(hsa_agent_t agent, void* data)
 {
     char agentName[512];
+
     if (HSA_STATUS_SUCCESS == m_pRealCoreFunctions->hsa_agent_get_info_fn(agent, HSA_AGENT_INFO_NAME, agentName))
     {
         HSAAgentsContainer::Instance()->AddAgent(agent, agentName);

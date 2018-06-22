@@ -89,9 +89,13 @@ General options
     ``--envvar`` switch represent the full environment block. If not specified,
     then the environment variables represent additions or changes to the system
     environment block."
-    "``-l [ --list ]``", "Print the list of valid counter names."
+    "``-l [ --list ]``", "Print a list of valid counter names."
+    "``--listactive``", "Print a list of valid counter names for active
+    devices."
     "``-L [listdetailed]``", "Print a list of valid counter names with
     descriptions."
+    "``--listdetailedactive``", "Print a list of valid counter names with
+    descriptions for active devices."
     "``-N [ --sessionname ] arg``", "Name of the generated session. If not
     specified, the name is the parent directory of the OutputFile."
     "``--maxpassperfile arg``", "Limits the set of counters in the generated
@@ -115,6 +119,7 @@ General options
     "``-w [ --workingdirectory ] arg``", "Set the working directory. If not
     provided, the default is the application binary's path."
     "``-h [ --help ]``", "Print a help message."
+    "``--showdoc``", "Launch the documentation in a web browser (if one is available)."
 
 
 Application Trace mode options (for ``--apitrace`` and ``-–hsatrace`` and ``--hsaaqlpackettrace``)

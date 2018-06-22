@@ -4,7 +4,6 @@ DEPTH = ../..
 include $(DEPTH)/Build/Linux/Common.mk
 
 TARGETSO = $(OUTPUT_BIN_DIR)/lib$(GPU_PROFILER_LIB_PREFIX)$(PROJECT_NAME)$(TARGET_SUFFIX).so
-STREAM_SDK_LIB = -L$(ATI_STREAM_SDK_DIR)/lib/x86_64
 
 INCLUDES = \
 	-I. \
@@ -12,9 +11,8 @@ INCLUDES = \
 	-I$(SRC_CLCOMMON_DIR) \
 	-I$(COMMON_PROJ_DIR) \
 	-isystem$(GPU_PERF_API_DIR) \
-	-isystem$(ATI_STREAM_SDK_DIR)/include \
+	-isystem$(APPSDK_DIR)/include \
 	-isystem$(CAL_DIR)/include \
-	-isystem$(COMMON_SRC)/GPUPerfAPIUtils \
 	-I$(DYNAMICLIBRARYMODULE_DIR) \
 	-I$(DEVICEINFO_DIR) \
 	-I$(TSINGLETON_DIR) \
@@ -37,7 +35,6 @@ LIBPATH = $(COMMON_LIB_PATHS)
 
 SO_OBJS =  \
 	./$(OBJ_DIR)/CLProfileAgent.o \
-	./$(OBJ_DIR)/CLInitProfiler.o \
 	./$(OBJ_DIR)/CLBuffer.o \
 	./$(OBJ_DIR)/CLContext.o \
 	./$(OBJ_DIR)/CLContextManager.o \

@@ -17,14 +17,13 @@ INCLUDES = \
 	-I$(DEVICEINFO_DIR) \
 	-isystem$(BOOST_DIR) \
 	-isystem$(CAL_DIR)/include \
-	-isystem$(ATI_STREAM_SDK_DIR)/include \
+	-isystem$(APPSDK_DIR)/include \
 	-isystem$(HSA_DIR)/include \
 	-isystem$(HSA_DIR)/include/hsa \
 	-I$(DYNAMICLIBRARYMODULE_DIR) \
 	-I$(TSINGLETON_DIR) \
 	-I$(UTF8CPP_DIR) \
 	-I$(GPU_PERF_API_DIR) \
-	-I$(GPUPERFAPIUTILS_DIR) \
 	-I$(ADL_DIR)/include \
 	-I$(HSAUTILS_DIR)
 

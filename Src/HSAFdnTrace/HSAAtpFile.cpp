@@ -117,18 +117,18 @@ HSAAPIInfo* HSAAtpFilePart::CreateAPIInfo(const std::string& strAPIName)
 
     if (apiType == HSA_API_Type_hsa_amd_memory_async_copy)
     {
-        retObj = new (nothrow) HSAMemoryTransferAPIInfo();
+        retObj = new(nothrow) HSAMemoryTransferAPIInfo();
     }
     else if (apiType == HSA_API_Type_hsa_memory_allocate || apiType == HSA_API_Type_hsa_memory_copy ||
              apiType == HSA_API_Type_hsa_memory_register || apiType == HSA_API_Type_hsa_memory_deregister ||
              apiType == HSA_API_Type_hsa_amd_memory_pool_allocate || apiType == HSA_API_Type_hsa_amd_memory_lock ||
              apiType == HSA_API_Type_hsa_amd_memory_fill || apiType == HSA_API_Type_hsa_amd_interop_map_buffer)
     {
-        retObj = new (nothrow)HSAMemoryAPIInfo();
+        retObj = new(nothrow)HSAMemoryAPIInfo();
     }
     else
     {
-        retObj = new (nothrow)HSAAPIInfo();
+        retObj = new(nothrow)HSAAPIInfo();
     }
 
     if (retObj)
@@ -362,7 +362,7 @@ bool HSAAtpFilePart::Parse(std::istream& in, std::string& outErrorMsg)
             {
                 size_t sectionNameStart = line.find_first_not_of('=');
                 std::string atpSectionHeaderStartEndString = ATP_SECTION_HEADER_START_END;
-                string sectionName = line.substr(sectionNameStart, line.size() - (2* atpSectionHeaderStartEndString.size()));
+                string sectionName = line.substr(sectionNameStart, line.size() - (2 * atpSectionHeaderStartEndString.size()));
 
                 if (!bKTSStart && std::find(m_sections.begin(), m_sections.end(), sectionName) != m_sections.end())
                 {
@@ -566,27 +566,30 @@ bool HSAAtpFilePart::Parse(std::istream& in, std::string& outErrorMsg)
             }
             else
             {
-                HSADispatchInfo* dispatchInfo = new (std::nothrow) HSADispatchInfo();
-
-                if (nullptr == dispatchInfo)
+                if (std::string::npos != line.find("HSA_PACKET_TYPE_KERNEL_DISPATCH"))
                 {
-                    Log(logERROR, "Error: out of memory\n");
-                    return false;
-                }
+                    HSADispatchInfo* dispatchInfo = new(std::nothrow) HSADispatchInfo();
 
-                if (!ParseDeviceTimestamp(line.c_str(), dispatchInfo))
-                {
-                    Log(logERROR, "Error parsing device timestamp entry\n");
-                    return false;
-                }
-
-                m_HSADispatchInfoList.push_back(dispatchInfo);
-
-                for (std::vector<IParserListener<HSAAPIInfo>*>::iterator it = m_listenerList.begin(); it != m_listenerList.end() && !m_shouldStopParsing; it++)
-                {
-                    if (nullptr != (*it))
+                    if (nullptr == dispatchInfo)
                     {
-                        (*it)->OnParse(dispatchInfo, m_shouldStopParsing);
+                        Log(logERROR, "Error: out of memory\n");
+                        return false;
+                    }
+
+                    if (!ParseDeviceTimestamp(line.c_str(), dispatchInfo))
+                    {
+                        Log(logERROR, "Error parsing device timestamp entry\n");
+                        return false;
+                    }
+
+                    m_HSADispatchInfoList.push_back(dispatchInfo);
+
+                    for (std::vector<IParserListener<HSAAPIInfo>*>::iterator it = m_listenerList.begin(); it != m_listenerList.end() && !m_shouldStopParsing; it++)
+                    {
+                        if (nullptr != (*it))
+                        {
+                            (*it)->OnParse(dispatchInfo, m_shouldStopParsing);
+                        }
                     }
                 }
             }

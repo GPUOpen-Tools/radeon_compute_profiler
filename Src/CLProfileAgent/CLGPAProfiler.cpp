@@ -1,5 +1,5 @@
 //==============================================================================
-// Copyright (c) 2015 Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2015-2018 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 /// \brief The implementation for the GPA helper class.
@@ -107,7 +107,7 @@ bool CLGPAProfiler::Open(cl_command_queue commandQueue)
     SpAssertRet(!m_isGPAOpened) false;
 
     SeqIDGenerator::Instance()->EnableGenerator(false);
-    m_isGPAOpened = m_GPAUtils.Open((void*)commandQueue);
+    m_isGPAOpened = m_gpaUtils.Open((void*)commandQueue);
     return m_isGPAOpened;
 }
 
@@ -118,7 +118,7 @@ bool CLGPAProfiler::Close()
 
     if (m_isGPAOpened)
     {
-        retVal = m_GPAUtils.Close();
+        retVal = m_gpaUtils.Close();
         m_isGPAOpened = !retVal;
     }
 
@@ -127,6 +127,24 @@ bool CLGPAProfiler::Close()
 
 bool CLGPAProfiler::AddContext(const cl_context context)
 {
+    std::string strError;
+
+    // if we haven't already initialized the profiler, this is a good time to do so
+    if (!m_gpaUtils.Loaded())
+    {
+        if (!g_Profiler.Init(GlobalSettings::GetInstance()->m_params, strError))
+        {
+            // if we are unable to intialize the GPA, output an error
+#ifdef USE_DEBUG_GPA
+            static std::string strDll(LIB_PREFIX "GPUPerfAPICL" BITNESS "-d" AMDT_BUILD_SUFFIX LIB_SUFFIX);
+#else
+            static std::string strDll(LIB_PREFIX "GPUPerfAPICL" BITNESS AMDT_BUILD_SUFFIX LIB_SUFFIX);
+#endif
+            std::cout << "Error loading " << strDll << ": " << strError << std::endl;
+            GPULogger::Log(GPULogger::logERROR, "Error loading %s. Error: %s\n", strDll.c_str(), strError.c_str());
+        }
+    }
+
     return m_contextManager.AddContext(context);
 }
 
@@ -269,40 +287,6 @@ bool CLGPAProfiler::HasKernelArgPipe(const cl_kernel kernel)
     return retVal;
 }
 
-bool CLGPAProfiler::GetDeviceName(char* pszDeviceName, cl_command_queue commandQueue) const
-{
-    if (NULL == pszDeviceName)
-    {
-        assert(!"GetDeviceName: pszDeviceName is NULL\n");
-        return false;
-    }
-
-    cl_device_id device;
-
-    // get device from the command queue
-    if (CL_SUCCESS != g_realDispatchTable.GetCommandQueueInfo(commandQueue, CL_QUEUE_DEVICE, sizeof(cl_device_id), &device, NULL))
-    {
-        return false;
-    }
-
-    // get the device type
-    cl_device_type deviceType;
-
-    if (CL_SUCCESS != g_realDispatchTable.GetDeviceInfo(device, CL_DEVICE_TYPE, sizeof(cl_device_type), &deviceType, NULL) ||
-        CL_DEVICE_TYPE_GPU != deviceType)
-    {
-        return false;
-    }
-
-    // get the GPU name
-    if (CL_SUCCESS != g_realDispatchTable.GetDeviceInfo(device, CL_DEVICE_NAME, SP_MAX_PATH, pszDeviceName, NULL))
-    {
-        return false;
-    }
-
-    return true;
-}
-
 bool CLGPAProfiler::Init(const Parameters& params, string& strErrorOut)
 {
     // Set kernel files
@@ -379,7 +363,7 @@ bool CLGPAProfiler::Init(const Parameters& params, string& strErrorOut)
     }
 
     CounterList enabledCounters;
-    m_GPAUtils.InitGPA(GPA_API_OPENCL,
+    m_gpaUtils.InitGPA(GPA_API_OPENCL,
                        strDllPath,
                        strErrorOut,
                        params.m_strCounterFile.empty() ? NULL : params.m_strCounterFile.c_str(),
@@ -408,42 +392,60 @@ bool CLGPAProfiler::Init(const Parameters& params, string& strErrorOut)
             GDT_HW_GENERATION gen;
             vector<string> counterNames;
 
-            string translatedDeviceName = AMDTDeviceInfoUtils::Instance()->TranslateDeviceName(idxPlatform->strDeviceName.c_str());
-
-            int deviceId;
-            int revisionId;
-            bool retVal = GetAvailableDeviceIdFromDeviceNameAndAsicInfoList(translatedDeviceName.c_str(), asicInfoList, deviceId, revisionId);
-
-            if (retVal)
+            if (0 != idxPlatform->m_pcieDeviceId)
             {
-                m_GPAUtils.GetAvailableCountersForDevice(deviceId, revisionId, nMaxPass, counterNames);
+                m_gpaUtils.GetAvailableCountersForDevice(idxPlatform->m_pcieDeviceId, REVISION_ID_ANY, nMaxPass, counterNames);
             }
-            else
+
+            if (counterNames.empty())
             {
-                if (AMDTDeviceInfoUtils::Instance()->GetHardwareGeneration(translatedDeviceName.c_str(), gen))
+                string translatedDeviceName = AMDTDeviceInfoUtils::Instance()->TranslateDeviceName(idxPlatform->m_deviceName.c_str());
+
+                int deviceId;
+                int revisionId;
+                bool retVal = GetAvailableDeviceIdFromDeviceNameAndAsicInfoList(translatedDeviceName.c_str(), asicInfoList, deviceId, revisionId);
+
+                if (retVal)
                 {
-                    switch (gen)
+                    m_gpaUtils.GetAvailableCountersForDevice(deviceId, revisionId, nMaxPass, counterNames);
+                }
+
+                if (counterNames.empty())
+                {
+                    bool isGenSet = false;
+
+                    isGenSet = AMDTDeviceInfoUtils::Instance()->GetHardwareGeneration(static_cast<size_t>(deviceId), gen);
+
+                    if (!isGenSet)
                     {
-                        case GDT_HW_GENERATION_SOUTHERNISLAND:
-                        {
-                            m_GPAUtils.GetAvailableCounters(GPA_HW_GENERATION_SOUTHERNISLAND, counterNames);
-                            break;
-                        }
+                        isGenSet = AMDTDeviceInfoUtils::Instance()->GetHardwareGeneration(translatedDeviceName.c_str(), gen);
+                    }
 
-                        case GDT_HW_GENERATION_SEAISLAND:
+                    if (isGenSet)
+                    {
+                        switch (gen)
                         {
-                            m_GPAUtils.GetAvailableCounters(GPA_HW_GENERATION_SEAISLAND, counterNames);
-                            break;
-                        }
+                            case GDT_HW_GENERATION_SOUTHERNISLAND:
+                            {
+                                m_gpaUtils.GetAvailableCounters(GPA_HW_GENERATION_SOUTHERNISLAND, counterNames);
+                                break;
+                            }
 
-                        case GDT_HW_GENERATION_VOLCANICISLAND:
-                        {
-                            m_GPAUtils.GetAvailableCounters(GPA_HW_GENERATION_VOLCANICISLAND, counterNames);
-                            break;
-                        }
+                            case GDT_HW_GENERATION_SEAISLAND:
+                            {
+                                m_gpaUtils.GetAvailableCounters(GPA_HW_GENERATION_SEAISLAND, counterNames);
+                                break;
+                            }
 
-                        default:
-                            break;
+                            case GDT_HW_GENERATION_VOLCANICISLAND:
+                            {
+                                m_gpaUtils.GetAvailableCounters(GPA_HW_GENERATION_VOLCANICISLAND, counterNames);
+                                break;
+                            }
+
+                            default:
+                                break;
+                        }
                     }
                 }
             }
@@ -461,7 +463,7 @@ bool CLGPAProfiler::Init(const Parameters& params, string& strErrorOut)
             }
         }
 
-        m_GPAUtils.SetEnabledCounters(enabledCounters);
+        m_gpaUtils.SetEnabledCounters(enabledCounters);
 
 #endif // AMDT_INTERNAL
     }
@@ -477,26 +479,6 @@ bool CLGPAProfiler::Init(const Parameters& params, string& strErrorOut)
     return true;
 }
 
-bool CLGPAProfiler::EnableCounters(cl_command_queue commandQueue)
-{
-    bool retVal = m_isGPAOpened;
-
-    if (m_isGPAOpened)
-    {
-        if (m_GPAUtils.StatusCheck(m_GPAUtils.GetGPALoader().GPA_SelectContext(commandQueue)) != GPA_STATUS_OK)
-        {
-            // make sure that the current context has been opened by GPA
-            retVal = false;
-        }
-        else
-        {
-            retVal = m_GPAUtils.EnableCounters();
-        }
-    }
-
-    return retVal;
-}
-
 bool CLGPAProfiler::FullProfile(
     cl_command_queue commandQueue,
     cl_kernel        kernel,
@@ -508,10 +490,10 @@ bool CLGPAProfiler::FullProfile(
     const cl_event*  pEventWaitList,
     cl_event*        pEvent,
     cl_int&          nResultOut,
-    gpa_uint32&      uSessionIDOut,
+    GPA_SessionId&   sessionIdOut,
     double&          dKernelTimeOut)
 {
-    if (!m_GPAUtils.Loaded())
+    if (!m_gpaUtils.Loaded())
     {
         return false;
     }
@@ -579,69 +561,73 @@ bool CLGPAProfiler::FullProfile(
 
     if (m_isGPAOpened)
     {
-        if (GPA_STATUS_OK == m_GPAUtils.GetGPALoader().GPA_BeginSession(&uSessionIDOut))
+        if (m_gpaUtils.CreateSession(sessionIdOut))
         {
-            gpa_uint32 GPA_pCountTemp;
-            m_GPAUtils.StatusCheck(m_GPAUtils.GetGPALoader().GPA_GetPassCount(&GPA_pCountTemp));
-
-            for (gpa_uint32 GPA_loopTemp = 0; GPA_loopTemp < GPA_pCountTemp; GPA_loopTemp++)
+            if (m_gpaUtils.EnableCounters(sessionIdOut) && GPA_STATUS_OK == m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_BeginSession(sessionIdOut)))
             {
-                if (!m_bForceSinglePass && kernelAlreadyDispatched)
+                gpa_uint32 gpaPassCount = 0;
+                m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_GetPassCount(sessionIdOut, &gpaPassCount));
+
+                for (gpa_uint32 curPass = 0; curPass < gpaPassCount; curPass++)
                 {
-                    // load related memory buffers before starting the next kernel dispatch
-                    // so that we can guarantee correctness of the multiple passes of the same kernel
-                    m_contextManager.LoadArena(context, commandQueue, kernel);
+                    if (!m_bForceSinglePass && kernelAlreadyDispatched)
+                    {
+                        // load related memory buffers before starting the next kernel dispatch
+                        // so that we can guarantee correctness of the multiple passes of the same kernel
+                        m_contextManager.LoadArena(context, commandQueue, kernel);
+
+                        if (NULL != pEvent)
+                        {
+                            // release the created event otherwise buffer used won't get released
+                            g_realDispatchTable.ReleaseEvent(*pEvent);
+                        }
+                    }
+
+                    GPA_CommandListId commandListId = nullptr;
+                    m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_BeginCommandList(sessionIdOut, curPass, GPA_NULL_COMMAND_LIST, GPA_COMMAND_LIST_NONE, &commandListId));
+                    m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_BeginSample(0, commandListId));
+
+                    // call the entry in g_realDispatchTable to prevent other agents from seeing the replayed kernels
+                    cl_int clRetVal = g_realDispatchTable.EnqueueNDRangeKernel(commandQueue,
+                                                                               kernel,
+                                                                               uWorkDim,
+                                                                               pGlobalWorkOffset,
+                                                                               pGlobalWorkSize,
+                                                                               pLocalWorkSize,
+                                                                               uEventWaitList,
+                                                                               pEventWaitList,
+                                                                               pEvent);
+
+                    if (!kernelAlreadyDispatched)
+                    {
+                        nResultOut = clRetVal;
+                    }
+
+                    kernelAlreadyDispatched = true;
+
+                    m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_EndSample(commandListId));
+                    m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_EndCommandList(commandListId));
+
+                    if (nResultOut != CL_SUCCESS)
+                    {
+                        break;
+                    }
 
                     if (NULL != pEvent)
                     {
-                        // release the created event otherwise buffer used won't get released
-                        g_realDispatchTable.ReleaseEvent(*pEvent);
+                        g_realDispatchTable.WaitForEvents(1, pEvent);
                     }
                 }
 
-                m_GPAUtils.StatusCheck(m_GPAUtils.GetGPALoader().GPA_BeginPass());
-                m_GPAUtils.StatusCheck(m_GPAUtils.GetGPALoader().GPA_BeginSample(0));
+                m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_EndSession(sessionIdOut));
 
-                // call the entry in g_realDispatchTable to prevent other agents from seeing the replayed kernels
-                cl_int clRetVal = g_realDispatchTable.EnqueueNDRangeKernel(commandQueue,
-                                                                           kernel,
-                                                                           uWorkDim,
-                                                                           pGlobalWorkOffset,
-                                                                           pGlobalWorkSize,
-                                                                           pLocalWorkSize,
-                                                                           uEventWaitList,
-                                                                           pEventWaitList,
-                                                                           pEvent);
-
-                if (!kernelAlreadyDispatched)
+                if (!m_bForceSinglePass)
                 {
-                    nResultOut = clRetVal;
+                    m_contextManager.ClearArena(context, kernel);
                 }
 
-                kernelAlreadyDispatched = true;
-
-                m_GPAUtils.StatusCheck(m_GPAUtils.GetGPALoader().GPA_EndSample());
-                m_GPAUtils.StatusCheck(m_GPAUtils.GetGPALoader().GPA_EndPass());
-
-                if (nResultOut != CL_SUCCESS)
-                {
-                    break;
-                }
-
-                if (NULL != pEvent)
-                {
-                    g_realDispatchTable.WaitForEvents(1, pEvent);
-                }
+                return true;
             }
-
-            m_GPAUtils.StatusCheck(m_GPAUtils.GetGPALoader().GPA_EndSession());
-
-            if (!m_bForceSinglePass)
-            {
-                m_contextManager.ClearArena(context, kernel);
-            }
-
-            return true;
         }
     }
 
@@ -710,12 +696,22 @@ void CLGPAProfiler::InitHeader()
 
     for (CLPlatformSet::iterator idxPlatform = m_platformList.begin(); idxPlatform != m_platformList.end(); idxPlatform++)
     {
-        KernelProfileResultManager::Instance()->AddHeader(StringUtils::FormatString("Device %s Platform Vendor=%s", idxPlatform->strDeviceName.c_str(), idxPlatform->strPlatformVendor.c_str()));
-        KernelProfileResultManager::Instance()->AddHeader(StringUtils::FormatString("Device %s Platform Name=%s", idxPlatform->strDeviceName.c_str(), idxPlatform->strPlatformName.c_str()));
-        KernelProfileResultManager::Instance()->AddHeader(StringUtils::FormatString("Device %s Platform Version=%s", idxPlatform->strDeviceName.c_str(), idxPlatform->strPlatformVersion.c_str()));
-        KernelProfileResultManager::Instance()->AddHeader(StringUtils::FormatString("Device %s CLDriver Version=%s", idxPlatform->strDeviceName.c_str(), idxPlatform->strDriverVersion.c_str()));
-        KernelProfileResultManager::Instance()->AddHeader(StringUtils::FormatString("Device %s CLRuntime Version=%s", idxPlatform->strDeviceName.c_str(), idxPlatform->strCLRuntime.c_str()));
-        KernelProfileResultManager::Instance()->AddHeader(StringUtils::FormatString("Device %s NumberAppAddressBits=%d", idxPlatform->strDeviceName.c_str(), idxPlatform->uiNbrAddressBits));
+        KernelProfileResultManager::Instance()->AddHeader(StringUtils::FormatString("Device %s Platform Vendor=%s", idxPlatform->m_deviceName.c_str(), idxPlatform->m_platformVendor.c_str()));
+        KernelProfileResultManager::Instance()->AddHeader(StringUtils::FormatString("Device %s Platform Name=%s", idxPlatform->m_deviceName.c_str(), idxPlatform->m_platformName.c_str()));
+        KernelProfileResultManager::Instance()->AddHeader(StringUtils::FormatString("Device %s Platform Version=%s", idxPlatform->m_deviceName.c_str(), idxPlatform->m_platformVersion.c_str()));
+        KernelProfileResultManager::Instance()->AddHeader(StringUtils::FormatString("Device %s CLDriver Version=%s", idxPlatform->m_deviceName.c_str(), idxPlatform->m_driverVersion.c_str()));
+        KernelProfileResultManager::Instance()->AddHeader(StringUtils::FormatString("Device %s CLRuntime Version=%s", idxPlatform->m_deviceName.c_str(), idxPlatform->m_runtimeVersion.c_str()));
+        KernelProfileResultManager::Instance()->AddHeader(StringUtils::FormatString("Device %s NumberAppAddressBits=%d", idxPlatform->m_deviceName.c_str(), idxPlatform->m_addressBits));
+
+        if (!idxPlatform->m_boardName.empty())
+        {
+            KernelProfileResultManager::Instance()->AddHeader(StringUtils::FormatString("Device %s Board Name=%s", idxPlatform->m_deviceName.c_str(), idxPlatform->m_boardName.c_str()));
+        }
+
+        if (0 != idxPlatform->m_pcieDeviceId)
+        {
+            KernelProfileResultManager::Instance()->AddHeader(StringUtils::FormatString("Device %s PCIE device id=%d", idxPlatform->m_deviceName.c_str(), idxPlatform->m_pcieDeviceId));
+        }
     }
 
     KernelProfileResultManager::Instance()->AddHeader(StringUtils::FormatString("%s=%s", FILE_HEADER_OS_VERSION, OSUtils::Instance()->GetOSInfo().c_str()));
@@ -787,7 +783,7 @@ void CLGPAProfiler::DumpKernelStats(const KernelStats& kernelStats)
         KernelProfileResultManager::Instance()->WriteKernelInfo(CSV_COMMON_COLUMN_GLOBAL_WORK_SIZE, StringUtils::FormatString("{%7lu %7lu %7lu}",
                                                                 static_cast<unsigned long>(kernelStats.m_globalWorkSize[0]),
                                                                 static_cast<unsigned long>(kernelStats.m_globalWorkSize[1]),
-                                                                static_cast<unsigned long>(kernelStats.m_globalWorkSize[2]) ));
+                                                                static_cast<unsigned long>(kernelStats.m_globalWorkSize[2])));
     }
 
     if (0 == kernelStats.m_workGroupSize[0] &&
@@ -815,25 +811,24 @@ void CLGPAProfiler::DumpKernelStats(const KernelStats& kernelStats)
     KernelProfileResultManager::Instance()->WriteKernelInfo(CSV_COMMON_COLUMN_SCRATCH_REGS, kernelStats.m_kernelInfo.m_nScratchReg == KERNELINFO_NONE ? "NA" : StringUtils::ToString(kernelStats.m_kernelInfo.m_nScratchReg));
 }
 
-bool CLGPAProfiler::DumpSession(gpa_uint32 uSessionID, const KernelStats& kernelStats)
+bool CLGPAProfiler::DumpSession(GPA_SessionId sessionId, const KernelStats& kernelStats)
 {
-    if (!m_GPAUtils.Loaded())
+    if (!m_gpaUtils.Loaded())
     {
         return false;
     }
 
     KernelProfileResultManager::Instance()->BeginKernelInfo();
 
-    bool bReadyResult = false;
-    GPA_Status sessionStatus = GPA_STATUS_ERROR_FAILED;
+    bool isSessionReady = false;
 
     if (m_isGPAOpened)
     {
-        sessionStatus = m_GPAUtils.StatusCheck(m_GPAUtils.GetGPALoader().GPA_IsSessionReady(&bReadyResult, uSessionID));
+        isSessionReady = GPA_STATUS_OK == m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_IsSessionComplete(sessionId));
     }
 
     // check whether the session is ready and the result has returned from GPU
-    if (!bReadyResult || GPA_STATUS_OK != sessionStatus)
+    if (!isSessionReady)
     {
         // just CPU profiling (time)
         DumpKernelStats(kernelStats);
@@ -844,211 +839,73 @@ bool CLGPAProfiler::DumpSession(gpa_uint32 uSessionID, const KernelStats& kernel
     if (m_isGPAOpened)
     {
         gpa_uint32 sampleCount;
-        m_GPAUtils.StatusCheck(m_GPAUtils.GetGPALoader().GPA_GetSampleCount(uSessionID, &sampleCount));
+        m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_GetSampleCount(sessionId, &sampleCount));
+
+        if (0 == sampleCount)
+        {
+            SpAssertRet(!"No samples found") false;
+        }
+
+        size_t sampleResultSizeInBytes = 0;
+        m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_GetSampleResultSize(sessionId, 0, &sampleResultSizeInBytes));
+
+        gpa_uint64* pResultsBuffer = reinterpret_cast<gpa_uint64*>(malloc(sampleResultSizeInBytes));
+        m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_GetSampleResult(sessionId, 0, sampleResultSizeInBytes, pResultsBuffer));
+
+        gpa_uint32 nEnabledCounters = 0;
+        m_gpaUtils.GetGPAFuncTable()->GPA_GetNumEnabledCounters(sessionId, &nEnabledCounters);
 
         for (gpa_uint32 sample = 0; sample < sampleCount; sample++)
         {
             DumpKernelStats(kernelStats);
 
-            gpa_uint32 nEnabledCounters = 0;
-            m_GPAUtils.GetGPALoader().GPA_GetEnabledCount(&nEnabledCounters);
-
             for (gpa_uint32 counter = 0; counter < nEnabledCounters; counter++)
             {
                 gpa_uint32 enabledCounterIndex;
-                m_GPAUtils.StatusCheck(m_GPAUtils.GetGPALoader().GPA_GetEnabledIndex(counter, &enabledCounterIndex));
-                GPA_Type type;
-                m_GPAUtils.StatusCheck(m_GPAUtils.GetGPALoader().GPA_GetCounterDataType(enabledCounterIndex, &type));
+                m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_GetEnabledIndex(sessionId, counter, &enabledCounterIndex));
 
-                const char* pName = NULL;
-                m_GPAUtils.StatusCheck(m_GPAUtils.GetGPALoader().GPA_GetCounterName(enabledCounterIndex, &pName));
+                GPA_Data_Type dataType;
+
+                if (!m_gpaUtils.GetCounterDataType(enabledCounterIndex, dataType))
+                {
+                    SpBreak("Failed to retrieve counter data type.");
+                    continue;
+                }
+
                 string strName;
 
-                if (pName != NULL)
-                {
-                    strName = pName;
-                }
-                else
+                if (!m_gpaUtils.GetCounterName(enabledCounterIndex, strName))
                 {
                     SpBreak("Failed to retrieve counter name.");
                     continue;
                 }
 
-                if (type == GPA_TYPE_UINT32)
+                if (GPA_DATA_TYPE_UINT64 == dataType)
                 {
-                    gpa_uint32 value;
-                    m_GPAUtils.StatusCheck(m_GPAUtils.GetGPALoader().GPA_GetSampleUInt32(uSessionID, sample, enabledCounterIndex, &value));
-                    KernelProfileResultManager::Instance()->WriteKernelInfo(strName, StringUtils::FormatString("%8u", value));
-                }
-                else if (type == GPA_TYPE_UINT64)
-                {
-                    gpa_uint64 value;
-                    m_GPAUtils.StatusCheck(m_GPAUtils.GetGPALoader().GPA_GetSampleUInt64(uSessionID, sample, enabledCounterIndex, &value));
-
 #ifdef _WIN32
-                    KernelProfileResultManager::Instance()->WriteKernelInfo(strName, StringUtils::FormatString("%8I64u", value));
+                    KernelProfileResultManager::Instance()->WriteKernelInfo(strName, StringUtils::FormatString("%8I64u", pResultsBuffer[counter]));
 #else
-                    KernelProfileResultManager::Instance()->WriteKernelInfo(strName, StringUtils::FormatString("%lu", value));
+                    KernelProfileResultManager::Instance()->WriteKernelInfo(strName, StringUtils::FormatString("%lu", pResultsBuffer[counter]));
 #endif
-
                 }
-                else if (type == GPA_TYPE_FLOAT32)
+                else if (GPA_DATA_TYPE_FLOAT64 == dataType)
                 {
-                    gpa_float32 value;
-                    m_GPAUtils.StatusCheck(m_GPAUtils.GetGPALoader().GPA_GetSampleFloat32(uSessionID, sample, enabledCounterIndex, &value));
-
-                    KernelProfileResultManager::Instance()->WriteKernelInfo(strName, StringUtils::FormatString("%12.2f", value));
-                }
-                else if (type == GPA_TYPE_FLOAT64)
-                {
-                    gpa_float64 value;
-                    m_GPAUtils.StatusCheck(m_GPAUtils.GetGPALoader().GPA_GetSampleFloat64(uSessionID, sample, enabledCounterIndex, &value));
-
-                    KernelProfileResultManager::Instance()->WriteKernelInfo(strName, StringUtils::FormatString("%12.2f", value));
+                    KernelProfileResultManager::Instance()->WriteKernelInfo(strName, StringUtils::FormatString("%12.2f", reinterpret_cast<gpa_float64*>(pResultsBuffer)[counter]));
                 }
                 else
                 {
-                    assert(false);
-                    return false;
+                    SpAssertRet(!"Unrecognized data type") false;
                 }
             }
         }
+
+        free(pResultsBuffer);
     }
 
     KernelProfileResultManager::Instance()->EndKernelInfo();
+    m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_DeleteSession(sessionId));
 
     return true;
-}
-
-std::string CLGPAProfiler::GetStatusString(GPA_Status status) const
-{
-    std::string result;
-
-    switch (status)
-    {
-        case GPA_STATUS_ERROR_NULL_POINTER :
-            result = "Null pointer";
-            break;
-
-        case GPA_STATUS_ERROR_COUNTERS_NOT_OPEN :
-            result = "Counters not opened";
-            break;
-
-        case GPA_STATUS_ERROR_COUNTERS_ALREADY_OPEN :
-            result = "Counters already opened";
-            break;
-
-        case GPA_STATUS_ERROR_INDEX_OUT_OF_RANGE :
-            result = "Index out of range";
-            break;
-
-        case GPA_STATUS_ERROR_NOT_FOUND :
-            result = "Not found";
-            break;
-
-        case GPA_STATUS_ERROR_ALREADY_ENABLED :
-            result = "Already enabled";
-            break;
-
-        case GPA_STATUS_ERROR_NO_COUNTERS_ENABLED :
-            result = "No counters enabled";
-            break;
-
-        case GPA_STATUS_ERROR_NOT_ENABLED :
-            result = "Not enabled";
-            break;
-
-        case GPA_STATUS_ERROR_SAMPLING_NOT_STARTED :
-            result = "Sampling not started";
-            break;
-
-        case GPA_STATUS_ERROR_SAMPLING_ALREADY_STARTED :
-            result = "Sampling already started";
-            break;
-
-        case GPA_STATUS_ERROR_SAMPLING_NOT_ENDED :
-            result = "Sampling not ended";
-            break;
-
-        case GPA_STATUS_ERROR_NOT_ENOUGH_PASSES :
-            result = "Not enough passes";
-            break;
-
-        case GPA_STATUS_ERROR_PASS_NOT_ENDED :
-            result = "Pass not ended";
-            break;
-
-        case GPA_STATUS_ERROR_PASS_NOT_STARTED :
-            result = "Pass not started";
-            break;
-
-        case GPA_STATUS_ERROR_PASS_ALREADY_STARTED :
-            result = "Pass already started";
-            break;
-
-        case GPA_STATUS_ERROR_SAMPLE_NOT_STARTED :
-            result = "Sample not found";
-            break;
-
-        case GPA_STATUS_ERROR_SAMPLE_ALREADY_STARTED :
-            result = "Sample already started";
-            break;
-
-        case GPA_STATUS_ERROR_SAMPLE_NOT_ENDED :
-            result = "sample not ended";
-            break;
-
-        case GPA_STATUS_ERROR_CANNOT_CHANGE_COUNTERS_WHEN_SAMPLING :
-            result = "Cannot change counters when sampling";
-            break;
-
-        case GPA_STATUS_ERROR_SESSION_NOT_FOUND :
-            result = "Session not found";
-            break;
-
-        case GPA_STATUS_ERROR_SAMPLE_NOT_FOUND :
-            result = "Sample not found";
-            break;
-
-        case GPA_STATUS_ERROR_SAMPLE_NOT_FOUND_IN_ALL_PASSES :
-            result = "Sample not found in all passes";
-            break;
-
-        case GPA_STATUS_ERROR_COUNTER_NOT_OF_SPECIFIED_TYPE :
-            result = "Counter not of specified type";
-            break;
-
-        case GPA_STATUS_ERROR_READING_COUNTER_RESULT :
-            result = "Error reading counter result";
-            break;
-
-        case GPA_STATUS_ERROR_VARIABLE_NUMBER_OF_SAMPLES_IN_PASSES :
-            result = "Variable number of samples in passes";
-            break;
-
-        case GPA_STATUS_ERROR_FAILED :
-            result = "Failed";
-            break;
-
-        case GPA_STATUS_ERROR_HARDWARE_NOT_SUPPORTED :
-            result = "Hardware not supported";
-            break;
-
-        case GPA_STATUS_ERROR_DRIVER_NOT_SUPPORTED:
-            result = "Driver version not supported";
-            break;
-
-        default:
-
-            if (status != GPA_STATUS_OK)
-            {
-                result = "Unknown error";
-            }
-
-            break;
-    }
-
-    return result;
 }
 
 void CLGPAProfiler::AddUserEvent(cl_event userEvent)

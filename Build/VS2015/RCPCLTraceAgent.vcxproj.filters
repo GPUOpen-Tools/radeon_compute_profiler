@@ -72,9 +72,6 @@
     <ClInclude Include="../../Src/CLTraceAgent/PMCSamplerManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="../../Src/CLTraceAgent/resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">

@@ -215,68 +215,6 @@ bool GetCPUISA(CElf& elf, string& strISAOut)
     return true;
 }
 
-bool KernelAssembly::DoesUseHSAILPath(const string& strDeviceName, cl_device_id device)
-{
-
-    bool retVal = true;
-
-    // HSAIL path is not used on Linux 32-bit regardless of driver version, hardware family
-#ifdef _LINUX
-#ifdef X86
-    retVal = false;
-#endif
-#endif
-
-    if (retVal)
-    {
-        // HSAIL path is not used on SI hardware
-        bool isSiFamily = false;
-        AMDTDeviceInfoUtils::Instance()->IsSIFamily(strDeviceName.c_str(), isSiFamily);
-
-        if (isSiFamily)
-        {
-            retVal = false;
-        }
-
-        if (retVal)
-        {
-            size_t versionLength;
-            cl_int clRet = g_realDispatchTable.GetDeviceInfo(device, CL_DRIVER_VERSION, 0, NULL, &versionLength);
-
-            if (clRet == CL_SUCCESS)
-            {
-                char* pszVersion = new(std::nothrow) char[versionLength];
-                SpAssertRet(pszVersion != NULL) false;
-
-                clRet = g_realDispatchTable.GetDeviceInfo(device, CL_DRIVER_VERSION, versionLength, pszVersion, NULL);
-
-                if (clRet == CL_SUCCESS)
-                {
-                    // version string is of the format: "2000.3 (VM)"
-                    string strOclVersion = string(pszVersion);
-                    size_t spacePos = strOclVersion.find(" ");
-
-                    if (string::npos != spacePos)
-                    {
-                        strOclVersion = strOclVersion.substr(0, spacePos);
-                    }
-
-                    int nOclVersion;
-
-                    if (StringUtils::Parse(strOclVersion, nOclVersion))
-                    {
-                        retVal = nOclVersion >= 1983; // HSAIL path became the default for OCL 1.2 kernels starting with OCL driver version 1983
-                    }
-                }
-
-                delete[] pszVersion;
-            }
-        }
-    }
-
-    return retVal;
-}
-
 bool KernelAssembly::GenerateKernelFilesFromACLModule(ACLModule*         pAclModule,
                                                       aclCompiler*       pAclCompiler,
                                                       std::vector<char>& vBinary,
@@ -445,14 +383,14 @@ bool KernelAssembly::GenerateKernelFiles(std::vector<char>& vBinary,
 
         if (aclLoaded)
         {
-             kernelFilesGenerated = GenerateKernelFilesFromACLModule(pAclModuleAMDIL,
-                                                                     pAclCompilerAMDIL,
-                                                                     vBinary,
-                                                                     strKernelFunction,
-                                                                     strKernelHandle,
-                                                                     strOutputDir,
-                                                                     isGPU,
-                                                                     false);
+            kernelFilesGenerated = GenerateKernelFilesFromACLModule(pAclModuleAMDIL,
+                                                                    pAclCompilerAMDIL,
+                                                                    vBinary,
+                                                                    strKernelFunction,
+                                                                    strKernelHandle,
+                                                                    strOutputDir,
+                                                                    isGPU,
+                                                                    false);
         }
     }
 

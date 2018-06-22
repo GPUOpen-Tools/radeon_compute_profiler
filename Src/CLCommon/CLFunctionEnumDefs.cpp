@@ -158,6 +158,15 @@ CL_FUNC_TYPE ToCLFuncType(const std::string& strName)
         s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clReleaseSsgFileObjectAMD"), CL_FUNC_TYPE_clReleaseSsgFileObjectAMD));
         s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clEnqueueReadSsgFileAMD"), CL_FUNC_TYPE_clEnqueueReadSsgFileAMD));
         s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clEnqueueWriteSsgFileAMD"), CL_FUNC_TYPE_clEnqueueWriteSsgFileAMD));
+        s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clCloneKernel"), CL_FUNC_TYPE_clCloneKernel));
+        s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clCreateProgramWithIL"), CL_FUNC_TYPE_clCreateProgramWithIL));
+        s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clEnqueueSVMMigrateMem"), CL_FUNC_TYPE_clEnqueueSVMMigrateMem));
+        s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clGetDeviceAndHostTimer"), CL_FUNC_TYPE_clGetDeviceAndHostTimer));
+        s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clGetHostTimer"), CL_FUNC_TYPE_clGetHostTimer));
+        s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clGetKernelSubGroupInfo"), CL_FUNC_TYPE_clGetKernelSubGroupInfo));
+        s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clSetDefaultDeviceCommandQueue"), CL_FUNC_TYPE_clSetDefaultDeviceCommandQueue));
+        s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clSetProgramReleaseCallback"), CL_FUNC_TYPE_clSetProgramReleaseCallback));
+        s_CLAPIMap.insert(pair<string, CL_FUNC_TYPE>(string("clSetProgramSpecializationConstant"), CL_FUNC_TYPE_clSetProgramSpecializationConstant));
     }
 
     map<string, CL_FUNC_TYPE>::iterator it = s_CLAPIMap.find(strName);
@@ -179,5 +188,6 @@ bool IsEnqueueAPI(const unsigned int uiAPIId)
            (uiAPIId >= CL_FUNC_TYPE_clEnqueueFillBuffer && uiAPIId <= CL_FUNC_TYPE_clEnqueueBarrierWithWaitList) ||
            (uiAPIId >= CL_FUNC_TYPE_clEnqueueSVMFree && uiAPIId <= CL_FUNC_TYPE_clEnqueueSVMUnmap) ||
            (uiAPIId >= CL_FUNC_TYPE_clEnqueueSVMFreeAMD && uiAPIId <= CL_FUNC_TYPE_clEnqueueSVMUnmapAMD) ||
-           (uiAPIId >= CL_FUNC_TYPE_clEnqueueReadSsgFileAMD && uiAPIId <= CL_FUNC_TYPE_clEnqueueWriteSsgFileAMD);
+           (uiAPIId >= CL_FUNC_TYPE_clEnqueueReadSsgFileAMD && uiAPIId <= CL_FUNC_TYPE_clEnqueueWriteSsgFileAMD) ||
+           (uiAPIId >= CL_FUNC_TYPE_clEnqueueSVMMigrateMem && uiAPIId <= CL_FUNC_TYPE_clEnqueueSVMMigrateMem);
 }

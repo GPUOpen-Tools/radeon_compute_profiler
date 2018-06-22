@@ -68,7 +68,7 @@ bool jqPlotChart::CopyJqPlotFile(std::string destPath, std::string fileName)
 
     if (FileUtils::FileExist(scriptSourcePath))
     {
-        return OSUtils::Instance()->osCopyFile(scriptSourcePath.c_str(), destFilePath.c_str());
+        return OSUtils::Instance()->OSCopyFile(scriptSourcePath.c_str(), destFilePath.c_str());
     }
 
     return false;

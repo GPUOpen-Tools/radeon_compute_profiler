@@ -9,8 +9,8 @@
 #define _GPU_PERFAPI_COUNTER_LOADER_H_
 
 #include "GPUPerfAPI.h"
-#include "GPAICounterAccessor.h"
-#include "GPAICounterScheduler.h"
+#include "IGPACounterAccessor.h"
+#include "IGPACounterScheduler.h"
 #include "GPUPerfAPICounters.h"
 #include <TSingleton.h>
 

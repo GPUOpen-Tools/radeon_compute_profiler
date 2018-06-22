@@ -20,13 +20,17 @@
 #include <queue>
 #include <unordered_map>
 #include <mutex>
+#include <memory>
+#include <map>
+#include <vector>
+#include <limits>
 
 #include "hsa.h"
 
 #include <AMDTOSWrappers/Include/osThread.h>
 
 #if defined (_LINUX) || defined (LINUX)
-#include <AMDTOSWrappers/Include/osCondition.h>
+    #include <AMDTOSWrappers/Include/osCondition.h>
 #endif
 
 #include <TSingleton.h>
@@ -74,6 +78,7 @@ class HSATimeCollectorGlobals: public TSingleton<HSATimeCollectorGlobals>
 public:
     hsa_signal_t              m_forceSignalCollection;  ///< signal used to indicate that the collector thread should collect timestamps for all remaining signals
     bool                      m_doQuit;                 ///< flag to indicate that the signal collector should finish
+    std::mutex                m_signalCollectorMtx;     ///< mutex protecting signal collection phase
 #if defined (_LINUX) || defined (LINUX)
     osCondition               m_dispatchesInFlight;     ///< condition used to wake up the signal collector thread
 #endif
@@ -92,11 +97,20 @@ class HSASignalQueue : public TSingleton<HSASignalQueue>
 public:
     /// Add a signal to the queue
     /// \param signal the replacer signal to add to the back of the queue
-    void AddSignalToBack(const HSAPacketSignalReplacer& signal);
+    /// \return true if the queue entry of the queue map is empty
+    bool AddSignalToBack(const HSAPacketSignalReplacer& signal);
 
     /// Get the signal from the queue
-    /// \param[out] signal the replacer signal retrieved from the front of the queue
-    void GetSignalFromFront(HSAPacketSignalReplacer& outSignal);
+    /// \param[out] outSignals the replacer signal pointer array that holds all front entries of each queue in the queue map
+    void GetSignalFromFront(std::vector<const HSAPacketSignalReplacer*>& outSignals);
+
+    /// Pop the signal from the queue
+    /// \param queue the queue pointer that need to be popped out from the queue map
+    void PopSignalFromQueue(const hsa_queue_t* queue);
+
+    /// Test whether the queue map is empty
+    /// \return empty status
+    bool IsEmpty();
 
     /// Gets the size of the queue
     /// \return the size of the queue
@@ -106,8 +120,8 @@ public:
     void Clear();
 
 private:
-    std::queue<HSAPacketSignalReplacer> m_signalQueue;    ///< Queue holding the signal replacers
-    std::mutex                m_signalQueueMtx;           ///< Mutex protecting access to m_signalList
+    std::map<const hsa_queue_t*, std::queue<HSAPacketSignalReplacer>> m_queueSignalsMap; ///< Queue map holding the signal replacers
+    std::mutex                m_signalQueueMtx;                                          ///< Mutex protecting access to m_signalList
 };
 
 /// Thread to collect timestamps for kernel dispatch packets.

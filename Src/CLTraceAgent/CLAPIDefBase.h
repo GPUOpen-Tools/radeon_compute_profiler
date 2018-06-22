@@ -113,6 +113,8 @@ public:
     CLEnqueueAPIBase() : CLAPIBase()
     {
         m_apiType = CL_ENQUEUE_BASE_API;
+        m_isDevicePcieIdSet = false;
+        m_devicePcieId = 0;
     }
 
     /// virtual destructor
@@ -163,6 +165,8 @@ protected:
     cl_uint m_uiContextID;                       ///< context id
     cl_uint m_uiQueueID;                         ///< queue id
     std::string m_strDeviceName;                 ///< device name
+    cl_uint m_devicePcieId;                      ///< device PCIE ID
+    bool m_isDevicePcieIdSet;                    ///< a flag indicating whether or not m_devicePcieId set
 };
 
 //------------------------------------------------------------------------------------

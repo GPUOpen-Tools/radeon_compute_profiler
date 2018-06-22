@@ -1,5 +1,5 @@
 //==============================================================================
-// Copyright (c) 2015 Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2015-2018 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 /// \brief A collection of functions to handle the interaction with
@@ -11,12 +11,12 @@
 #include "CLFunctionDefs.h"
 #include "CLProfileAgent.h"
 #include "CLProfilerMineCLEntry.h"
-#include "CLInitProfiler.h"
 #include "CLGPAProfiler.h"
 #include "../Common/Logger.h"
 #include "../Common/Defs.h"
 #include "../Common/Version.h"
 #include "../Common/FileUtils.h"
+#include "../Common/GlobalSettings.h"
 
 static cl_icd_dispatch_table original_dispatch;
 static cl_icd_dispatch_table modified_dispatch;
@@ -58,10 +58,17 @@ clAgent_OnLoad(cl_agent* agent)
     err = agent->SetICDDispatchTable(
               agent, &modified_dispatch, sizeof(modified_dispatch));
 
-    if (false == InitProfiler())
-    {
-        return CL_PROFILING_INFO_NOT_AVAILABLE;
-    }
+    std::string strLogFile = FileUtils::GetDefaultOutputPath() + "clprofileagent.log";
+    GPULogger::LogFileInitialize(strLogFile.c_str());
+
+    // Pass params between processes through file
+    // rcprof generates a text file in current dir
+    Parameters params;
+    FileUtils::GetParametersFromFile(params);
+    FileUtils::ReadKernelListFile(params);
+
+    GlobalSettings::GetInstance()->m_bVerbose = params.m_bVerbose;
+    GlobalSettings::GetInstance()->m_params = params;
 
     if (err != CL_SUCCESS)
     {

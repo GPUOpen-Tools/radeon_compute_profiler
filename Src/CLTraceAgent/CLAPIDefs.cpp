@@ -9,6 +9,7 @@
 #include "CLAPIInfoManager.h"
 #include "CLTraceAgent.h"
 #include "../Common/Logger.h"
+#include "DeviceInfoUtils.h"
 
 using namespace GPULogger;
 
@@ -68,6 +69,21 @@ void CLAPI_clCreateCommandQueueBase::Create(
             // failed to retrieve device type
             Log(logWARNING, "Failed to retrieve device type.\n");
             m_dtype = CL_DEVICE_TYPE_DEFAULT;
+        }
+
+        cl_uint pcieId = 0;
+
+        ret = GetRealDispatchTable()->GetDeviceInfo(device, CL_DEVICE_PCIE_ID_AMD, sizeof(cl_uint), &pcieId, nullptr);
+
+        if (CL_SUCCESS == ret && 0 != pcieId)
+        {
+            GDT_HW_GENERATION gen = GDT_HW_GENERATION_NONE;
+
+            if (AMDTDeviceInfoUtils::Instance()->GetHardwareGeneration(pcieId, gen))
+            {
+                m_devicePcieId = pcieId;
+                m_isDevicePcieIdSet = true;
+            }
         }
     }
 
@@ -241,5 +257,42 @@ void CLAPI_clCreateKernel::Create(
     if (nullptr != retVal)
     {
         CLAPIInfoManager::Instance()->AddToKernelMap(m_retVal, kernel_name);
+    }
+}
+
+void CLAPI_clCloneKernel::Create(
+    ULONGLONG ullStartTime,
+    ULONGLONG ullEndTime,
+    cl_kernel kernel,
+    cl_int* errcode_ret,
+    cl_kernel retVal)
+{
+    m_ullStart = ullStartTime;
+    m_ullEnd = ullEndTime;
+    m_type = CL_FUNC_TYPE_clCloneKernel;
+    m_kernel = kernel;
+    m_errcode_ret = errcode_ret;
+
+    if (nullptr != errcode_ret)
+    {
+        m_errcode_retVal = *errcode_ret;
+    }
+    else
+    {
+        m_errcode_retVal = 0;
+    }
+
+    m_retVal = retVal;
+
+    std::string kernelName;
+
+    if (nullptr != kernel)
+    {
+        kernelName = CLAPIInfoManager::Instance()->GetKernelName(kernel);
+    }
+
+    if (nullptr != retVal)
+    {
+        CLAPIInfoManager::Instance()->AddToKernelMap(m_retVal, kernelName.c_str());
     }
 }

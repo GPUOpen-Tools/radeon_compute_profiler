@@ -14,12 +14,13 @@
 #include <boost/algorithm/string/classification.hpp>
 #pragma warning ( pop )
 
-#include "AMDTOSWrappers/Include/osFilePath.h"
+#include <AMDTOSWrappers/Include/osFilePath.h>
 
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <functional>
+#include <cstdlib>
 #include "../Common/Version.h"
 #include "ParseCmdLine.h"
 #include "../Common/StringUtils.h"
@@ -33,7 +34,14 @@
 #include <ADLUtil/ADLUtil.h>
 #include "OpenCLModule.h"
 
+#ifdef _WIN32
+    #include <windows.h>
+    #include <ShellApi.h>
+    #include <direct.h>
+#endif
+
 #if defined (_LINUX) || defined (LINUX)
+    #include <unistd.h>
     #ifndef SKIP_HSA_BUILD
         #include "HSAUtils.h"
     #endif
@@ -74,8 +82,9 @@ struct CounterPassInfo
 
 
 void PrintCounters(const std::string& strOutputFile, const bool shouldIncludeCounterDescriptions = false);
-void PrintCounters(CounterList& counterList, const string& strGenerationName, const std::string& outputFile, const bool shouldIncludeCounterDescriptions = false);
-std::string GetCounterListOutputFileName(const std::string& strOutputFile, const std::string& strAPI, const std::string& strGeneration);
+void PrintCountersForDevices(const std::string& strOutputFile, const bool shouldIncludeCounterDescriptions = false);
+void PrintCounters(CounterList& counterList, const string& strName, const std::string& outputFile, const bool shouldIncludeCounterDescriptions = false);
+std::string GetCounterListOutputFileName(const std::string& strOutputFile, const std::string& strAPI, const std::string& strName);
 std::string RemoveGroupFromCounterDescriptionIfPresent(std::string counterDescription);
 inline void ShowExamples();
 void PrintNumberOfPass(const std::string counterFile, const bool& gpuTimePMCEnabled);
@@ -111,7 +120,9 @@ bool ParseCmdLine(int argc, wchar_t* argv[], Config& configOut)
         ("envvarfile,E", po::value<string>(), "Path to a file containing a list of environment variables that should be defined when running the profiled application. The file should contain one line for each variable in the format NAME=VALUE.")
         ("fullenv,f", "The environment variables specified with the envvar or envvarfile switch represent the full environment block.  If not specified, then the environment variables represent additions or changes to the system environment block.")
         ("list,l", "Print a list of valid counter names.")
+        ("listactive", "Print a list of valid counter names for active devices.")
         ("listdetailed,L", "Print a list of valid counter names with descriptions.")
+        ("listdetailedactive", "Print a list of valid counter names with descriptions for active devices.")
         ("sessionname,N", po::value<string>(), "Name of the generated session.")
         ("maxpassperfile", po::value<unsigned int>(), "Limits the set of counters in the generated counter file to a set that can be collected in the the specified number of passes. If the full set of counters do not fit in the specified number of passes, then multiple counter files will be generated. Ignored if --list and --outputfile are not specified.")
         ("numberofpass", "Print the number of passes required for the specified counter set (or the default set if no counter file is specified).")
@@ -125,7 +136,8 @@ bool ParseCmdLine(int argc, wchar_t* argv[], Config& configOut)
 #endif
         ("version,v", "Print the " PROFILER_EXE " version number.")
         ("workingdirectory,w", po::value<string>(), "Set the working directory (the default is the app binary's path).")
-        ("help,h", "Print this help message.");
+        ("help,h", "Print this help message.")
+        ("showdoc", "Launch the documentation.");
 
         po::options_description profileModeOpt("Profile mode options");
         profileModeOpt.add_options()
@@ -199,6 +211,8 @@ bool ParseCmdLine(int argc, wchar_t* argv[], Config& configOut)
         ("__preload__", po::value<string>(), "Name of an optional library or libraries to preload in the application being profiled.")
 #endif
         ("__nodetours__", "Don't launch application using detours.")
+        ("__nostableclocks__", "Disable calling VkStableClocks.")
+        ("__nohsatransfertime__", "Disable collection of HSA data transfer timing data.")
         ("__forcesinglegpu__", po::value<unsigned int>(), "Override profiler agents discovery to only expose a single GPU to the application. The argument is the device index (0-based).");
 
         // all options available from command line
@@ -302,6 +316,13 @@ bool ParseCmdLine(int argc, wchar_t* argv[], Config& configOut)
         configOut.bHSAPMC = unicodeOptionsMap.count("hsapmc") > 0;
         configOut.bAqlPacketTracing = unicodeOptionsMap.count("hsaaqlpackettrace") > 0;
         configOut.bDisableKernelDemangling = unicodeOptionsMap.count("hsanokerneldemangle") > 0;
+
+        if (configOut.bHSATrace && configOut.bAqlPacketTracing)
+        {
+            std::cout << "Options --hsatrace and --hsaaqlpackettrace cannot be specified simultaneously." << std::endl;
+
+            return false;
+        }
 
         if (configOut.bAqlPacketTracing)
         {
@@ -748,7 +769,11 @@ bool ParseCmdLine(int argc, wchar_t* argv[], Config& configOut)
 
         configOut.bNoDetours = unicodeOptionsMap.count("__nodetours__") > 0;
 
+        configOut.bNoStableClocks = unicodeOptionsMap.count("__nostableclocks__") > 0;
+
         configOut.bForceSingleGPU = unicodeOptionsMap.count("__forcesinglegpu__") > 0;
+
+        configOut.bNoHSATransferTime = unicodeOptionsMap.count("__nohsatransfertime__") > 0;
 
         if (configOut.bForceSingleGPU)
         {
@@ -771,54 +796,115 @@ bool ParseCmdLine(int argc, wchar_t* argv[], Config& configOut)
 
         }
 
-        // check for "list" last so that other params are checked first (like output file)
-        if (unicodeOptionsMap.count("list") > 0)
+        // --outputfile and maxpassperfile do not rely on --list
+        if (!configOut.strOutputFile.empty() && configOut.uiMaxPassPerFile >= 1)
         {
-            if (!configOut.strOutputFile.empty() && configOut.uiMaxPassPerFile >= 1)
+            CounterList counterList;
+            std::string outputFileName = configOut.strOutputFile;
+
+            if (!configOut.counterFileList.empty())
             {
-                CounterList counterList;
-                std::string outputFileName = configOut.strOutputFile;
+                bool appendCounterFileName = configOut.counterFileList.size() > 1 ? true : false;
 
-                if (!configOut.counterFileList.empty())
+                for (CounterFileList::iterator it = configOut.counterFileList.begin(); it != configOut.counterFileList.end(); ++it)
                 {
-                    bool appendCounterFileName = configOut.counterFileList.size() > 1 ? true : false;
+                    FileUtils::ReadFile(*it, counterList, true);
 
-                    for (CounterFileList::iterator it = configOut.counterFileList.begin(); it != configOut.counterFileList.end(); ++it)
+                    if (appendCounterFileName)
                     {
-                        FileUtils::ReadFile(*it, counterList, true);
-
-                        if (appendCounterFileName)
-                        {
-                            gtString counterFileFullPathString;
-                            counterFileFullPathString.fromUtf8String(it->c_str());
-                            osFilePath counterFilePath = osFilePath(counterFileFullPathString);
-                            gtString baseCounterFileName;
-                            counterFilePath.getFileName(baseCounterFileName);
-                            std::string baseFileString(baseCounterFileName.asASCIICharArray());
-                            outputFileName = outputFileName + "_" + baseFileString;
-                        }
-
-                        ListCounterToFileForMaxPass(counterList, outputFileName, configOut.uiMaxPassPerFile);
-                        counterList.clear();
+                        gtString counterFileFullPathString;
+                        counterFileFullPathString.fromUtf8String(it->c_str());
+                        osFilePath counterFilePath = osFilePath(counterFileFullPathString);
+                        gtString baseCounterFileName;
+                        counterFilePath.getFileName(baseCounterFileName);
+                        std::string baseFileString(baseCounterFileName.asASCIICharArray());
+                        outputFileName = outputFileName + "_" + baseFileString;
                     }
-                }
-                else
-                {
+
                     ListCounterToFileForMaxPass(counterList, outputFileName, configOut.uiMaxPassPerFile);
+                    counterList.clear();
                 }
             }
             else
             {
-                PrintCounters(configOut.strOutputFile);
+                if (unicodeOptionsMap.count("list") > 0)
+                {
+                    ListCounterToFileForMaxPass(counterList, outputFileName, configOut.uiMaxPassPerFile);
+                }
+                else
+                {
+                    std::cout << "No counter files specified, use --list to create default counter files." << std::endl;
+                }
             }
 
             return false;
         }
+        else
+        {
+            if (unicodeOptionsMap.count("list") > 0)
+            {
+                // If --outputfile is specified, counters will be written to the output file
+                // If --outputfile is not specified, counters will be displayed on screen
+                PrintCounters(configOut.strOutputFile);
+                return false;
+            }
 
+            if (unicodeOptionsMap.count("listactive") > 0)
+            {
+                PrintCountersForDevices(configOut.strOutputFile);
+                return false;
+            }
+        }
 
         if (unicodeOptionsMap.count("listdetailed") > 0)
         {
             PrintCounters(configOut.strOutputFile, true);
+            return false;
+        }
+
+        if (unicodeOptionsMap.count("listdetailedactive") > 0)
+        {
+            PrintCountersForDevices(configOut.strOutputFile, true);
+            return false;
+        }
+
+        if (unicodeOptionsMap.count("showdoc") > 0)
+        {
+            std::string docPath = FileUtils::GetExePath();
+            docPath = docPath.substr(0, docPath.find_last_of("/\\")) + "/docs/index.html";
+
+            if (FileUtils::FileExist(docPath))
+            {
+                bool docLaunchStatus = true;
+#ifdef _WIN32
+                std::wstring wDocPath(docPath.begin(), docPath.end());
+
+                if (reinterpret_cast<long long>(ShellExecute(nullptr, L"open", wDocPath.c_str(), nullptr, nullptr, SW_SHOWNORMAL)) <= 32)
+                {
+                    docLaunchStatus = false;
+                }
+
+#else
+                std::string sysCmd;
+                sysCmd = "xdg-open " + docPath + " > /dev/null 2>&1";
+
+                if (std::system(sysCmd.c_str()) != 0)
+                {
+                    docLaunchStatus = false;
+                }
+
+#endif
+
+                if (!docLaunchStatus)
+                {
+                    std::cout << "Unable to launch default web browser, please open " << docPath << " to launch the documentation." << std::endl;
+                }
+            }
+            else
+            {
+                std::cout << "Documentation not found in " << docPath << "." << std::endl;
+            }
+
             return false;
         }
 
@@ -870,6 +956,8 @@ bool ParseCmdLine(int argc, wchar_t* argv[], Config& configOut)
             //Show examples when --help or -h option is used
             ShowExamples();
 
+            std::cout << "For complete documentation of " << RCP_PRODUCT_NAME << ", please open docs/index.html in a web browser, or use the --showdoc switch to launch the documentation." << std::endl;
+
             return false;
         }
 
@@ -879,7 +967,7 @@ bool ParseCmdLine(int argc, wchar_t* argv[], Config& configOut)
 
             if (configOut.counterFileList.empty())
             {
-                std::cout << "A counter file is required in the internal build.  Please specify a counter file using the --counterfile option" << std::endl << std::endl;
+                std::cout << "A counter file is required in the internal build.  Please specify a counter file using the --counterfile switch" << std::endl << std::endl;
                 return false;
             }
 
@@ -1056,7 +1144,7 @@ pair<string, string> Parser(const string& strOptionToParse)
 /// \param gen the hardware generation
 /// \param[out] strGenerationName the string for the generation name
 /// \return true if a string is returned, false otherwise
-bool GetGenerationName(GPA_HW_GENERATION gen, std::string& strGenerationName)
+bool GetGenerationName(GPA_Hw_Generation gen, std::string& strGenerationName)
 {
     GDT_HW_GENERATION generation = GDT_HW_GENERATION_NONE;
 
@@ -1098,7 +1186,7 @@ bool GetGenerationName(GPA_HW_GENERATION gen, std::string& strGenerationName)
 
 }
 
-std::string GetCounterListOutputFileName(const std::string& strOutputFile, const std::string& strAPI, const std::string& strGeneration)
+std::string GetCounterListOutputFileName(const std::string& strOutputFile, const std::string& strAPI, const std::string& strName)
 {
     std::string retVal = "";
 
@@ -1115,7 +1203,7 @@ std::string GetCounterListOutputFileName(const std::string& strOutputFile, const
         gtString apiName;
         apiName.fromASCIIString(strAPI.c_str());
 
-        std::string noSpaceGenName = StringUtils::Replace(strGeneration, " ", "_");
+        std::string noSpaceGenName = StringUtils::Replace(strName, " ", "_");
         gtString genName;
         genName.fromASCIIString(noSpaceGenName.c_str());
 
@@ -1152,9 +1240,9 @@ void PrintCounters(const std::string& strOutputFile, const bool shouldIncludeCou
             cout << "OpenCL performance counters:\n";
         }
 
-        for (int gen = GPA_HW_GENERATION_SOUTHERNISLAND; gen < GPA_HW_GENERATION_LAST; gen++)
+        for (int gen = GPA_HW_GENERATION_SOUTHERNISLAND; gen < GPA_HW_GENERATION__LAST; gen++)
         {
-            GPA_HW_GENERATION hwGen = static_cast<GPA_HW_GENERATION>(gen);
+            GPA_Hw_Generation hwGen = static_cast<GPA_Hw_Generation>(gen);
 
             if (gpaUtils.GetAvailableCounters(hwGen, counterList, shouldIncludeCounterDescriptions))
             {
@@ -1183,9 +1271,9 @@ void PrintCounters(const std::string& strOutputFile, const bool shouldIncludeCou
             cout << "HSA performance counters:\n";
         }
 
-        for (int gen = GPA_HW_GENERATION_SEAISLAND; gen < GPA_HW_GENERATION_LAST; gen++)
+        for (int gen = GPA_HW_GENERATION_SEAISLAND; gen < GPA_HW_GENERATION__LAST; gen++)
         {
-            GPA_HW_GENERATION hwGen = static_cast<GPA_HW_GENERATION>(gen);
+            GPA_Hw_Generation hwGen = static_cast<GPA_Hw_Generation>(gen);
 
             if (gpaUtils.GetAvailableCounters(hwGen, counterList, shouldIncludeCounterDescriptions))
             {
@@ -1195,6 +1283,69 @@ void PrintCounters(const std::string& strOutputFile, const bool shouldIncludeCou
                 {
                     PrintCounters(counterList, strGenerationName, GetCounterListOutputFileName(strOutputFile, "HSA", strGenerationName), shouldIncludeCounterDescriptions);
                 }
+            }
+        }
+
+        gpaUtils.Unload();
+    }
+}
+
+void PrintCountersForDevices(const std::string& strOutputFile, const bool shouldIncludeCounterDescriptions)
+{
+    gtString strDirPath = FileUtils::GetExePathAsUnicode();
+    string strErrorOut;
+    GPAUtils gpaUtils;
+    CounterList counterList;
+
+    bool shouldWriteToFile = !strOutputFile.empty();
+
+    std::vector<DeviceInfo> deviceInfoList = GetDeviceInfoList(GPA_API_OPENCL);
+
+    bool gpaInit = gpaUtils.InitGPA(GPA_API_OPENCL,
+                                    strDirPath,
+                                    strErrorOut,
+                                    nullptr,
+                                    &counterList);
+
+    if (gpaInit)
+    {
+        if (!shouldWriteToFile && !deviceInfoList.empty())
+        {
+            cout << "OpenCL performance counters:\n";
+        }
+
+        for (size_t i = 0; i < deviceInfoList.size(); ++i)
+        {
+            if (gpaUtils.GetAvailableCountersForDeviceWithoutMaxPass(deviceInfoList[i].m_deviceId, deviceInfoList[i].m_revId, counterList, shouldIncludeCounterDescriptions))
+            {
+                PrintCounters(counterList, deviceInfoList[i].m_deviceCALName, GetCounterListOutputFileName(strOutputFile, "OpenCL", deviceInfoList[i].m_deviceCALName + "_" + std::to_string(deviceInfoList[i].m_deviceId)), shouldIncludeCounterDescriptions);
+            }
+        }
+
+        gpaUtils.Unload();
+    }
+
+    deviceInfoList.clear();
+    deviceInfoList = GetDeviceInfoList(GPA_API_HSA);
+
+    gpaInit = gpaUtils.InitGPA(GPA_API_HSA,
+                               strDirPath,
+                               strErrorOut,
+                               nullptr,
+                               &counterList);
+
+    if (gpaInit)
+    {
+        if (!shouldWriteToFile && !deviceInfoList.empty())
+        {
+            cout << "HSA performance counters:\n";
+        }
+
+        for (size_t i = 0; i < deviceInfoList.size(); ++i)
+        {
+            if (gpaUtils.GetAvailableCountersForDeviceWithoutMaxPass(deviceInfoList[i].m_deviceId, deviceInfoList[i].m_revId, counterList, shouldIncludeCounterDescriptions))
+            {
+                PrintCounters(counterList, deviceInfoList[i].m_deviceCALName, GetCounterListOutputFileName(strOutputFile, "HSA", deviceInfoList[i].m_deviceCALName + "_" + std::to_string(deviceInfoList[i].m_deviceId)), shouldIncludeCounterDescriptions);
             }
         }
 
@@ -1251,7 +1402,7 @@ void PrintNumberOfPass(const std::string counterFile, const bool& gpuTimePMCEnab
 }
 
 // helper function
-void PrintCounters(CounterList& counterList, const string& strGenerationName, const std::string& outputFile, const bool shouldIncludeCounterDescriptions)
+void PrintCounters(CounterList& counterList, const string& strName, const std::string& outputFile, const bool shouldIncludeCounterDescriptions)
 {
     const unsigned int nLineBreak = 5;
     unsigned int curItem = 0;
@@ -1271,7 +1422,20 @@ void PrintCounters(CounterList& counterList, const string& strGenerationName, co
     }
     else
     {
-        cout << "The list of valid counters for " << strGenerationName << " based graphics cards:\n";
+        cout << "The list of valid counters for " << strName << " based graphics cards:\n";
+    }
+
+    size_t paddingSizeCounterName = 0;
+    size_t paddingSizeCounterGroup = 0;
+
+    if (shouldIncludeCounterDescriptions)
+    {
+        for (CounterList::iterator it = counterList.begin(); it != counterList.end(); ++it)
+        {
+            paddingSizeCounterName = std::max(paddingSizeCounterName, it->size());
+            paddingSizeCounterGroup = std::max(paddingSizeCounterGroup, (++it)->size());
+            ++it;
+        }
     }
 
     for (CounterList::iterator it = counterList.begin(); it != counterList.end(); ++it)
@@ -1285,32 +1449,28 @@ void PrintCounters(CounterList& counterList, const string& strGenerationName, co
             }
             else
             {
-                fout << it->c_str();
-                it++;
-                fout << '\t' << RemoveGroupFromCounterDescriptionIfPresent(*it) << std::endl;
+                fout << std::left << setw(paddingSizeCounterName) << *it << "; ";
+                fout << std::left << setw(paddingSizeCounterGroup) << *(++it) << "; ";
+                fout << *(++it) << std::endl;
             }
         }
         else
         {
-            cout << *it;
-
             if (shouldIncludeCounterDescriptions)
             {
-                std::string description = RemoveGroupFromCounterDescriptionIfPresent((++it)->c_str());
-                cout << "\t" << description;
-            }
-
-            if (*it != counterList.back())
-            {
-                cout << ", ";
-            }
-
-            if (shouldIncludeCounterDescriptions)
-            {
-                std::cout << std::endl;
+                std::cout << std::left << std::setw(paddingSizeCounterName) << *it << "; ";
+                std::cout << std::left << std::setw(paddingSizeCounterGroup) << *(++it) << "; ";
+                std::cout << *(++it) << std::endl;
             }
             else
             {
+                std::cout << *it;
+
+                if (*it != counterList.back())
+                {
+                    cout << ", ";
+                }
+
                 // line break
                 if (curItem && (curItem + 1) % nLineBreak == 0)
                 {
@@ -1334,15 +1494,6 @@ void PrintCounters(CounterList& counterList, const string& strGenerationName, co
     {
         cout << endl << endl;
     }
-}
-
-//Helper Function
-std::string RemoveGroupFromCounterDescriptionIfPresent(std::string counterDescription)
-{
-    std::vector<std::string> tempStringVector;
-    StringUtils::Split(tempStringVector, counterDescription, "#", true, true);
-    std::string trimmedString = tempStringVector.size() > 0 ? tempStringVector[tempStringVector.size() - 1 ] : NULL;
-    return trimmedString;
 }
 
 #ifdef CL_TRACE_TEST
@@ -1515,11 +1666,11 @@ std::vector<DeviceInfo> GetDeviceInfoList(GPA_API_Type apiType)
 
         if (success && !platformSet.empty())
         {
-            for (std::set<CLPlatformInfo::platform_info,
+            for (std::set<CLPlatformInfo::PlatformInfo,
                  CLPlatformInfo::CLPlatformInfoCompare>::iterator it = platformSet.begin();
                  it != platformSet.end() && !isAMDDevice; ++it)
             {
-                isAMDDevice |= it->strPlatformVendor.compare(amdVendor) == 0;
+                isAMDDevice |= it->m_platformVendor.compare(amdVendor) == 0;
             }
 
             if (isAMDDevice)
@@ -1594,37 +1745,61 @@ std::vector<DeviceInfo> GetDeviceInfoList(GPA_API_Type apiType)
 
                                             for (unsigned int deviceIdIter = 0; success && (deviceIdIter < numberOfDevices); deviceIdIter++)
                                             {
-                                                size_t paramValueSize;
-                                                success &= CL_SUCCESS == clModule.GetDeviceInfo(deviceIds[deviceIdIter], CL_DEVICE_NAME,
-                                                                                                paramValueSize, nullptr, &paramValueSize);
+                                                bool isCardInfoSet = false;
+                                                GDT_GfxCardInfo cardInfo = {};
+                                                cl_uint pcieID = 0;
 
-                                                if (success && (paramValueSize > 0))
+                                                if (CL_SUCCESS == clModule.GetDeviceInfo(deviceIds[deviceIdIter], CL_DEVICE_PCIE_ID_AMD, sizeof(cl_uint), &pcieID, nullptr) && 0 != pcieID)
                                                 {
-                                                    char* paramDeviceName = new(std::nothrow) char[paramValueSize];
+                                                    isCardInfoSet = AMDTDeviceInfoUtils::Instance()->GetDeviceInfo(pcieID, REVISION_ID_ANY, cardInfo);
+                                                }
+
+                                                if (!isCardInfoSet)
+                                                {
+                                                    size_t paramValueSize;
                                                     success &= CL_SUCCESS == clModule.GetDeviceInfo(deviceIds[deviceIdIter], CL_DEVICE_NAME,
-                                                                                                    paramValueSize, reinterpret_cast<void*>(paramDeviceName), nullptr);
+                                                                                                    paramValueSize, nullptr, &paramValueSize);
 
-                                                    if (success)
+                                                    if (success && (paramValueSize > 0))
                                                     {
-                                                        std::string deviceName(reinterpret_cast<char*>(paramDeviceName));
-                                                        std::vector<GDT_GfxCardInfo> cardList;
-                                                        // TODO: the device name may not match what is in the device info table
-                                                        AMDTDeviceInfoUtils::Instance()->GetDeviceInfo(deviceName.c_str(), cardList);
+                                                        char* paramDeviceName = new(std::nothrow) char[paramValueSize];
+                                                        success &= CL_SUCCESS == clModule.GetDeviceInfo(deviceIds[deviceIdIter], CL_DEVICE_NAME,
+                                                                                                        paramValueSize, reinterpret_cast<void*>(paramDeviceName), nullptr);
 
-                                                        if (cardList.size() > 0)
+                                                        if (success)
                                                         {
-                                                            deviceInfo.m_deviceId = static_cast<unsigned int>(cardList.begin()->m_deviceID);
-                                                            deviceInfo.m_revId = static_cast<unsigned int>(cardList.begin()->m_revID);
-                                                            deviceInfo.m_deviceCALName = cardList.begin()->m_szCALName;
-                                                            deviceInfo.m_generation = cardList.begin()->m_generation;
-                                                            deviceInfoList.push_back(deviceInfo);
+                                                            std::string deviceName(reinterpret_cast<char*>(paramDeviceName));
+                                                            std::vector<GDT_GfxCardInfo> cardList;
+
+                                                            isCardInfoSet = AMDTDeviceInfoUtils::Instance()->GetDeviceInfo(deviceName.c_str(), cardList);
+
+                                                            if (isCardInfoSet)
+                                                            {
+                                                                if (cardList.size() > 0)
+                                                                {
+                                                                    cardInfo = cardList.front();
+                                                                }
+                                                                else
+                                                                {
+                                                                    isCardInfoSet = false;
+                                                                }
+                                                            }
+                                                        }
+
+                                                        if (nullptr != paramDeviceName)
+                                                        {
+                                                            delete[] paramDeviceName;
                                                         }
                                                     }
+                                                }
 
-                                                    if (nullptr != paramDeviceName)
-                                                    {
-                                                        delete[] paramDeviceName;
-                                                    }
+                                                if (isCardInfoSet)
+                                                {
+                                                    deviceInfo.m_deviceId = static_cast<unsigned int>(cardInfo.m_deviceID);
+                                                    deviceInfo.m_revId = static_cast<unsigned int>(cardInfo.m_revID);
+                                                    deviceInfo.m_deviceCALName = cardInfo.m_szCALName;
+                                                    deviceInfo.m_generation = cardInfo.m_generation;
+                                                    deviceInfoList.push_back(deviceInfo);
                                                 }
                                             }
 
@@ -1695,8 +1870,8 @@ std::vector<DeviceInfo> GetDeviceInfoList(GPA_API_Type apiType)
 std::vector<CounterPassInfo> GetNumberOfPassFromGPUPerfAPI(GPA_API_Type apiType, CounterList counterList, std::vector<DeviceInfo> deviceInfoList, bool forceSinglePassForHSA)
 {
     gtString strDirPath = FileUtils::GetExePathAsUnicode();
-    GPA_ICounterAccessor* ppCounterAccessor = nullptr;
-    GPA_ICounterScheduler* ppCounterScheduler = nullptr;
+    IGPACounterAccessor* ppCounterAccessor = nullptr;
+    IGPACounterScheduler* ppCounterScheduler = nullptr;
     std::vector<CounterPassInfo> counterPassInfoList;
     CounterPassInfo counterPassInfo;
     GPA_GetAvailableCountersForDeviceProc get_GPAGetAvailableCountersForDeviceProc = nullptr;
@@ -1713,6 +1888,8 @@ std::vector<CounterPassInfo> GetNumberOfPassFromGPUPerfAPI(GPA_API_Type apiType,
                                                                           i->m_vendorId,
                                                                           i->m_deviceId,
                                                                           i->m_revId,
+                                                                          GPA_OPENCONTEXT_DEFAULT_BIT,
+                                                                          true,
                                                                           &ppCounterAccessor,
                                                                           &ppCounterScheduler) &&
                 ppCounterScheduler != nullptr &&
@@ -1839,6 +2016,7 @@ void ListCounterToFileForMaxPass(CounterList counterList, std::string counterOut
             {
                 std::cout << "The following individual counters require more than " << maxPass << " pass(es) for " << apiTypeString << std::endl;
                 PrintCounterList(leftCounterList);
+                std::cout << std::endl;
             }
         }
     };
@@ -1864,8 +2042,8 @@ std::vector<CounterList> GetCounterListsByMaxPassForEachDevice(GPA_API_Type apiT
 {
     std::vector<CounterList> counterListEachPass;
     gtString strDirPath = FileUtils::GetExePathAsUnicode();
-    GPA_ICounterAccessor* ppCounterAccessor = nullptr;
-    GPA_ICounterScheduler* ppCounterScheduler = nullptr;
+    IGPACounterAccessor* ppCounterAccessor = nullptr;
+    IGPACounterScheduler* ppCounterScheduler = nullptr;
     GPA_GetAvailableCountersForDeviceProc getGPAGetAvailableCountersForDeviceProc = nullptr;
 
     bool success = false;
@@ -1882,6 +2060,8 @@ std::vector<CounterList> GetCounterListsByMaxPassForEachDevice(GPA_API_Type apiT
                                                                      counterPassInfo.m_deviceInfo.m_vendorId,
                                                                      counterPassInfo.m_deviceInfo.m_deviceId,
                                                                      counterPassInfo.m_deviceInfo.m_revId,
+                                                                     GPA_OPENCONTEXT_DEFAULT_BIT,
+                                                                     true,
                                                                      &ppCounterAccessor,
                                                                      &ppCounterScheduler) &&
             ppCounterScheduler != nullptr &&

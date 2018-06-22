@@ -31,4 +31,12 @@ void HSA_APITrace_hsa_executable_get_symbol_by_name_PostCallHelper(hsa_status_t 
 /// see HSA runtime spec for parameter descriptions
 void HSA_APITrace_hsa_executable_symbol_get_info_PostCallHelper(hsa_status_t retVal, hsa_executable_symbol_t executable_symbol, hsa_executable_symbol_info_t attribute, void* value);
 
+/// interception helper function for hsa_system_get_extension_table
+/// see HSA runtime spec for parameter descriptions
+void HSA_APITrace_hsa_system_get_extension_table_PostCallHelper(hsa_status_t retVal, uint16_t extension, uint16_t version_major, uint16_t version_minor, void* table);
+
+/// interception helper function for hsa_system_get_major_extension_table
+/// see HSA runtime spec for parameter descriptions
+void HSA_APITrace_hsa_system_get_major_extension_table_PostCallHelper(hsa_status_t retVal, uint16_t extension, uint16_t version_major, size_t table_length, void* table);
+
 #endif // _HSA_TRACE_INTERCEPTION_HELPERS_H

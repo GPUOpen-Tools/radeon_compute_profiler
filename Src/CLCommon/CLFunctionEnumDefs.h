@@ -169,6 +169,17 @@ enum CL_FUNC_TYPE
     CL_FUNC_TYPE_clEnqueueReadSsgFileAMD,                  ///< cl function enum for clEnqueueReadSsgFileAMD
     CL_FUNC_TYPE_clEnqueueWriteSsgFileAMD,                 ///< cl function enum for clEnqueueWriteSsgFileAMD
 
+    CL_FUNC_TYPE_clCloneKernel,                            ///< cl funciton enum for clCloneKernel
+    CL_FUNC_TYPE_clCreateProgramWithIL,                    ///< cl function enum for clCreateProgramWithIL
+    CL_FUNC_TYPE_clEnqueueSVMMigrateMem,                   ///< cl function enum for clEnqueueSVMMigrateMem
+    CL_FUNC_TYPE_clGetDeviceAndHostTimer,                  ///< cl function enum for clGetDeviceAndHostTimer
+    CL_FUNC_TYPE_clGetHostTimer,                           ///< cl function enum for clGetHostTimer
+    CL_FUNC_TYPE_clGetKernelSubGroupInfo,                  ///< cl function enum for clGetKernelSubGroupInfo
+    CL_FUNC_TYPE_clSetDefaultDeviceCommandQueue,           ///< cl function enum for clSetDefaultDeviceCommandQueue
+
+    CL_FUNC_TYPE_clSetProgramReleaseCallback,              ///< cl function enum for clSetProgramReleaseCallback
+    CL_FUNC_TYPE_clSetProgramSpecializationConstant,       ///< cl function enum for clSetProgramSpecializationConstant
+
     CL_FUNC_TYPE_Unknown                                   ///< cl unknown function
 };
 

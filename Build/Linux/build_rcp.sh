@@ -6,7 +6,7 @@ set -u
 RCPROOT=`dirname $(readlink -f "$0")`/../..
 
 # Command line args
-echo "Command line arguments passed to build_rcp.sh: $@"
+echo "Command line arguments passed to build_rcp.sh: $*"
 
 # Build Framework (BaseTools/OSWrappers) -- only makes sense to skip if doing an incremental build
 bBuildFramework=true
@@ -161,9 +161,9 @@ HSAFDNTRACE="$SRCDIR/HSAFdnTrace"
 PRELOADXINITTHREADS="$SRCDIR/PreloadXInitThreads"
 ACTIVITYLOGGER="CXLActivityLogger"
 ACTIVITYLOGGERDIR="$COMMONSRC/AMDTActivityLogger/"
-GPA="$COMMON/Lib/AMD/GPUPerfAPI/2_23"
+GPA="$COMMON/Lib/AMD/GPUPerfAPI/3_1"
+VKSTABLECLOCKS="$COMMON/Lib/AMD/VKStableClocks/VKStableClocks/VkStableClocks"
 JQPLOT_PATH="$SRCCOMMON/jqPlot"
-DOXYGENBIN="$COMMON/DK/Doxygen/doxygen-1.5.6/bin/doxygen"
 PROFILEDATAPARSERSRC="$SRCDIR/ProfileDataParser"
 PROFILEDATAPARSER="RCPProfileDataParser"
 
@@ -210,9 +210,9 @@ RCP_ARCHIVE="$BUILD_PATH/$RCP_ARCHIVE_BASE"
 
 RCPPROFILEDATAPARSERARCHIVE="$PROFILEDATAPARSER-$VERSION_STR.tgz"
 
-if !($bZipOnly) ; then
+if ! ($bZipOnly) ; then
    # delete log file
-   if !($bAppendToLog) ; then
+   if ! ($bAppendToLog) ; then
       rm -f "$LOGFILE"
    fi
 
@@ -328,11 +328,11 @@ if !($bZipOnly) ; then
    for SUBDIR in $BUILD_DIRS; do
       BASENAME=`basename $SUBDIR`
 
-      if !($bIncrementalBuild) ; then
+      if ! ($bIncrementalBuild) ; then
          make -C "$SUBDIR" spotless >> "$LOGFILE" 2>&1
       fi
 
-      if !($bCleanOnly); then
+      if ! ($bCleanOnly); then
          #make 64 bit
          echo "Build ${BASENAME}, 64-bit..." | tee -a "$LOGFILE"
 
@@ -361,13 +361,14 @@ if !($bZipOnly) ; then
       fi
    done
 
-   if !($bCleanOnly); then
+   if ! ($bCleanOnly); then
       cp -f "$GPA/Bin/Linx64/$GPACOUNTER" "$PROFILER_OUTPUT"
       cp -f "$GPA/Bin/Linx86/$GPACOUNTER32" "$PROFILER_OUTPUT"
 
       if $bBuildOCLProfiler ; then
          cp -f "$GPA/Bin/Linx64/$GPACL" "$PROFILER_OUTPUT"
          cp -f "$GPA/Bin/Linx86/$GPACL32" "$PROFILER_OUTPUT"
+         cp "$VKSTABLECLOCKS" "$PROFILER_OUTPUT"
       fi
 
       if $bBuildHSAProfiler ; then
@@ -378,7 +379,7 @@ if !($bZipOnly) ; then
    fi
 
    if ($bBuildDocumentation); then
-      echo "Build Documentation"
+      echo "Build Documentation" | tee -a "$LOGFILE"
       if ! make -C "$DOCS" html >> "$LOGFILE" 2>&1; then
          echo "Failed to build Documentation"
          exit 1
@@ -390,7 +391,7 @@ if !($bZipOnly) ; then
    #-----------------------------------------
    rm -rf "$BIN"
 
-   if !($bCleanOnly); then
+   if ! ($bCleanOnly); then
       #-----------------------------------------
       #check if bin folder exist
       #-----------------------------------------
@@ -415,6 +416,7 @@ if !($bZipOnly) ; then
          cp "$PROFILER_OUTPUT/$CLTRACEBIN" "$BIN/$CLTRACEBIN"
          cp "$PROFILER_OUTPUT/$CLOCCUPANCYBIN" "$BIN/$CLOCCUPANCYBIN"
          cp "$GPA/Bin/Linx64/$GPACL" "$BIN/$GPACL"
+         cp "$VKSTABLECLOCKS" "$BIN/"
       fi
       if $bBuildHSAProfiler ; then
          cp "$PROFILER_OUTPUT/$HSATRACEAGENTBIN" "$BIN/$HSATRACEAGENTBIN"

@@ -189,24 +189,23 @@ private:
     /// \return lhs
     CLAPIInfoManager& operator = (const CLAPIInfoManager& obj) = delete;
 
-    unsigned int            m_uiLineNum;                         ///< number of lines output to file
-    PreviousGEIMap          m_previousGEIMap;                    ///< stl map that contains the previous CLAPI_clGetEventInfo instance for each thread
-    CLCommandQueueMap       m_clCommandQueueMap;                 ///< stl map that maps from cl_command_queue to CLAPI_clCreateCommandQueue*
-    CLContextMap            m_clContextMap;                      ///< stl map that maps from cl_context to CLAPI_clCreateContextBase*
-    CLKernelMap             m_clKernelMap;                       ///< stl map that maps from cl_kernel to string
-    EnqueuedTaskList        m_enqueuedTasks;                     ///< stl vector containing the clEnqueueTask apis
-    std::mutex              m_mtxPreviousGEI;                    ///< mutex used to lock access to m_PreviousGEIMap
-    std::mutex              m_mtxEnqueuedTask;                   ///< mutex used to lock access to m_enqueuedTasks
-    std::set<CL_FUNC_TYPE>  m_filterAPIs;                        ///< OpenCL APIs that are disabled in the trace, if API is not in m_MustInterceptAPIs list, the API will not be intercept,
-                                                                 ///< otherwise, API is intercepted but it won't show up in trace file.
-    std::set<CL_FUNC_TYPE>  m_mustInterceptAPIs;                 ///< Some of the APIs like clCreateContext, clCreateCommandQueue and etc are not able to be disabled.
-    std::list<ITraceEntry*> m_mustInterceptAPIList;              ///< List containing the must-intercept API objects, if they are not actually traced.  If not tracing the APIs, we need to store the must-intercept API objects somewhere
-    bool                    m_bDelayStartEnabled;                ///< flag indicating whether or not the profiler should start with delay or not
-    bool                    m_bProfilerDurationEnabled;          ///< flag indiacating whether profiler should only run for certain duration
-    unsigned long           m_delayInMilliseconds;               ///< milliseconds to delay for profiler to start
-    unsigned long           m_durationInMilliseconds;            ///< duration in milliseconds for which Profiler should run
-    ProfilerTimer*          m_pDelayTimer;                       ///< timer for handling delay timer for the profile agent
-    ProfilerTimer*          m_pDurationTimer;                    ///< timer for handling duration timer for the profile agent
+    unsigned int            m_uiLineNum;                ///< number of lines output to file
+    PreviousGEIMap          m_previousGEIMap;           ///< stl map that contains the previous CLAPI_clGetEventInfo instance for each thread
+    CLCommandQueueMap       m_clCommandQueueMap;        ///< stl map that maps from cl_command_queue to CLAPI_clCreateCommandQueue*
+    CLContextMap            m_clContextMap;             ///< stl map that maps from cl_context to CLAPI_clCreateContextBase*
+    CLKernelMap             m_clKernelMap;              ///< stl map that maps from cl_kernel to string
+    EnqueuedTaskList        m_enqueuedTasks;            ///< stl vector containing the clEnqueueTask apis
+    std::mutex              m_mtxPreviousGEI;           ///< mutex used to lock access to m_PreviousGEIMap
+    std::mutex              m_mtxEnqueuedTask;          ///< mutex used to lock access to m_enqueuedTasks
+    std::set<CL_FUNC_TYPE>  m_filterAPIs;               ///< OpenCL APIs that are disabled in the trace, if API is not in m_MustInterceptAPIs list, the API will not be intercept, otherwise, API is intercepted but it won't show up in trace file.
+    std::set<CL_FUNC_TYPE>  m_mustInterceptAPIs;        ///< Some of the APIs like clCreateContext, clCreateCommandQueue and etc are not able to be disabled.
+    std::list<ITraceEntry*> m_mustInterceptAPIList;     ///< List containing the must-intercept API objects, if they are not actually traced.  If not tracing the APIs, we need to store the must-intercept API objects somewhere
+    bool                    m_bDelayStartEnabled;       ///< flag indicating whether or not the profiler should start with delay or not
+    bool                    m_bProfilerDurationEnabled; ///< flag indiacating whether profiler should only run for certain duration
+    unsigned long           m_delayInMilliseconds;      ///< milliseconds to delay for profiler to start
+    unsigned long           m_durationInMilliseconds;   ///< duration in milliseconds for which Profiler should run
+    ProfilerTimer*          m_pDelayTimer;              ///< timer for handling delay timer for the profile agent
+    ProfilerTimer*          m_pDurationTimer;           ///< timer for handling duration timer for the profile agent
 };
 
 // @}

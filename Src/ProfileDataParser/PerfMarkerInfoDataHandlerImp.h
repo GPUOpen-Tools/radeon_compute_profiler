@@ -67,7 +67,7 @@ public:
     const char* GetPerfMarkerEndExGroupName() const override;
 
     /// Destructor
-    ~PerfMarkerInfoDataHandler(){}
+    ~PerfMarkerInfoDataHandler() {}
 
 private:
     PerfMarkerEntry*                    m_pPerfMarkerEntry;             ///< pointer to perf marker entry

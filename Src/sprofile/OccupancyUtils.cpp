@@ -45,7 +45,7 @@ using std::ifstream;
     { \
         if (StringUtils::Parse(strValue, params.var) == false) \
         { \
-           params.var = defaultval; \
+            params.var = defaultval; \
         } \
         b##param##Found = true; \
     }
@@ -75,7 +75,7 @@ using std::ifstream;
     { \
         strError = "Invalid value for \"" param "\" in input file: " + strOccupancyFile; \
         return false; \
-    } \
+    }
 
 const unsigned int MAX_PATH_LENGTH = 512;
 
@@ -214,9 +214,11 @@ bool OccupancyUtils::GetOccupancyParamsFromFile(const std::string& strOccupancyF
     SP_UNREFERENCED_PARAMETER(occupancyIndex);
 
     KernelProfileResultParser occupancyFile;
+
     if (occupancyFile.Parse(strOccupancyFile))
     {
         const KernelProfileResultList& results = occupancyFile.GetProfileResults();
+
         if (occupancyIndex < results.size())
         {
             if (!results[occupancyIndex]->GetValue(0, OCCUPANCY_COLUMN_NAME_KERNELNAME, params.m_strKernelName))

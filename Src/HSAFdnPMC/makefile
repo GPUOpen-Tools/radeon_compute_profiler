@@ -11,7 +11,6 @@ ADDL_CFLAGS = $(HSAFDN_CFLAGS)
 INCLUDES = \
 	-I. \
 	-isystem$(GPU_PERF_API_DIR) \
-	-isystem$(COMMON_SRC)/GPUPerfAPIUtils \
 	-isystem$(CAL_DIR)/include \
 	-I$(COMMON_PROJ_DIR) \
 	-I$(SRC_COMMON_DIR) \

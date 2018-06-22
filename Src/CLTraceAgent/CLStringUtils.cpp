@@ -144,6 +144,8 @@ std::string CLStringUtils::GetErrorString(const cl_int errcode)
             CASE(CL_D3D10_RESOURCE_NOT_ACQUIRED_KHR);
 #endif
             CASE(CL_INVALID_FILE_OBJECT_AMD);
+            CASE(CL_INVALID_SPEC_ID);
+            CASE(CL_MAX_SIZE_RESTRICTION_EXCEEDED);
 
         default: return StringUtils::ToString(errcode);
     }
@@ -992,6 +994,7 @@ std::string CLStringUtils::GetChannelTypeString(const cl_channel_type type)
             CASE(CL_HALF_FLOAT);
             CASE(CL_FLOAT);
             CASE(CL_UNORM_INT24);
+            CASE(CL_UNORM_INT_101010_2);
 
         default: return StringUtils::ToString(type);
     }
@@ -1267,12 +1270,13 @@ std::string CLStringUtils::GetPlatformInfoString(const cl_platform_info param_na
             CASE(CL_PLATFORM_VENDOR);
             CASE(CL_PLATFORM_EXTENSIONS);
             CASE(CL_PLATFORM_ICD_SUFFIX_KHR);
+            CASE(CL_PLATFORM_HOST_TIMER_RESOLUTION);
 
         default: return StringUtils::ToString(param_name);
     }
 }
 
-std::string CLStringUtils::GetPlatformInfoValueString(const void* param_value, cl_int ret_value)
+std::string CLStringUtils::GetPlatformInfoValueString(const cl_platform_info param_name, const void* param_value, cl_int ret_value)
 {
     if (param_value != NULL)
     {
@@ -1281,7 +1285,29 @@ std::string CLStringUtils::GetPlatformInfoValueString(const void* param_value, c
 
         if (ret_value == CL_SUCCESS)
         {
-            ss << GetStringString((char*)param_value, false);
+            switch (param_name)
+            {
+                case CL_PLATFORM_HOST_TIMER_RESOLUTION:
+                {
+                    ss << StringUtils::ToString(*((cl_ulong*)param_value));
+                    break;
+                }
+
+                case CL_PLATFORM_PROFILE:
+                case CL_PLATFORM_VERSION:
+                case CL_PLATFORM_NAME:
+                case CL_PLATFORM_VENDOR:
+                case CL_PLATFORM_EXTENSIONS:
+                case CL_PLATFORM_ICD_SUFFIX_KHR:
+                {
+                    ss << GetStringString((char*)param_value, false);
+                    break;
+                }
+
+                default:
+                    ss << StringUtils::ToString(*((int*)param_value));
+                    break;
+            }
         }
 
         ss << ']';
@@ -1415,6 +1441,9 @@ std::string CLStringUtils::GetDeviceInfoString(const cl_device_info param_name)
             CASE(CL_DEVICE_PREFERRED_WORK_GROUP_SIZE_AMD);
             CASE(CL_DEVICE_MAX_WORK_GROUP_SIZE_AMD);
             CASE(CL_DEVICE_PREFERRED_CONSTANT_BUFFER_SIZE_AMD);
+            CASE(CL_DEVICE_IL_VERSION);
+            CASE(CL_DEVICE_MAX_NUM_SUB_GROUPS);
+            CASE(CL_DEVICE_SUB_GROUP_INDEPENDENT_FORWARD_PROGRESS);
 
         default: return StringUtils::ToString(param_name);
     }
@@ -1513,6 +1542,7 @@ std::string CLStringUtils::GetCommandQueueInfoString(const cl_command_queue_info
             CASE(CL_QUEUE_REFERENCE_COUNT);
             CASE(CL_QUEUE_PROPERTIES);
             CASE(CL_QUEUE_SIZE);
+            CASE(CL_QUEUE_DEVICE_DEFAULT);
 
         default: return StringUtils::ToString(param_name);
     }
@@ -1546,6 +1576,10 @@ std::string CLStringUtils::GetCommandQueueInfoValueString(const cl_command_queue
                     ss << GetCommandQueuePropertyString(*((cl_command_queue_properties*)param_value));
                     break;
 
+                case CL_QUEUE_DEVICE_DEFAULT:
+                    ss << StringUtils::ToHexString(*((cl_command_queue*)param_value));
+                    break;
+
                 default:
                     ss << StringUtils::ToString(*((int*)param_value));
                     break;
@@ -1574,6 +1608,9 @@ std::string CLStringUtils::GetProgramInfoString(const cl_program_info param_name
             CASE(CL_PROGRAM_BINARIES);
             CASE(CL_PROGRAM_NUM_KERNELS);
             CASE(CL_PROGRAM_KERNEL_NAMES);
+            CASE(CL_PROGRAM_IL);
+            CASE(CL_PROGRAM_SCOPE_GLOBAL_CTORS_PRESENT);
+            CASE(CL_PROGRAM_SCOPE_GLOBAL_DTORS_PRESENT);
 
         default: return StringUtils::ToString(param_name);
     }
@@ -1599,6 +1636,14 @@ std::string CLStringUtils::GetProgramInfoValueString(const cl_program_info param
                 case CL_PROGRAM_CONTEXT:
                     ss << StringUtils::ToHexString(*((cl_context*)param_value));
                     break;
+
+                // Details of CTORS/DTORS are missing in OCL spec 2.2, temporarily treat them like cl_bool
+                case CL_PROGRAM_SCOPE_GLOBAL_CTORS_PRESENT:
+                case CL_PROGRAM_SCOPE_GLOBAL_DTORS_PRESENT:
+                {
+                    ss << GetBoolString(*((cl_bool*)param_value));
+                    break;
+                }
 
                 case CL_PROGRAM_DEVICES:
                 {
@@ -1652,6 +1697,7 @@ std::string CLStringUtils::GetProgramInfoValueString(const cl_program_info param
                     break;
 
                 case CL_PROGRAM_SOURCE:
+                case CL_PROGRAM_IL:
                     ss << GetStringString((char*)param_value, true);
                     break;
 
@@ -1680,6 +1726,8 @@ std::string CLStringUtils::GetKernelInfoString(const cl_kernel_info param_name)
             CASE(CL_KERNEL_CONTEXT);
             CASE(CL_KERNEL_PROGRAM);
             CASE(CL_KERNEL_ATTRIBUTES);
+            CASE(CL_KERNEL_MAX_NUM_SUB_GROUPS);
+            CASE(CL_KERNEL_COMPILE_NUM_SUB_GROUPS);
 
         default: return StringUtils::ToString(param_name);
     }
@@ -1703,6 +1751,8 @@ std::string CLStringUtils::GetKernelInfoValueString(const cl_kernel_info param_n
 
                 case CL_KERNEL_NUM_ARGS:
                 case CL_KERNEL_REFERENCE_COUNT:
+                case CL_KERNEL_MAX_NUM_SUB_GROUPS:
+                case CL_KERNEL_COMPILE_NUM_SUB_GROUPS:
                     ss << *((cl_uint*)param_value);
                     break;
 
@@ -1870,6 +1920,20 @@ std::string CLStringUtils::GetKernelWorkGroupInfoString(const cl_kernel_work_gro
             CASE(CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE);
             CASE(CL_KERNEL_PRIVATE_MEM_SIZE);
             CASE(CL_KERNEL_GLOBAL_WORK_SIZE);
+
+        default: return StringUtils::ToString(param_name);
+    }
+}
+
+std::string CLStringUtils::GetKernelSubGroupInfoString(const cl_kernel_sub_group_info param_name)
+{
+    switch (param_name)
+    {
+            CASE(CL_KERNEL_MAX_SUB_GROUP_SIZE_FOR_NDRANGE);
+            CASE(CL_KERNEL_SUB_GROUP_COUNT_FOR_NDRANGE);
+            CASE(CL_KERNEL_LOCAL_SIZE_FOR_SUB_GROUP_COUNT);
+            CASE(CL_KERNEL_MAX_NUM_SUB_GROUPS);
+            CASE(CL_KERNEL_COMPILE_NUM_SUB_GROUPS);
 
         default: return StringUtils::ToString(param_name);
     }
@@ -2558,6 +2622,33 @@ std::string CLStringUtils::GetCLAPINameString(const CL_FUNC_TYPE type)
         case CL_FUNC_TYPE_clEnqueueWriteSsgFileAMD:
             return std::string("clEnqueueWriteSsgFileAMD");
 
+        case CL_FUNC_TYPE_clCloneKernel:
+            return std::string("clCloneKernel");
+
+        case CL_FUNC_TYPE_clCreateProgramWithIL:
+            return std::string("clCreateProgramWithIL");
+
+        case CL_FUNC_TYPE_clEnqueueSVMMigrateMem:
+            return std::string("clEnqueueSVMMigrateMem");
+
+        case CL_FUNC_TYPE_clGetDeviceAndHostTimer:
+            return std::string("clGetDeviceAndHostTimer");
+
+        case CL_FUNC_TYPE_clGetHostTimer:
+            return std::string("clGetHostTimer");
+
+        case CL_FUNC_TYPE_clGetKernelSubGroupInfo:
+            return std::string("clGetKernelSubGroupInfo");
+
+        case CL_FUNC_TYPE_clSetDefaultDeviceCommandQueue:
+            return std::string("clSetDefaultDeviceCommandQueue");
+
+        case CL_FUNC_TYPE_clSetProgramReleaseCallback:
+            return std::string("clSetProgramReleaseCallback");
+
+        case CL_FUNC_TYPE_clSetProgramSpecializationConstant:
+            return std::string("clSetProgramSpecializationConstant");
+
         default:
             return std::string("Unknown_function_type");
     }
@@ -2615,6 +2706,138 @@ std::string CLStringUtils::GetKernelWorkGroupInfoValueString(const cl_kernel_wor
     }
 }
 
+std::string CLStringUtils::GetKernelSubGroupInfoOutputValueString(const cl_kernel_sub_group_info param_name, const void* param_value, size_t param_value_size, cl_int ret_value)
+{
+    if (nullptr != param_value)
+    {
+        std::ostringstream ss;
+
+        ss << '[';
+
+        if (ret_value == CL_SUCCESS)
+        {
+            switch (param_name)
+            {
+                case CL_KERNEL_MAX_SUB_GROUP_SIZE_FOR_NDRANGE:
+                    ss << *((size_t*)param_value);
+                    break;
+
+                case CL_KERNEL_SUB_GROUP_COUNT_FOR_NDRANGE:
+                    ss << *((size_t*)param_value);
+                    break;
+
+                case CL_KERNEL_LOCAL_SIZE_FOR_SUB_GROUP_COUNT:
+                {
+                    size_t count = param_value_size / sizeof(size_t);
+                    size_t i;
+                    ss << "{";
+
+                    for (i = 0; i < count - 1; ++i)
+                    {
+                        ss << ((size_t*)param_value)[i] << ",";
+                    }
+
+                    ss << ((size_t*)param_value)[i];
+                    ss << "}";
+                }
+                break;
+
+                case CL_KERNEL_MAX_NUM_SUB_GROUPS:
+                    ss << *((size_t*)param_value);
+                    break;
+
+                case CL_KERNEL_COMPILE_NUM_SUB_GROUPS:
+                    ss << *((size_t*)param_value);
+                    break;
+
+
+                default:
+                    ss << StringUtils::ToString(*((int*)param_value));
+                    break;
+            }
+        }
+
+        ss << ']';
+        return ss.str();
+    }
+    else
+    {
+        return "NULL";
+    }
+}
+
+std::string CLStringUtils::GetKernelSubGroupInfoInputValueString(const cl_kernel_sub_group_info param_name, const void* input_value, size_t input_value_size, cl_int ret_value)
+{
+    if (nullptr != input_value)
+    {
+        std::ostringstream ss;
+
+        ss << '[';
+
+        if (ret_value == CL_SUCCESS)
+        {
+            switch (param_name)
+            {
+                case CL_KERNEL_MAX_SUB_GROUP_SIZE_FOR_NDRANGE:
+                {
+                    size_t count = input_value_size / sizeof(size_t);
+                    size_t i;
+                    ss << "{";
+
+                    for (i = 0; i < count - 1; ++i)
+                    {
+                        ss << ((size_t*)input_value)[i] << ",";
+                    }
+
+                    ss << ((size_t*)input_value)[i];
+                    ss << "}";
+                }
+                break;
+
+                case CL_KERNEL_SUB_GROUP_COUNT_FOR_NDRANGE:
+                {
+                    size_t count = input_value_size / sizeof(size_t);
+                    size_t i;
+                    ss << "{";
+
+                    for (i = 0; i < count - 1; ++i)
+                    {
+                        ss << ((size_t*)input_value)[i] << ",";
+                    }
+
+                    ss << ((size_t*)input_value)[i];
+                    ss << "}";
+                }
+                break;
+
+                case CL_KERNEL_LOCAL_SIZE_FOR_SUB_GROUP_COUNT:
+                    ss << *((size_t*)input_value);
+                    break;
+
+                case CL_KERNEL_MAX_NUM_SUB_GROUPS:
+                    ss << *((size_t*)input_value);
+                    break;
+
+                case CL_KERNEL_COMPILE_NUM_SUB_GROUPS:
+                    ss << *((size_t*)input_value);
+                    break;
+
+
+                default:
+                    ss << StringUtils::ToString(*((int*)input_value));
+                    break;
+            }
+        }
+
+        ss << ']';
+        return ss.str();
+    }
+    else
+    {
+        return "NULL";
+    }
+}
+
 std::string CLStringUtils::GetCommandTypeString(const cl_command_type type)
 {
     switch (type)
@@ -2659,6 +2882,7 @@ std::string CLStringUtils::GetCommandTypeString(const cl_command_type type)
             CASE(CL_COMMAND_MAKE_BUFFERS_RESIDENT_AMD);
             CASE(CL_COMMAND_READ_SSG_FILE_AMD);
             CASE(CL_COMMAND_WRITE_SSG_FILE_AMD);
+            CASE(CL_COMMAND_SVM_MIGRATE_MEM);
 
         default: return StringUtils::ToString(type);
     }
@@ -2836,6 +3060,7 @@ std::string CLStringUtils::GetDeviceInfoValueString(const cl_device_info param_n
                 case CL_DEVICE_PRINTF_BUFFER_SIZE                :
                 case CL_DEVICE_PREFERRED_WORK_GROUP_SIZE_AMD     :
                 case CL_DEVICE_MAX_WORK_GROUP_SIZE_AMD           :
+                case CL_DEVICE_MAX_NUM_SUB_GROUPS                :
                 {
                     size_t* val = (size_t*)param_value;
                     ss << StringUtils::ToString(*val);
@@ -2855,15 +3080,16 @@ std::string CLStringUtils::GetDeviceInfoValueString(const cl_device_info param_n
                     break;
                 }
 
-                case CL_DEVICE_IMAGE_SUPPORT                     :
-                case CL_DEVICE_ERROR_CORRECTION_SUPPORT          :
-                case CL_DEVICE_ENDIAN_LITTLE                     :
-                case CL_DEVICE_AVAILABLE                         :
-                case CL_DEVICE_COMPILER_AVAILABLE                :
-                case CL_DEVICE_HOST_UNIFIED_MEMORY               :
-                case CL_DEVICE_LINKER_AVAILABLE                  :
-                case CL_DEVICE_PREFERRED_INTEROP_USER_SYNC       :
-                case CL_DEVICE_THREAD_TRACE_SUPPORTED_AMD        :
+                case CL_DEVICE_IMAGE_SUPPORT                          :
+                case CL_DEVICE_ERROR_CORRECTION_SUPPORT               :
+                case CL_DEVICE_ENDIAN_LITTLE                          :
+                case CL_DEVICE_AVAILABLE                              :
+                case CL_DEVICE_COMPILER_AVAILABLE                     :
+                case CL_DEVICE_HOST_UNIFIED_MEMORY                    :
+                case CL_DEVICE_LINKER_AVAILABLE                       :
+                case CL_DEVICE_PREFERRED_INTEROP_USER_SYNC            :
+                case CL_DEVICE_THREAD_TRACE_SUPPORTED_AMD             :
+                case CL_DEVICE_SUB_GROUP_INDEPENDENT_FORWARD_PROGRESS :
                 {
                     cl_bool* val = (cl_bool*)param_value;
                     ss << GetBoolString(*val);
@@ -2872,7 +3098,7 @@ std::string CLStringUtils::GetDeviceInfoValueString(const cl_device_info param_n
 
                 case CL_DEVICE_SINGLE_FP_CONFIG                  :
                 case CL_DEVICE_DOUBLE_FP_CONFIG                  :
-                case CL_DEVICE_HALF_FP_CONFIG                  :
+                case CL_DEVICE_HALF_FP_CONFIG                    :
                 {
                     cl_device_fp_config fp_config = *((cl_device_fp_config*)param_value);
 
@@ -3015,6 +3241,7 @@ std::string CLStringUtils::GetDeviceInfoValueString(const cl_device_info param_n
                 case CL_DEVICE_OPENCL_C_VERSION                  :
                 case CL_DEVICE_BUILT_IN_KERNELS                  :
                 case CL_DEVICE_BOARD_NAME_AMD                    :
+                case CL_DEVICE_IL_VERSION                        :
                 {
                     ss << GetStringString((char*)param_value, false);
                     break;
@@ -3227,6 +3454,20 @@ std::string CLStringUtils::GetIntString(const cl_uint* intPtr, cl_uint intVal)
     {
         std::ostringstream ss;
         ss << '[' << intVal << ']';
+        return ss.str();
+    }
+}
+
+std::string CLStringUtils::GetLongString(const cl_ulong* longPtr, cl_ulong longVal)
+{
+    if (longPtr == NULL)
+    {
+        return "NULL";
+    }
+    else
+    {
+        std::ostringstream ss;
+        ss << '[' << longVal << ']';
         return ss.str();
     }
 }
@@ -3962,10 +4203,10 @@ std::string CLStringUtils::GetFileInfoAMDString(const cl_file_info_amd param_nam
 {
     switch (param_name)
     {
-        CASE(CL_FILE_BLOCK_SIZE_AMD);
-        CASE(CL_FILE_SIZE_AMD);
+            CASE(CL_FILE_BLOCK_SIZE_AMD);
+            CASE(CL_FILE_SIZE_AMD);
 
-    default: return StringUtils::ToString(param_name);
+        default: return StringUtils::ToString(param_name);
     }
 }
 
@@ -3981,17 +4222,17 @@ std::string CLStringUtils::GetFileInfoAMDValueString(const cl_file_info_amd para
 
             switch (param_name)
             {
-            case CL_FILE_BLOCK_SIZE_AMD:
-                ss << *((cl_uint*)param_value);
-                break;
+                case CL_FILE_BLOCK_SIZE_AMD:
+                    ss << *((cl_uint*)param_value);
+                    break;
 
-            case CL_FILE_SIZE_AMD:
-                ss << *((cl_ulong*)param_value);
-                break;
+                case CL_FILE_SIZE_AMD:
+                    ss << *((cl_ulong*)param_value);
+                    break;
 
-            default:
-                ss << StringUtils::ToString(*((int*)param_value));
-                break;
+                default:
+                    ss << StringUtils::ToString(*((int*)param_value));
+                    break;
             }
         }
 

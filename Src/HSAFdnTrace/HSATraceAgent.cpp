@@ -103,6 +103,7 @@ extern "C" bool DLL_PUBLIC OnLoad(void* pTable, uint64_t runtimeVersion, uint64_
     {
         HSAAPIInfoManager::Instance()->EnableProfileDelayStart(params.m_bDelayStartEnabled, params.m_delayInMilliseconds);
         HSAAPIInfoManager::Instance()->EnableProfileDuration(params.m_bProfilerDurationEnabled, params.m_durationInMilliseconds);
+
         if (params.m_bDelayStartEnabled)
         {
             HSAAPIInfoManager::Instance()->CreateTimer(PROFILEDELAYTIMER, params.m_delayInMilliseconds);
@@ -124,6 +125,11 @@ extern "C" bool DLL_PUBLIC OnLoad(void* pTable, uint64_t runtimeVersion, uint64_
     if (!params.m_strAPIFilterFile.empty())
     {
         HSAAPIInfoManager::Instance()->LoadAPIFilterFile(params.m_strAPIFilterFile);
+    }
+
+    if (params.m_bNoHSATransferTime)
+    {
+        HSAAPIInfoManager::Instance()->DisableHsaTransferTime();
     }
 
     StackTracer::Instance()->InitSymPath();
@@ -221,6 +227,7 @@ extern "C" void DLL_PUBLIC OnUnload()
         g_pRealCoreFunctions->hsa_signal_store_screlease_fn(forceSignalCollection, 1);
 
 #if defined (_LINUX) || defined (LINUX)
+
         // notify the signal collector thread to collect all remaining signals
         if (!HSATimeCollectorGlobals::Instance()->m_dispatchesInFlight.unlockCondition())
         {

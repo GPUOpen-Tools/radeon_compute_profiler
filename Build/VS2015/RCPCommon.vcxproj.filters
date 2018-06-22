@@ -76,12 +76,6 @@
     <ClCompile Include="..\..\..\Common\Src\DynamicLibraryModule\DynamicLibraryModule.cpp">
       <Filter>DynamicLibraryModule</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\Src\GPUPerfAPIUtils\GPUPerfAPILoader.cpp">
-      <Filter>GPUPerfAPIUtils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Common\Src\GPUPerfAPIUtils\GPUPerfAPIRegistry.cpp">
-      <Filter>GPUPerfAPIUtils</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Src\Common\APIInfo.h">
@@ -189,12 +183,6 @@
     <ClInclude Include="..\..\..\Common\Src\DynamicLibraryModule\DynamicLibraryModule.h">
       <Filter>DynamicLibraryModule</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\Src\GPUPerfAPIUtils\GPUPerfAPILoader.h">
-      <Filter>GPUPerfAPIUtils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\Src\GPUPerfAPIUtils\GPUPerfAPIRegistry.h">
-      <Filter>GPUPerfAPIUtils</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Src\Common\ProfilerOutputFileDefs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -214,9 +202,6 @@
     </Filter>
     <Filter Include="DynamicLibraryModule">
       <UniqueIdentifier>{74fa6d82-487a-4b16-91fc-f7d51a62f369}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GPUPerfAPIUtils">
-      <UniqueIdentifier>{509e05bc-c619-4317-b666-d51bd2137da3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{5efbc9b4-4f2d-4e8f-b236-3f23ee362b4d}</UniqueIdentifier>

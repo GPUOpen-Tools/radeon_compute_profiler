@@ -60,6 +60,7 @@ bool OccupancyFileInfoDataHandler::Parse(const char* pOccupancyFile)
     bool bFoundHeader = false;
     size_t kernelCount = 0u;
     size_t currentKernelCount = 0u;
+    std::string listSeparator;
 
     auto GetColumnIndex = [&](std::string columnName)->size_t
     {
@@ -137,14 +138,27 @@ bool OccupancyFileInfoDataHandler::Parse(const char* pOccupancyFile)
                         kernelCount = 0u;
                     }
                 }
+
+                std::string listSeparatorNameString(FILE_HEADER_LIST_SEPARATOR);
+                size_t listSeparatorPosition = occupancyHeader.find(listSeparatorNameString);
+
+                if (std::string::npos != listSeparatorPosition)
+                {
+                    listSeparator = std::string(occupancyHeader.begin() + listSeparatorPosition + listSeparatorNameString.size() + 1, occupancyHeader.end());
+                }
             }
             else
             {
+                if (listSeparator.empty())
+                {
+                    listSeparator.push_back(OCCUPANCY_DEFAULT_LIST_SEPARATOR_CHAR);
+                }
+
                 if (!bFoundHeader)
                 {
                     bFoundHeader = true;
                     std::vector<std::string> columnHeaders;
-                    StringUtils::Split(columnHeaders, lineBuffer, ",");
+                    StringUtils::Split(columnHeaders, lineBuffer, listSeparator);
                     m_headerColumnCount = static_cast<unsigned int>(columnHeaders.size());
                     m_ppHeaderList = new(std::nothrow) char* [m_headerColumnCount];
 
@@ -171,7 +185,7 @@ bool OccupancyFileInfoDataHandler::Parse(const char* pOccupancyFile)
                 else
                 {
                     columnData.clear();
-                    StringUtils::Split(columnData, lineBuffer, ",");
+                    StringUtils::Split(columnData, lineBuffer, listSeparator);
 
                     OccupancyInfoDataHandler* pTmpOccupancyInfo = new OccupancyInfoDataHandler();
                     pTmpOccupancyInfo->m_occupancyInfo.m_nTID = ColumnStrOutToUint(OCCUPANCY_COLUMN_NAME_THREADID);
@@ -209,6 +223,7 @@ bool OccupancyFileInfoDataHandler::Parse(const char* pOccupancyFile)
 
                     if (pTmpOccupancyInfo->m_occupancyInfo.m_nDeviceGfxIpVer == 0)
                     {
+                        // TODO: include device PCIE ID in occupancy file, then we can query HW Gen using GetHardwareGeneration(deviceID, Gen)
                         AMDTDeviceInfoUtils::Instance()->GetHardwareGeneration(pTmpOccupancyInfo->m_occupancyInfo.m_strDeviceName.c_str(), pTmpOccupancyInfo->m_occupancyInfo.m_gen);
                     }
                     else

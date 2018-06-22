@@ -118,6 +118,7 @@ struct Parameters
     unsigned int m_uiForcedGpuIndex;              ///< Forced GPU index
     bool m_bAqlPacketTracing;                     ///< Flag indicating that an AQL Packet Trace should be performed.
     bool m_bDisableKernelDemangling;              ///< Flag indicating whether or not to demangle the kernel name
+    bool m_bNoHSATransferTime;                    ///< Flag indicating whether or not HSA transfer time is ignored
 };
 
 #endif // _PROFILING_PARAMS_H_

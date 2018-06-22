@@ -14,36 +14,67 @@ HSATimeCollectorGlobals::HSATimeCollectorGlobals() :
     m_doQuit(false)
 {
 #if defined (_LINUX) || defined (LINUX)
+
     if (!m_dispatchesInFlight.lockCondition())
     {
         GPULogger::Log(GPULogger::logERROR, "unable to lock condition\n");
     }
+
 #endif
 }
 
-void HSASignalQueue::AddSignalToBack(const HSAPacketSignalReplacer& signal)
+bool HSASignalQueue::AddSignalToBack(const HSAPacketSignalReplacer& signal)
 {
     std::lock_guard<std::mutex> lock(m_signalQueueMtx);
-    m_signalQueue.push(signal);
+
+    auto& queue = m_queueSignalsMap[signal.m_pQueue];
+
+    bool retVal = queue.empty();
+
+    queue.push(signal);
+
+    return retVal;
 }
 
-void HSASignalQueue::GetSignalFromFront(HSAPacketSignalReplacer& outSignal)
+void HSASignalQueue::GetSignalFromFront(std::vector<const HSAPacketSignalReplacer*>& outSignals)
 {
     std::lock_guard<std::mutex> lock(m_signalQueueMtx);
-    outSignal = m_signalQueue.front();
-    m_signalQueue.pop();
+
+    for (const auto& it : m_queueSignalsMap)
+    {
+        outSignals.push_back(&it.second.front());
+    }
+}
+
+void HSASignalQueue::PopSignalFromQueue(const hsa_queue_t* queue)
+{
+    std::lock_guard<std::mutex> lock(m_signalQueueMtx);
+
+    auto it = m_queueSignalsMap.find(queue);
+    SpAssertRet(it != m_queueSignalsMap.end());
+    it->second.pop();
+
+    if (it->second.empty())
+    {
+        m_queueSignalsMap.erase(it);
+    }
+}
+
+bool HSASignalQueue::IsEmpty()
+{
+    return m_queueSignalsMap.empty();
 }
 
 size_t HSASignalQueue::GetSize() const
 {
-    return m_signalQueue.size();
+    return m_queueSignalsMap.size();
 }
 
 void HSASignalQueue::Clear()
 {
-    while (!m_signalQueue.empty())
+    while (!m_queueSignalsMap.empty())
     {
-        m_signalQueue.pop();
+        m_queueSignalsMap.clear();
     }
 }
 
@@ -65,19 +96,17 @@ int HSASignalCollectorThread::entryPoint()
 {
     int retVal = 0;
 
-    hsa_signal_t signalList[2];
-    hsa_signal_value_t signalValueList[2];
-    hsa_signal_condition_t signalConditionList[2];
+    std::vector<hsa_signal_t> signalList;
+    std::vector<hsa_signal_value_t> signalValueList;
+    std::vector<hsa_signal_condition_t> signalConditionList;
 
-    signalList[0] = HSATimeCollectorGlobals::Instance()->m_forceSignalCollection;
-    signalValueList[0] = 1;
-    signalConditionList[0] = HSA_SIGNAL_CONDITION_EQ;
+    std::vector<const HSAPacketSignalReplacer*> outSignals;
 
-    signalValueList[1] = 1;
-    signalConditionList[1] = HSA_SIGNAL_CONDITION_LT;
+    signalList.push_back(HSATimeCollectorGlobals::Instance()->m_forceSignalCollection);
+    signalValueList.push_back(0);
+    signalConditionList.push_back(HSA_SIGNAL_CONDITION_NE);
 
     bool doFlush = false;
-    bool doIdleFlush = false;
 
     // provide local aliases to some of the globals
     bool& doQuit = HSATimeCollectorGlobals::Instance()->m_doQuit;
@@ -85,18 +114,43 @@ int HSASignalCollectorThread::entryPoint()
 
     while (true)
     {
-        while (0 != HSASignalQueue::Instance()->GetSize() || doFlush)
+        while (!HSASignalQueue::Instance()->IsEmpty() || doFlush)
         {
-            if (!doFlush)
+            // get first signal data from each queue and format for wait_any
+            outSignals.clear();
+            HSASignalQueue::Instance()->GetSignalFromFront(outSignals);
+            signalList.resize(1);
+
+            for (auto& signal : outSignals)
             {
-                HSASignalQueue::Instance()->GetSignalFromFront(m_deferList[m_index]);
-                signalList[1] = m_deferList[m_index].m_profilerSignal;
+                signalList.push_back(signal->m_profilerSignal);
             }
 
-            doFlush = false;
-
-            if (1 == g_pRealAmdExtFunctions->hsa_amd_signal_wait_any_fn(2, signalList, signalConditionList, signalValueList, static_cast<uint64_t>(-1), HSA_WAIT_STATE_BLOCKED, nullptr))
+            for (std::size_t i = signalValueList.size(); i < outSignals.size() + 1; ++i)
             {
+                signalValueList.push_back(1);
+                signalConditionList.push_back(HSA_SIGNAL_CONDITION_LT);
+            }
+
+            hsa_signal_value_t sigVal;
+
+            SpAssertRet(signalList.size() <= std::numeric_limits<std::uint32_t>::max()) retVal;
+
+            std::uint32_t signalListSize = static_cast<std::uint32_t>(signalList.size());
+
+            std::uint32_t wakeIndex = g_pRealAmdExtFunctions->hsa_amd_signal_wait_any_fn(signalListSize,
+                                      &signalList[0],
+                                      &signalConditionList[0],
+                                      &signalValueList[0],
+                                      static_cast<std::uint64_t>(-1),
+                                      HSA_WAIT_STATE_BLOCKED,
+                                      &sigVal);
+
+            if (0 != wakeIndex)
+            {
+                m_deferList[m_index] = *outSignals[wakeIndex - 1];
+                HSASignalQueue::Instance()->PopSignalFromQueue(m_deferList[m_index].m_pQueue);
+
                 if (0 != m_deferList[m_index].m_originalSignal.handle)
                 {
                     // update the original signal so the app will know that it is complete
@@ -107,6 +161,12 @@ int HSASignalCollectorThread::entryPoint()
             }
             else
             {
+                if (2 == sigVal)
+                {
+                    g_pRealCoreFunctions->hsa_signal_store_relaxed_fn(signalList[0], 0);
+                    continue; // wake is to pickup a new queue
+                }
+
                 doFlush = true;
             }
 
@@ -117,14 +177,19 @@ int HSASignalCollectorThread::entryPoint()
 
             if (m_index == m_deferLen || doFlush)
             {
+                std::lock_guard<std::mutex> lock(HSATimeCollectorGlobals::Instance()->m_signalCollectorMtx);
+
                 for (unsigned int i = 0; i < m_index; i++)
                 {
                     HSAPacketSignalReplacer& replacer = m_deferList[i];
 
-                    hsa_amd_profiling_dispatch_time_t time;
-                    g_pRealAmdExtFunctions->hsa_amd_profiling_get_dispatch_time_fn(replacer.m_agent, replacer.m_profilerSignal, &time);
-                    numDispatches++;
-                    replacer.m_pAqlPacket->SetTimestamps(time.start, time.end);
+                    if (HSA_PACKET_TYPE_KERNEL_DISPATCH == replacer.m_pAqlPacket->m_type)
+                    {
+                        hsa_amd_profiling_dispatch_time_t time;
+                        g_pRealAmdExtFunctions->hsa_amd_profiling_get_dispatch_time_fn(replacer.m_agent, replacer.m_profilerSignal, &time);
+                        numDispatches++;
+                        replacer.m_pAqlPacket->SetTimestamps(time.start, time.end);
+                    }
 
                     HSASignalPool::Instance()->ReleaseSignal(replacer.m_profilerSignal);
                 }
@@ -132,21 +197,15 @@ int HSASignalCollectorThread::entryPoint()
                 if (doFlush)
                 {
                     g_pRealCoreFunctions->hsa_signal_store_screlease_fn(signalList[0], 0); // this is HSATimeCollectorGlobals::Instance()->m_forceSignalCollection
-                    m_deferList[0] = m_deferList[m_index];
                 }
 
                 m_index = 0;
+                doFlush = false;
             }
 
             if (doQuit)
             {
                 return retVal;
-            }
-
-            if (doIdleFlush)
-            {
-                doFlush = false;
-                doIdleFlush = false;
             }
         }
 
@@ -157,8 +216,6 @@ int HSASignalCollectorThread::entryPoint()
         if (1 == g_pRealCoreFunctions->hsa_signal_load_relaxed_fn(signalList[0]))
         {
             doFlush = true;
-            doIdleFlush = true;
-            signalList[1] = signalList[0];
         }
     }
 

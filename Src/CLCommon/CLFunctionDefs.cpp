@@ -25,19 +25,21 @@ void InitNextCLFunctions(cl_icd_dispatch_table& table)
 }
 
 #ifdef _WIN32
-   #if AMDT_ADDRESS_SPACE_TYPE == AMDT_64_BIT_ADDRESS_SPACE
+    #if AMDT_ADDRESS_SPACE_TYPE == AMDT_64_BIT_ADDRESS_SPACE
         #define AMDOCL_MODULE_NAME "amdocl64.dll"
     #else
         #define AMDOCL_MODULE_NAME "amdocl.dll"
     #endif
-    #define FALLBACK_AMDOCL_MODULE_NAME ""
+    // on Windows systems with the driver store enabled, you can't just load amdocl
+    // you need to load opencl.dll which will in turn load amdocl
+    #define FALLBACK_AMDOCL_MODULE_NAME "opencl.dll"
 #else
     #ifdef __x86_64__
         #define AMDOCL_MODULE_NAME "libamdocl64.so"
-        #define FALLBACK_AMDOCL_MODULE_NAME "libatiocl64.so"
+        #define FALLBACK_AMDOCL_MODULE_NAME "libamdocl-orca64.so"
     #else
         #define AMDOCL_MODULE_NAME "libamdocl32.so"
-        #define FALLBACK_AMDOCL_MODULE_NAME "libatiocl64.so"
+        #define FALLBACK_AMDOCL_MODULE_NAME "libamdocl-orca32.so"
     #endif
 #endif
 
@@ -212,6 +214,19 @@ void InitRealCLFunctions()
         g_realDispatchTable.CreateSamplerWithProperties = g_OpenCLModule.CreateSamplerWithProperties;
         g_realDispatchTable.SetKernelArgSVMPointer = g_OpenCLModule.SetKernelArgSVMPointer;
         g_realDispatchTable.SetKernelExecInfo = g_OpenCLModule.SetKernelExecInfo;
+
+        // OpenCL 2.1
+        g_realDispatchTable.clCloneKernel = g_OpenCLModule.CloneKernel;
+        g_realDispatchTable.clEnqueueSVMMigrateMem = g_OpenCLModule.EnqueueSVMMigrateMem;
+        g_realDispatchTable.clGetDeviceAndHostTimer = g_OpenCLModule.GetDeviceAndHostTimer;
+        g_realDispatchTable.clGetHostTimer = g_OpenCLModule.GetHostTimer;
+        g_realDispatchTable.clSetDefaultDeviceCommandQueue = g_OpenCLModule.SetDefaultDeviceCommandQueue;
+        g_realDispatchTable.clGetKernelSubGroupInfo = g_OpenCLModule.GetKernelSubGroupInfo;
+        g_realDispatchTable.clCreateProgramWithIL = g_OpenCLModule.CreateProgramWithIL;
+
+        // OpenCL 2.2
+        g_realDispatchTable.clSetProgramReleaseCallback = g_OpenCLModule.SetProgramReleaseCallback;
+        g_realDispatchTable.clSetProgramSpecializationConstant = g_OpenCLModule.SetProgramSpecializationConstant;
     }
 }
 

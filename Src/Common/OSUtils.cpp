@@ -11,6 +11,7 @@
 #include <iostream>
 
 #include "AMDTOSWrappers/Include/osGeneralFunctions.h"
+#include "AMDTOSWrappers/Include/osFile.h"
 
 #include "OSUtils.h"
 #include "Logger.h"
@@ -153,7 +154,8 @@ PROCESSID OSUtils::ExecProcess(const char* szExe,
                                const char* szArgs,
                                const char* szWorkingDir,
                                const char* szEnvBlock,
-                               bool bCreateSuspended)
+                               bool bCreateSuspended,
+                               bool bCreateConsole)
 {
     SP_TODO("revisit use of STARTUPINFOA for Unicode support")
     STARTUPINFOA si;
@@ -163,11 +165,16 @@ PROCESSID OSUtils::ExecProcess(const char* szExe,
     PROCESS_INFORMATION pi;
     memset(&pi, 0, sizeof(pi));
 
-    DWORD dwCreationFlags = CREATE_DEFAULT_ERROR_MODE | CREATE_NEW_CONSOLE;
+    DWORD dwCreationFlags = CREATE_DEFAULT_ERROR_MODE;
 
     if (bCreateSuspended)
     {
         dwCreationFlags |= CREATE_SUSPENDED;
+    }
+
+    if (bCreateConsole)
+    {
+        dwCreationFlags |= CREATE_NEW_CONSOLE;
     }
 
     SP_TODO("revisit use of CreateProcessA for Unicode support")
@@ -179,6 +186,7 @@ PROCESSID OSUtils::ExecProcess(const char* szExe,
                    szWorkingDir,
                    &si,
                    &pi);
+
     return pi;
 }
 
@@ -228,13 +236,13 @@ void OSUtils::ReleaseSysEnvBlock(ENVSYSBLOCK pEnvBlock)
     FreeEnvironmentStrings(const_cast<TCHAR*>(pEnvBlock));
 }
 
-bool OSUtils::osCopyFile(const char* szFrom, const char* szTo)
+bool OSUtils::OSCopyFile(const char* szFrom, const char* szTo)
 {
     SP_TODO("revisit use of CopyFileA for Unicode support")
     return CopyFileA(szFrom, szTo, FALSE) == TRUE;
 }
 
-bool OSUtils::osMoveFile(const char* szFrom, const char* szTo)
+bool OSUtils::OSMoveFile(const char* szFrom, const char* szTo)
 {
     SP_TODO("revisit use of MoveFileA for Unicode support")
     return MoveFileA(szFrom, szTo) != 0;
@@ -280,7 +288,7 @@ ULONGLONG OSUtils::GetTimeNanos()
     {
         clock_gettime(CLOCK_MONOTONIC, &tp);
         return static_cast<unsigned long long>(tp.tv_sec) * (1000ULL * 1000ULL * 1000ULL) +
-            static_cast<unsigned long long>(tp.tv_nsec);
+               static_cast<unsigned long long>(tp.tv_nsec);
     }
 }
 
@@ -333,14 +341,22 @@ PROCESSID OSUtils::ExecProcess(const char* szExe,
                                const char* szArgs,
                                const char* szWorkingDir,
                                const char* szEnvBlock,
-                               bool bCreateSuspended)
+                               bool bCreateSuspended,
+                               bool bCreateConsole)
 {
     SP_UNREFERENCED_PARAMETER(bCreateSuspended);
+    SP_UNREFERENCED_PARAMETER(bCreateConsole);
     PROCESSID processId = fork();
 
     if (processId == 0)
     {
         // Child code
+
+        if (!bCreateConsole)
+        {
+            freopen("/dev/null", "w", stdout);
+            freopen("/dev/null", "w", stderr);
+        }
 
         // change working directory
         if (szWorkingDir != NULL)
@@ -504,51 +520,48 @@ void* OSUtils::GetSymbolAddr(LIB_HANDLE pLibrary, std::string strFunctionName)
 
 }
 
-// This implementation is from stackoverflow:  http://stackoverflow.com/questions/3680730/c-fileio-copy-vs-systemcp-file1-x-file2-x
-bool OSUtils::osCopyMoveFileHelper(const char* szFrom, const char* szTo, bool bMove)
+bool OSUtils::OSCopyMoveFileHelper(const char* szFrom, const char* szTo, bool bMove)
 {
-    bool retVal = false;
+    gtString destFullPath;
+    destFullPath.fromASCIIString(szTo);
+    osFilePath destFilePath;
+    destFilePath.setFullPathFromString(destFullPath);
 
-    int read_fd = open(szFrom, O_RDONLY);
+    gtString srcFullPath;
+    srcFullPath.fromASCIIString(szFrom);
+    osFilePath srcFilepath;
+    srcFilepath.setFullPathFromString(srcFullPath);
 
-    if (read_fd != -1)
+    bool retVal = true;
+
+    if (srcFilepath.exists())
     {
-        // get the size
-        struct stat stat_buf;
-        fstat(read_fd, &stat_buf);
-
-        // open the output file for writing, with the same permissions as the source file.
-        int write_fd = open(szTo, O_WRONLY | O_CREAT, stat_buf.st_mode);
-
-        if (write_fd != -1)
-        {
-            // move the contents from one file to the other with sendfile
-            off_t offset = 0;
-            retVal = sendfile(write_fd, read_fd, &offset, stat_buf.st_size) != -1;
-            close(write_fd);
-        }
-
-        close(read_fd);
+        retVal = osCopyFile(srcFilepath, destFilePath, true);
 
         // delete the file if moving
         if (bMove && retVal)
         {
-            retVal = remove(szFrom) == 0;
+            osFile fileToDelete(srcFilepath);
+            retVal = fileToDelete.deleteFile();
+
+            if (!retVal)
+            {
+                GPULogger::Log(GPULogger::logERROR, "Unable to delete existing file\n");
+            }
         }
     }
 
     return retVal;
 }
 
-
-bool OSUtils::osCopyFile(const char* szFrom, const char* szTo)
+bool OSUtils::OSCopyFile(const char* szFrom, const char* szTo)
 {
-    return osCopyMoveFileHelper(szFrom, szTo, false);
+    return OSCopyMoveFileHelper(szFrom, szTo, false);
 }
 
-bool OSUtils::osMoveFile(const char* szFrom, const char* szTo)
+bool OSUtils::OSMoveFile(const char* szFrom, const char* szTo)
 {
-    return osCopyMoveFileHelper(szFrom, szTo, true);
+    return OSCopyMoveFileHelper(szFrom, szTo, true);
 }
 
 #endif

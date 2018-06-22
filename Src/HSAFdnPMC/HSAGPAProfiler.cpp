@@ -45,7 +45,8 @@ HSAGPAProfiler::HSAGPAProfiler(void) :
     m_delayInMilliseconds(0ul),
     m_durationInMilliseconds(0ul),
     m_pDelayTimer(nullptr),
-    m_pDurationTimer(nullptr)
+    m_pDurationTimer(nullptr),
+    m_commandListId(nullptr)
 {
 }
 
@@ -150,10 +151,9 @@ bool HSAGPAProfiler::CheckForCompletedSession(uint64_t queueId)
 
     if (m_activeSessionMap.end() != it)
     {
-        bool isSessionReady = false;
-        GPA_Status sessionStatus = m_gpaUtils.StatusCheck(m_gpaUtils.GetGPALoader().GPA_IsSessionReady(&isSessionReady, it->second.m_sessionID));
+        GPA_Status sessionStatus = m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_IsSessionComplete(it->second.m_sessionID));
 
-        if (GPA_STATUS_OK == sessionStatus && isSessionReady)
+        if (GPA_STATUS_OK == sessionStatus)
         {
             WriteSessionResult(it->second);
             m_gpaUtils.Close();
@@ -227,6 +227,7 @@ bool HSAGPAProfiler::Init(const Parameters& params, std::string& strErrorOut)
             if (m_bDelayStartEnabled)
             {
                 CreateTimer(PROFILEDELAYTIMER, m_delayInMilliseconds);
+
                 if (nullptr != m_pDelayTimer)
                 {
                     m_pDelayTimer->SetTimerFinishHandler(HSAGPAProfilerTimerEndResponse);
@@ -236,6 +237,7 @@ bool HSAGPAProfiler::Init(const Parameters& params, std::string& strErrorOut)
             else if (m_bProfilerDurationEnabled)
             {
                 CreateTimer(PROFILEDURATIONTIMER, m_durationInMilliseconds);
+
                 if (nullptr != m_pDurationTimer)
                 {
                     m_pDurationTimer->SetTimerFinishHandler(HSAGPAProfilerTimerEndResponse);
@@ -577,18 +579,21 @@ bool HSAGPAProfiler::Begin(const hsa_agent_t             device,
         gpaContext.m_pAqlTranslationHandle = pAqlTranslationHandle;
         bool bRet = m_gpaUtils.Open(&gpaContext);
         SpAssertRet(bRet) false;
-        bRet = m_gpaUtils.EnableCounters();
+        GPA_SessionId currentSessionId = nullptr;
+        bRet = m_gpaUtils.CreateSession(currentSessionId);
+        SpAssertRet(bRet) false;
+        bRet = m_gpaUtils.EnableCounters(currentSessionId);
         SpAssertRet(bRet) false;
 
-        gpa_uint32 currentSessionId;
-        int stat = m_gpaUtils.StatusCheck(m_gpaUtils.GetGPALoader().GPA_BeginSession(&currentSessionId));
-        gpa_uint32 GPA_pCountTemp;
-        stat += m_gpaUtils.StatusCheck(m_gpaUtils.GetGPALoader().GPA_GetPassCount(&GPA_pCountTemp));
+        int stat = m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_BeginSession(currentSessionId));
+        gpa_uint32 gpaPassCount = 0;
+        stat += m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_GetPassCount(currentSessionId, &gpaPassCount));
 
-        SpAssertRet(GPA_pCountTemp == 1) false;
+        SpAssertRet(1 == gpaPassCount) false;
+        SpAssertRet(nullptr == m_commandListId) false;
 
-        stat += m_gpaUtils.StatusCheck(m_gpaUtils.GetGPALoader().GPA_BeginPass());
-        stat += m_gpaUtils.StatusCheck(m_gpaUtils.GetGPALoader().GPA_BeginSample(0));
+        stat += m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_BeginCommandList(currentSessionId, 0, GPA_NULL_COMMAND_LIST, GPA_COMMAND_LIST_NONE, &m_commandListId));
+        stat += m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_BeginSample(0, m_commandListId));
 
         retVal = stat == static_cast<int>(GPA_STATUS_OK);
 
@@ -629,9 +634,20 @@ bool HSAGPAProfiler::End(const hsa_agent_t  device,
             return false;
         }
 
-        int stat = m_gpaUtils.StatusCheck(m_gpaUtils.GetGPALoader().GPA_EndSample());
-        stat += m_gpaUtils.StatusCheck(m_gpaUtils.GetGPALoader().GPA_EndPass());
-        stat += m_gpaUtils.StatusCheck(m_gpaUtils.GetGPALoader().GPA_EndSession());
+        int stat = m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_EndSample(m_commandListId));
+        stat += m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_EndCommandList(m_commandListId));
+
+        QueueSessionMap::iterator it = m_activeSessionMap.find(pQueue->id);
+
+        if (m_activeSessionMap.end() != it)
+        {
+            stat += m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_EndSession(it->second.m_sessionID));
+            m_commandListId = nullptr;
+        }
+        else
+        {
+            stat = GPA_STATUS_ERROR_SESSION_NOT_FOUND;
+        }
 
         m_mtx.unlock();
         retVal = (stat == static_cast<int>(GPA_STATUS_OK));
@@ -665,97 +681,72 @@ bool HSAGPAProfiler::WriteSessionResult(const SessionInfo& sessionInfo)
     KernelProfileResultManager::Instance()->WriteKernelInfo(CSV_COMMON_COLUMN_SGPRs, sessionInfo.m_kernelStats.m_kernelInfo.m_nUsedScalarGPRs == KERNELINFO_NONE ? "NA" : StringUtils::ToString(sessionInfo.m_kernelStats.m_kernelInfo.m_nUsedScalarGPRs));
 
     gpa_uint32 sampleCount;
-    m_gpaUtils.StatusCheck(m_gpaUtils.GetGPALoader().GPA_GetSampleCount(sessionInfo.m_sessionID, &sampleCount));
+    m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_GetSampleCount(sessionInfo.m_sessionID, &sampleCount));
+
+    if (0 == sampleCount)
+    {
+        SpAssertRet(!"No samples found") false;
+    }
+
+    size_t sampleResultSizeInBytes = 0;
+    m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_GetSampleResultSize(sessionInfo.m_sessionID, 0, &sampleResultSizeInBytes));
+
+    gpa_uint64* pResultsBuffer = reinterpret_cast<gpa_uint64*>(malloc(sampleResultSizeInBytes));
+    m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_GetSampleResult(sessionInfo.m_sessionID, 0, sampleResultSizeInBytes, pResultsBuffer));
+
+    gpa_uint32 nEnabledCounters = 0;
+    m_gpaUtils.GetGPAFuncTable()->GPA_GetNumEnabledCounters(sessionInfo.m_sessionID, &nEnabledCounters);
 
     for (gpa_uint32 sample = 0; sample < sampleCount; sample++)
     {
-        gpa_uint32 nEnabledCounters = 0;
-        m_gpaUtils.GetGPALoader().GPA_GetEnabledCount(&nEnabledCounters);
-
         for (gpa_uint32 counter = 0; counter < nEnabledCounters; counter++)
         {
             gpa_uint32 enabledCounterIndex;
 
-            if (GPA_STATUS_OK != m_gpaUtils.StatusCheck(m_gpaUtils.GetGPALoader().GPA_GetEnabledIndex(counter, &enabledCounterIndex)))
+            if (GPA_STATUS_OK != m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_GetEnabledIndex(sessionInfo.m_sessionID, counter, &enabledCounterIndex)))
             {
+                SpBreak("Failed to retrieve counter index.");
                 continue;
             }
 
-            GPA_Type type;
+            GPA_Data_Type dataType;
 
-            if (m_gpaUtils.StatusCheck(m_gpaUtils.GetGPALoader().GPA_GetCounterDataType(enabledCounterIndex, &type)))
+            if (!m_gpaUtils.GetCounterDataType(enabledCounterIndex, dataType))
             {
-                continue;
-            }
-
-            const char* pName = NULL;
-
-            if (m_gpaUtils.StatusCheck(m_gpaUtils.GetGPALoader().GPA_GetCounterName(enabledCounterIndex, &pName)))
-            {
+                SpBreak("Failed to retrieve counter data type.");
                 continue;
             }
 
             string strName;
 
-            if (pName != NULL)
-            {
-                strName = pName;
-            }
-            else
+            if (!m_gpaUtils.GetCounterName(enabledCounterIndex, strName))
             {
                 SpBreak("Failed to retrieve counter name.");
                 continue;
             }
 
-            if (type == GPA_TYPE_UINT32)
+            if (GPA_DATA_TYPE_UINT64 == dataType)
             {
-                gpa_uint32 value;
-
-                if (GPA_STATUS_OK == m_gpaUtils.StatusCheck(m_gpaUtils.GetGPALoader().GPA_GetSampleUInt32(sessionInfo.m_sessionID, sample, enabledCounterIndex, &value)))
-                {
-                    KernelProfileResultManager::Instance()->WriteKernelInfo(strName, StringUtils::FormatString("%8u", value));
-                }
-            }
-            else if (type == GPA_TYPE_UINT64)
-            {
-                gpa_uint64 value;
-
-                if (GPA_STATUS_OK == m_gpaUtils.StatusCheck(m_gpaUtils.GetGPALoader().GPA_GetSampleUInt64(sessionInfo.m_sessionID, sample, enabledCounterIndex, &value)))
-                {
 #ifdef _WIN32
-                    KernelProfileResultManager::Instance()->WriteKernelInfo(strName, StringUtils::FormatString("%8I64u", value));
+                KernelProfileResultManager::Instance()->WriteKernelInfo(strName, StringUtils::FormatString("%8I64u", pResultsBuffer[counter]));
 #else
-                    KernelProfileResultManager::Instance()->WriteKernelInfo(strName, StringUtils::FormatString("%lu", value));
+                KernelProfileResultManager::Instance()->WriteKernelInfo(strName, StringUtils::FormatString("%lu", pResultsBuffer[counter]));
 #endif
-                }
             }
-            else if (type == GPA_TYPE_FLOAT32)
+            else if (GPA_DATA_TYPE_FLOAT64 == dataType)
             {
-                gpa_float32 value;
-
-                if (GPA_STATUS_OK == m_gpaUtils.StatusCheck(m_gpaUtils.GetGPALoader().GPA_GetSampleFloat32(sessionInfo.m_sessionID, sample, enabledCounterIndex, &value)))
-                {
-                    KernelProfileResultManager::Instance()->WriteKernelInfo(strName, StringUtils::FormatString("%12.2f", value));
-                }
-            }
-            else if (type == GPA_TYPE_FLOAT64)
-            {
-                gpa_float64 value;
-
-                if (GPA_STATUS_OK == m_gpaUtils.StatusCheck(m_gpaUtils.GetGPALoader().GPA_GetSampleFloat64(sessionInfo.m_sessionID, sample, enabledCounterIndex, &value)))
-                {
-                    KernelProfileResultManager::Instance()->WriteKernelInfo(strName, StringUtils::FormatString("%12.2f", value));
-                }
+                KernelProfileResultManager::Instance()->WriteKernelInfo(strName, StringUtils::FormatString("%12.2f", reinterpret_cast<gpa_float64*>(pResultsBuffer)[counter]));
             }
             else
             {
-                assert(false);
-                return false;
+                SpAssertRet(!"Unrecognized data type") false;
             }
         }
     }
 
+    free(pResultsBuffer);
     KernelProfileResultManager::Instance()->EndKernelInfo();
+    m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_DeleteSession(sessionInfo.m_sessionID));
 
     return true;
 }

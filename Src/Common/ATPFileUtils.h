@@ -12,10 +12,10 @@
 
 #include "Logger.h"
 
-#define CHECK_SS_ERROR( ss )  if( ss.fail() )   \
-    {                 \
-         GPULogger::Log( GPULogger::logWARNING, "Failed to parse string.\n" ); \
-         return false;  \
+#define CHECK_SS_ERROR( ss )  if( ss.fail() )                                 \
+    {                                                                         \
+        GPULogger::Log( GPULogger::logWARNING, "Failed to parse string.\n" ); \
+        return false;                                                         \
     }
 
 /// Read excluded APIs from API filter file

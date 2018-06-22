@@ -123,10 +123,12 @@ void CLDataTransferAnalyzer::FlattenedAPIAnalyze(APIInfo* pAPIInfo)
                 {
                     CLEnqueueAPI* pEnQAPI = reinterpret_cast<CLEnqueueAPI*>(pCLAPIInfo);
                     SpAssertRet(nullptr != pEnQAPI);
-                    bool bIsAPU = false;
-                    AMDTDeviceInfoUtils::Instance()->IsAPU(pEnQAPI->m_strDevice.c_str(), bIsAPU);
+                    bool isAPU = false;
 
-                    if (!bIsAPU)
+                    // TODO: IsAPU() will be migrated to using PCIE ID instead of device name in the future
+                    AMDTDeviceInfoUtils::Instance()->IsAPU(pEnQAPI->m_strDevice.c_str(), isAPU);
+
+                    if (!isAPU)
                     {
                         // find CL_MEM_ALLOC_HOST_PTR type buffer in all kernel args
                         bool bFound = false;

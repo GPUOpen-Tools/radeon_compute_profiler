@@ -174,12 +174,6 @@ private:
     /// \param size size of the message
     static void DisassembleLogFunction(const char* pMsg, size_t size);
 
-    /// Utility function to check whether, with the current driver and hardware combination, the HSAIL compilation path is the default
-    /// \param strDeviceName the name of the device to check
-    /// \param device the ocl device
-    /// \return true if the current compilation path is the HSAIL path
-    bool DoesUseHSAILPath(const std::string& strDeviceName, cl_device_id device);
-
     std::map<std::string, KernelInfo>          m_assemblyGenerated;          ///< to check whether files with the same handle has been generated or not
     std::string                                m_strFilePrefix;              ///< the prefix string for the .cl/.isa/.il output files
     KernelInfo                                 m_kernelInfoDefault;          ///< the shader compiler stats we can retrieve from the isa file

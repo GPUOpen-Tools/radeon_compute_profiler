@@ -21,7 +21,7 @@
     istream >> output; \
     if (istream.fail()) \
     { \
-         GPULogger::Log( GPULogger::logERROR, "%s\n", errMsg); \
+        GPULogger::Log( GPULogger::logERROR, "%s\n", errMsg); \
         m_strWarningMsg = errMsg; \
         m_bWarning = true; \
         return false; \

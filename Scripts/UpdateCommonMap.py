@@ -14,7 +14,6 @@ GitHubMapping = {
     "common-lib-ext-mhook"                   : "../Common/Lib/Ext/mhook",
     "common-lib-ext-tinyxml-2.6.2"           : "../Common/Lib/Ext/tinyxml",
     "common-lib-ext-utf8cpp"                 : "../Common/Lib/Ext/utf8cpp",
-    "common-lib-ext-zlib-1.2.8"              : "../Common/Lib/Ext/zlib",
     "common-src-ACLModuleManager"            : "../Common/Src/ACLModuleManager",
     "common-src-ADLUtil"                     : "../Common/Src/ADLUtil",
     "common-src-AMDTActivityLogger"          : "../Common/Src/AMDTActivityLogger",
@@ -25,7 +24,6 @@ GitHubMapping = {
     "common-src-CElf"                        : "../Common/Src/CElf",
     "common-src-DeviceInfo"                  : "../Common/Src/DeviceInfo",
     "common-src-DynamicLibraryModule"        : "../Common/Src/DynamicLibraryModule",
-    "common-src-GPUPerfAPIUtils"             : "../Common/Src/GPUPerfAPIUtils",
     "common-src-HSAUtils"                    : "../Common/Src/HSAUtils",
     "common-src-Miniz"                       : "../Common/Src/Miniz",
     "common-src-SCons"                       : "../Common/Src/SCons",
@@ -35,11 +33,22 @@ GitHubMapping = {
 }
 
 downloadMappingWin = {
-    "https://github.com/GPUOpen-Tools/GPA/releases/download/v2.23.1/GPUPerfAPI-2.23.2392.1.zip" : "../Common/Lib/AMD/GPUPerfAPI",
+    "https://github.com/GPUOpen-Tools/GPA/releases/download/v3.1a/GPUPerfAPI-3.1.571.0.zip" : "../Common/Lib/AMD/GPUPerfAPI",
+    "https://github.com/GPUOpen-Tools/RCP/releases/download/v5.4/RadeonComputeProfiler-v5.4.6937.zip" : "../Common/Lib/AMD/VKStableClocks"
 }
 
 downloadMappingLin = {
-    "https://github.com/GPUOpen-Tools/GPA/releases/download/v2.23.1/GPUPerfAPI.2.23.1986-lnx.tgz" : "../Common/Lib/AMD/GPUPerfAPI",
+    "https://github.com/GPUOpen-Tools/GPA/releases/download/v3.1a/GPUPerfAPI.3.1.793-lnx.tgz" : "../Common/Lib/AMD/GPUPerfAPI",
+    "https://github.com/GPUOpen-Tools/RCP/releases/download/v5.4/RadeonComputeProfiler-v5.4.6906.tgz" : "../Common/Lib/AMD/VKStableClocks"
 }
 
+# FileToCopy,  [BaseDir, SubDir, SrcPath]
+vkStableClocksMappingWin = {
+    "VkStableClocks.exe" : ["../Common/Lib/AMD/VKStableClocks", "VKStableClocks", "RadeonComputeProfiler/bin"],
+    "VKStableClocks-x64.exe" : ["../Common/Lib/AMD/VKStableClocks", "VKStableClocks", "RadeonComputeProfiler/bin"],
+}
+
+vkStableClocksMappingLin = {
+    "VkStableClocks" : ["../Common/Lib/AMD/VKStableClocks", "VKStableClocks", "bin"],
+}
 

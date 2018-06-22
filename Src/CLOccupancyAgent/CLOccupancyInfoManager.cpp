@@ -329,6 +329,7 @@ void OccupancyInfoManager::SaveToOccupancyFile()
 
         // Count the kernels in the map
         size_t kernelCount = 0u;
+
         for (TraceInfoMap::iterator mapIt = activeMap.begin(); mapIt != activeMap.end(); ++mapIt)
         {
             kernelCount += mapIt->second.size();
@@ -498,6 +499,7 @@ void OccupancyInfoManager::startTimer(ProfilerTimerType timerType)
             {
                 m_pDurationTimer->startTimer(true);
             }
+
             break;
 
         default:

@@ -80,6 +80,32 @@ CL_OCCUPANCY_API_ENTRY_EnqueueNDRangeKernel(
         return status;
     }
 
+    // Query the kernel name
+    const size_t KERNEL_NAME_BUFFER_SIZE = 256;
+    char szKernelNameBuffer[KERNEL_NAME_BUFFER_SIZE];
+    occupancy_status = g_realDispatchTable.GetKernelInfo(kernel, CL_KERNEL_FUNCTION_NAME, KERNEL_NAME_BUFFER_SIZE, szKernelNameBuffer, NULL);
+
+    std::string strKernelName;
+
+    if (CL_SUCCESS != occupancy_status)
+    {
+        Log(logERROR, "Unable to query the kernel name\n");
+        strKernelName = "UNKNOWN_KERNEL";
+    }
+    else
+    {
+        strKernelName = szKernelNameBuffer;
+    }
+
+    KernelFilterList enabledKernels = GlobalSettings::GetInstance()->m_params.m_kernelFilterList;
+
+    bool skipProfiling = (!enabledKernels.empty()) && (enabledKernels.find(strKernelName) == enabledKernels.end());
+
+    if (skipProfiling)
+    {
+        return status;
+    }
+
     //get the thread ID
     osThreadId tid = osGetUniqueCurrentThreadId();
 
@@ -87,21 +113,7 @@ CL_OCCUPANCY_API_ENTRY_EnqueueNDRangeKernel(
     SpAssertRet(pEntry != NULL) status;
 
     pEntry->m_tid = tid;
-
-    // Query the kernel name
-    const size_t KERNEL_NAME_BUFFER_SIZE = 256;
-    char szKernelNameBuffer[ KERNEL_NAME_BUFFER_SIZE ];
-    occupancy_status = g_realDispatchTable.GetKernelInfo(kernel, CL_KERNEL_FUNCTION_NAME, KERNEL_NAME_BUFFER_SIZE, szKernelNameBuffer, NULL);
-
-    if (CL_SUCCESS != occupancy_status)
-    {
-        Log(logERROR, "Unable to query the kernel name\n");
-        pEntry->m_strKernelName = "UNKNOWN_KERNEL";
-    }
-    else
-    {
-        pEntry->m_strKernelName = szKernelNameBuffer;
-    }
+    pEntry->m_strKernelName = strKernelName;
 
     // Get device name
     if (CLUtils::GetDeviceName(device, pEntry->m_strDeviceName) != CL_SUCCESS)
@@ -150,13 +162,25 @@ CL_OCCUPANCY_API_ENTRY_EnqueueNDRangeKernel(
 
     pEntry->m_nDeviceGfxIpVer = gfxIpMajor;
 
-    GDT_HW_GENERATION gen;
+    GDT_HW_GENERATION gen = GDT_HW_GENERATION_NONE;
+    cl_uint pcieID;
+    bool isHwGenSet = false;
+    bool isPCIEDeviceIDSet = false;
 
-    if (!AMDTDeviceInfoUtils::Instance()->GetHardwareGeneration(pEntry->m_strDeviceName.c_str(), gen))
+    if (CL_SUCCESS == g_realDispatchTable.GetDeviceInfo(device, CL_DEVICE_PCIE_ID_AMD, sizeof(cl_uint), &pcieID, nullptr) && 0 != pcieID)
     {
-        Log(logERROR, "Unable to query the hw generation\n");
-        SAFE_DELETE(pEntry);
-        return status;
+        isHwGenSet = AMDTDeviceInfoUtils::Instance()->GetHardwareGeneration(pcieID, gen);
+        isPCIEDeviceIDSet = true;
+    }
+
+    if (!isHwGenSet)
+    {
+        if (!AMDTDeviceInfoUtils::Instance()->GetHardwareGeneration(pEntry->m_strDeviceName.c_str(), gen))
+        {
+            Log(logERROR, "Unable to query the hw generation\n");
+            SAFE_DELETE(pEntry);
+            return status;
+        }
     }
 
     if (gen >= GDT_HW_GENERATION_VOLCANICISLAND && gen < GDT_HW_GENERATION_LAST)
@@ -292,9 +316,20 @@ CL_OCCUPANCY_API_ENTRY_EnqueueNDRangeKernel(
     pEntry->m_pCLCUInfo->SetCUParam(CU_PARAMS_DEVICE_NAME, pEntry->m_strDeviceName);
     pEntry->m_pCLCUInfo->SetCUParam(CU_PARAMS_DEVICE_GFXIP_VER, pEntry->m_nDeviceGfxIpVer);
 
-    GDT_DeviceInfo deviceInfo;
+    GDT_DeviceInfo deviceInfo = {};
+    bool isDeviceInfoSet = false;
 
-    if (AMDTDeviceInfoUtils::Instance()->GetDeviceInfo(pEntry->m_strDeviceName.c_str(), deviceInfo))
+    if (isPCIEDeviceIDSet)
+    {
+        isDeviceInfoSet = AMDTDeviceInfoUtils::Instance()->GetDeviceInfo(pcieID, REVISION_ID_ANY, deviceInfo);
+    }
+
+    if (!isDeviceInfoSet)
+    {
+        isDeviceInfoSet = AMDTDeviceInfoUtils::Instance()->GetDeviceInfo(pEntry->m_strDeviceName.c_str(), deviceInfo);
+    }
+
+    if (isDeviceInfoSet)
     {
         pEntry->m_nSimdsPerCU = deviceInfo.m_nNumSIMDPerCU;
         pEntry->m_nMaxWavefrontsPerCU = deviceInfo.m_nMaxWavePerSIMD * deviceInfo.m_nNumSIMDPerCU;

@@ -4963,15 +4963,15 @@ cl_int CL_API_CALL CL_API_TRACE_clEnqueueWriteSsgFileAMD(
     if (pAPIInfo == NULL)
     {
         return g_realExtensionFunctionTable.EnqueueWriteSsgFileAMD(command_queue,
-                                                     buffer,
-                                                     blocking_write,
-                                                     buffer_offset,
-                                                     cb,
-                                                     file,
-                                                     file_offset,
-                                                     num_events_in_wait_list,
-                                                     event_wait_list,
-                                                     event);
+                                                                   buffer,
+                                                                   blocking_write,
+                                                                   buffer_offset,
+                                                                   cb,
+                                                                   file,
+                                                                   file_offset,
+                                                                   num_events_in_wait_list,
+                                                                   event_wait_list,
+                                                                   event);
     }
 
     cl_int ret = pAPIInfo->Create(command_queue,
@@ -4990,6 +4990,302 @@ cl_int CL_API_CALL CL_API_TRACE_clEnqueueWriteSsgFileAMD(
     return ret;
 }
 
+cl_kernel CL_API_CALL CL_API_TRACE_clCloneKernel(cl_kernel source_kernel,
+                                                 cl_int* errcode_ret)
+{
+    REPLACE_IF_NULL(errcode_ret)
+
+    CLAPI_clCloneKernel* pAPIInfo = new(nothrow) CLAPI_clCloneKernel();
+
+    ULONGLONG ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(pAPIInfo);
+
+    cl_kernel ret = g_nextDispatchTable.clCloneKernel(source_kernel,
+                                                      errcode_ret);
+
+    ULONGLONG ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(pAPIInfo);
+
+    SpAssertRet(pAPIInfo != NULL) ret;
+
+    pAPIInfo->Create(ullStart,
+                     ullEnd,
+                     source_kernel,
+                     errcode_ret,
+                     ret);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo)
+
+    CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return ret;
+}
+
+cl_int CL_API_CALL CL_API_TRACE_clEnqueueSVMMigrateMem(cl_command_queue command_queue,
+                                                       cl_uint num_svm_pointers,
+                                                       const void** svm_pointers,
+                                                       const size_t* sizes,
+                                                       cl_mem_migration_flags flags,
+                                                       cl_uint num_events_in_wait_list,
+                                                       const cl_event* event_wait_list,
+                                                       cl_event* event)
+{
+    CLAPI_clEnqueueSVMMigrateMem* pAPIInfo = new(nothrow) CLAPI_clEnqueueSVMMigrateMem();
+
+    cl_int ret = pAPIInfo->Create(command_queue,
+                                  num_svm_pointers,
+                                  svm_pointers,
+                                  sizes,
+                                  flags,
+                                  num_events_in_wait_list,
+                                  event_wait_list,
+                                  event);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo)
+
+    CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return ret;
+}
+
+cl_int CL_API_CALL CL_API_TRACE_clGetDeviceAndHostTimer(cl_device_id device,
+                                                        cl_ulong* device_timestamp,
+                                                        cl_ulong* host_timestamp)
+{
+    CLAPI_clGetDeviceAndHostTimer* pAPIInfo = new(nothrow) CLAPI_clGetDeviceAndHostTimer();
+
+    ULONGLONG ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(pAPIInfo);
+
+    cl_int ret = g_nextDispatchTable.clGetDeviceAndHostTimer(device,
+                                                             device_timestamp,
+                                                             host_timestamp);
+
+    ULONGLONG ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(pAPIInfo);
+
+    SpAssertRet(pAPIInfo != NULL) ret;
+
+    pAPIInfo->Create(ullStart,
+                     ullEnd,
+                     device,
+                     device_timestamp,
+                     host_timestamp,
+                     ret);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo)
+
+    CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return ret;
+}
+
+cl_int CL_API_CALL CL_API_TRACE_clGetHostTimer(cl_device_id device,
+                                               cl_ulong* host_timestamp)
+{
+    CLAPI_clGetHostTimer* pAPIInfo = new(nothrow) CLAPI_clGetHostTimer();
+
+    ULONGLONG ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(pAPIInfo);
+
+    cl_int ret = g_nextDispatchTable.clGetHostTimer(device,
+                                                    host_timestamp);
+
+    ULONGLONG ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(pAPIInfo);
+
+    SpAssertRet(pAPIInfo != NULL) ret;
+
+    pAPIInfo->Create(ullStart,
+                     ullEnd,
+                     device,
+                     host_timestamp,
+                     ret);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo)
+
+    CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return ret;
+}
+
+cl_int CL_API_CALL CL_API_TRACE_clSetDefaultDeviceCommandQueue(cl_context context,
+                                                               cl_device_id device,
+                                                               cl_command_queue command_queue)
+{
+    CLAPI_clSetDefaultDeviceCommandQueue* pAPIInfo = new(nothrow) CLAPI_clSetDefaultDeviceCommandQueue();
+
+    ULONGLONG ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(pAPIInfo);
+
+    cl_int ret = g_nextDispatchTable.clSetDefaultDeviceCommandQueue(context,
+                                                                    device,
+                                                                    command_queue);
+
+    ULONGLONG ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(pAPIInfo);
+
+    SpAssertRet(pAPIInfo != NULL) ret;
+
+    pAPIInfo->Create(ullStart,
+                     ullEnd,
+                     context,
+                     device,
+                     command_queue,
+                     ret);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo)
+
+    CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return ret;
+}
+
+cl_int CL_API_CALL CL_API_TRACE_clGetKernelSubGroupInfo(cl_kernel                kernel,
+                                                        cl_device_id             device,
+                                                        cl_kernel_sub_group_info param_name,
+                                                        size_t                   input_value_size,
+                                                        const void*              input_value,
+                                                        size_t                   param_value_size,
+                                                        void*                    param_value,
+                                                        size_t*                  param_value_size_ret)
+{
+    bool replacedNullParam = (nullptr == param_value_size_ret);
+
+    size_t substituted_ret;
+
+    if (replacedNullParam)
+    {
+        param_value_size_ret = &substituted_ret;
+    }
+
+    CLAPI_clGetKernelSubGroupInfo* pAPIInfo = new(nothrow) CLAPI_clGetKernelSubGroupInfo();
+
+    ULONGLONG ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(pAPIInfo);
+
+    cl_int ret = g_nextDispatchTable.clGetKernelSubGroupInfo(kernel,
+                                                             device,
+                                                             param_name,
+                                                             input_value_size,
+                                                             input_value,
+                                                             param_value_size,
+                                                             param_value,
+                                                             param_value_size_ret);
+
+    ULONGLONG ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(pAPIInfo);
+
+    SpAssertRet(pAPIInfo != NULL) ret;
+
+    pAPIInfo->Create(ullStart,
+                     ullEnd,
+                     kernel,
+                     device,
+                     param_name,
+                     input_value_size,
+                     input_value,
+                     param_value_size,
+                     param_value,
+                     param_value_size_ret,
+                     replacedNullParam,
+                     ret);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo)
+
+    CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return ret;
+}
+
+cl_program CL_API_CALL CL_API_TRACE_clCreateProgramWithIL(cl_context context,
+                                                          const void* il,
+                                                          size_t length,
+                                                          cl_int* errcode_ret)
+{
+    REPLACE_IF_NULL(errcode_ret)
+
+    CLAPI_clCreateProgramWithIL* pAPIInfo = new(nothrow) CLAPI_clCreateProgramWithIL();
+
+    ULONGLONG ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(pAPIInfo);
+
+    cl_program ret = g_nextDispatchTable.clCreateProgramWithIL(context,
+                                                               il,
+                                                               length,
+                                                               errcode_ret);
+
+    ULONGLONG ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(pAPIInfo);
+
+    SpAssertRet(pAPIInfo != NULL) ret;
+
+    pAPIInfo->Create(ullStart,
+                     ullEnd,
+                     context,
+                     il,
+                     length,
+                     errcode_ret,
+                     ret);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo)
+
+    CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return ret;
+}
+
+cl_int CL_API_CALL CL_API_TRACE_clSetProgramReleaseCallback(cl_program         program,
+                                                            void (CL_CALLBACK* pfn_notify)(cl_program program, void* user_data),
+                                                            void*              user_data)
+{
+    CLAPI_clSetProgramReleaseCallback* pAPIInfo = new(nothrow) CLAPI_clSetProgramReleaseCallback();
+
+    ULONGLONG ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(pAPIInfo);
+
+    cl_int ret = g_nextDispatchTable.clSetProgramReleaseCallback(program,
+                                                                 pfn_notify,
+                                                                 user_data);
+
+    ULONGLONG ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(pAPIInfo);
+
+    SpAssertRet(pAPIInfo != NULL) ret;
+
+    pAPIInfo->Create(ullStart,
+                     ullEnd,
+                     program,
+                     pfn_notify,
+                     user_data,
+                     ret);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo)
+
+    CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return ret;
+}
+
+cl_int CL_API_CALL CL_API_TRACE_clSetProgramSpecializationConstant(cl_program program,
+                                                                   cl_uint spec_id,
+                                                                   size_t spec_size,
+                                                                   const void* spec_value)
+{
+    CLAPI_clSetProgramSpecializationConstant* pAPIInfo = new(nothrow) CLAPI_clSetProgramSpecializationConstant();
+
+    ULONGLONG ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(pAPIInfo);
+
+    cl_int ret = g_nextDispatchTable.clSetProgramSpecializationConstant(program,
+                                                                        spec_id,
+                                                                        spec_size,
+                                                                        spec_value);
+
+    ULONGLONG ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(pAPIInfo);
+
+    SpAssertRet(pAPIInfo != NULL) ret;
+
+    pAPIInfo->Create(ullStart,
+                     ullEnd,
+                     program,
+                     spec_id,
+                     spec_size,
+                     spec_value,
+                     ret);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo)
+
+    CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return ret;
+}
+
 #define SetFuncPtr(func) \
     if (CLAPIInfoManager::Instance()->ShouldIntercept("cl"#func)){ \
         dispatchTable.func                 = CL_API_TRACE_cl##func; \
@@ -4998,6 +5294,12 @@ cl_int CL_API_CALL CL_API_TRACE_clEnqueueWriteSsgFileAMD(
 #define SetFuncPtr1(item, func) \
     if (CLAPIInfoManager::Instance()->ShouldIntercept("cl"#func)){ \
         dispatchTable.item                 = (void*)CL_API_TRACE_cl##func; \
+    }
+
+// Special handling for OpenCL 2.1/2.2 cl_icd_dispatch_table with cl prefix
+#define SetFuncPtr2(func) \
+    if (CLAPIInfoManager::Instance()->ShouldIntercept("cl"#func)){ \
+        dispatchTable.cl##func            = CL_API_TRACE_cl##func; \
     }
 
 void CreateAPITraceDispatchTable(cl_icd_dispatch_table& dispatchTable)
@@ -5135,6 +5437,19 @@ void CreateAPITraceDispatchTable(cl_icd_dispatch_table& dispatchTable)
     SetFuncPtr(CreateSamplerWithProperties)
     SetFuncPtr(SetKernelArgSVMPointer)
     SetFuncPtr(SetKernelExecInfo)
+
+    // OpenCL 2.1
+    SetFuncPtr2(CloneKernel)
+    SetFuncPtr2(EnqueueSVMMigrateMem)
+    SetFuncPtr2(GetDeviceAndHostTimer)
+    SetFuncPtr2(GetHostTimer)
+    SetFuncPtr2(SetDefaultDeviceCommandQueue)
+    SetFuncPtr2(GetKernelSubGroupInfo)
+    SetFuncPtr2(CreateProgramWithIL)
+
+    // OpenCL 2.2
+    SetFuncPtr2(SetProgramReleaseCallback)
+    SetFuncPtr2(SetProgramSpecializationConstant)
 }
 
 void* AssignExtensionFunctionPointer(const char* pFuncName, void* pRealFuncPtr)

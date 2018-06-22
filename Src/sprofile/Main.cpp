@@ -25,7 +25,6 @@
 #include <sstream>
 #include <string>
 #include <signal.h>
-#include "GPUPerfAPIRegistry.h"
 #include "ParseCmdLine.h"
 #include "Analyze.h"
 #include "OccupancyChart.h"
@@ -116,7 +115,7 @@ static bool PrintLastError(wchar_t* szPre)
                   NULL);
 
     std::cout << szPre << ": "
-         << dwError << ": " << szError << std::endl;
+              << dwError << ": " << szError << std::endl;
 
     return true;
 }
@@ -346,6 +345,87 @@ int DisplayOccupancy(const std::string& strOutputFile)
     return retVal;
 }
 
+static const char* s_HSA_SOFTCP_ENV_VAR_NAME = "HSA_EMULATE_AQL"; ///< The SoftCP environment variable name
+static const char* s_HSA_SOFTCP_ENV_VAR_VALUE = "1";              ///< The SoftCP environment variable value
+
+bool SetHSASoftCPEnvVar(bool showMessage)
+{
+    UNREFERENCED_PARAMETER(showMessage);
+    bool retVal = true;
+
+#ifndef _WIN32
+    int result = setenv(s_HSA_SOFTCP_ENV_VAR_NAME, s_HSA_SOFTCP_ENV_VAR_VALUE, 1);
+    retVal = (0 == result);
+
+    if (showMessage)
+    {
+        if (!retVal)
+        {
+            std::cout << "Error: Unable to enable HSA Performance Counters in Driver\n";
+        }
+        else
+        {
+            std::cout << "Successfully enabled HSA Performance Counters in Driver\n";
+        }
+    }
+
+#endif
+    return retVal;
+}
+
+bool UnsetHSASoftCPEnvVar(bool showMessage)
+{
+    UNREFERENCED_PARAMETER(showMessage);
+    bool retVal = true;
+
+#ifndef _WIN32
+    int result = unsetenv(s_HSA_SOFTCP_ENV_VAR_NAME);
+    retVal = (0 == result);
+
+    if (showMessage)
+    {
+        if (!retVal)
+        {
+            std::cout << "Error: Unable to disable HSA Performance Counters in Driver\n";
+        }
+        else
+        {
+            std::cout << "Successfully disabled HSA Performance Counters in Driver\n";
+        }
+    }
+
+#endif
+
+    return retVal;
+}
+
+/// Sets the GPU Stable clock mode
+/// \param mode the clock mode to use: 0 is default
+void SetStableClocks(unsigned int mode)
+{
+    if (!config.bNoStableClocks && config.bPerfCounter)
+    {
+#ifdef _WIN32
+        const char* pStableClocksExe = "VkStableClocks" BITNESS ".exe";
+        std::stringstream args;
+        args << FileUtils::GetExePath().c_str() << "/" << pStableClocksExe << " " << mode;
+        PROCESSID pid = OSUtils::Instance()->ExecProcess(nullptr, args.str().c_str(), nullptr, nullptr, false, false);
+#else
+        const char* pStableClocksExe = "VkStableClocks";
+        std::stringstream exe;
+        std::stringstream args;
+        exe << FileUtils::GetExePath().c_str() << "/" << pStableClocksExe;
+        args << mode;
+        PROCESSID pid = OSUtils::Instance()->ExecProcess(exe.str().c_str(), args.str().c_str(), nullptr, nullptr, false, false);
+#endif
+
+        if (!OSUtils::Instance()->WaitForProcess(pid))
+        {
+            std::cout << "FAIL:  error running: " << pStableClocksExe << std::endl;
+        }
+    }
+}
+
 int ProfileApplication(const std::string& strCounterFile, const int& profilerBits)
 {
     int retVal = 0;
@@ -523,6 +603,7 @@ int ProfileApplication(const std::string& strCounterFile, const int& profilerBit
     params.m_uiForcedGpuIndex = config.uiForcedGpuIndex;
     params.m_bAqlPacketTracing = config.bAqlPacketTracing;
     params.m_bDisableKernelDemangling = config.bDisableKernelDemangling;
+    params.m_bNoHSATransferTime = config.bNoHSATransferTime;
 
 #ifdef AMDT_INTERNAL
 
@@ -619,6 +700,66 @@ int ProfileApplication(const std::string& strCounterFile, const int& profilerBit
     }
 
 #else
+
+    if (!config.bNoStableClocks && config.bPerfCounter)
+    {
+        // For OpenCL perf counter collection on most Linux driver
+        // stacks, write access is required on a particular system
+        // file in order to set stable GPU clocks.
+        // This code checks if the system files are writeable and
+        // issues a message if not.
+        std::wstringstream wss;
+        gtString dpmBaseDir = L"/sys/class/drm/card";
+        gtString dpmRestOfPath = L"device";
+        gtString dpmFile = L"power_dpm_force_performance_level";
+
+        bool fileFound = true;
+        unsigned int cardIndex = 0;
+
+        while (fileFound)
+        {
+            wss.str(L"");
+            wss << dpmBaseDir.asCharArray() << cardIndex << L"/";
+            cardIndex++;
+            gtString baseDir = wss.str().c_str();;
+            osFilePath baseFilePath(baseDir);
+
+            if (baseFilePath.isDirectory())
+            {
+                baseFilePath.appendSubDirectory(dpmRestOfPath);
+                baseFilePath.setFileName(dpmFile);
+
+                if (baseFilePath.isRegularFile())
+                {
+                    osFile sysFile;
+
+                    // check if the file can be opened for writing
+                    if (!sysFile.open(baseFilePath, osChannel::OS_ASCII_TEXT_CHANNEL, osFile::OS_OPEN_TO_WRITE))
+                    {
+                        // if not suggest to the user to either run as root or modify permissions on the file
+                        std::cout << "\nInsufficient privileges. Either re-run as root or modify the permissions on\n"
+                                  << baseFilePath.asString().asASCIICharArray() << std::endl
+                                  << "to give the current user write access.\n\n";
+
+                        return -1;
+                    }
+                    else
+                    {
+                        sysFile.close();
+                    }
+                }
+                else
+                {
+                    fileFound = false;
+                }
+            }
+            else
+            {
+                fileFound = false;
+            }
+        }
+    }
+
     SetPreLoadLibs();
 
     std::string strAppCommandLine;
@@ -703,6 +844,9 @@ int ProfileApplication(const std::string& strCounterFile, const int& profilerBit
 
     delete[] pszCmdline;
 #endif
+    // Work-around an OpenCL driver issue where it can leave the GPU
+    // in stable clock mode after collecting performance counters
+    SetStableClocks(0);
 
     if (config.bHSAPMC)
     {

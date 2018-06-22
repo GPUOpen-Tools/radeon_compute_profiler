@@ -31,6 +31,8 @@ hsa_status_t AqlPacketTraceCallback(const hsa_aql_trace_t* pAqlPacketTrace, void
 
     HSAAqlPacketBase* pAqlPacket = nullptr;
 
+    auto& forceSignalCollection = HSATimeCollectorGlobals::Instance()->m_forceSignalCollection;
+
     switch (pAqlPacketTrace->type)
     {
         case HSA_PACKET_TYPE_KERNEL_DISPATCH:
@@ -52,7 +54,10 @@ hsa_status_t AqlPacketTraceCallback(const hsa_aql_trace_t* pAqlPacketTrace, void
                 pKernelDispatchPacket->completion_signal = replacementSignal;
 
                 // add the replacer to the list of signals that are available to listen for
-                HSASignalQueue::Instance()->AddSignalToBack(signalReplacer);
+                if (HSASignalQueue::Instance()->AddSignalToBack(signalReplacer))
+                {
+                    g_pRealCoreFunctions->hsa_signal_store_screlease_fn(forceSignalCollection, 2);
+                }
 
 #if defined (_LINUX) || defined (LINUX)
 
@@ -235,6 +240,11 @@ void HSA_APITrace_hsa_amd_memory_async_copy_PreCallHelper(void* dst, hsa_agent_t
     SP_UNREFERENCED_PARAMETER(num_dep_signals);
     SP_UNREFERENCED_PARAMETER(dep_signals);
 
+    if (HSAAPIInfoManager::Instance()->IsHsaTransferTimeDisabled())
+    {
+        return;
+    }
+
     if (0 != completion_signal.handle)
     {
         hsa_signal_value_t origValue = g_pRealCoreFunctions->hsa_signal_load_scacquire_fn(completion_signal);
@@ -250,6 +260,149 @@ void HSA_APITrace_hsa_amd_memory_async_copy_PreCallHelper(void* dst, hsa_agent_t
             HSAAPIInfoManager::Instance()->AddReplacementAsyncCopySignal(completion_signal, replacementSignal);
             HSAAPIInfoManager::Instance()->AddAsyncCopyCompletionSignal(replacementSignal);
             completion_signal = replacementSignal;
+        }
+    }
+}
+
+void HSA_APITrace_hsa_system_get_extension_table_PostCallHelper(hsa_status_t retVal, uint16_t extension, uint16_t version_major, uint16_t version_minor, void* table)
+{
+    SP_UNREFERENCED_PARAMETER(version_major);
+    SP_UNREFERENCED_PARAMETER(version_minor);
+
+    if (HSA_STATUS_SUCCESS == retVal && nullptr != table)
+    {
+        if (HSA_EXTENSION_AMD_LOADER == extension)
+        {
+            hsa_ven_amd_loader_1_01_pfn_t* tableReplacer = reinterpret_cast<hsa_ven_amd_loader_1_01_pfn_t*>(table);
+            size_t tableSize = sizeof(hsa_ven_amd_loader_1_01_pfn_t);
+            g_pRealLoaderExtFunctions = reinterpret_cast<hsa_ven_amd_loader_1_01_pfn_t*>(malloc(tableSize));
+            memcpy(g_pRealLoaderExtFunctions, tableReplacer, tableSize);
+
+            tableReplacer->hsa_ven_amd_loader_query_host_address = HSA_API_Trace_hsa_ven_amd_loader_query_host_address;
+            tableReplacer->hsa_ven_amd_loader_query_segment_descriptors = HSA_API_Trace_hsa_ven_amd_loader_query_segment_descriptors;
+            tableReplacer->hsa_ven_amd_loader_query_executable = HSA_API_Trace_hsa_ven_amd_loader_query_executable;
+
+            if (version_minor > 0)
+            {
+                //these methods added in minor version 1
+                tableReplacer->hsa_ven_amd_loader_executable_iterate_loaded_code_objects = HSA_API_Trace_hsa_ven_amd_loader_executable_iterate_loaded_code_objects;
+                tableReplacer->hsa_ven_amd_loader_loaded_code_object_get_info = HSA_API_Trace_hsa_ven_amd_loader_loaded_code_object_get_info;
+            }
+        }
+        else if (HSA_EXTENSION_AMD_AQLPROFILE == extension)
+        {
+            hsa_ven_amd_aqlprofile_1_00_pfn_t* tableReplacer = reinterpret_cast<hsa_ven_amd_aqlprofile_1_00_pfn_t*>(table);
+            size_t tableSize = sizeof(hsa_ven_amd_aqlprofile_1_00_pfn_t);
+            g_pRealAqlProfileExtFunctions = reinterpret_cast<hsa_ven_amd_aqlprofile_1_00_pfn_t*>(malloc(tableSize));
+            memcpy(g_pRealAqlProfileExtFunctions, tableReplacer, tableSize);
+
+            tableReplacer->hsa_ven_amd_aqlprofile_validate_event = HSA_API_Trace_hsa_ven_amd_aqlprofile_validate_event;
+            tableReplacer->hsa_ven_amd_aqlprofile_start = HSA_API_Trace_hsa_ven_amd_aqlprofile_start;
+            tableReplacer->hsa_ven_amd_aqlprofile_stop = HSA_API_Trace_hsa_ven_amd_aqlprofile_stop;
+            tableReplacer->hsa_ven_amd_aqlprofile_legacy_get_pm4 = HSA_API_Trace_hsa_ven_amd_aqlprofile_legacy_get_pm4;
+            tableReplacer->hsa_ven_amd_aqlprofile_get_info = HSA_API_Trace_hsa_ven_amd_aqlprofile_get_info;
+            tableReplacer->hsa_ven_amd_aqlprofile_iterate_data = HSA_API_Trace_hsa_ven_amd_aqlprofile_iterate_data;
+            tableReplacer->hsa_ven_amd_aqlprofile_error_string = HSA_API_Trace_hsa_ven_amd_aqlprofile_error_string;
+        }
+    }
+}
+
+void HSA_APITrace_hsa_system_get_major_extension_table_PostCallHelper(hsa_status_t retVal, uint16_t extension, uint16_t version_major, size_t table_length, void* table)
+{
+    SP_UNREFERENCED_PARAMETER(version_major);
+
+    if (HSA_STATUS_SUCCESS == retVal && nullptr != table)
+    {
+        if (HSA_EXTENSION_AMD_LOADER == extension)
+        {
+            hsa_ven_amd_loader_1_01_pfn_t* tableReplacer = reinterpret_cast<hsa_ven_amd_loader_1_01_pfn_t*>(table);
+            size_t tableSize = std::min(table_length, sizeof(hsa_ven_amd_loader_1_01_pfn_t));
+            g_pRealLoaderExtFunctions = reinterpret_cast<hsa_ven_amd_loader_1_01_pfn_t*>(malloc(tableSize));
+            memcpy(g_pRealLoaderExtFunctions, tableReplacer, tableSize);
+
+            size_t requiredTableSize = sizeof(void*);
+
+            if (table_length >= requiredTableSize)
+            {
+                requiredTableSize += sizeof(void*);
+                tableReplacer->hsa_ven_amd_loader_query_host_address = HSA_API_Trace_hsa_ven_amd_loader_query_host_address;
+            }
+
+            if (table_length >= requiredTableSize)
+            {
+                requiredTableSize += sizeof(void*);
+                tableReplacer->hsa_ven_amd_loader_query_segment_descriptors = HSA_API_Trace_hsa_ven_amd_loader_query_segment_descriptors;
+            }
+
+            if (table_length >= requiredTableSize)
+            {
+                requiredTableSize += sizeof(void*);
+                tableReplacer->hsa_ven_amd_loader_query_executable = HSA_API_Trace_hsa_ven_amd_loader_query_executable;
+            }
+
+            if (table_length >= requiredTableSize)
+            {
+                requiredTableSize += sizeof(void*);
+
+                tableReplacer->hsa_ven_amd_loader_executable_iterate_loaded_code_objects = HSA_API_Trace_hsa_ven_amd_loader_executable_iterate_loaded_code_objects;
+            }
+
+            if (table_length >= requiredTableSize)
+            {
+                requiredTableSize += sizeof(void*);
+                tableReplacer->hsa_ven_amd_loader_loaded_code_object_get_info = HSA_API_Trace_hsa_ven_amd_loader_loaded_code_object_get_info;
+            }
+        }
+        else if (HSA_EXTENSION_AMD_AQLPROFILE == extension)
+        {
+            hsa_ven_amd_aqlprofile_1_00_pfn_t* tableReplacer = reinterpret_cast<hsa_ven_amd_aqlprofile_1_00_pfn_t*>(table);
+            size_t tableSize = std::min(table_length, sizeof(hsa_ven_amd_aqlprofile_1_00_pfn_t));
+            g_pRealAqlProfileExtFunctions = reinterpret_cast<hsa_ven_amd_aqlprofile_1_00_pfn_t*>(malloc(tableSize));
+            memcpy(g_pRealAqlProfileExtFunctions, tableReplacer, tableSize);
+
+            size_t requiredTableSize = sizeof(void*);
+
+            if (table_length >= requiredTableSize)
+            {
+                requiredTableSize += sizeof(void*);
+                tableReplacer->hsa_ven_amd_aqlprofile_validate_event = HSA_API_Trace_hsa_ven_amd_aqlprofile_validate_event;
+            }
+
+            if (table_length >= requiredTableSize)
+            {
+                requiredTableSize += sizeof(void*);
+                tableReplacer->hsa_ven_amd_aqlprofile_start = HSA_API_Trace_hsa_ven_amd_aqlprofile_start;
+            }
+
+            if (table_length >= requiredTableSize)
+            {
+                requiredTableSize += sizeof(void*);
+                tableReplacer->hsa_ven_amd_aqlprofile_stop = HSA_API_Trace_hsa_ven_amd_aqlprofile_stop;
+            }
+
+            if (table_length >= requiredTableSize)
+            {
+                requiredTableSize += sizeof(void*);
+                tableReplacer->hsa_ven_amd_aqlprofile_legacy_get_pm4 = HSA_API_Trace_hsa_ven_amd_aqlprofile_legacy_get_pm4;
+            }
+
+            if (table_length >= requiredTableSize)
+            {
+                requiredTableSize += sizeof(void*);
+                tableReplacer->hsa_ven_amd_aqlprofile_get_info = HSA_API_Trace_hsa_ven_amd_aqlprofile_get_info;
+            }
+
+            if (table_length >= requiredTableSize)
+            {
+                requiredTableSize += sizeof(void*);
+                tableReplacer->hsa_ven_amd_aqlprofile_iterate_data = HSA_API_Trace_hsa_ven_amd_aqlprofile_iterate_data;
+            }
+
+            if (table_length >= requiredTableSize)
+            {
+                requiredTableSize += sizeof(void*);
+                tableReplacer->hsa_ven_amd_aqlprofile_error_string = HSA_API_Trace_hsa_ven_amd_aqlprofile_error_string;
+            }
         }
     }
 }

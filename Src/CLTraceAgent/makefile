@@ -13,7 +13,7 @@ INCLUDES = \
 	-I$(SRC_COMMON_DIR) \
 	-I$(SRC_CLCOMMON_DIR) \
 	-I$(COMMON_PROJ_DIR) \
-	-isystem$(ATI_STREAM_SDK_DIR)/include \
+	-isystem$(APPSDK_DIR)/include \
 	-isystem$(CAL_DIR)/include \
 	-I$(DYNAMICLIBRARYMODULE_DIR) \
 	-I$(DEVICEINFO_DIR) \

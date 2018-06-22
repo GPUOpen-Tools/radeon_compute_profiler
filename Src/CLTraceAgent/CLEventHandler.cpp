@@ -114,6 +114,7 @@ static void CL_CALLBACK EventStatusChanged(cl_agent* agent, cl_event event, cl_i
             case CL_SUBMITTED:
                 clEvent->m_ullSubmitted = ts;
                 break;
+
             default:
                 break;
         }

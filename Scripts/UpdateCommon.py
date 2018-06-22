@@ -3,6 +3,7 @@
 # Simple script to update a set of common directories that are needed as dependencies of the current project
 
 import os
+import shutil
 import string
 import subprocess
 import sys
@@ -27,8 +28,10 @@ else:
 from UpdateCommonMap import *
 if MACHINE_OS == "Linux":
     from UpdateCommonMap import downloadMappingLin as downloadMapping
+    from UpdateCommonMap import vkStableClocksMappingLin as vkStableClocksMapping
 else:
     from UpdateCommonMap import downloadMappingWin as downloadMapping
+    from UpdateCommonMap import vkStableClocksMappingWin as vkStableClocksMapping
 
 # to allow the script to be run from anywhere - not just the cwd - store the absolute path to the script file
 scriptRoot = os.path.dirname(os.path.realpath(__file__))
@@ -43,14 +46,22 @@ for key in GitHubMapping:
     targetPath = os.path.normpath(tmppath)
     if os.path.isdir(targetPath):
         print("\nDirectory " + targetPath + " exists, using 'git pull' to get latest")
+        sys.stdout.flush()
+        sys.stderr.flush()
         p = subprocess.Popen(["git","pull"], cwd=targetPath)
-        p.wait();
+        p.wait()
+        sys.stdout.flush()
+        sys.stderr.flush()
     else:
         print("\nDirectory " + targetPath + " does not exist, using 'git clone' to get latest")
         gitamdRoot = "https://github.com/GPUOpen-Tools/" + key
         commandArgs = ["git", "clone", gitamdRoot, targetPath]
+        sys.stdout.flush()
+        sys.stderr.flush()
         p = subprocess.Popen( commandArgs )
         p.wait()
+        sys.stdout.flush()
+        sys.stderr.flush()
 
 def downloadandunzip(key, value):
     # convert targetPath to OS specific format
@@ -70,5 +81,20 @@ def downloadandunzip(key, value):
         elif os.path.splitext(zipPath)[1] == ".tgz":
             tarfile.open(zipPath).extractall(targetPath)
 
+def handleVkStableClocks(key, value):
+    tmppath = os.path.join(scriptRoot, "..", value[0])
+    targetPath = os.path.normpath(os.path.join(tmppath, value[1]))
+    if False == os.path.isdir(targetPath):
+        os.makedirs(targetPath)
+    srcPath =  os.path.normpath(os.path.join(tmppath, value[2], key))
+    dstPath = os.path.normpath(os.path.join(targetPath, key))
+    if False == os.path.isfile(dstPath):
+       if True == os.path.isfile(srcPath):
+           print("Copying " + srcPath + " to " + dstPath)
+           shutil.copy2(srcPath, dstPath)
+
 for key in downloadMapping:
     downloadandunzip(key, downloadMapping[key])
+
+for key in vkStableClocksMapping:
+    handleVkStableClocks(key, vkStableClocksMapping[key])

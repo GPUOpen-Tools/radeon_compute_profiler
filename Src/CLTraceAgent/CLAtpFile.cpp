@@ -771,7 +771,7 @@ bool CLAtpFilePart::UpdateTmpTimestampFiles(const string& strTmpFilePath, const 
                     for (vector<CLAPIInfo*>::const_iterator infoIt = apis.begin(); infoIt != apis.end(); ++infoIt)
                     {
                         WriteTimestampEntry(fout, *infoIt);
-                        delete (*infoIt);
+                        delete(*infoIt);
                     }
 
                     apis.clear();
@@ -806,12 +806,22 @@ void CLAtpFilePart::WriteHeaderSection(SP_fileStream& sout)
 
         for (itPlatformInfo = platformInfo.begin(); itPlatformInfo != platformInfo.end(); itPlatformInfo++)
         {
-            sout << "Device " << (*itPlatformInfo).strDeviceName.c_str() << " Platform Vendor = " << (*itPlatformInfo).strPlatformVendor.c_str() << endl;
-            sout << "Device " << (*itPlatformInfo).strDeviceName.c_str() << " Platform Name = " << (*itPlatformInfo).strPlatformName.c_str() << endl;
-            sout << "Device " << (*itPlatformInfo).strDeviceName.c_str() << " Platform Version = " << (*itPlatformInfo).strPlatformVersion.c_str() << endl;
-            sout << "Device " << (*itPlatformInfo).strDeviceName.c_str() << " CLDriver Version = " << (*itPlatformInfo).strDriverVersion.c_str() << endl;
-            sout << "Device " << (*itPlatformInfo).strDeviceName.c_str() << " CLRuntime Version = " << (*itPlatformInfo).strCLRuntime.c_str() << endl;
-            sout << "Device " << (*itPlatformInfo).strDeviceName.c_str() << " NumberAppAddressBits = " << (*itPlatformInfo).uiNbrAddressBits << endl;
+            sout << "Device " << (*itPlatformInfo).m_deviceName.c_str() << " Platform Vendor = " << (*itPlatformInfo).m_platformVendor.c_str() << endl;
+            sout << "Device " << (*itPlatformInfo).m_deviceName.c_str() << " Platform Name = " << (*itPlatformInfo).m_platformName.c_str() << endl;
+            sout << "Device " << (*itPlatformInfo).m_deviceName.c_str() << " Platform Version = " << (*itPlatformInfo).m_platformVersion.c_str() << endl;
+            sout << "Device " << (*itPlatformInfo).m_deviceName.c_str() << " CLDriver Version = " << (*itPlatformInfo).m_driverVersion.c_str() << endl;
+            sout << "Device " << (*itPlatformInfo).m_deviceName.c_str() << " CLRuntime Version = " << (*itPlatformInfo).m_runtimeVersion.c_str() << endl;
+            sout << "Device " << (*itPlatformInfo).m_deviceName.c_str() << " NumberAppAddressBits = " << (*itPlatformInfo).m_addressBits << endl;
+
+            if (!(*itPlatformInfo).m_boardName.empty())
+            {
+                sout << "Device " << (*itPlatformInfo).m_deviceName.c_str() << " Board Name = " << (*itPlatformInfo).m_boardName.c_str() << endl;
+            }
+
+            if (0 != (*itPlatformInfo).m_pcieDeviceId)
+            {
+                sout << "Device " << (*itPlatformInfo).m_deviceName.c_str() << " PCIE device id = " << (*itPlatformInfo).m_pcieDeviceId << endl;
+            }
         }
     }
 }
@@ -1175,7 +1185,7 @@ void CLAtpFilePart::SaveToFile(const std::string& strTmpFilePath, const std::str
     }
 
     fout << FILE_HEADER_TRACE_FILE_VERSION << EQUAL_SIGN_STR << RCP_MAJOR_VERSION << "." << RCP_MINOR_VERSION << endl;
-    fout << FILE_HEADER_PROFILER_VERSION << EQUAL_SIGN_STR <<RCP_MAJOR_VERSION << "." << RCP_MINOR_VERSION << "." << RCP_BUILD_NUMBER << endl;
+    fout << FILE_HEADER_PROFILER_VERSION << EQUAL_SIGN_STR << RCP_MAJOR_VERSION << "." << RCP_MINOR_VERSION << "." << RCP_BUILD_NUMBER << endl;
     fout << FILE_HEADER_APPLICATION << EQUAL_SIGN_STR << m_config.strInjectedApp.asUTF8CharArray() << endl;
     fout << FILE_HEADER_APPLICATION_ARGS << EQUAL_SIGN_STR << m_config.strInjectedAppArgs.asUTF8CharArray() << endl;
     fout << FILE_HEADER_WORKING_DIRECTORY << EQUAL_SIGN_STR << m_config.strWorkingDirectory.asUTF8CharArray() << endl;
@@ -1193,7 +1203,7 @@ void CLAtpFilePart::SaveToFile(const std::string& strTmpFilePath, const std::str
     fout << FILE_HEADER_USER_TIMER << EQUAL_SIGN_STR << (m_config.bUserTimer ? "True" : "False") << endl;
 
     fout << FILE_HEADER_OS_VERSION << EQUAL_SIGN_STR << OSUtils::Instance()->GetOSInfo().c_str() << endl;
-    fout << FILE_HEADER_DISPLAY_NAME << EQUAL_SIGN_STR <<m_config.strSessionName.c_str() << endl;
+    fout << FILE_HEADER_DISPLAY_NAME << EQUAL_SIGN_STR << m_config.strSessionName.c_str() << endl;
 
     WriteHeaderSection(fout);
     WriteContentSection(fout, strTmpFilePath, strPID);

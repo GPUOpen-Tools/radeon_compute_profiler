@@ -1068,11 +1068,22 @@ bool CLAPI_clEnqueueMapMemObj::GetMemDeviceInfo(cl_mem buffer)
         }
         else
         {
-            bool bIsAPU = false;
+            bool isApu = false;
+            bool isVarIsApuSet = false;
 
-            if (AMDTDeviceInfoUtils::Instance()->IsAPU(m_strDeviceName.c_str(), bIsAPU))
+            if (m_isDevicePcieIdSet)
             {
-                if (bIsAPU)
+                isVarIsApuSet = AMDTDeviceInfoUtils::Instance()->IsAPU(static_cast<size_t>(m_devicePcieId), isApu);
+            }
+
+            if (!isVarIsApuSet)
+            {
+                isVarIsApuSet = AMDTDeviceInfoUtils::Instance()->IsAPU(m_strDeviceName.c_str(), isApu);
+            }
+
+            if (isVarIsApuSet)
+            {
+                if (isApu)
                 {
                     m_deviceType = DT_APU;
                 }
@@ -1115,20 +1126,31 @@ bool CLAPI_clEnqueueMapMemObj::GetMemDeviceInfo(cl_mem buffer)
         }
         else
         {
-            char szDeviceName[SP_MAX_PATH];
-            iRet = g_realDispatchTable.GetDeviceInfo(deviceID, CL_DEVICE_NAME, SP_MAX_PATH, szDeviceName, NULL);
+            bool isApu = false;
+            bool isVarIsApuSet = false;
 
-            if (iRet != CL_SUCCESS)
+            if (m_isDevicePcieIdSet)
             {
-                m_deviceType = DT_Unknown;
-                return false;
+                isVarIsApuSet = AMDTDeviceInfoUtils::Instance()->IsAPU(static_cast<size_t>(m_devicePcieId), isApu);
             }
 
-            bool bIsAPU = false;
-
-            if (AMDTDeviceInfoUtils::Instance()->IsAPU(szDeviceName, bIsAPU))
+            if (!isVarIsApuSet)
             {
-                if (bIsAPU)
+                char szDeviceName[SP_MAX_PATH];
+                iRet = g_realDispatchTable.GetDeviceInfo(deviceID, CL_DEVICE_NAME, SP_MAX_PATH, szDeviceName, nullptr);
+
+                if (iRet != CL_SUCCESS)
+                {
+                    m_deviceType = DT_Unknown;
+                    return false;
+                }
+
+                isVarIsApuSet = AMDTDeviceInfoUtils::Instance()->IsAPU(szDeviceName, isApu);
+            }
+
+            if (isVarIsApuSet)
+            {
+                if (isApu)
                 {
                     m_deviceType = DT_APU;
                 }
@@ -1209,13 +1231,26 @@ bool CLAPI_clEnqueueMapMemObj::GetLocation(MemLocation& allocLocation, MemLocati
 #ifndef _WIN32
     // Linux
     bool bVM = false;
-    bool bIsGCN = false;
-    AMDTDeviceInfoUtils::Instance()->IsGCN(m_strDeviceName.c_str(), bIsGCN);
+    bool isGcn = false;
+    bool isVarIsGcnSet = false;
 
-    if (bIsGCN)
+    if (m_isDevicePcieIdSet)
     {
-        // SI and CI supports VM on Linux
-        bVM = true;
+        isVarIsGcnSet = AMDTDeviceInfoUtils::Instance()->IsGCN(static_cast<size_t>(m_devicePcieId), isGcn);
+    }
+
+    if (!isVarIsGcnSet)
+    {
+        isVarIsGcnSet = AMDTDeviceInfoUtils::Instance()->IsGCN(m_strDeviceName.c_str(), isGcn);
+    }
+
+    if (isVarIsGcnSet)
+    {
+        if (isGcn)
+        {
+            // SI and CI supports VM on Linux
+            bVM = true;
+        }
     }
 
 #else
@@ -3176,6 +3211,73 @@ cl_int CLAPI_clEnqueueWriteSsgFileAMD::Create(cl_command_queue command_queue,
     else
     {
         m_event = NULL;
+    }
+
+    if (this->GetAPISucceeded())
+    {
+        m_pEvent = CLEventManager::Instance()->UpdateEvent(*pTmpEvent, bUserEvent, this);
+    }
+
+    return m_retVal;
+}
+
+cl_int CLAPI_clEnqueueSVMMigrateMem::Create(cl_command_queue command_queue,
+                                            cl_uint num_svm_pointers,
+                                            const void** svm_pointers,
+                                            const size_t* sizes,
+                                            cl_mem_migration_flags flags,
+                                            cl_uint num_events_in_wait_list,
+                                            const cl_event* event_wait_list,
+                                            cl_event* event)
+{
+    cl_event* pTmpEvent = event;
+    cl_event event1;
+
+    bool bUserEvent = true;
+
+    if (nullptr == pTmpEvent)
+    {
+        pTmpEvent = &event1;
+        bUserEvent = false;
+    }
+
+    m_ullStart = CLAPIInfoManager::Instance()->GetTimeNanosStart(this);
+
+    m_retVal = g_nextDispatchTable.clEnqueueSVMMigrateMem(command_queue,
+                                                          num_svm_pointers,
+                                                          svm_pointers,
+                                                          sizes,
+                                                          flags,
+                                                          num_events_in_wait_list,
+                                                          event_wait_list,
+                                                          event);
+
+    m_ullEnd = CLAPIInfoManager::Instance()->GetTimeNanosEnd(this);
+
+    m_command_queue = command_queue;
+    m_num_svm_pointers = num_svm_pointers;
+    m_sizes = sizes;
+
+    for (cl_uint i = 0; i < num_svm_pointers; ++i)
+    {
+        m_svm_pointers_list.push_back(const_cast<void*>(svm_pointers[i]));
+        m_sizes_list.push_back(sizes[i]);
+    }
+
+    m_flags = flags;
+    m_num_events_in_wait_list = num_events_in_wait_list;
+    m_event_wait_list = event_wait_list;
+
+    GetContextInfo();
+    CopyEventList(event_wait_list, m_num_events_in_wait_list, m_vecEvent_wait_list);
+
+    if (nullptr != event)
+    {
+        m_event = *event;
+    }
+    else
+    {
+        m_event = nullptr;
     }
 
     if (this->GetAPISucceeded())

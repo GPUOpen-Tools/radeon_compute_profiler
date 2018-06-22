@@ -1,49 +1,60 @@
 //==============================================================================
-// Copyright (c) 2015 Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2015-2018 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 /// \brief GPUPerfAPI Utilities
 //==============================================================================
 
+#include <string.h> //for strcmp
+#include <iostream>
+#include <algorithm>
+#include <functional>
+#include <mutex>
+
+#include "OSUtils.h"
 #include "GPAUtils.h"
 #include "StringUtils.h"
 #include "FileUtils.h"
 #include "DeviceInfoUtils.h"
 #include "Logger.h"
 #include "GlobalSettings.h"
-#include <string.h> //for strcmp
-#include <iostream>
-#include <algorithm>
-#include <functional>
-#include <mutex>
-#include "OSUtils.h"
 
 using namespace std;
 using namespace GPULogger;
 
-std::mutex mtx;
+std::mutex g_mtx;
+
+GPAApiManager* GPAApiManager::m_pGpaApiManager = nullptr;
+GPAFuncTableInfo* g_pFuncTableInfo = NULL;
 
 GPAUtils::GPAUtils()
 {
     m_nMaxNumCounter = 1000;
-    m_pGetAvailableCountersByGen = NULL;
-    m_pGetAvailableCountersForDevice = NULL;
-    m_API = GPA_API__LAST;
+    m_pGetAvailableCountersByGen = nullptr;
+    m_pGetAvailableCountersForDevice = nullptr;
+    m_api = GPA_API__LAST;
     m_bInit = false;
     m_nMaxPass = GPA_INFINITE_PASS;
+    m_contextId = nullptr;
+    m_gpaLoaded = false;
 }
 
 bool GPAUtils::Open(void* context)
 {
     // Remove this lock when GPA is threadsafe
-    std::lock_guard<std::mutex> lock(mtx);
+    std::lock_guard<std::mutex> lock(g_mtx);
 
-    if (!m_GPALoader.Loaded())
+    if (!m_gpaLoaded)
     {
         return false;
     }
 
-    if (StatusCheck(m_GPALoader.GPA_OpenContext(context)) != GPA_STATUS_OK)
+    if (nullptr != m_contextId)
+    {
+        return false;
+    }
+
+    if (StatusCheck(m_gpaFuncTable->GPA_OpenContext(context, GPA_OPENCONTEXT_DEFAULT_BIT, &m_contextId)) != GPA_STATUS_OK)
     {
         return false;
     }
@@ -53,22 +64,24 @@ bool GPAUtils::Open(void* context)
 
 bool GPAUtils::Close()
 {
-    if (!m_GPALoader.Loaded())
+    if (!m_gpaLoaded)
     {
         return false;
     }
 
-    if (StatusCheck(m_GPALoader.GPA_CloseContext()) != GPA_STATUS_OK)
+    if (StatusCheck(m_gpaFuncTable->GPA_CloseContext(m_contextId)) != GPA_STATUS_OK)
     {
         return false;
     }
+
+    m_contextId = nullptr;
 
     return true;
 }
 
-bool GPAUtils::EnableCounters()
+bool GPAUtils::EnableCounters(GPA_SessionId sessionId)
 {
-    if (!m_GPALoader.Loaded())
+    if (!m_gpaLoaded)
     {
         return false;
     }
@@ -77,7 +90,7 @@ bool GPAUtils::EnableCounters()
     {
 #ifndef AMDT_INTERNAL
         // enable all counters
-        return m_GPALoader.GPA_EnableAllCounters() == GPA_STATUS_OK;
+        return m_gpaFuncTable->GPA_EnableAllCounters(sessionId) == GPA_STATUS_OK;
 #else
         cout << "Unable to enable all counters in internal build." << endl;
         return false;
@@ -93,7 +106,7 @@ bool GPAUtils::EnableCounters()
         }
 
         // enable the counter set
-        if (!EnableCounterSet(m_selectedCounters))
+        if (!EnableCounterSet(sessionId, m_selectedCounters))
         {
             return false;
         }
@@ -110,27 +123,39 @@ bool GPAUtils::InitGPA(GPA_API_Type api,
                        CounterList* pSelectedCounters,
                        size_t nMaxPass)
 {
-    m_API = api;
+    m_api = api;
     m_nMaxPass = nMaxPass;
 
     const char* pszErrorMessage = NULL;
 
-    SP_TODO("Solve API Loader Issues for installed libraries in unicode directory");
+#ifdef _WIN32
+    GPA_Status status = GPAApiManager::Instance()->LoadApi(api, strDLLPath.asCharArray());
+#else
     string utf8DllPath;
     StringUtils::WideStringToUtf8String(strDLLPath.asCharArray(), utf8DllPath);
-    bool bGPALoaded = m_GPALoader.Load(utf8DllPath.c_str(), api, &pszErrorMessage);
+    GPA_Status status = GPAApiManager::Instance()->LoadApi(api, utf8DllPath.c_str());
+#endif
 
-    if (bGPALoaded)
+    if (GPA_STATUS_OK == status)
     {
-        if (GPA_STATUS_OK != m_GPALoader.GPA_RegisterLoggingCallback(GPA_LOGGING_ERROR_AND_MESSAGE, GPALogCallback))
+        m_gpaFuncTable = GPAApiManager::Instance()->GetFunctionTable(m_api);
+
+        if (nullptr == m_gpaFuncTable)
+        {
+            Log(logERROR, "Unable to get the GPA function table\n");
+            return false;
+        }
+
+        if (GPA_STATUS_OK != m_gpaFuncTable->GPA_RegisterLoggingCallback(GPA_LOGGING_ERROR_AND_MESSAGE, GPALogCallback))
         {
             Log(logERROR, "Failed to register GPA logging callback\n");
         }
-    }
 
-    if (pszErrorMessage != NULL)
+        m_gpaLoaded = true;
+    }
+    else if (pszErrorMessage != NULL)
     {
-        strError = pszErrorMessage;
+        strError = "Unable to load GPUPerfAPI library";
     }
 
     if (!GPUPerfAPICounterLoader::Instance()->IsLoaded())
@@ -144,12 +169,12 @@ bool GPAUtils::InitGPA(GPA_API_Type api,
     if (pszCounterFile != NULL)
     {
         CounterList tmpCounterList;
-        bool bRet = FileUtils::ReadFile(pszCounterFile, tmpCounterList, true) && bGPALoaded;
+        bool bRet = FileUtils::ReadFile(pszCounterFile, tmpCounterList, true) && GPA_STATUS_OK == status;
 
         for (CounterList::iterator it = tmpCounterList.begin(); it != tmpCounterList.end(); ++it)
         {
             std::string counterName = StringUtils::Trim(*it); // trim off any whitespace in counter name
-            GPA_HW_GENERATION gen;
+            GPA_Hw_Generation gen;
             VerifyCounter(counterName, gen);
 
             if (gen == GPA_HW_GENERATION_NONE)
@@ -174,8 +199,8 @@ bool GPAUtils::InitGPA(GPA_API_Type api,
     }
     else
     {
-        m_bInit = bGPALoaded;
-        return bGPALoaded;
+        m_bInit = GPA_STATUS_OK == status;
+        return m_bInit;
     }
 }
 
@@ -187,129 +212,11 @@ GPA_Status GPAUtils::StatusCheck(GPA_Status status)
 #else
 GPA_Status GPAUtils::StatusCheck(GPA_Status status)
 {
-    switch (status)
+    if (GPA_STATUS_OK > status)
     {
-        case GPA_STATUS_ERROR_NULL_POINTER :
-            Log(logERROR, "Null pointer\n");
-            break;
-
-        case GPA_STATUS_ERROR_COUNTERS_NOT_OPEN :
-            Log(logERROR, "Counters not opened\n");
-            break;
-
-        case GPA_STATUS_ERROR_COUNTERS_ALREADY_OPEN :
-            Log(logERROR, "Counters already opened\n");
-            break;
-
-        case GPA_STATUS_ERROR_INDEX_OUT_OF_RANGE :
-            Log(logERROR, "Index out of range\n");
-            break;
-
-        case GPA_STATUS_ERROR_NOT_FOUND :
-            Log(logERROR, "Not found\n");
-            break;
-
-        case GPA_STATUS_ERROR_ALREADY_ENABLED :
-            Log(logERROR, "Already enabled\n");
-            break;
-
-        case GPA_STATUS_ERROR_NO_COUNTERS_ENABLED :
-            Log(logERROR, "No counters enabled\n");
-            break;
-
-        case GPA_STATUS_ERROR_NOT_ENABLED :
-            Log(logERROR, "Not enabled\n");
-            break;
-
-        case GPA_STATUS_ERROR_SAMPLING_NOT_STARTED :
-            Log(logERROR, "Sampling not started\n");
-            break;
-
-        case GPA_STATUS_ERROR_SAMPLING_ALREADY_STARTED :
-            Log(logERROR, "Sampling already started\n");
-            break;
-
-        case GPA_STATUS_ERROR_SAMPLING_NOT_ENDED :
-            Log(logERROR, "Sampling not ended\n");
-            break;
-
-        case GPA_STATUS_ERROR_NOT_ENOUGH_PASSES :
-            Log(logERROR, "Not enough passes\n");
-            break;
-
-        case GPA_STATUS_ERROR_PASS_NOT_ENDED :
-            Log(logERROR, "Pass not ended\n");
-            break;
-
-        case GPA_STATUS_ERROR_PASS_NOT_STARTED :
-            Log(logERROR, "Pass not started\n");
-            break;
-
-        case GPA_STATUS_ERROR_PASS_ALREADY_STARTED :
-            Log(logERROR, "Pass already started\n");
-            break;
-
-        case GPA_STATUS_ERROR_SAMPLE_NOT_STARTED :
-            Log(logERROR, "Sample not found\n");
-            break;
-
-        case GPA_STATUS_ERROR_SAMPLE_ALREADY_STARTED :
-            Log(logERROR, "Sample already started\n");
-            break;
-
-        case GPA_STATUS_ERROR_SAMPLE_NOT_ENDED :
-            Log(logERROR, "sample not ended\n");
-            break;
-
-        case GPA_STATUS_ERROR_CANNOT_CHANGE_COUNTERS_WHEN_SAMPLING :
-            Log(logERROR, "Cannot change counters when sampling\n");
-            break;
-
-        case GPA_STATUS_ERROR_SESSION_NOT_FOUND :
-            Log(logERROR, "Session not found\n");
-            break;
-
-        case GPA_STATUS_ERROR_SAMPLE_NOT_FOUND :
-            Log(logERROR, "Sample not found\n");
-            break;
-
-        case GPA_STATUS_ERROR_SAMPLE_NOT_FOUND_IN_ALL_PASSES :
-            Log(logERROR, "Sample not found in all passes\n");
-            break;
-
-        case GPA_STATUS_ERROR_COUNTER_NOT_OF_SPECIFIED_TYPE :
-            Log(logERROR, "Counter not of specified type\n");
-            break;
-
-        case GPA_STATUS_ERROR_READING_COUNTER_RESULT :
-            Log(logERROR, "Error reading counter result\n");
-            break;
-
-        case GPA_STATUS_ERROR_VARIABLE_NUMBER_OF_SAMPLES_IN_PASSES :
-            Log(logERROR, "Variable number of samples in passes\n");
-            break;
-
-        case GPA_STATUS_ERROR_FAILED :
-            Log(logERROR, "Failed\n");
-            break;
-
-        case GPA_STATUS_ERROR_HARDWARE_NOT_SUPPORTED :
-            Log(logERROR, "Hardware not supported\n");
-            break;
-
-        case GPA_STATUS_ERROR_DRIVER_NOT_SUPPORTED:
-            Log(logERROR, "Driver version not supported\n");
-            break;
-
-
-        default:
-
-            if (status != GPA_STATUS_OK)
-            {
-                Log(logERROR, "Unknown error\n");
-            }
-
-            break;
+        std::string statusStr = m_gpaFuncTable->GPA_GetStatusAsStr(status);
+        statusStr.append("\n");
+        Log(logERROR, statusStr.c_str());
     }
 
     return status;
@@ -317,7 +224,7 @@ GPA_Status GPAUtils::StatusCheck(GPA_Status status)
 #endif
 
 
-bool GPAUtils::EnableCounterSet(const CounterList& selectedCounterNames)
+bool GPAUtils::EnableCounterSet(GPA_SessionId sessionId, const CounterList& selectedCounterNames)
 {
     // if the list of selected counters is the full set of counters, and we don't have to worry about max passes,
     // then just call EnableAllCounters.  It is a little faster than using EnableCounterStr, which itself has to loop
@@ -326,34 +233,34 @@ bool GPAUtils::EnableCounterSet(const CounterList& selectedCounterNames)
     // the counters are re-enabled)
     gpa_uint32 numAvailableCounters;
 
-    if (StatusCheck(m_GPALoader.GPA_GetNumCounters(&numAvailableCounters)) == GPA_STATUS_OK)
+    if (StatusCheck(m_gpaFuncTable->GPA_GetNumCounters(m_contextId, &numAvailableCounters)) == GPA_STATUS_OK)
     {
         if (selectedCounterNames.size() == numAvailableCounters && GPA_INFINITE_PASS == m_nMaxPass)
         {
-            if (StatusCheck(m_GPALoader.GPA_EnableAllCounters()) == GPA_STATUS_OK)
+            if (StatusCheck(m_gpaFuncTable->GPA_EnableAllCounters(sessionId)) == GPA_STATUS_OK)
             {
                 return true;
             }
         }
     }
 
-    StatusCheck(m_GPALoader.GPA_DisableAllCounters());
+    StatusCheck(m_gpaFuncTable->GPA_DisableAllCounters(sessionId));
 
     for (size_t i = 0; i < selectedCounterNames.size(); i++)
     {
-        if (StatusCheck(m_GPALoader.GPA_EnableCounterStr(selectedCounterNames[i].c_str())) != GPA_STATUS_OK)
+        if (StatusCheck(m_gpaFuncTable->GPA_EnableCounterByName(sessionId, selectedCounterNames[i].c_str())) != GPA_STATUS_OK)
         {
             Log(logMESSAGE, "Can't enable counter : %s\n", selectedCounterNames[i].c_str());
         }
 
         if (m_nMaxPass != GPA_INFINITE_PASS)
         {
-            gpa_uint32 nPassCount;
-            m_GPALoader.GPA_GetPassCount(&nPassCount);
+            gpa_uint32 nPassCount = 0;
+            m_gpaFuncTable->GPA_GetPassCount(sessionId, &nPassCount);
 
             if (nPassCount > m_nMaxPass)
             {
-                m_GPALoader.GPA_DisableCounterStr(selectedCounterNames[i].c_str());
+                m_gpaFuncTable->GPA_DisableCounterByName(sessionId, selectedCounterNames[i].c_str());
                 cout << "Max number of enabled counters reached. Counter \"" << selectedCounterNames[i] << "\" ignored." << endl;
             }
         }
@@ -362,9 +269,9 @@ bool GPAUtils::EnableCounterSet(const CounterList& selectedCounterNames)
     return true;
 }
 
-GPA_HW_GENERATION GPAUtils::GdtHwGenToGpaHwGen(const GDT_HW_GENERATION gdtHwGen)
+GPA_Hw_Generation GPAUtils::GdtHwGenToGpaHwGen(const GDT_HW_GENERATION gdtHwGen)
 {
-    GPA_HW_GENERATION gpaHwGen = GPA_HW_GENERATION_NONE;
+    GPA_Hw_Generation gpaHwGen = GPA_HW_GENERATION_NONE;
 
     switch (gdtHwGen)
     {
@@ -391,36 +298,46 @@ GPA_HW_GENERATION GPAUtils::GdtHwGenToGpaHwGen(const GDT_HW_GENERATION gdtHwGen)
     return gpaHwGen;
 }
 
-void GPAUtils::GetCounterValues(gpa_uint32 uSessionID, CounterList& counterDataTable, gpa_uint32& sampleCount, gpa_uint32& count)
+void GPAUtils::GetCounterValues(GPA_SessionId sessionID, CounterList& counterDataTable, gpa_uint32& sampleCount, gpa_uint32& count)
 {
     bool readyResult = false;
 
-    if (uSessionID > 0)
+    if (sessionID > 0) //TODO: is this check still valid?
     {
         while (!readyResult)
         {
-            m_GPALoader.GPA_IsSessionReady(&readyResult, uSessionID);
+            GPA_Status isSessionReady = m_gpaFuncTable->GPA_IsSessionComplete(sessionID);
+            readyResult = GPA_STATUS_OK == isSessionReady;
         }
     }
 
-    m_GPALoader.GPA_GetEnabledCount(&count);
+    m_gpaFuncTable->GPA_GetNumEnabledCounters(sessionID, &count);
 
     string str;
 
-    m_GPALoader.GPA_GetSampleCount(uSessionID, &sampleCount);
+    m_gpaFuncTable->GPA_GetSampleCount(sessionID, &sampleCount);
 
     for (gpa_uint32 sample = 0 ; sample < sampleCount ; sample++)
     {
         for (gpa_uint32 counter = 0 ; counter < count ; counter++)
         {
             gpa_uint32 enabledCounterIndex;
-            m_GPALoader.GPA_GetEnabledIndex(counter, &enabledCounterIndex);
-            GPA_Type type;
-            m_GPALoader.GPA_GetCounterDataType(enabledCounterIndex, &type);
+            m_gpaFuncTable->GPA_GetEnabledIndex(sessionID, counter, &enabledCounterIndex);
 
-            const char* name;
-            m_GPALoader.GPA_GetCounterName(enabledCounterIndex, &name);
-            string strName = name;
+            GPA_Data_Type dataType;
+
+            if (!GetCounterDataType(enabledCounterIndex, dataType))
+            {
+                Log(logERROR, "Unable to get counter data type.");
+            }
+
+            string strName;
+
+            if (!GetCounterName(enabledCounterIndex, strName))
+            {
+                Log(logERROR, "Unable to get counter name.");
+            }
+
             int precision = 2;
 
             if (strName.find("GPUTime") != string::npos)
@@ -430,7 +347,7 @@ void GPAUtils::GetCounterValues(gpa_uint32 uSessionID, CounterList& counterDataT
 
             bool bConvertUnit = false;
 
-            /// In GPADX11, TexMemBytesRead is the equivalent coutner for FetchSize
+            /// In GPADX11, TexMemBytesRead is the equivalent counter for FetchSize
             /// execept it's unit is in byte instead of kilobyte
             /// Convert it to kilobyte so that it's consistent in client side
             if (strName.find("TexMemBytesRead") != string::npos)
@@ -451,39 +368,24 @@ void GPAUtils::GetCounterValues(gpa_uint32 uSessionID, CounterList& counterDataT
                 bConvertUnit = true;
             }
 
-            if (type == GPA_TYPE_UINT32)
-            {
-                gpa_uint32 value;
-                m_GPALoader.GPA_GetSampleUInt32(uSessionID, sample, enabledCounterIndex, &value);
+            size_t sampleResultSize = 0;
+            m_gpaFuncTable->GPA_GetSampleResultSize(sessionID, sample, &sampleResultSize);
 
-                str = StringUtils::ToString(value);
-                counterDataTable.push_back(str);
-            }
-            else if (type == GPA_TYPE_UINT64)
+            if (GPA_DATA_TYPE_UINT64 == dataType)
             {
                 gpa_uint64 value;
-                m_GPALoader.GPA_GetSampleUInt64(uSessionID, sample, enabledCounterIndex, &value);
+                m_gpaFuncTable->GPA_GetSampleResult(sessionID, sample, sampleResultSize, &value);
 
                 str = StringUtils::ToString(value);
                 counterDataTable.push_back(str);
             }
-            else if (type == GPA_TYPE_FLOAT32)
-            {
-                gpa_float32 value;
-                m_GPALoader.GPA_GetSampleFloat32(uSessionID, sample, enabledCounterIndex, &value);
-
-                if (bConvertUnit)
-                {
-                    value /= 1024.0f;
-                }
-
-                str = StringUtils::ToStringPrecision(value, precision);
-                counterDataTable.push_back(str);
-            }
-            else if (type == GPA_TYPE_FLOAT64)
+            else if (GPA_DATA_TYPE_FLOAT64 == dataType)
             {
                 gpa_float64 value;
-                m_GPALoader.GPA_GetSampleFloat64(uSessionID, sample, enabledCounterIndex, &value);
+                m_gpaFuncTable->GPA_GetSampleResult(sessionID, sample, sampleResultSize, &value);
+
+                str = StringUtils::ToString(value);
+                counterDataTable.push_back(str);
 
                 if (bConvertUnit)
                 {
@@ -502,16 +404,16 @@ void GPAUtils::GetCounterValues(gpa_uint32 uSessionID, CounterList& counterDataT
 
 }
 
-CounterList& GPAUtils::GetCounters(GPA_HW_GENERATION generation, const bool shouldIncludeCounterDescriptions)
+CounterList& GPAUtils::GetCounters(GPA_Hw_Generation generation, const bool shouldIncludeCounterDescriptions)
 {
     CounterList& list = m_HWCounterMap[generation];
 
     if (list.empty())
     {
-        GPA_ICounterAccessor* pAccessor = NULL;
+        IGPACounterAccessor* pAccessor = NULL;
         SpAssertRet(m_pGetAvailableCountersByGen != NULL) list;
-        SpAssertRet(m_API != GPA_API__LAST) list;
-        m_pGetAvailableCountersByGen(m_API, generation, &pAccessor);
+        SpAssertRet(m_api != GPA_API__LAST) list;
+        m_pGetAvailableCountersByGen(m_api, generation, GPA_OPENCONTEXT_DEFAULT_BIT, true, &pAccessor);
 
         if (pAccessor == NULL)
         {
@@ -519,7 +421,7 @@ CounterList& GPAUtils::GetCounters(GPA_HW_GENERATION generation, const bool shou
         }
 
         gpa_uint32 nCounters = pAccessor->GetNumCounters();
-        list.resize(shouldIncludeCounterDescriptions ? nCounters * 2 : nCounters);
+        list.resize(shouldIncludeCounterDescriptions ? nCounters * 3 : nCounters);
 
         unsigned int counterListIndex = 0;
 
@@ -529,6 +431,7 @@ CounterList& GPAUtils::GetCounters(GPA_HW_GENERATION generation, const bool shou
 
             if (shouldIncludeCounterDescriptions)
             {
+                list[counterListIndex++] = pAccessor->GetCounterGroup(i);
                 list[counterListIndex++] = pAccessor->GetCounterDescription(i);
             }
         }
@@ -543,12 +446,12 @@ CounterList& GPAUtils::GetCountersForDevice(gpa_uint32 uDeviceid, gpa_uint32 uRe
 
     if (list.empty())
     {
-        GPA_ICounterAccessor* pAccessor = NULL;
-        GPA_ICounterScheduler* pScheduler = NULL;
+        IGPACounterAccessor* pAccessor = NULL;
+        IGPACounterScheduler* pScheduler = NULL;
         SpAssertRet(m_pGetAvailableCountersForDevice != NULL) list;
-        SpAssertRet(m_API != GPA_API__LAST) list;
+        SpAssertRet(m_api != GPA_API__LAST) list;
         static const int AMD_VENDOR_ID = 0x1002;
-        m_pGetAvailableCountersForDevice(m_API, AMD_VENDOR_ID, uDeviceid, uRevisionid, &pAccessor, &pScheduler);
+        m_pGetAvailableCountersForDevice(m_api, AMD_VENDOR_ID, uDeviceid, uRevisionid, GPA_OPENCONTEXT_DEFAULT_BIT, true, &pAccessor, &pScheduler);
         SpAssertRet(pAccessor != NULL) list;
         SpAssertRet(pScheduler != NULL) list;
 
@@ -580,13 +483,48 @@ CounterList& GPAUtils::GetCountersForDevice(gpa_uint32 uDeviceid, gpa_uint32 uRe
     return list;
 }
 
+CounterList& GPAUtils::GetCountersForDevice(gpa_uint32 uDeviceid, gpa_uint32 uRevisionid, const bool shouldIncludeCounterDescriptions)
+{
+    CounterList& list = m_HWCounterDeviceMap[uDeviceid];
+
+    if (list.empty())
+    {
+        IGPACounterAccessor* pAccessor = NULL;
+        IGPACounterScheduler* pScheduler = NULL;
+        SpAssertRet(m_pGetAvailableCountersForDevice != NULL) list;
+        SpAssertRet(m_api != GPA_API__LAST) list;
+        static const int AMD_VENDOR_ID = 0x1002;
+        m_pGetAvailableCountersForDevice(m_api, AMD_VENDOR_ID, uDeviceid, uRevisionid, GPA_OPENCONTEXT_DEFAULT_BIT, true, &pAccessor, &pScheduler);
+        SpAssertRet(pAccessor != NULL) list;
+        SpAssertRet(pScheduler != NULL) list;
+
+        gpa_uint32 nCounters = pAccessor->GetNumCounters();
+        list.resize(shouldIncludeCounterDescriptions ? nCounters * 3 : nCounters);
+
+        unsigned int counterListIndex = 0;
+
+        for (gpa_uint32 i = 0; i < nCounters; ++i)
+        {
+            list[counterListIndex++] = pAccessor->GetCounterName(i);
+
+            if (shouldIncludeCounterDescriptions)
+            {
+                list[counterListIndex++] = pAccessor->GetCounterGroup(i);
+                list[counterListIndex++] = pAccessor->GetCounterDescription(i);
+            }
+        }
+    }
+
+    return list;
+}
+
 bool GPAUtils::SetEnabledCounters(const CounterList& countersToEnable)
 {
     m_selectedCounters.assign(countersToEnable.begin(), countersToEnable.end());
     return true;
 }
 
-bool GPAUtils::GetAvailableCounters(GPA_HW_GENERATION generation, CounterList& availableCounters, const bool shouldIncludeCounterDescriptions)
+bool GPAUtils::GetAvailableCounters(GPA_Hw_Generation generation, CounterList& availableCounters, const bool shouldIncludeCounterDescriptions)
 {
     bool retVal = true;
 
@@ -614,7 +552,7 @@ bool GPAUtils::GetAvailableCounters(GPA_HW_GENERATION generation, CounterList& a
 
 bool GPAUtils::GetAvailableCountersGdt(GDT_HW_GENERATION generation, CounterList& availableCounters)
 {
-    GPA_HW_GENERATION gpaHwGen = GdtHwGenToGpaHwGen(generation);
+    GPA_Hw_Generation gpaHwGen = GdtHwGenToGpaHwGen(generation);
     bool retVal = true;
 
     if (GPA_HW_GENERATION_NONE == gpaHwGen)
@@ -635,7 +573,13 @@ bool GPAUtils::GetAvailableCountersForDevice(gpa_uint32 deviceId, gpa_uint32 rev
     return true;
 }
 
-void GPAUtils::VerifyCounter(const std::string& strCounter, GPA_HW_GENERATION& generation)
+bool GPAUtils::GetAvailableCountersForDeviceWithoutMaxPass(gpa_uint32 deviceId, gpa_uint32 revisionId, CounterList& availableCounters, const bool shouldIncludeCounterDescriptions)
+{
+    availableCounters = GetCountersForDevice(deviceId, revisionId, shouldIncludeCounterDescriptions);
+    return true;
+}
+
+void GPAUtils::VerifyCounter(const std::string& strCounter, GPA_Hw_Generation& generation)
 {
     CounterList& list = GetCounters(GPA_HW_GENERATION_GFX9);
     CounterList::iterator it = std::find(list.begin(), list.end(), strCounter);
@@ -674,6 +618,33 @@ void GPAUtils::VerifyCounter(const std::string& strCounter, GPA_HW_GENERATION& g
     }
 
     generation = GPA_HW_GENERATION_NONE;
+}
+
+bool GPAUtils::GetCounterDataType(gpa_uint32 counterIndex, GPA_Data_Type& counterDataType) const
+{
+    bool retVal = GPA_STATUS_OK == m_gpaFuncTable->GPA_GetCounterDataType(m_contextId, counterIndex, &counterDataType);
+
+    return retVal;
+}
+
+bool GPAUtils::GetCounterName(gpa_uint32 counterIndex, std::string& counterName) const
+{
+    const char* name;
+    bool retVal = GPA_STATUS_OK == m_gpaFuncTable->GPA_GetCounterName(m_contextId, counterIndex, &name);
+
+    if (retVal)
+    {
+        counterName = name;
+    }
+
+    return retVal;
+}
+
+bool GPAUtils::CreateSession(GPA_SessionId& sessionId) const
+{
+    bool retVal = GPA_STATUS_OK == m_gpaFuncTable->GPA_CreateSession(m_contextId, GPA_SESSION_SAMPLE_TYPE_DISCRETE_COUNTER, &sessionId);
+
+    return retVal;
 }
 
 void GPAUtils::GPALogCallback(GPA_Logging_Type messageType, const char* message)

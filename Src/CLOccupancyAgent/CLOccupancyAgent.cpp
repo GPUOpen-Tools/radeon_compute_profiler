@@ -168,6 +168,12 @@ clAgent_OnLoad(cl_agent* agent)
 
     Parameters params;
     FileUtils::GetParametersFromFile(params);
+
+    if (!params.m_bTrace)
+    {
+        FileUtils::ReadKernelListFile(params);
+    }
+
     std::string occupancyFile = params.m_strOutputFile;
 
     size_t passStringPosition = occupancyFile.find("_pass");

@@ -32,6 +32,8 @@ std::string HSATraceStringUtils::GetHSAAPINameString(HSA_API_Type type)
             HSA_EXT_FINALIZE_API_TABLE
             HSA_EXT_IMAGE_API_TABLE
             HSA_EXT_AMD_API_TABLE
+            HSA_VEN_AMD_LOADER_API_TABLE
+            HSA_VEN_AMD_AQL_PROFILE_API_TABLE
 
         default: return "";
 #undef X
@@ -346,20 +348,24 @@ unsigned int HSATraceStringUtils::Get_hsa_amd_agent_get_info_AttributeSize(hsa_a
         case HSA_AMD_AGENT_INFO_PRODUCT_NAME:
             return sizeof(char[64]);
 
-            // uint32_t
+        // uint32_t
         case HSA_AMD_AGENT_INFO_CHIP_ID:
         case HSA_AMD_AGENT_INFO_CACHELINE_SIZE:
         case HSA_AMD_AGENT_INFO_COMPUTE_UNIT_COUNT:
         case HSA_AMD_AGENT_INFO_MAX_CLOCK_FREQUENCY:
         case HSA_AMD_AGENT_INFO_DRIVER_NODE_ID:
         case HSA_AMD_AGENT_INFO_MAX_ADDRESS_WATCH_POINTS:
+        case HSA_AMD_AGENT_INFO_BDFID:
         case HSA_AMD_AGENT_INFO_MEMORY_WIDTH:
         case HSA_AMD_AGENT_INFO_MEMORY_MAX_FREQUENCY:
-        case HSA_AMD_AGENT_INFO_BDFID:
+        case HSA_AMD_AGENT_INFO_MAX_WAVES_PER_CU:
+        case HSA_AMD_AGENT_INFO_NUM_SIMDS_PER_CU:
+        case HSA_AMD_AGENT_INFO_NUM_SHADER_ENGINES:
+        case HSA_AMD_AGENT_INFO_NUM_SHADER_ARRAYS_PER_SE:
             return sizeof(uint32_t);
 
         default:
-            return 0;
+            return sizeof(int);
     }
 }
 std::string HSATraceStringUtils::Get_hsa_amd_agent_get_info_AttributeString(void* value, hsa_amd_agent_info_t attribute, hsa_status_t retVal)
@@ -388,15 +394,19 @@ std::string HSATraceStringUtils::Get_hsa_amd_agent_get_info_AttributeString(void
                 case HSA_AMD_AGENT_INFO_MAX_CLOCK_FREQUENCY:
                 case HSA_AMD_AGENT_INFO_DRIVER_NODE_ID:
                 case HSA_AMD_AGENT_INFO_MAX_ADDRESS_WATCH_POINTS:
+                case HSA_AMD_AGENT_INFO_BDFID:
                 case HSA_AMD_AGENT_INFO_MEMORY_WIDTH:
                 case HSA_AMD_AGENT_INFO_MEMORY_MAX_FREQUENCY:
-                case HSA_AMD_AGENT_INFO_BDFID:
+                case HSA_AMD_AGENT_INFO_MAX_WAVES_PER_CU:
+                case HSA_AMD_AGENT_INFO_NUM_SIMDS_PER_CU:
+                case HSA_AMD_AGENT_INFO_NUM_SHADER_ENGINES:
+                case HSA_AMD_AGENT_INFO_NUM_SHADER_ARRAYS_PER_SE:
                     ss << (*(static_cast<uint32_t*>(value)));
                     break;
 
-            default:
-                ss << StringUtils::ToString(*(static_cast<int*>(value)));
-                break;
+                default:
+                    ss << StringUtils::ToString(*(static_cast<int*>(value)));
+                    break;
             }
         }
 
@@ -1193,8 +1203,8 @@ unsigned int HSATraceStringUtils::Get_hsa_amd_agent_memory_pool_get_info_Attribu
         case HSA_AMD_AGENT_MEMORY_POOL_INFO_LINK_INFO:
             return sizeof(hsa_amd_memory_pool_link_info_t);
 
-    default:
-        return 0;
+        default:
+            return 0;
     }
 }
 
@@ -1255,8 +1265,8 @@ unsigned int HSATraceStringUtils::Get_hsa_cache_get_info_AttributeSize(hsa_cache
         case HSA_CACHE_INFO_LEVEL:
             return sizeof(hsa_amd_memory_pool_link_info_t);
 
-    default:
-        return 0;
+        default:
+            return 0;
     }
 }
 
@@ -1309,8 +1319,8 @@ unsigned int HSATraceStringUtils::Get_hsa_wavefront_get_info_AttributeSize(hsa_w
         case HSA_WAVEFRONT_INFO_SIZE:
             return sizeof(uint32_t);
 
-    default:
-        return 0;
+        default:
+            return 0;
     }
 }
 
@@ -1357,8 +1367,8 @@ unsigned int HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_get_info_AttributeS
         case HSA_VEN_AMD_AQLPROFILE_INFO_SQTT_DATA:
             return sizeof(uint64_t);
 
-    default:
-        return 0;
+        default:
+            return 0;
     }
 }
 
@@ -1434,8 +1444,8 @@ unsigned int HSATraceStringUtils::Get_hsa_ven_amd_loader_loaded_code_object_get_
         case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_LOAD_DELTA:
             return sizeof(int64_t);
 
-    default:
-        return 0;
+        default:
+            return 0;
     }
 }
 
@@ -1469,7 +1479,7 @@ std::string HSATraceStringUtils::Get_hsa_ven_amd_loader_loaded_code_object_get_i
 
                 // hsa_ven_amd_loader_code_object_storage_type_t
                 case HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_CODE_OBJECT_STORAGE_TYPE:
-                    ss << HSATraceStringUtils::Get_hsa_ven_amd_loader_code_object_storage_type_t_String(*(static_cast<hsa_ven_amd_loader_code_object_storage_type_t*>(value)));                    
+                    ss << HSATraceStringUtils::Get_hsa_ven_amd_loader_code_object_storage_type_t_String(*(static_cast<hsa_ven_amd_loader_code_object_storage_type_t*>(value)));
                     break;
 
                 // uint64_t

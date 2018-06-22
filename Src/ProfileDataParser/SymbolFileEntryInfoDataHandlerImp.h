@@ -74,7 +74,7 @@ public:
     bool IsStackEntryNull() const override;
 
     /// Destructor
-    ~SymbolFileEntryInfoDataHandler(){}
+    ~SymbolFileEntryInfoDataHandler() {}
 
 private:
     SymbolFileEntry*                    m_pSymbolFileEntry;             ///< pointer to symbol file entry data

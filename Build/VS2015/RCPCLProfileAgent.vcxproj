@@ -37,6 +37,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="RCP-Common.props" />
     <Import Project="RCP-Common-OpenCL.props" />
+    <Import Project="RCP-VKStableClocks.props" />
     <Import Project="..\..\..\RCP-Internal\Build\VS2015\RCP-Internal.props" Condition="exists('..\..\..\RCP-Internal\Build\VS2015\RCP-Internal.props')" />
     <Import Project="$(CommonDir)\Lib\AMD\ACL\Global-ACL.props" />
     <Import Project="$(CommonDir)\Src\CElf\Global-CElf.props" />
@@ -50,7 +51,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <CustomBuildStep>
-      <Command>"..\..\Src\CLProfileAgent\CLExternalFileCopy.bat" "$(GPUPerfAPIDir)" "$(AMDTBuildSuffix)" "$(AMDTPlatform)" "$(AMDTPlatformSuffix)" "$(OutDir)"</Command>
+      <Command>"..\..\Src\CLProfileAgent\CLExternalFileCopy.bat" "$(GPUPerfAPIDir)" "$(VKStableClocksDir)" "$(AMDTBuildSuffix)" "$(AMDTPlatform)" "$(AMDTPlatformSuffix)" "$(OutDir)"</Command>
       <Outputs>$(OutDir)GPUPerfAPICL$(AMDTPlatformSuffix)$(AMDT_BUILD_SUFFIX).dll;$(OutDir)\GPUPerfAPICounters$(AMDTPlatformSuffix)$(AMDT_BUILD_SUFFIX).dll;$(Outputs)</Outputs>
     </CustomBuildStep>
     <Link>
@@ -73,7 +74,6 @@
     <ClCompile Include="..\..\Src\CLProfileAgent\CLContextManager.cpp" />
     <ClCompile Include="..\..\Src\CLProfileAgent\CLDeferredKernel.cpp" />
     <ClCompile Include="..\..\Src\CLProfileAgent\CLGPAProfiler.cpp" />
-    <ClCompile Include="..\..\Src\CLProfileAgent\CLInitProfiler.cpp" />
     <ClCompile Include="..\..\Src\CLProfileAgent\CLKernel.cpp" />
     <ClCompile Include="..\..\Src\CLProfileAgent\CLKernelAssembly.cpp" />
     <ClCompile Include="..\..\Src\CLProfileAgent\CLProfileAgent.cpp" />
@@ -88,14 +88,12 @@
     <ClInclude Include="..\..\Src\CLProfileAgent\CLContextManager.h" />
     <ClInclude Include="..\..\Src\CLProfileAgent\CLDeferredKernel.h" />
     <ClInclude Include="..\..\Src\CLProfileAgent\CLGPAProfiler.h" />
-    <ClInclude Include="..\..\Src\CLProfileAgent\CLInitProfiler.h" />
     <ClInclude Include="..\..\Src\CLProfileAgent\CLKernel.h" />
     <ClInclude Include="..\..\Src\CLProfileAgent\CLKernelAssembly.h" />
     <ClInclude Include="..\..\Src\CLProfileAgent\CLProfileAgent.h" />
     <ClInclude Include="..\..\Src\CLProfileAgent\CLProfilerMineCLEntry.h" />
     <ClInclude Include="..\..\Src\CLProfileAgent\CLProfilerMineCLMemory.h" />
     <ClInclude Include="..\..\Src\CLProfileAgent\CLUserEvent.h" />
-    <ClInclude Include="..\..\Src\CLProfileAgent\resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Src\AMDTBaseTools\AMDTBaseToolsVS14.vcxproj">

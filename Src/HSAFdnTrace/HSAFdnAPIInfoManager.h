@@ -163,6 +163,14 @@ public:
     /// Unlocks access to the signal replacer map
     void UnlockSignalMap();
 
+    /// Disable HSA transfer time
+    /// This should prevent the code that replaces hsa_amd_memory_async_copy signals from executing
+    void DisableHsaTransferTime();
+
+    /// Return true if HSA transfer time is disabled
+    /// \return true if HSA transfer time is disabled
+    bool IsHsaTransferTimeDisabled();
+
 protected:
     /// Flush non-API timestamp data to the output stream
     /// \param pid the process id of the profiled process
@@ -215,6 +223,7 @@ private:
     ProfilerTimer*         m_pDurationTimer;                ///< timer for handling duration timer for the profile agent
     ReplacementSignalMap   m_signalMap;                     ///< map of replacement signal handle to the original signal
     std::mutex             m_signalMapMtx;                  ///< mutex to guard access to m_signalMap
+    bool                   m_bNoHSATransferTime;            ///< flag indicating whether or not HSA transfer time is ignored
 };
 
 #endif // _HSA_FDN_API_INFO_MANAGER_H_

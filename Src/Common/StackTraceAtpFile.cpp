@@ -130,7 +130,7 @@ void StackTraceAtpFilePart::SaveToFile(const std::string& strTmpFilePath, const 
         // Construct output name: $name.$mod.st
         ss << FileUtils::GetBaseFileName(m_config.strOutputFile) << "." << m_strPartName << TRACE_STACK_EXT;
         std::string fromFile = ss.str();
-        OSUtils::Instance()->osMoveFile(fromFile.c_str(), stackFile.c_str());
+        OSUtils::Instance()->OSMoveFile(fromFile.c_str(), stackFile.c_str());
     }
 }
 

@@ -78,7 +78,7 @@ extern "C" bool DLL_PUBLIC OnLoad(void* pTable, uint64_t runtimeVersion, uint64_
 
     GlobalSettings::GetInstance()->m_params = params;
 
-    if(params.m_bKernelOccupancy)
+    if (params.m_bKernelOccupancy)
     {
         std::string occupancyFile = params.m_strOutputFile;
         size_t passStringPosition = occupancyFile.find("_pass");

@@ -61,7 +61,7 @@ public:
     virtual void ReleaseData() = 0;
 
     /// Virtual Destructor
-    virtual ~IOccupancyFileInfoDataHandler(){};
+    virtual ~IOccupancyFileInfoDataHandler() {};
 };
 
 #endif // _I_OCCUPANCY_FILE_INFO_DATA_HANDLER_H_

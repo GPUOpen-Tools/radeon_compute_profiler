@@ -137,7 +137,7 @@ public:
 
             uiNumBuffer = obj.uiNumBuffer;
             uiNumImage = obj.uiNumImage;
-            uiNumQueue= obj.uiNumQueue;
+            uiNumQueue = obj.uiNumQueue;
         }
 
         return *this;

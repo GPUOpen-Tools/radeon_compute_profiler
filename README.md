@@ -32,20 +32,24 @@ RCP was formerly delivered as part of CodeXL with the executable name
 * When used with CodeXL, all profiler data can be visualized in a user-friendly graphical user interface.
 
 ## What's New
-* Version 5.3 (12/20/17)
- * OpenCL: Support for tracing SSG extension APIs.
- * ROCm/HSA: Support for ROCm 1.7.
- * Documentation now included for RCP (previously RCP documentation was only available in CodeXL).
- * Fixes an issue with incorrect error reporting in the BestPractices Summary Page for OpenCL APIs that do not return a cl_int error code.
+* Version 5.4 (6/22/18)
+ * Adds support for additional GPUs and APUs.
+ * Support for profiling OpenCL applications running on ROCm
+ * OpenCL: Support for tracing OpenCL 2.1 and 2.2 APIs
+ * ROCm/HSA: Support for ROCm 1.8.
+ * ROCm/HSA: Support for tracing AMD vendor extensions.
+ * Fixes an issue parsing occupancy data collected on systems with certain locale settings.
+ * ROCm/HSA: Fixes an issue with garbage characters in the .atp file for some HSA API string parameters.
+ * OpenCL: Fixes profiling on recent amdgpu-pro drivers using the legacy OpenCL stack.
+ * OpenCL: Works around a driver issue where GPU clock frequencies remain fixed after profiling on GFX9-based GPUs.
 
 ## System Requirements
 * An AMD Radeon GCN-based GPU or APU
-* Radeon Software Crimson ReLive Edition 17.4.3 or later (Driver Packaging Version 17.10 or later).
-  * For Vega support, a driver with Driver Packaging Version 17.30 or later is required
-* ROCm 1.7. See system requirements for ROCm: https://rocm.github.io/install.html and https://rocm.github.io/hardware.html.
+* Radeon Software Crimson ReLive Edition 18.5.1 or later (Driver Packaging Version 18.10 or later).
+* ROCm 1.8. See system requirements for ROCm: https://rocm.github.io/install.html and https://rocm.github.io/hardware.html
 * Windows 7, 8.1, and 10
   * For Windows, the `Visual C++ Redistributable for Visual Studio 2015` is required. It can be downloaded from https://www.microsoft.com/en-us/download/details.aspx?id=48145
-* Ubuntu (14.04 and later, 16.04 or later for ROCm support) and RHEL (7 and later) distributions
+* Ubuntu (16.04 and later) and RHEL (7 and later) distributions
 
 ## Cloning the Repository
 To clone the RCP repository, execute the following git commands
@@ -58,6 +62,7 @@ UpdateCommon.py has replaced the use of git submodules in the CodeXL repository
 
 ## Source Code Directory Layout
 * [Build](Build) -- contains both Linux and Windows build-related files
+* [docs](docs) -- contains documentation sources
 * [Scripts](Scripts) -- scripts to use to clone/update dependent repositories
 * [Src/CLCommon](Src/CLCommon) -- contains source code shared by the various OpenCL™ agents
 * [Src/CLOccupancyAgent](Src/CLOccupancyAgent) -- contains source code for the OpenCL™ agent which collects kernel occupancy information
@@ -91,8 +96,13 @@ is being pulled out of CodeXL and into its own codebase again, we've bumped the
 version number up to 5.x.
 
 ## Known Issues
-* For the OpenCL™ Profiler
-  * Collecting Performance Counters using --perfcounter for an OpenCL™ application when running OpenCL-on-ROCm is not suported currently. The workaround is to profile using the ROCm profiler (using the --hsapmc command-line switch).
+* For the OpenCL Profiler
+  * When collecting performance counters on Linux, the current user must have read access to <br><br>/sys/class/drm/card\<N\>/device/power_dpm_force_performance_level<br><br>
+    where \<N\> is the index of the card in question. By default this file is only modifiable by root, so the profiler would have to be run as root in order for it to modify
+    this file. It is possible to modify the permissions for the file instead so that it can be written by unprivileged users. The following command will
+    achieve this. Note, however, that changing the permissions on a system file like this could circumvent security. Also, on multi-GPU systems, you may have to replace
+    "card0" with the appropriate card number. Permissions on this file may be reset when rebooting the system:
+    * sudo chmod ugo+w /sys/class/drm/card0/device/power_dpm_force_performance_level
 * For the ROCm Profiler
   * API Trace and Perf Counter data may be truncated or missing if the application being profiled does not call hsa_shut_down
   * Kernel occupancy information will only be written to disk if the application being profiled calls hsa_shut_down

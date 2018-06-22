@@ -23,7 +23,7 @@
 // @{
 
 #define RCP_MAJOR_VERSION 5
-#define RCP_MINOR_VERSION 3
+#define RCP_MINOR_VERSION 4
 #define RCP_BUILD_NUMBER 0
 #define RCP_UPDATE_VERSION 0
 
@@ -47,7 +47,7 @@
 #define GPU_PROFILER_LIBRARY_NAME_PREFIX "RCP"
 #define RCP_PRODUCT_NAME "Radeon Compute Profiler"
 
-#define RCP_COPYRIGHT_CURRENT_YEAR 2017
+#define RCP_COPYRIGHT_CURRENT_YEAR 2018
 
 #define RCP_COPYRIGHT_STR "Copyright (c) 2010-" RCP_VERSION_STR(RCP_COPYRIGHT_CURRENT_YEAR) " Advanced Micro Devices, Inc. All rights reserved."
 

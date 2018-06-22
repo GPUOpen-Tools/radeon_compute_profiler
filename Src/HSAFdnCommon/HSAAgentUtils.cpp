@@ -60,7 +60,8 @@ void HSAAgentUtils::SplitHSAAgentStringToHandleAndName(
 {
     // Format {handle=*****,name=*****}
     std::string tempString = hsaAgentString;
-    if(hsaAgentString.find('{') != std::string::npos)
+
+    if (hsaAgentString.find('{') != std::string::npos)
     {
         tempString = std::string(hsaAgentString.begin() + 1, hsaAgentString.end() - 1);
     }

@@ -55,6 +55,8 @@ CLRetCodeAnalyzer::CLRetCodeAnalyzer(CLAPIAnalyzerManager* pManager) : CLAPIAnal
     m_retCodeArgMap[CL_FUNC_TYPE_clCreatePipe] = 5;
     m_retCodeArgMap[CL_FUNC_TYPE_clCreateUserEvent] = 1;
     m_retCodeArgMap[CL_FUNC_TYPE_clCreateSsgFileObjectAMD] = 3;
+    m_retCodeArgMap[CL_FUNC_TYPE_clCloneKernel] = 1;
+    m_retCodeArgMap[CL_FUNC_TYPE_clCreateProgramWithIL] = 3;
 
     // the following are the OCL APIs that do not provide a return code at all
     m_retCodeArgMap[CL_FUNC_TYPE_clGetExtensionFunctionAddress] = s_NO_RET_CODE_ARG_INDEX;

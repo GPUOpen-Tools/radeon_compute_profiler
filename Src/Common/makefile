@@ -14,7 +14,6 @@ INCLUDES = \
 	-I$(TSINGLETON_DIR) \
 	-I$(UTF8CPP_DIR) \
 	-I$(GPU_PERF_API_DIR) \
-	-I$(GPUPERFAPIUTILS_DIR) \
 	-I$(ACL_DIR)/include \
 	-I$(ADL_DIR)/include
 
@@ -36,8 +35,6 @@ LIB_OBJS =  \
 	./$(OBJ_DIR)/DynamicLibraryModule.o \
 	./$(OBJ_DIR)/KernelStats.o \
 	./$(OBJ_DIR)/GPAUtils.o \
-	./$(OBJ_DIR)/GPUPerfAPILoader.o \
-	./$(OBJ_DIR)/GPUPerfAPIRegistry.o \
 	./$(OBJ_DIR)/CSVFileParser.o \
 	./$(OBJ_DIR)/KernelProfileResultManager.o \
 	./$(OBJ_DIR)/ACLModule.o \

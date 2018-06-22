@@ -225,7 +225,7 @@ void CLAPIInfoManager::FlushTraceData(bool bForceFlush)
 
             // don't remove clCreateCommandQueue, clCreateCommandQueueWithProperties, clCreateContext, clCreateContextFromType
             // In time out mode, we keep clCreateCommandQueue API Object so that we can retrieve device name and etc
-            if (nullptr != item && 
+            if (nullptr != item &&
                 CL_FUNC_TYPE_clCreateCommandQueue != item->m_type &&
                 CL_FUNC_TYPE_clCreateCommandQueueWithProperties != item->m_type &&
                 CL_FUNC_TYPE_clCreateContext != item->m_type &&

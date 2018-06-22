@@ -9,7 +9,7 @@ INCLUDES = \
 	-I. \
 	-I../Common \
 	-I$(COMMON_PROJ_DIR) \
-	-I$(ATI_STREAM_SDK_DIR)/include \
+	-I$(APPSDK_DIR)/include \
 	-I$(CAL_DIR)/include \
 	-I$(DYNAMICLIBRARYMODULE_DIR) \
 	-I$(DEVICEINFO_DIR) \

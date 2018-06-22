@@ -191,6 +191,7 @@ clAgent_OnLoad(cl_agent* agent)
     {
         CLAPIInfoManager::Instance()->EnableProfileDelayStart(params.m_bDelayStartEnabled, params.m_delayInMilliseconds);
         CLAPIInfoManager::Instance()->EnableProfileDuration(params.m_bProfilerDurationEnabled, params.m_durationInMilliseconds);
+
         if (params.m_bDelayStartEnabled)
         {
             CLAPIInfoManager::Instance()->CreateTimer(PROFILEDELAYTIMER, params.m_delayInMilliseconds);

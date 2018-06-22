@@ -72,6 +72,7 @@ typedef struct
     bool                bHSAPMC;                            ///< flag indicating whether or not HSA performance counter is enabled
     bool                bCompatibilityMode;                 ///< flag indicating whether or not compatibility mode is enabled
     bool                bNoDetours;                         ///< flag indicating that application should not be launched using detours
+    bool                bNoStableClocks;                    ///< flag indicating that GPU clocks should not be forced to stable
     bool                bForceSinglePassPMC;                ///< flag indicating that only a single pass should be allowed when collecting performance counters
     bool                bGPUTimePMC;                        ///< flag indicating whether or not the profiler should collect gpu time when collecting perf counters
     bool                bStartDisabled;                     ///< flag indicating whether or not to start with profiling disabled
@@ -82,6 +83,7 @@ typedef struct
     unsigned int        uiMaxPassPerFile;                   ///< maximum pass for generating counter files
     bool                bAqlPacketTracing;                  ///< flag indicating whether or not to enable AQL packet tracing
     bool                bDisableKernelDemangling;           ///< flag indicating whether or not to demangle the kernel name
+    bool                bNoHSATransferTime;                 ///< flag indicating whether or not HSA transfer time is ignored
 } Config;
 
 #endif // _CONFIG_H_

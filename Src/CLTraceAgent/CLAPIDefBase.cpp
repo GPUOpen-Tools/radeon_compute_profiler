@@ -320,6 +320,12 @@ void CLEnqueueAPIBase::GetContextInfo()
             std::string strDeviceName = std::string(szDeviceName);
             m_strDeviceName = StringUtils::Replace(strDeviceName, " ", "_");
         }
+
+        if (clCreateCmdQueueAPIObj->GetDevicePcieIdStatus())
+        {
+            m_devicePcieId = clCreateCmdQueueAPIObj->GetDevicePcieId();
+            m_isDevicePcieIdSet = true;
+        }
     }
     else
     {

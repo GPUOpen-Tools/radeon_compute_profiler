@@ -96,6 +96,8 @@ std::string GetExeName();
 /// \return executable file path string
 std::string GetExePath();
 
+/// Get executable file path
+/// \return executable file path string
 gtString GetExePathAsUnicode();
 
 /// Get base file name
@@ -111,7 +113,6 @@ std::string GetFileExtension(const std::string& strFileName);
 /// Get current app's full path
 /// \return full path string
 std::string GetExeFullPath();
-
 
 /// Get current app's full path
 /// \return full path string

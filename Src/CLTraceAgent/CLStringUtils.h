@@ -335,10 +335,11 @@ std::string GetDeviceTypeString(const cl_device_type type);
 std::string GetPlatformInfoString(const cl_platform_info param_name);
 
 /// Get platform info value string
+/// \param param_name cl_platform_info enum
 /// \param param_value the value of the parameter
 /// \param ret_value the return value of API
 /// \return string representation of the input
-std::string GetPlatformInfoValueString(const void* param_value, cl_int ret_value);
+std::string GetPlatformInfoValueString(const cl_platform_info param_name, const void* param_value, cl_int ret_value);
 
 /// Convert device info to string
 /// \param param_name device info
@@ -431,12 +432,33 @@ std::string GetKernelArgTypeQualifierString(const cl_kernel_arg_type_qualifier t
 /// \return string representation of the input
 std::string GetKernelWorkGroupInfoString(const cl_kernel_work_group_info param_name);
 
+/// Convert cl_kernel_sub_group_info to string
+/// \param param_name cl_kernel_sub_group_info enum
+/// \return string representation of the input
+std::string GetKernelSubGroupInfoString(const cl_kernel_sub_group_info param_name);
+
 /// Convert cl_kernel_work_group_info to string
 /// \param param_name cl_kernel_work_group_info
 /// \param param_value returned param value
 /// \param ret_value the return value of API
 /// \return string representation of the input
 std::string GetKernelWorkGroupInfoValueString(const cl_kernel_work_group_info param_name, const void* param_value, cl_int ret_value);
+
+/// Convert cl_kernel_sub_group_info to string
+/// \param param_name cl_kernel_sub_group_info
+/// \param param_value returned param value
+/// \param param_value_size returned param value size in bytes
+/// \param ret_value the return value of API
+/// \return string representation of the input
+std::string GetKernelSubGroupInfoOutputValueString(const cl_kernel_sub_group_info param_name, const void* param_value, size_t param_value_size, cl_int ret_value);
+
+/// Convert cl_kernel_sub_group_info to string
+/// \param param_name cl_kernel_sub_group_info
+/// \param param_value returned input value
+/// \param param_value_size returned input value size in bytes
+/// \param ret_value the return value of API
+/// \return string representation of the input
+std::string GetKernelSubGroupInfoInputValueString(const cl_kernel_sub_group_info param_name, const void* input_value, size_t input_value_size, cl_int ret_value);
 
 /// Convert cl_program_build_info to string
 /// \param param_name cl_program_build_info
@@ -554,6 +576,12 @@ std::string GetSizeString(const size_t* size, size_t sizeVal);
 /// \param intVal the dereferenced cl_uint pointer returned by the API
 /// \return string representation of the cl_uint, or "NULL"
 std::string GetIntString(const cl_uint* intPtr, cl_uint intVal);
+
+/// Return the cl_ulong or NULL
+/// \param intPtr the cl_ulong pointer returned by the API
+/// \param intVal the dereferenced cl_ulong pointer returned by the API
+/// \return string representation of the cl_ulong, or "NULL"
+std::string GetLongString(const cl_ulong* longPtr, cl_ulong longVal);
 
 /// Convert cl_device_partition_property_ext to string
 /// \param prop the property to convert

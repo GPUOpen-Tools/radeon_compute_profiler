@@ -148,12 +148,13 @@ bool OccupancyInfoDataHandler::GenerateOccupancyChart(const char* pOutputFile, c
 {
     std::string tmpErrorMessage;
     bool success = false;
+
     if (nullptr != pOutputFile)
     {
         success = ::GenerateOccupancyChart(m_occupancyInfo, pOutputFile, tmpErrorMessage);
     }
 
-    if(success != true)
+    if (success != true)
     {
         if (nullptr != m_pErrorMessageResource)
         {
@@ -162,7 +163,8 @@ bool OccupancyInfoDataHandler::GenerateOccupancyChart(const char* pOutputFile, c
 
         if (!tmpErrorMessage.empty())
         {
-            *ppErrorMessage = new (std::nothrow) char[tmpErrorMessage.size() + 1];
+            *ppErrorMessage = new(std::nothrow) char[tmpErrorMessage.size() + 1];
+
             if (nullptr != *ppErrorMessage)
             {
                 memcpy(*ppErrorMessage, tmpErrorMessage.c_str(), tmpErrorMessage.size());
@@ -172,7 +174,8 @@ bool OccupancyInfoDataHandler::GenerateOccupancyChart(const char* pOutputFile, c
         }
         else
         {
-            *ppErrorMessage = new (std::nothrow) char[1];
+            *ppErrorMessage = new(std::nothrow) char[1];
+
             if (nullptr != ppErrorMessage)
             {
                 *ppErrorMessage[0] = '\0';

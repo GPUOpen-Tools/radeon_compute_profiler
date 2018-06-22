@@ -335,7 +335,7 @@ Mine_clEnqueueNDRangeKernel(cl_command_queue commandQueue,
     kernelStats.m_threadId = tid;
     kernelStats.m_uSequenceId = seqid;
 
-    gpa_uint32 uSessionIDOut = 0;
+    GPA_SessionId sessionId = 0;
     cl_int returnCode = CL_SUCCESS;
 
     KernelFilterList enabledKernels = GlobalSettings::GetInstance()->m_params.m_kernelFilterList;
@@ -373,7 +373,7 @@ Mine_clEnqueueNDRangeKernel(cl_command_queue commandQueue,
     {
         if (!bProfilerLoaded)
         {
-            GPULogger::Log(GPULogger::logERROR, "Error: Profiler not loaded.\n");
+            GPULogger::Log(GPULogger::logERROR, "Profiler not loaded.\n");
         }
 
         if (userEvent != NULL)
@@ -433,9 +433,9 @@ Mine_clEnqueueNDRangeKernel(cl_command_queue commandQueue,
     }
     else
     {
-        if (g_Profiler.Open(commandQueue))
+        if (!g_Profiler.Open(commandQueue))
         {
-            g_Profiler.EnableCounters(commandQueue);
+            GPULogger::Log(GPULogger::logERROR, "Unable to open profiler. Check for GPA Errors.\n");
         }
 
         // perform profiling with a full set of GPA public counters
@@ -449,7 +449,7 @@ Mine_clEnqueueNDRangeKernel(cl_command_queue commandQueue,
                                pEventWaitList,
                                pEvent,
                                returnCode,
-                               uSessionIDOut,
+                               sessionId,
                                kernelStats.m_dTime);
     }
 
@@ -539,7 +539,7 @@ Mine_clEnqueueNDRangeKernel(cl_command_queue commandQueue,
         if (!bNoCounters)
         {
             // write the result out to a csv file
-            g_Profiler.DumpSession(uSessionIDOut, kernelStats);
+            g_Profiler.DumpSession(sessionId, kernelStats);
         }
         else
         {
@@ -2266,6 +2266,152 @@ Mine_clEnqueueWriteSsgFileAMD(cl_command_queue command_queue,
                                                                event);
 }
 
+cl_kernel CL_API_CALL
+Mine_clCloneKernel(cl_kernel source_kernel,
+                   cl_int* errcode_ret)
+{
+    SeqIDGenerator::Instance()->GenerateID();
+
+    cl_kernel kernel = g_nextDispatchTable.clCloneKernel(source_kernel,
+                                                         errcode_ret);
+
+    if (nullptr != errcode_ret && CL_SUCCESS != *errcode_ret)
+    {
+        return kernel;
+    }
+
+    g_Profiler.AddKernel(kernel);
+
+    return kernel;
+}
+
+cl_int CL_API_CALL
+Mine_clEnqueueSVMMigrateMem(cl_command_queue command_queue,
+                            cl_uint num_svm_pointers,
+                            const void** svm_pointers,
+                            const size_t* sizes,
+                            cl_mem_migration_flags flags,
+                            cl_uint num_events_in_wait_list,
+                            const cl_event* event_wait_list,
+                            cl_event* event)
+{
+    SeqIDGenerator::Instance()->GenerateID();
+
+    cl_int ret = g_nextDispatchTable.clEnqueueSVMMigrateMem(command_queue,
+                                                            num_svm_pointers,
+                                                            svm_pointers,
+                                                            sizes,
+                                                            flags,
+                                                            num_events_in_wait_list,
+                                                            event_wait_list,
+                                                            event);
+
+    return ret;
+}
+
+cl_int CL_API_CALL Mine_clGetDeviceAndHostTimer(cl_device_id device,
+                                                cl_ulong* device_timestamp,
+                                                cl_ulong* host_timestamp)
+{
+    SeqIDGenerator::Instance()->GenerateID();
+
+    cl_int ret = g_nextDispatchTable.clGetDeviceAndHostTimer(device,
+                                                             device_timestamp,
+                                                             host_timestamp);
+
+    return ret;
+}
+
+cl_int CL_API_CALL Mine_clGetHostTimer(cl_device_id device,
+                                       cl_ulong* host_timestamp)
+{
+    SeqIDGenerator::Instance()->GenerateID();
+
+    cl_int ret = g_nextDispatchTable.clGetHostTimer(device,
+                                                    host_timestamp);
+
+    return ret;
+}
+
+cl_int CL_API_CALL Mine_clSetDefaultDeviceCommandQueue(cl_context context,
+                                                       cl_device_id device,
+                                                       cl_command_queue command_queue)
+{
+    SeqIDGenerator::Instance()->GenerateID();
+
+    cl_int ret = g_nextDispatchTable.clSetDefaultDeviceCommandQueue(context,
+                                                                    device,
+                                                                    command_queue);
+
+    return ret;
+}
+
+cl_int CL_API_CALL Mine_clGetKernelSubGroupInfo(cl_kernel                kernel,
+                                                cl_device_id             device,
+                                                cl_kernel_sub_group_info param_name,
+                                                size_t                   input_value_size,
+                                                const void*              input_value,
+                                                size_t                   param_value_size,
+                                                void*                    param_value,
+                                                size_t*                  param_value_size_ret)
+{
+    SeqIDGenerator::Instance()->GenerateID();
+
+    cl_int ret = g_nextDispatchTable.clGetKernelSubGroupInfo(kernel,
+                                                             device,
+                                                             param_name,
+                                                             input_value_size,
+                                                             input_value,
+                                                             param_value_size,
+                                                             param_value,
+                                                             param_value_size_ret);
+
+    return ret;
+}
+
+cl_program CL_API_CALL Mine_clCreateProgramWithIL(cl_context context,
+                                                  const void* il,
+                                                  size_t length,
+                                                  cl_int* errcode_ret)
+{
+    SeqIDGenerator::Instance()->GenerateID();
+
+    cl_program ret = g_nextDispatchTable.clCreateProgramWithIL(context,
+                                                               il,
+                                                               length,
+                                                               errcode_ret);
+
+    return ret;
+}
+
+cl_int CL_API_CALL Mine_clSetProgramReleaseCallback(cl_program program,
+                                                    void (CL_CALLBACK* pfn_notify)(cl_program, void*),
+                                                    void* user_data)
+{
+    SeqIDGenerator::Instance()->GenerateID();
+
+    cl_int ret = g_nextDispatchTable.clSetProgramReleaseCallback(program,
+                                                                 pfn_notify,
+                                                                 user_data);
+
+    return ret;
+}
+
+cl_int CL_API_CALL Mine_clSetProgramSpecializationConstant(cl_program program,
+                                                           cl_uint spec_id,
+                                                           size_t spec_size,
+                                                           const void* spec_value)
+{
+    SeqIDGenerator::Instance()->GenerateID();
+
+    cl_int ret = g_nextDispatchTable.clSetProgramSpecializationConstant(program,
+                                                                        spec_id,
+                                                                        spec_size,
+                                                                        spec_value);
+
+    return ret;
+}
+
 //******End of Seq track*********************//
 
 void CreateMineDispatchTable(cl_icd_dispatch_table& dispatchTable)
@@ -2404,6 +2550,19 @@ void CreateMineDispatchTable(cl_icd_dispatch_table& dispatchTable)
     dispatchTable.CreateSamplerWithProperties = Mine_clCreateSamplerWithProperties;
     dispatchTable.SetKernelArgSVMPointer = Mine_clSetKernelArgSVMPointer;
     dispatchTable.SetKernelExecInfo = Mine_clSetKernelExecInfo;
+
+    // OpenCL 2.1
+    dispatchTable.clCloneKernel = Mine_clCloneKernel;
+    dispatchTable.clEnqueueSVMMigrateMem = Mine_clEnqueueSVMMigrateMem;
+    dispatchTable.clGetDeviceAndHostTimer = Mine_clGetDeviceAndHostTimer;
+    dispatchTable.clGetHostTimer = Mine_clGetHostTimer;
+    dispatchTable.clSetDefaultDeviceCommandQueue = Mine_clSetDefaultDeviceCommandQueue;
+    dispatchTable.clGetKernelSubGroupInfo = Mine_clGetKernelSubGroupInfo;
+    dispatchTable.clCreateProgramWithIL = Mine_clCreateProgramWithIL;
+
+    // OpenCL 2.2
+    dispatchTable.clSetProgramReleaseCallback = Mine_clSetProgramReleaseCallback;
+    dispatchTable.clSetProgramSpecializationConstant = Mine_clSetProgramSpecializationConstant;
 }
 
 void* AssignExtensionFunctionPointer(const char* pFuncName, void* pRealFuncPtr)

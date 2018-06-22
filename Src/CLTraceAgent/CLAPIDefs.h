@@ -167,7 +167,7 @@ public:
         ss << StringUtils::ToHexString(m_platform) << s_strParamSeparator
            << CLStringUtils::GetPlatformInfoString(m_param_name) << s_strParamSeparator
            << m_param_value_size << s_strParamSeparator
-           << CLStringUtils::GetPlatformInfoValueString(m_param_value, m_retVal) << s_strParamSeparator
+           << CLStringUtils::GetPlatformInfoValueString(m_param_name, m_param_value, m_retVal) << s_strParamSeparator
            << CLStringUtils::GetSizeString(REPLACEDNULLVAL(m_replaced_null_param, m_param_value_size_ret), m_param_value_size_retVal);
 
         return ss.str();
@@ -988,6 +988,8 @@ public:
         ms_NumInstance++;
         ms_mtx.unlock();
         m_bUserSetProfileFlag = false;
+        m_isDevicePcieIdSet = false;
+        m_devicePcieId = 0;
     }
 
     /// Destructor
@@ -1054,6 +1056,20 @@ public:
         return m_dtype;
     }
 
+    /// Get the device PCIE ID
+    /// \return the device PCIE ID
+    cl_uint GetDevicePcieId() const
+    {
+        return m_devicePcieId;
+    }
+
+    /// Get the device PCIE ID flag status
+    /// \return the device PCIE ID flag
+    bool GetDevicePcieIdStatus() const
+    {
+        return m_isDevicePcieIdSet;
+    }
+
 protected:
     /// Save the parameter values, return value and time stamps of CLAPI_clCreateCommandQueueBase
     /// \param ullStartTime start api call time stamp
@@ -1092,6 +1108,8 @@ protected:
     cl_command_queue            m_retVal;                          ///< return value
     cl_device_type              m_dtype;                           ///< device type
     char                        m_szDevice[MAX_DEVICE_NAME_STR];   ///< device name
+    cl_uint                     m_devicePcieId;                    ///< device PCIE ID
+    bool                        m_isDevicePcieIdSet;               ///< a flag indicating whether or not m_devicePcieId set
     static cl_uint              ms_NumInstance;                    ///< number of instance created
     static std::mutex           ms_mtx;                            ///< mutex to protect m_sNumInstance
     cl_uint                     m_uiQueueID;                       ///< queue id
@@ -8575,6 +8593,690 @@ private:
 private:
     cl_file_amd  m_file;   ///< parameter for clReleaseSsgFileObjectAMD
     cl_int       m_retVal; ///< return value
+};
+
+//------------------------------------------------------------------------------------
+/// clCloneKernel
+//------------------------------------------------------------------------------------
+class CLAPI_clCloneKernel : public CLAPIBase
+{
+public:
+    /// Constructor
+    CLAPI_clCloneKernel() = default;
+
+    /// Destructor
+    ~CLAPI_clCloneKernel() {}
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString() override
+    {
+        return StringUtils::ToHexString(m_retVal);
+    }
+
+    /// To String
+    /// \return string representation of the API
+    std::string ToString() override
+    {
+        std::ostringstream ss;
+        ss << StringUtils::ToHexString(m_kernel) << s_strParamSeparator
+           << CLStringUtils::GetErrorString(m_errcode_ret, m_errcode_retVal);
+        return ss.str();
+    }
+
+    /// Save the parameter values, return value and time stamps of clCloneKernel
+    /// \param ullStartTime start api call time stamp
+    /// \param ullEndTime end api call time stamp
+    /// \param kernel Parameter for CLAPI_clCloneKernel
+    /// \param errcode_ret Parameter for CLAPI_clCloneKernel
+    /// \param retVal return value
+    void Create(
+        ULONGLONG ullStartTime,
+        ULONGLONG ullEndTime,
+        cl_kernel kernel,
+        cl_int* errcode_ret,
+        cl_kernel retVal);
+
+private:
+    /// Disable copy constructor
+    /// \param[in] obj  the input object
+    CLAPI_clCloneKernel(const CLAPI_clCloneKernel& obj) = delete;
+
+    /// Disable assignment operator
+    /// \param[in] obj the input object
+    /// \return a reference of the object
+    CLAPI_clCloneKernel& operator = (const CLAPI_clCloneKernel& obj) = delete;
+
+private:
+    cl_kernel m_kernel;         ///< parameter for clCloneKernel
+    cl_int*   m_errcode_ret;    ///< parameter for clCloneKernel
+    cl_int    m_errcode_retVal; ///< parameter for clCloneKernel
+    cl_kernel m_retVal;         ///< return value
+};
+
+//------------------------------------------------------------------------------------
+/// clGetDeviceAndHostTimer
+//------------------------------------------------------------------------------------
+class CLAPI_clGetDeviceAndHostTimer : public CLAPIBase
+{
+public:
+    /// Constructor
+    CLAPI_clGetDeviceAndHostTimer() = default;
+
+    /// Destructor
+    ~CLAPI_clGetDeviceAndHostTimer() {}
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString() override
+    {
+        std::ostringstream ss;
+        ss << CLStringUtils::GetErrorString(m_retVal);
+        return ss.str();
+    }
+
+    /// To String
+    /// \return string representation of the API
+    std::string ToString() override
+    {
+        std::ostringstream ss;
+        ss << StringUtils::ToHexString(m_device) << s_strParamSeparator
+           << CLStringUtils::GetLongString(m_device_timestamp, m_device_timestampVal) << s_strParamSeparator
+           << CLStringUtils::GetLongString(m_host_timestamp, m_host_timestampVal);
+        return ss.str();
+    }
+
+    /// Save the parameter values, return value and time stamps of clGetDeviceAndHostTimer
+    /// \param ullStartTime start api call time stamp
+    /// \param ullEndTime end api call time stamp
+    /// \param device Parameter for CLAPI_clGetDeviceAndHostTimer
+    /// \param m_device_timestamp Parameter for CLAPI_clGetDeviceAndHostTimer
+    /// \param m_host_timestamp Parameter for CLAPI_clGetDeviceAndHostTimer
+    /// \param retVal return value
+    void Create(ULONGLONG ullStartTime,
+                ULONGLONG ullEndTime,
+                cl_device_id device,
+                cl_ulong* device_timestamp,
+                cl_ulong* host_timestamp,
+                cl_int retVal)
+    {
+        m_ullStart = ullStartTime;
+        m_ullEnd = ullEndTime;
+        m_type = CL_FUNC_TYPE_clGetDeviceAndHostTimer;
+        m_device = device;
+        m_device_timestamp = device_timestamp;
+        m_host_timestamp = host_timestamp;
+
+        if (nullptr != device_timestamp)
+        {
+            m_device_timestampVal = *device_timestamp;
+        }
+        else
+        {
+            m_device_timestampVal = 0;
+        }
+
+        if (nullptr != host_timestamp)
+        {
+            m_host_timestampVal = *host_timestamp;
+        }
+        else
+        {
+            m_host_timestampVal = 0;
+        }
+
+        m_retVal = retVal;
+    }
+
+private:
+    /// Disable copy constructor
+    /// \param[in] obj  the input object
+    CLAPI_clGetDeviceAndHostTimer(const CLAPI_clGetDeviceAndHostTimer& obj) = delete;
+
+    /// Disable assignment operator
+    /// \param[in] obj the input object
+    /// \return a reference of the object
+    CLAPI_clGetDeviceAndHostTimer& operator = (const CLAPI_clGetDeviceAndHostTimer& obj) = delete;
+
+private:
+    cl_device_id m_device;          ///< parameter for clGetDeviceAndHostTimer
+    cl_ulong* m_device_timestamp;   ///< parameter for clGetDeviceAndHostTimer
+    cl_ulong m_device_timestampVal; ///< parameter for clGetDeviceAndHostTimer
+    cl_ulong* m_host_timestamp;     ///< parameter for clGetDeviceAndHostTimer
+    cl_ulong m_host_timestampVal;   ///< parameter for clGetDeviceAndHostTimer
+    cl_int m_retVal;                ///< return value
+};
+
+//------------------------------------------------------------------------------------
+/// clGetHostTimer
+//------------------------------------------------------------------------------------
+class CLAPI_clGetHostTimer : public CLAPIBase
+{
+public:
+    /// Constructor
+    CLAPI_clGetHostTimer() = default;
+
+    /// Destructor
+    ~CLAPI_clGetHostTimer() {}
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString() override
+    {
+        std::ostringstream ss;
+        ss << CLStringUtils::GetErrorString(m_retVal);
+        return ss.str();
+    }
+
+    /// To String
+    /// \return string representation of the API
+    std::string ToString() override
+    {
+        std::ostringstream ss;
+        ss << StringUtils::ToHexString(m_device) << s_strParamSeparator
+           << CLStringUtils::GetLongString(m_host_timestamp, m_host_timestampVal);
+        return ss.str();
+    }
+
+    /// Save the parameter values, return value and time stamps of clGetHostTimer
+    /// \param ullStartTime start api call time stamp
+    /// \param ullEndTime end api call time stamp
+    /// \param m_host_timestamp Parameter for CLAPI_clGetHostTimer
+    /// \param retVal return value
+    void Create(ULONGLONG ullStartTime,
+                ULONGLONG ullEndTime,
+                cl_device_id device,
+                cl_ulong* host_timestamp,
+                cl_int retVal)
+    {
+        m_ullStart = ullStartTime;
+        m_ullEnd = ullEndTime;
+        m_type = CL_FUNC_TYPE_clGetHostTimer;
+        m_device = device;
+        m_host_timestamp = host_timestamp;
+
+        if (nullptr != host_timestamp)
+        {
+            m_host_timestampVal = *host_timestamp;
+        }
+        else
+        {
+            m_host_timestampVal = 0;
+        }
+
+        m_retVal = retVal;
+    }
+
+private:
+    /// Disable copy constructor
+    /// \param[in] obj  the input object
+    CLAPI_clGetHostTimer(const CLAPI_clGetHostTimer& obj) = delete;
+
+    /// Disable assignment operator
+    /// \param[in] obj the input object
+    /// \return a reference of the object
+    CLAPI_clGetHostTimer& operator = (const CLAPI_clGetHostTimer& obj) = delete;
+
+private:
+    cl_device_id m_device;        ///< parameter for clGetHostTimer
+    cl_ulong* m_host_timestamp;   ///< parameter for clGetHostTimer
+    cl_ulong m_host_timestampVal; ///< parameter for clGetHostTimer
+    cl_int m_retVal;              ///< return value
+};
+
+//------------------------------------------------------------------------------------
+/// clSetDefaultDeviceCommandQueue
+//------------------------------------------------------------------------------------
+class CLAPI_clSetDefaultDeviceCommandQueue : public CLAPIBase
+{
+public:
+    /// Constructor
+    CLAPI_clSetDefaultDeviceCommandQueue() = default;
+
+    /// Destructor
+    ~CLAPI_clSetDefaultDeviceCommandQueue() {}
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString() override
+    {
+        std::ostringstream ss;
+        ss << CLStringUtils::GetErrorString(m_retVal);
+        return ss.str();
+    }
+
+    /// To String
+    /// \return string representation of the API
+    std::string ToString() override
+    {
+        std::ostringstream ss;
+        ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
+           << StringUtils::ToHexString(m_device) << s_strParamSeparator
+           << StringUtils::ToHexString(m_command_queue);
+        return ss.str();
+    }
+
+    /// Save the parameter values, return value and time stamps of clSetDefaultDeviceCommandQueue
+    /// \param ullStartTime start api call time stamp
+    /// \param ullEndTime end api call time stamp
+    /// \param context Parameter for CLAPI_clSetDefaultDeviceCommandQueue
+    /// \param device Parameter for CLAPI_clSetDefaultDeviceCommandQueue
+    /// \param command_queue Parameter for CLAPI_clSetDefaultDeviceCommandQueue
+    /// \param retVal return value
+    void Create(ULONGLONG ullStartTime,
+                ULONGLONG ullEndTime,
+                cl_context context,
+                cl_device_id device,
+                cl_command_queue command_queue,
+                cl_int retVal)
+    {
+        m_ullStart = ullStartTime;
+        m_ullEnd = ullEndTime;
+        m_type = CL_FUNC_TYPE_clSetDefaultDeviceCommandQueue;
+        m_context = context;
+        m_device = device;
+        m_command_queue = command_queue;
+        m_retVal = retVal;
+    }
+
+private:
+    /// Disable copy constructor
+    /// \param[in] obj  the input object
+    CLAPI_clSetDefaultDeviceCommandQueue(const CLAPI_clSetDefaultDeviceCommandQueue& obj) = delete;
+
+    /// Disable assignment operator
+    /// \param[in] obj the input object
+    /// \return a reference of the object
+    CLAPI_clSetDefaultDeviceCommandQueue& operator = (const CLAPI_clSetDefaultDeviceCommandQueue& obj) = delete;
+
+private:
+    cl_context m_context;             ///< parameter for clSetDefaultDeviceCommandQueue
+    cl_device_id m_device;            ///< parameter for clSetDefaultDeviceCommandQueue
+    cl_command_queue m_command_queue; ///< parameter for clSetDefaultDeviceCommandQueue
+    cl_int m_retVal;                  ///< return value
+};
+
+//------------------------------------------------------------------------------------
+/// clGetKernelSubGroupInfo
+//------------------------------------------------------------------------------------
+class CLAPI_clGetKernelSubGroupInfo : public CLAPIBase
+{
+public:
+    /// Constructor
+    CLAPI_clGetKernelSubGroupInfo()
+    {
+        m_param_value = nullptr;
+        m_input_value = nullptr;
+    }
+
+    /// Destructor
+    ~CLAPI_clGetKernelSubGroupInfo()
+    {
+        if (nullptr != m_param_value)
+        {
+            FreeBuffer(m_param_value);
+        }
+
+        if (nullptr != m_input_value)
+        {
+            FreeBuffer(m_input_value);
+        }
+    }
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString() override
+    {
+        std::ostringstream ss;
+        ss << CLStringUtils::GetErrorString(m_retVal);
+        return ss.str();
+    }
+
+    /// To String
+    /// \return string representation of the API
+    std::string ToString() override
+    {
+        std::ostringstream ss;
+        ss << StringUtils::ToHexString(m_kernel) << s_strParamSeparator
+           << StringUtils::ToHexString(m_device) << s_strParamSeparator
+           << CLStringUtils::GetKernelSubGroupInfoString(m_param_name) << s_strParamSeparator
+           << m_input_value_size << s_strParamSeparator
+           << CLStringUtils::GetKernelSubGroupInfoInputValueString(m_param_name, m_input_value, m_input_value_size, m_retVal) << s_strParamSeparator
+           << m_param_value_size << s_strParamSeparator
+           << CLStringUtils::GetKernelSubGroupInfoOutputValueString(m_param_name, m_param_value, m_param_value_size, m_retVal) << s_strParamSeparator
+           << CLStringUtils::GetSizeString(REPLACEDNULLVAL(m_replaced_null_param, m_param_value_size_ret), m_param_value_size_retVal);
+
+        return ss.str();
+    }
+
+    /// Save the parameter values, return value and time stamps of clGetKernelSubGroupInfo
+    /// \param ullStartTime start api call time stamp
+    /// \param ullEndTime end api call time stamp
+    /// \param kernel Parameter for CLAPI_clGetKernelSubGroupInfo
+    /// \param device Parameter for CLAPI_clGetKernelSubGroupInfo
+    /// \param param_name Parameter for CLAPI_clGetKernelSubGroupInfo
+    /// \param input_value_size Parameter for CLAPI_clGetKernelSubGroupInfo
+    /// \param input_value Parameter for CLAPI_clGetKernelSubGroupInfo
+    /// \param param_value_size Parameter for CLAPI_clGetKernelSubGroupInfo
+    /// \param param_value Parameter for CLAPI_clGetKernelSubGroupInfo
+    /// \param param_value_size_ret Parameter for CLAPI_clGetKernelSubGroupInfo
+    /// \param replaced_null_param flag indicating if the user app passed null to param_value_size_ret
+    /// \param retVal return value
+    void Create(ULONGLONG ullStartTime,
+                ULONGLONG ullEndTime,
+                cl_kernel kernel,
+                cl_device_id device,
+                cl_kernel_sub_group_info param_name,
+                size_t input_value_size,
+                const void* input_value,
+                size_t param_value_size,
+                void* param_value,
+                size_t* param_value_size_ret,
+                bool replaced_null_param,
+                cl_int retVal)
+    {
+        m_ullStart = ullStartTime;
+        m_ullEnd = ullEndTime;
+        m_type = CL_FUNC_TYPE_clGetKernelSubGroupInfo;
+        m_kernel = kernel;
+        m_device = device;
+        m_param_name = param_name;
+        m_param_value_size = param_value_size;
+        m_input_value_size = input_value_size;
+        m_param_value_size_ret = param_value_size_ret;
+        m_replaced_null_param = replaced_null_param;
+
+        if (nullptr != param_value_size_ret)
+        {
+            m_param_value_size_retVal = *param_value_size_ret;
+        }
+        else
+        {
+            m_param_value_size_retVal = 0;
+        }
+
+        if (nullptr != param_value)
+        {
+            DeepCopyBuffer(&m_param_value, param_value, RETVALMIN(m_param_value_size_retVal, m_param_value_size));
+        }
+
+        if (nullptr != input_value)
+        {
+            DeepCopyBuffer(&m_input_value, input_value, m_input_value_size);
+        }
+
+        m_retVal = retVal;
+    }
+
+private:
+    /// Disable copy constructor
+    /// \param[in] obj  the input object
+    CLAPI_clGetKernelSubGroupInfo(const CLAPI_clGetKernelSubGroupInfo& obj) = delete;
+
+    /// Disable assignment operator
+    /// \param[in] obj the input object
+    /// \return a reference of the object
+    CLAPI_clGetKernelSubGroupInfo& operator = (const CLAPI_clGetKernelSubGroupInfo& obj) = delete;
+
+private:
+    cl_kernel                m_kernel;                  ///< parameter for clGetKernelSubGroupInfo
+    cl_device_id             m_device;                  ///< parameter for clGetKernelSubGroupInfo
+    cl_kernel_sub_group_info m_param_name;              ///< parameter for clGetKernelSubGroupInfo
+    size_t                   m_input_value_size;        ///< parameter for clGetKernelSubGroupInfo
+    void*                    m_input_value;             ///< parameter for clGetKernelSubGroupInfo
+    size_t                   m_param_value_size;        ///< parameter for clGetKernelSubGroupInfo
+    void*                    m_param_value;             ///< parameter for clGetKernelSubGroupInfo
+    size_t*                  m_param_value_size_ret;    ///< parameter for clGetKernelSubGroupInfo
+    size_t                   m_param_value_size_retVal; ///< parameter for clGetKernelSubGroupInfo
+    bool                     m_replaced_null_param;     ///< flag indicating that we've provided a replacement for a NULL m_param_value_size_ret value
+    cl_int                   m_retVal;                  ///< return value
+};
+
+//------------------------------------------------------------------------------------
+/// clCreateProgramWithIL
+//------------------------------------------------------------------------------------
+class CLAPI_clCreateProgramWithIL : public CLAPIBase
+{
+public:
+    /// Constructor
+    CLAPI_clCreateProgramWithIL() = default;
+
+    /// Destructor
+    ~CLAPI_clCreateProgramWithIL() {}
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString() override
+    {
+        return StringUtils::ToHexString(m_retVal);
+    }
+
+    /// To String
+    /// \return string representation of the API
+    std::string ToString() override
+    {
+        std::ostringstream ss;
+        ss << StringUtils::ToHexString(m_context) << s_strParamSeparator
+           << StringUtils::ToHexString(m_il) << s_strParamSeparator
+           << m_length << s_strParamSeparator
+           << CLStringUtils::GetErrorString(m_errcode_ret, m_errcode_retVal);
+        return ss.str();
+    }
+
+    /// Save the parameter values, return value and time stamps of CLAPI_clCreateProgramWithIL
+    /// \param ullStartTime start api call time stamp
+    /// \param ullEndTime end api call time stamp
+    /// \param context Parameter for CLAPI_clCreateProgramWithIL
+    /// \param il Parameter for CLAPI_clCreateProgramWithIL
+    /// \param length Parameter for CLAPI_clCreateProgramWithIL
+    /// \param errcode_ret Parameter for CLAPI_clCreateProgramWithIL
+    /// \param retVal return value
+    void Create(ULONGLONG ullStartTime,
+                ULONGLONG ullEndTime,
+                cl_context context,
+                const void* il,
+                size_t length,
+                cl_int* errcode_ret,
+                cl_program retVal)
+    {
+        m_ullStart = ullStartTime;
+        m_ullEnd = ullEndTime;
+        m_type = CL_FUNC_TYPE_clCreateProgramWithIL;
+        m_context = context;
+        m_il = const_cast<void*>(il);
+        m_length = length;
+        m_errcode_ret = errcode_ret;
+
+        if (nullptr != errcode_ret)
+        {
+            m_errcode_retVal = *errcode_ret;
+        }
+        else
+        {
+            m_errcode_retVal = 0;
+        }
+
+        m_retVal = retVal;
+    }
+
+private:
+    /// Disable copy constructor
+    /// \param[in] obj  the input object
+    CLAPI_clCreateProgramWithIL(const CLAPI_clCreateProgramWithIL& obj) = delete;
+
+    /// Disable assignment operator
+    /// \param[in] obj the input object
+    /// \return a reference of the object
+    CLAPI_clCreateProgramWithIL& operator = (const CLAPI_clCreateProgramWithIL& obj) = delete;
+
+private:
+    cl_context  m_context;        ///< parameter for clCreateProgramWithIL
+    void* m_il;                   ///< parameter for clCreateProgramWithIL
+    size_t      m_length;         ///< parameter for clCreateProgramWithIL
+    cl_int*     m_errcode_ret;    ///< parameter for clCreateProgramWithIL
+    cl_int      m_errcode_retVal; ///< parameter for clCreateProgramWithIL
+    cl_program  m_retVal;         ///< return value
+};
+
+//------------------------------------------------------------------------------------
+/// clSetProgramReleaseCallback
+//------------------------------------------------------------------------------------
+class CLAPI_clSetProgramReleaseCallback : public CLAPIBase
+{
+public:
+    /// Constructor
+    CLAPI_clSetProgramReleaseCallback() = default;
+
+    /// Destructor
+    ~CLAPI_clSetProgramReleaseCallback() {}
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString() override
+    {
+        std::ostringstream ss;
+        ss << CLStringUtils::GetErrorString(m_retVal);
+        return ss.str();
+    }
+
+    /// To String
+    /// \return string representation of the API
+    std::string ToString() override
+    {
+        std::ostringstream ss;
+        ss << StringUtils::ToHexString(m_program) << s_strParamSeparator
+           << StringUtils::ToHexString(m_pfn_notify) << s_strParamSeparator
+           << StringUtils::ToHexString(m_user_data);
+        return ss.str();
+    }
+
+    /// Save the parameter values, return value and time stamps of CLAPI_clSetProgramReleaseCallback
+    /// \param ullStartTime start api call time stamp
+    /// \param ullEndTime end api call time stamp
+    /// \param program Parameter for CLAPI_clSetProgramReleaseCallback
+    /// \param pfn_notify Parameter for CLAPI_clSetProgramReleaseCallback
+    /// \param user_data Parameter for CLAPI_clSetProgramReleaseCallback
+    /// \param retVal return value
+    void Create(ULONGLONG ullStartTime,
+                ULONGLONG ullEndTime,
+                cl_program program,
+                void (CL_CALLBACK* pfn_notify)(cl_program program, void* user_data),
+                void* user_data,
+                cl_int retVal)
+    {
+        m_ullStart = ullStartTime;
+        m_ullEnd = ullEndTime;
+        m_type = CL_FUNC_TYPE_clSetProgramReleaseCallback;
+        m_program = program;
+        this->m_pfn_notify = pfn_notify;
+        m_user_data = user_data;
+        m_retVal = retVal;
+    }
+
+private:
+    /// Disable copy constructor
+    /// \param[in] obj  the input object
+    CLAPI_clSetProgramReleaseCallback(const CLAPI_clSetProgramReleaseCallback& obj) = delete;
+
+    /// Disable assignment operator
+    /// \param[in] obj the input object
+    /// \return a reference of the object
+    CLAPI_clSetProgramReleaseCallback& operator = (const CLAPI_clSetProgramReleaseCallback& obj) = delete;
+
+private:
+    cl_program m_program;                                                  ///< parameter for clSetProgramReleaseCallback
+    void (CL_CALLBACK* m_pfn_notify)(cl_program program, void* user_data); ///< parameter for clSetProgramReleaseCallback
+    void*      m_user_data;                                                ///< parameter for clSetProgramReleaseCallback
+    cl_int     m_retVal;                                                   ///< return value
+};
+
+//------------------------------------------------------------------------------------
+/// clSetProgramSpecializationConstant
+//------------------------------------------------------------------------------------
+class CLAPI_clSetProgramSpecializationConstant : public CLAPIBase
+{
+public:
+    /// Constructor
+    CLAPI_clSetProgramSpecializationConstant()
+    {
+        m_spec_valueVal = nullptr;
+    }
+
+    /// Destructor
+    ~CLAPI_clSetProgramSpecializationConstant()
+    {
+        if (nullptr != m_spec_valueVal)
+        {
+            FreeBuffer(m_spec_valueVal);
+        }
+    }
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString() override
+    {
+        std::ostringstream ss;
+        ss << CLStringUtils::GetErrorString(m_retVal);
+        return ss.str();
+    }
+
+    /// To String
+    /// \return string representation of the API
+    std::string ToString() override
+    {
+        std::ostringstream ss;
+        ss << StringUtils::ToHexString(m_program) << s_strParamSeparator
+           << m_spec_id << s_strParamSeparator
+           << m_spec_size << s_strParamSeparator
+           << StringUtils::ToHexString(m_spec_value);
+
+        return ss.str();
+    }
+
+    /// Save the parameter values, return value and time stamps of clSetProgramSpecializationConstant
+    /// \param ullStartTime start api call time stamp
+    /// \param ullEndTime end api call time stamp
+    /// \param program Parameter for CLAPI_clSetProgramSpecializationConstant
+    /// \param spec_id Parameter for CLAPI_clSetProgramSpecializationConstant
+    /// \param spec_size Parameter for CLAPI_clSetProgramSpecializationConstant
+    /// \param spec_value Parameter for CLAPI_clSetProgramSpecializationConstant
+    /// \param retVal return value
+    void Create(ULONGLONG ullStartTime,
+                ULONGLONG ullEndTime,
+                cl_program program,
+                cl_uint spec_id,
+                size_t spec_size,
+                const void* spec_value,
+                cl_int retVal)
+    {
+        m_ullStart = ullStartTime;
+        m_ullEnd = ullEndTime;
+        m_type = CL_FUNC_TYPE_clSetProgramSpecializationConstant;
+        m_program = program;
+        m_spec_id = spec_id;
+        m_spec_size = spec_size;
+        m_spec_value = spec_value;
+        DeepCopyBuffer(&m_spec_valueVal, spec_value, m_spec_size);
+        m_retVal = retVal;
+    }
+
+private:
+    /// Disable copy constructor
+    /// \param[in] obj  the input object
+    CLAPI_clSetProgramSpecializationConstant(const CLAPI_clSetProgramSpecializationConstant& obj) = delete;
+
+    /// Disable assignment operator
+    /// \param[in] obj the input object
+    /// \return a reference of the object
+    CLAPI_clSetProgramSpecializationConstant& operator = (const CLAPI_clSetProgramSpecializationConstant& obj) = delete;
+
+private:
+    cl_program  m_program;       ///< parameter for clSetProgramSpecializationConstant
+    cl_uint     m_spec_id;       ///< parameter for clSetProgramSpecializationConstant
+    size_t      m_spec_size;     ///< parameter for clSetProgramSpecializationConstant
+    const void* m_spec_value;    ///< parameter for clSetProgramSpecializationConstant
+    void*       m_spec_valueVal; ///< parameter for clSetProgramSpecializationConstant
+    cl_int      m_retVal;        ///< return value
 };
 
 // @}

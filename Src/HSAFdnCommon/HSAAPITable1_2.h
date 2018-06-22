@@ -13,7 +13,8 @@
 #include "hsa_ext_finalize.h"
 #include "hsa_ext_amd.h"
 
-struct ApiTableVersion1_2 {
+struct ApiTableVersion1_2
+{
     uint32_t major_id;
     uint32_t minor_id;
     uint32_t step_id;
@@ -21,7 +22,8 @@ struct ApiTableVersion1_2 {
 };
 
 // Table to export HSA Finalizer Extension Apis
-struct FinalizerExtTable1_2 {
+struct FinalizerExtTable1_2
+{
     ApiTableVersion1_2 version;
     decltype(hsa_ext_program_create)* hsa_ext_program_create_fn;
     decltype(hsa_ext_program_destroy)* hsa_ext_program_destroy_fn;
@@ -32,7 +34,8 @@ struct FinalizerExtTable1_2 {
 };
 
 // Table to export HSA Image Extension Apis
-struct ImageExtTable1_2 {
+struct ImageExtTable1_2
+{
     ApiTableVersion1_2 version;
     decltype(hsa_ext_image_get_capability)* hsa_ext_image_get_capability_fn;
     decltype(hsa_ext_image_data_get_info)* hsa_ext_image_data_get_info_fn;
@@ -47,14 +50,15 @@ struct ImageExtTable1_2 {
 };
 
 // Table to export AMD Extension Apis
-struct AmdExtTable1_2 {
+struct AmdExtTable1_2
+{
     ApiTableVersion1_2 version;
     decltype(hsa_amd_coherency_get_type)* hsa_amd_coherency_get_type_fn;
     decltype(hsa_amd_coherency_set_type)* hsa_amd_coherency_set_type_fn;
     decltype(hsa_amd_profiling_set_profiler_enabled)* hsa_amd_profiling_set_profiler_enabled_fn;
-    decltype(hsa_amd_profiling_async_copy_enable) *hsa_amd_profiling_async_copy_enable_fn;
+    decltype(hsa_amd_profiling_async_copy_enable)* hsa_amd_profiling_async_copy_enable_fn;
     decltype(hsa_amd_profiling_get_dispatch_time)* hsa_amd_profiling_get_dispatch_time_fn;
-    decltype(hsa_amd_profiling_get_async_copy_time) *hsa_amd_profiling_get_async_copy_time_fn;
+    decltype(hsa_amd_profiling_get_async_copy_time)* hsa_amd_profiling_get_async_copy_time_fn;
     decltype(hsa_amd_profiling_convert_tick_to_system_domain)* hsa_amd_profiling_convert_tick_to_system_domain_fn;
     decltype(hsa_amd_signal_async_handler)* hsa_amd_signal_async_handler_fn;
     decltype(hsa_amd_async_function)* hsa_amd_async_function_fn;
@@ -78,7 +82,8 @@ struct AmdExtTable1_2 {
 };
 
 // Table to export HSA Core Runtime Apis
-struct CoreApiTable1_2 {
+struct CoreApiTable1_2
+{
     ApiTableVersion1_2 version;
     decltype(hsa_init)* hsa_init_fn;
     decltype(hsa_shut_down)* hsa_shut_down_fn;
@@ -180,7 +185,8 @@ struct CoreApiTable1_2 {
 
 // Table to export HSA Apis from Core Runtime, Amd Extensions
 // Finalizer and Images
-struct HsaApiTable1_2 {
+struct HsaApiTable1_2
+{
     // Version of Hsa Api Table
     ApiTableVersion1_2 version;
 

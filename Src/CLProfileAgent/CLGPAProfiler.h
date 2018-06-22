@@ -62,13 +62,6 @@ public:
     CLGPAProfiler();
     ~CLGPAProfiler();
 
-    /// Accessor to the GPA Loader
-    GPUPerfAPILoader& GetGPALoader()
-    {
-        //return m_GPALoader;
-        return m_GPAUtils.GetGPALoader();
-    }
-
     /// Initialize GPA with a context (command queue)
     /// \param commandQueue the command queue for the context
     bool Open(cl_command_queue commandQueue);
@@ -76,12 +69,19 @@ public:
     /// Close the current context in GPA
     bool Close();
 
-    /// Enable GPA counters
-    /// \param commandQueue the command queue for the context
-    /// \return true if succesfull, false otherwise (counters have been enabled)
-    bool EnableCounters(cl_command_queue commandQueue);
-
     /// Profile an OpenCL kernel call with the full set of public counters
+    /// \param commandQueue the OpenCL command queue (argument to clEnqueueNDRangeKernel)
+    /// \param kernel the OpenCL kernel (argument to clEnqueueNDRangeKernel)
+    /// \param uWorkDim the number of work dimensions (argument to clEnqueueNDRangeKernel)
+    /// \param pGlobalWorkOffset the global work offset (argument to clEnqueueNDRangeKernel)
+    /// \param pGlobalWorkSize the global work size (argument to clEnqueueNDRangeKernel)
+    /// \param pLocalWorkSize the local work size (argument to clEnqueueNDRangeKernel)
+    /// \param uEventWaitList the number of events in the event wait list (argument to clEnqueueNDRangeKernel)
+    /// \param pEventWaitList the event wait list (argument to clEnqueueNDRangeKernel)
+    /// \param pEvent the OpenCL event (argument to clEnqueueNDRangeKernel)
+    /// \param nResultOut the result of the clEnqueueNDRangeKernel call
+    /// \param sessionIdOut the GPA session id
+    /// \param dKernelTimeOut the kernel execution time
     bool FullProfile(
         cl_command_queue commandQueue,
         cl_kernel        kernel,
@@ -93,7 +93,7 @@ public:
         const cl_event*  pEventWaitList,
         cl_event*        pEvent,
         cl_int&          nResultOut,
-        gpa_uint32&      uSessionIDOut,
+        GPA_SessionId&   sessionIdOut,
         double&          dKernelTimeOut);
 
     /// Check whether we need to generate the kernel source, IL or ISA (based on the kernel name and
@@ -119,10 +119,10 @@ public:
     bool Init(const Parameters& params, std::string& strErrorOut);
 
     /// Output the counter result for the specified session to a csv file
-    /// \param uSessionID  the GPA profiling session ID
+    /// \param sessionId the GPA profiling session ID
     /// \param kernelStats contains the kernel statistics
     /// \return false if GPA is not loaded, true if successful
-    bool DumpSession(gpa_uint32 uSessionID, const KernelStats& kernelStats);
+    bool DumpSession(GPA_SessionId sessionId, const KernelStats& kernelStats);
 
     /// A helper function to print out the statistics in the kernel stats' structure.
     /// \param kernelStats  the kernel stats' structure
@@ -132,19 +132,14 @@ public:
     /// \return true if GPA dll has been loaded; false otherwise
     bool Loaded()
     {
-        return m_GPAUtils.Loaded();
+        return m_gpaUtils.Loaded();
     }
 
     /// unloads the currently loaded GPA dll
     void Unload()
     {
-        m_GPAUtils.Unload();
+        m_gpaUtils.Unload();
     }
-
-    /// Converts the status into a string that can be used in error messages
-    /// \param status the status to convert
-    /// \return a string version of the status
-    std::string GetStatusString(GPA_Status status) const;
 
     /// Save the context to the contextManager
     /// \param context the CL context to be saved
@@ -302,12 +297,6 @@ private:
     /// Add header to profile result mgr, setup default columns
     void InitHeader();
 
-    /// Given the command queue, get the GPU device name
-    /// \param pszDeviceName  the resulting GPU device name
-    /// \param commandQueue   the cl command queue
-    /// \return false if it is not a GPU device, true if successful
-    bool GetDeviceName(char* pszDeviceName, cl_command_queue commandQueue) const;
-
     /// Gets the device id from the given device name, using ADLUtils' asicInfoList
     /// \param pszDeviceName the device name whose device id is wanted
     /// \param asicInfoList the list of available ASICs from ADL
@@ -315,7 +304,7 @@ private:
     /// \param[out] revisionId the revision id for the specified device
     bool GetAvailableDeviceIdFromDeviceNameAndAsicInfoList(const char* pszDeviceName, const AsicInfoList asicInfoList, int& deviceId, int& revisionId);
 
-    GPAUtils           m_GPAUtils;                          ///< common GPA utility functions
+    GPAUtils           m_gpaUtils;                          ///< common GPA utility functions
     bool               m_isGPAOpened;                       ///< flag indicating if a GPA Context is currently opened
     std::string        m_strDeviceName;                     ///< the device name
     unsigned int       m_uiCurKernelCount;                  ///< number of kernels that have been profiled.

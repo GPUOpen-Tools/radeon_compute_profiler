@@ -1,4 +1,4 @@
-# Radeon Compute Profiler (RCP) Build Instructions
+﻿# Radeon Compute Profiler (RCP) Build Instructions
 ---
 ## Table of Contents
 * [Cloning/Updating Dependent Repositories](#cloningupdating-dependent-repositories)
@@ -41,6 +41,8 @@ this script every time you pull new changes from RCP repository.
 ##### Prerequisites
  * RCP uses some shared components which are built using scons. You will need to install scons as follows:
    * `sudo apt-get install scons`
+ * RCP requires OpenGL headers in order to build the OpenCL™ profiler backend. You will need to install mesa-common-dev as follows:
+   * `sudo apt-get install mesa-common-dev`
  * In order to build the 32-bit version of RCP, you will need to install the following libraries:
    * `sudo apt-get install gcc-multilib g++-multilib`
  * When building on Ubuntu 16.04, you will need to install the compatible Boost libraries:
@@ -55,9 +57,9 @@ this script every time you pull new changes from RCP repository.
      * `sudo apt-get install libboost-wave-dev:i386`
 
 ##### Building the HSA/ROCm Profiler
-* In order to build the HSA/ROCm profiler, the rocm packages need to be installed (so that the ROCR header files are available at build time).
+* In order to build the HSA/ROCm profiler, the ROCm packages need to be installed (so that the ROCR header files are available at build time).
 * Please see the ROCm install instructions at [https://rocm.github.io/ROCmInstall.html](https://rocm.github.io/ROCmInstall.html).
-* If the ROCR header files are not available on the build system (i.e. if the build system is not supported by ROCm), you can skip this part of the build. See the Build Instructions section below for information on how to do this.
+* If the ROCR header files are not available on the build system, you can skip this part of the build. See the Build Instructions section below for information on how to do this.
 
 ##### Build Instructions
  * cd into the Build\Linux directory

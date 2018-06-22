@@ -81,7 +81,6 @@
     <ClInclude Include="../../Src/CLTraceAgent/CLStringUtils.h" />
     <ClInclude Include="../../Src/CLTraceAgent/CLTraceAgent.h" />
     <ClInclude Include="../../Src/CLTraceAgent/PMCSamplerManager.h" />
-    <ClInclude Include="../../Src/CLTraceAgent/resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Src\AMDTBaseTools\AMDTBaseToolsVS14.vcxproj">

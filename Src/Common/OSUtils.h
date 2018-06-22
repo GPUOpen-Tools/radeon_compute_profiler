@@ -95,8 +95,9 @@ public:
     /// \param szWorkingDir working directory, not applicable to linux
     /// \param szEnvBlock a zero-separated, double-zero-terminated string containing the environment block.  NULL indicates that it should use the calling process' environment block
     /// \param bCreateSuspended created in suspended state
+    /// \param bCreateConsole Windows: create a new console windows; Linux: set to false to suppress stderr/stdout
     /// \return process id(linux) or PROCESS_INFORMATION(windows)
-    PROCESSID ExecProcess(const char* szExe, const char* szArgs, const char* szWorkingDir, const char* szEnvBlock, bool bCreateSuspended = false);
+    PROCESSID ExecProcess(const char* szExe, const char* szArgs, const char* szWorkingDir, const char* szEnvBlock, bool bCreateSuspended = false, bool bCreateConsole = true);
 
     /// Wait for a process to finish
     /// \param pid Process ID
@@ -135,13 +136,13 @@ public:
     /// \param szFrom Source path
     /// \param szTo Destination path
     /// \return true if succeed.
-    bool osCopyFile(const char* szFrom, const char* szTo);
+    bool OSCopyFile(const char* szFrom, const char* szTo);
 
     /// Move file
     /// \param szFrom Source path
     /// \param szTo Destination path
     /// \return true if succeed.
-    bool osMoveFile(const char* szFrom, const char* szTo);
+    bool OSMoveFile(const char* szFrom, const char* szTo);
 
 protected:
     OSUtils();
@@ -163,7 +164,7 @@ private:
     /// \param szTo Destination path
     /// \param bMove flag indicating whether or not this is a copy or a move
     /// \return true if succeed.
-    bool osCopyMoveFileHelper(const char* szFrom, const char* szTo, bool bMove);
+    bool OSCopyMoveFileHelper(const char* szFrom, const char* szTo, bool bMove);
 #endif
 };
 

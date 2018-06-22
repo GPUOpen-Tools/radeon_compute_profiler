@@ -16,25 +16,26 @@ namespace CLPlatformInfo
 {
 
 /// Structure containing the CL platform information
-typedef struct platform_info
+typedef struct PlatformInfo
 {
-    std::string strPlatformVendor;  ///< Compute platform vendor
-    std::string strPlatformName;    ///< Compute platform name
-    std::string strDeviceName;      ///< Compute device name
-    std::string strPlatformVersion; ///< Compute platform version string
-    std::string strDriverVersion;   ///< Compute Abstraction Layer version information}
-    std::string strCLRuntime;       ///< CL runtime version
-    unsigned int uiNbrAddressBits;  ///< Number of address bits used by application (application 'bitness')
-    std::string strBoardName;       ///< Compute board name
-} platform_info_struct;
+    std::string  m_platformVendor;  ///< Compute platform vendor
+    std::string  m_platformName;    ///< Compute platform name
+    std::string  m_deviceName;      ///< Compute device name
+    std::string  m_platformVersion; ///< Compute platform version string
+    std::string  m_driverVersion;   ///< Compute Abstraction Layer version information}
+    std::string  m_runtimeVersion;  ///< CL runtime version
+    unsigned int m_addressBits;     ///< Number of address bits used by application (application 'bitness')
+    std::string  m_boardName;       ///< Compute board name
+    cl_uint      m_pcieDeviceId;    ///< PCIE device id
+} PlatformInfo;
 
 struct CLPlatformInfoCompare
 {
-    bool operator()(const CLPlatformInfo::platform_info p1, const CLPlatformInfo::platform_info p2) const;
+    bool operator()(const CLPlatformInfo::PlatformInfo p1, const CLPlatformInfo::PlatformInfo p2) const;
 };
 
 }
 
-typedef std::set<CLPlatformInfo::platform_info, CLPlatformInfo::CLPlatformInfoCompare> CLPlatformSet;
+typedef std::set<CLPlatformInfo::PlatformInfo, CLPlatformInfo::CLPlatformInfoCompare> CLPlatformSet;
 
 #endif // _CL_PLATFORM_INFO_H_

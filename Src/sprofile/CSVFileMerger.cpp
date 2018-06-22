@@ -184,7 +184,7 @@ HeaderList KernelRowDataHelper::CreateHeader(const std::vector<std::string>& cou
             headersWithActualHeaderNameAndFileIndex.push_back(HeaderPair(threadIdWithPass, MethodFileIndexPair(m_threadIdString, i)));
         }
 
-        if(apiName != GPA_API_HSA)
+        if (apiName != GPA_API_HSA)
         {
             headersWithActualHeaderNameAndFileIndex.push_back(HeaderPair(m_callIndexString, MethodFileIndexPair(m_callIndexString, baseFileIndex)));
         }
@@ -208,7 +208,7 @@ HeaderList KernelRowDataHelper::CreateHeader(const std::vector<std::string>& cou
         headersWithActualHeaderNameAndFileIndex.push_back(HeaderPair(m_vgprsString, MethodFileIndexPair(m_vgprsString, baseFileIndex)));
         headersWithActualHeaderNameAndFileIndex.push_back(HeaderPair(m_sgprsString, MethodFileIndexPair(m_sgprsString, baseFileIndex)));
 
-        if(apiName != GPA_API_HSA)
+        if (apiName != GPA_API_HSA)
         {
             headersWithActualHeaderNameAndFileIndex.push_back(HeaderPair(m_scratchRegsString, MethodFileIndexPair(m_scratchRegsString, baseFileIndex)));
         }

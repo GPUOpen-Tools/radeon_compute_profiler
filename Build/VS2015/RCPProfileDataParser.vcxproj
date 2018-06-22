@@ -72,7 +72,6 @@
     <ClInclude Include="..\..\Src\ProfileDataParser\OccupancyInfoDataHandlerImp.h" />
     <ClInclude Include="..\..\Src\ProfileDataParser\OccupancyParams.h" />
     <ClInclude Include="..\..\Src\ProfileDataParser\PerfMarkerInfoDataHandlerImp.h" />
-    <ClInclude Include="..\..\Src\ProfileDataParser\resource.h" />
     <ClInclude Include="..\..\Src\ProfileDataParser\SymbolFileEntryInfoDataHandlerImp.h" />
     <ClInclude Include="..\..\Src\CLTraceAgent\CLAtpFile.h" />
     <ClInclude Include="..\..\Src\Common\StackTraceAtpFile.h" />

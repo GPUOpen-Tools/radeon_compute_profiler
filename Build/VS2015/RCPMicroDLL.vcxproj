@@ -62,7 +62,6 @@
     <ClInclude Include="..\..\Src\MicroDLL\DetourLoadLibrary.h" />
     <ClInclude Include="..\..\Src\MicroDLL\DLLMain.h" />
     <ClInclude Include="..\..\Src\MicroDLL\PluginInfo.h" />
-    <ClInclude Include="..\..\Src\MicroDLL\resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Src\AMDTBaseTools\AMDTBaseToolsVS14.vcxproj">

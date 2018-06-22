@@ -133,9 +133,9 @@ private:
     /// Struct used in the session map
     typedef struct
     {
-        gpa_uint32  m_sessionID;   ///< the GPA session ID for a given session
-        KernelStats m_kernelStats; ///< the Kernel Statistics for a given session
-        std::string m_agentName;   ///< the name of the agent (device)
+        GPA_SessionId  m_sessionID;   ///< the GPA session ID for a given session
+        KernelStats    m_kernelStats; ///< the Kernel Statistics for a given session
+        std::string    m_agentName;   ///< the name of the agent (device)
     } SessionInfo;
 
     /// Writes the results from the specified session to the session output file
@@ -184,6 +184,7 @@ private:
     unsigned long           m_durationInMilliseconds;            ///< duration in milliseconds for which Profiler should run
     ProfilerTimer*          m_pDelayTimer;                       ///< timer for handling delay timer for the profile agent
     ProfilerTimer*          m_pDurationTimer;                    ///< timer for handling duration timer for the profile agent
+    GPA_CommandListId       m_commandListId;                     ///< GPA Command List object for the session
 };
 
 #endif  //_HSA_GPA_PROFILE_H_

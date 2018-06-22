@@ -27,7 +27,7 @@ static const uint64_t s_invalidPacketId = static_cast<uint64_t>(-1);
 HSAAqlPacketBase::HSAAqlPacketBase(hsa_packet_type_t type) :
     m_type(type),
     m_packetId(s_invalidPacketId),
-    m_agent( {0}),
+    m_agent({0}),
     m_pQueue(nullptr),
     m_isReady(false)
 {

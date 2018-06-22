@@ -1132,7 +1132,7 @@ private:
     /// Disable assignment operator
     /// \param[in] obj the input object
     /// \return a reference of the object
-    CLAPI_clEnqueueCopyImageToBuffer& operator = (const CLAPI_clEnqueueCopyImageToBuffer& obj) = delete; 
+    CLAPI_clEnqueueCopyImageToBuffer& operator = (const CLAPI_clEnqueueCopyImageToBuffer& obj) = delete;
 
     cl_mem          m_src_image;       ///< parameter for clEnqueueCopyImageToBuffer
     cl_mem          m_dst_buffer;      ///< parameter for clEnqueueCopyImageToBuffer
@@ -3501,6 +3501,90 @@ private:
     size_t      m_file_offset;    ///< parameter for clEnqueueWriteSsgFileAMD
     cl_event    m_event;          ///< parameter for clEnqueueWriteSsgFileAMD
     cl_int      m_retVal;         ///< return value
+};
+
+//------------------------------------------------------------------------------------
+/// clEnqueueSVMMigrateMem
+//------------------------------------------------------------------------------------
+class CLAPI_clEnqueueSVMMigrateMem : public CLEnqueueOther
+{
+public:
+    /// Constructor
+    CLAPI_clEnqueueSVMMigrateMem() = default;
+
+    /// Destructor
+    ~CLAPI_clEnqueueSVMMigrateMem() {}
+
+    /// Return whether the API succeeded
+    /// \return true if the API succeeded (CL_SUCCESS), false otherwise
+    bool GetAPISucceeded() const override
+    {
+        return CL_SUCCESS == m_retVal;
+    }
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString() override
+    {
+        return CLStringUtils::GetErrorString(m_retVal);
+    }
+
+    /// To String
+    /// \return string representation of the API
+    std::string ToString() override
+    {
+        std::ostringstream ss;
+        ss << StringUtils::ToHexString(m_command_queue) << s_strParamSeparator
+           << m_num_svm_pointers << s_strParamSeparator
+           << CLStringUtils::GetPointerListString(const_cast<void**>(m_svm_pointers), m_svm_pointers_list) << s_strParamSeparator
+           << CLStringUtils::GetSizeListString(m_sizes, m_num_svm_pointers, true) << s_strParamSeparator
+           << CLStringUtils::GetMemMigrationFlagsString(m_flags) << s_strParamSeparator
+           << m_num_events_in_wait_list << s_strParamSeparator
+           << CLStringUtils::GetEventListString(m_event_wait_list, m_vecEvent_wait_list) << s_strParamSeparator
+           << CLStringUtils::GetEventString(m_event);
+        return ss.str();
+    }
+
+    /// Save the parameter values and return value of clEnqueueSVMMigrateMem
+    /// \param command_queue Parameter for CLAPI_clEnqueueSVMMigrateMem
+    /// \param num_svm_pointers Parameter for CLAPI_clEnqueueSVMMigrateMem
+    /// \param svm_pointers Parameter for CLAPI_clEnqueueSVMMigrateMem
+    /// \param sizes Parameter for CLAPI_clEnqueueSVMMigrateMem
+    /// \param flags Parameter for CLAPI_clEnqueueSVMMigrateMem
+    /// \param num_events_in_wait_list Parameter for CLAPI_clEnqueueSVMMigrateMem
+    /// \param event_wait_list Parameter for CLAPI_clEnqueueSVMMigrateMem
+    /// \param event Parameter for CLAPI_clEnqueueSVMMigrateMem
+    /// \return dispatch function status
+    cl_int Create(cl_command_queue command_queue,
+                  cl_uint num_svm_pointers,
+                  const void** svm_pointers,
+                  const size_t* sizes,
+                  cl_mem_migration_flags flags,
+                  cl_uint num_events_in_wait_list,
+                  const cl_event* event_wait_list,
+                  cl_event* event);
+
+private:
+    /// Disable copy constructor
+    /// \param[in] obj  the input object
+    CLAPI_clEnqueueSVMMigrateMem(const CLAPI_clEnqueueSVMMigrateMem& obj) = delete;
+
+    /// Disable assignment operator
+    /// \param[in] obj the input object
+    /// \return a reference of the object
+    CLAPI_clEnqueueSVMMigrateMem& operator = (const CLAPI_clEnqueueSVMMigrateMem& obj) = delete;
+
+private:
+    // num_svm_pointers is the number of pointers in the specified svm_pointers array, and the number of sizes in the sizes array
+    cl_uint m_num_svm_pointers;             ///< parameter for clEnqueueSVMMigrateMem
+    const void** m_svm_pointers;            ///< parameter for clEnqueueSVMMigrateMem
+    std::vector<void*> m_svm_pointers_list; ///< parameter for clEnqueueSVMMigrateMem
+    // the number of sizes in the sizes array equals m_num_svm_pointers
+    const size_t* m_sizes;                  ///< parameter for clEnqueueSVMMigrateMem
+    std::vector<size_t> m_sizes_list;       ///< parameter for clEnqueueSVMMigrateMem
+    cl_mem_migration_flags m_flags;         ///< parameter for clEnqueueSVMMigrateMem
+    cl_event m_event;                       ///< parameter for clEnqueueSVMMigrateMem
+    cl_int m_retVal;                        ///< return value clEnqueueSVMMigrateMem
 };
 // @}
 
