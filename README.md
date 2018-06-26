@@ -33,15 +33,15 @@ RCP was formerly delivered as part of CodeXL with the executable name
 
 ## What's New
 * Version 5.4 (6/22/18)
- * Adds support for additional GPUs and APUs.
- * Support for profiling OpenCL applications running on ROCm
- * OpenCL: Support for tracing OpenCL 2.1 and 2.2 APIs
- * ROCm/HSA: Support for ROCm 1.8.
- * ROCm/HSA: Support for tracing AMD vendor extensions.
- * Fixes an issue parsing occupancy data collected on systems with certain locale settings.
- * ROCm/HSA: Fixes an issue with garbage characters in the .atp file for some HSA API string parameters.
- * OpenCL: Fixes profiling on recent amdgpu-pro drivers using the legacy OpenCL stack.
- * OpenCL: Works around a driver issue where GPU clock frequencies remain fixed after profiling on GFX9-based GPUs.
+  * Adds support for additional GPUs and APUs.
+  * Support for profiling OpenCL applications running on ROCm
+  * OpenCL: Support for tracing OpenCL 2.1 and 2.2 APIs
+  * ROCm/HSA: Support for ROCm 1.8.
+  * ROCm/HSA: Support for tracing AMD vendor extensions.
+  * Fixes an issue parsing occupancy data collected on systems with certain locale settings.
+  * ROCm/HSA: Fixes an issue with garbage characters in the .atp file for some HSA API string parameters.
+  * OpenCL: Fixes profiling on recent amdgpu-pro drivers using the legacy OpenCL stack.
+  * OpenCL: Works around a driver issue where GPU clock frequencies remain fixed after profiling on GFX9-based GPUs.
 
 ## System Requirements
 * An AMD Radeon GCN-based GPU or APU
