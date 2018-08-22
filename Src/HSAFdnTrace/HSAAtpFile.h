@@ -71,10 +71,11 @@ private:
     /// struct used to match data from the temp async copy timestamp file to the api timestamps
     struct AsyncCopyItem
     {
-        std::string m_strSignalHandle; ///< signal handle string from a async copy timestamp
-        uint64_t    m_start;           ///< start timestamp from a async copy
-        uint64_t    m_end;             ///< end timestamp from a async copy
-        uint32_t    m_apiIndex;        ///< api index of the hsa_amd_memory_async_copy api that initiated this data transfer
+        std::string m_strSignalHandle;     ///< signal handle string from a async copy timestamp
+        uint64_t    m_start;               ///< start timestamp from a async copy
+        uint64_t    m_end;                 ///< end timestamp from a async copy
+        uint32_t    m_apiIndex;            ///< api index of the hsa_amd_memory_async_copy api that initiated this data transfer
+        uint64_t    m_asyncCopyIdentifier; ///< unique identifier for a certain async copy call
     };
 
     /// Update tmp timestamp file
@@ -94,15 +95,6 @@ private:
     /// \param threadCopyInfoMap the map to fill with async copy timestamp info
     /// \return true on success
     bool LoadAsyncCopyTimestamps(const std::string& strFile, ThreadCopyItemMap& threadCopyInfoMap);
-
-    /// Loads the .apitrace file and pulls out the hsa_amd_memory_async_copy api index and
-    /// updates the api index in the items stored in threadCopyInfoMap.  It finds the correct
-    /// api by matching the signal handle in the apitrace with the signal handle in the pre-
-    /// loaded data in the threadCopyInfoMap
-    /// \param strFile the .apitrace file
-    /// \param threadCopyInfoMap the map containing the loaded async copy timestamps
-    /// \return true on success
-    bool UpdateApiIndexes(const std::string strFile, ThreadCopyItemMap& threadCopyInfoMap);
 
     /// Updates the .tstamp file to include the async copy timestamps in the specified threadCopyInfoMap
     /// \param strFile the .tstamp file

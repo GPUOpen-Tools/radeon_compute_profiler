@@ -41,8 +41,6 @@ SO_OBJS =  \
 	./$(OBJ_DIR)/HSAAMDLoaderExtensionAPITraceClasses.o \
 	./$(OBJ_DIR)/HSAImageExtensionAPITraceClasses.o \
 	./$(OBJ_DIR)/HSATraceStringOutput.o \
-	./$(OBJ_DIR)/HSATraceInterceptionTable1_0.o \
-	./$(OBJ_DIR)/HSATraceInterceptionTable1_2.o \
 	./$(OBJ_DIR)/HSAAqlPacketInfo.o \
 	./$(OBJ_DIR)/HSAAqlPacketTimeCollector.o \
 	./$(OBJ_DIR)/HSASignalPool.o \

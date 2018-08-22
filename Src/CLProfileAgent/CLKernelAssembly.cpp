@@ -8,8 +8,8 @@
 
 #include <sstream>
 #include <algorithm>
+#include <fstream>
 #include <boost/algorithm/string.hpp>
-#include <CElf.h>
 
 // ADL headers
 #include <ADLUtil.h>
@@ -43,8 +43,7 @@ KernelAssembly::KernelAssembly() : m_strFilePrefix(KERNEL_ASSEMBLY_FILE_PREFIX),
     m_bOutputIL(false),
     m_bOutputISA(false),
     m_bOutputCL(false),
-    m_bOutputHSAIL(false),
-    m_bInitCAL(false)
+    m_bOutputHSAIL(false)
 {
 };
 
@@ -196,25 +195,6 @@ bool SaveBifToFile(const char* pszFileName, ACLModule* mod, aclBinary* pBin)
     return true;
 }
 
-bool GetCPUISA(CElf& elf, string& strISAOut)
-{
-    const CElfSection* pAstextSection = elf.GetSection(".astext");
-
-    if (pAstextSection == NULL)
-    {
-        // ERROR
-        Log(logERROR, "Failed to retrieve astext section.\n");
-        return false;
-    }
-    else
-    {
-        const vector<char> data(pAstextSection->GetData());
-        strISAOut = string(data.begin(), data.end());
-    }
-
-    return true;
-}
-
 bool KernelAssembly::GenerateKernelFilesFromACLModule(ACLModule*         pAclModule,
                                                       aclCompiler*       pAclCompiler,
                                                       std::vector<char>& vBinary,
@@ -296,16 +276,6 @@ bool KernelAssembly::GenerateKernelFilesFromACLModule(ACLModule*         pAclMod
             {
                 strISA = pAsText;
                 bISA = true;
-            }
-            else
-            {
-                // Fallback to CELF path
-                CElf elf(vBinary);
-
-                if (elf.good())
-                {
-                    bISA = GetCPUISA(elf, strISA);
-                }
             }
 
             if (bISA)

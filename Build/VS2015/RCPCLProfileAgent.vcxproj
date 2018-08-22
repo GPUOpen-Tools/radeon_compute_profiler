@@ -40,10 +40,8 @@
     <Import Project="RCP-VKStableClocks.props" />
     <Import Project="..\..\..\RCP-Internal\Build\VS2015\RCP-Internal.props" Condition="exists('..\..\..\RCP-Internal\Build\VS2015\RCP-Internal.props')" />
     <Import Project="$(CommonDir)\Lib\AMD\ACL\Global-ACL.props" />
-    <Import Project="$(CommonDir)\Src\CElf\Global-CElf.props" />
     <Import Project="$(CommonDir)\Src\ADLUtil\Global-ADLUtil.props" />
     <Import Project="$(CommonDir)\Src\ACLModuleManager\Global-ACLModuleManager.props" />
-    <Import Project="$(CommonDir)\Lib\AMD\CAL\Global-CAL-NoLib.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -63,10 +61,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Common\Src\ADLUtil\ADLUtil.cpp" />
-    <ClCompile Include="..\..\..\Common\Src\CElf\Src\CElf.cpp" />
-    <ClCompile Include="..\..\..\Common\Src\CElf\Src\CElfSection.cpp" />
-    <ClCompile Include="..\..\..\Common\Src\CElf\Src\CElfStringTable.cpp" />
-    <ClCompile Include="..\..\..\Common\Src\CElf\Src\CElfSymbolTable.cpp" />
     <ClCompile Include="..\..\..\Common\Src\DynamicLibraryModule\ACLModule.cpp" />
     <ClCompile Include="..\..\..\Common\Src\ACLModuleManager\ACLModuleManager.cpp" />
     <ClCompile Include="..\..\Src\CLProfileAgent\CLBuffer.cpp" />

@@ -833,7 +833,8 @@ void HSA_APITrace_hsa_amd_memory_async_copy::Create(
     uint32_t num_dep_signals,
     const hsa_signal_t* dep_signals,
     hsa_signal_t completion_signal,
-    hsa_status_t retVal)
+    hsa_status_t retVal,
+    ULONGLONG asyncCopyIdentifier)
 {
     m_ullStart = ullStartTime;
     m_ullEnd = ullEndTime;
@@ -853,6 +854,19 @@ void HSA_APITrace_hsa_amd_memory_async_copy::Create(
 
     m_completion_signal = completion_signal;
     m_retVal = retVal;
+
+    m_asyncCopyIdentifier = asyncCopyIdentifier;
+}
+
+bool HSA_APITrace_hsa_amd_memory_async_copy::WriteTimestampEntry(std::ostream& sout, bool bTimeout)
+{
+    if (HSAAPIBase::WriteTimestampEntry(sout, bTimeout))
+    {
+        // async copy identifier
+        sout << std::left << std::setw(21) << m_asyncCopyIdentifier;
+    }
+
+    return true;
 }
 
 ///////////////////////////////////////////////////

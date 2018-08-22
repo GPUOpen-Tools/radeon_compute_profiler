@@ -1,5 +1,9 @@
 # Radeon Compute Profiler Release Notes
 ---
+## Version 5.5 (8/22/18)
+ * Adds support for additional GPUs and APUs.
+ * ROCm/HSA: Fixes several issues with incorrect or missing data transfer timestamps.
+
 ## Version 5.4 (6/22/18)
  * Adds support for additional GPUs and APUs.
  * Support for profiling OpenCL applications running on ROCm

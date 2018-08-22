@@ -17,7 +17,6 @@ INCLUDES = \
 	-I$(DEVICEINFO_DIR) \
 	-I$(TSINGLETON_DIR) \
 	-isystem$(BOOST_DIR) \
-	-isystem$(CELF_DIR)/Include \
 	-I$(UTF8CPP_DIR) \
 	-I$(ACL_DIR)/include \
 	-I$(ADL_DIR)/include \
@@ -46,10 +45,6 @@ SO_OBJS =  \
 	./$(OBJ_DIR)/CLDeferredKernel.o \
 	./$(OBJ_DIR)/CLProfilerMineCLEntry.o \
 	./$(OBJ_DIR)/CLProfilerMineCLMemory.o \
-	./$(OBJ_DIR)/CElf.o \
-	./$(OBJ_DIR)/CElfSection.o \
-	./$(OBJ_DIR)/CElfStringTable.o \
-	./$(OBJ_DIR)/CElfSymbolTable.o \
 	./$(OBJ_DIR)/GPUPerfAPICounterLoader.o \
 
 include $(DEPTH)/Build/Linux/CommonTargets.mk

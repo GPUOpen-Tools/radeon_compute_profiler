@@ -181,7 +181,6 @@ private:
     bool                                       m_bOutputISA;                 ///< flag indicating whether or not to write out the ISA file
     bool                                       m_bOutputCL;                  ///< flag indicating whether or not to write out the CL file
     bool                                       m_bOutputHSAIL;               ///< flag indicating whether or not to write out the HSAIL file
-    bool                                       m_bInitCAL;                   ///< flag indicating whether or not CALRT is initialized
     static std::string                         m_sTmpDisassemblyLoggerISA;   ///< string to hold the ISA text contents from the disassembly logger
     static std::string                         m_sTmpDisassemblyLoggerHSAIL; ///< string to hold the HSAIL text contents from the disassembly logger
     static unsigned int                        m_sDisassembleCount;          ///< count of the number of unique text items from the disassembly logger

@@ -29,6 +29,10 @@
 
 using namespace std;
 
+std::mutex HSAAPIInfoManager::ms_asyncTimeStampsMtx;
+
+AsyncCopyInfoList HSAAPIInfoManager::ms_asyncCopyInfoList;
+
 HSAAPIInfoManager::HSAAPIInfoManager(void) : m_tracedApiCount(0), m_queueCreationCount(0)
 {
     m_strTraceModuleName = "hsa";
@@ -169,6 +173,7 @@ bool HSAAPIInfoManager::WriteAsyncCopyTimestamp(std::ostream& sout, const AsyncC
         sout << std::left << std::setw(21) << pAsyncCopyInfo->m_signal.handle;
         sout << std::left << std::setw(21) << pAsyncCopyInfo->m_start;
         sout << std::left << std::setw(21) << pAsyncCopyInfo->m_end;
+        sout << std::left << std::setw(21) << pAsyncCopyInfo->m_asyncCopyIdentifier;
 
         return true;
     }
@@ -219,14 +224,14 @@ void HSAAPIInfoManager::FlushNonAPITimestampData(const osProcessId& pid)
         }
 
         {
-            std::lock_guard<std::mutex> lock(m_asyncTimeStampsMtx);
+            std::lock_guard<std::mutex> lock(ms_asyncTimeStampsMtx);
 
-            if (m_asyncCopyInfoList.size() > 0)
+            if (ms_asyncCopyInfoList.size() > 0)
             {
                 string tmpAsyncCopyTimestampFile = GetTempFileName(pid, 0, TMP_ASYNC_COPY_TIME_STAMP_EXT);
                 ofstream foutCopyTS(tmpAsyncCopyTimestampFile.c_str(), fstream::out | fstream::app);
 
-                for (auto asyncCopyInfo : m_asyncCopyInfoList)
+                for (auto asyncCopyInfo : ms_asyncCopyInfoList)
                 {
                     WriteAsyncCopyTimestamp(foutCopyTS, asyncCopyInfo);
                     foutCopyTS << std::endl;
@@ -234,12 +239,12 @@ void HSAAPIInfoManager::FlushNonAPITimestampData(const osProcessId& pid)
 
                 foutCopyTS.close();
 
-                for (auto it = m_asyncCopyInfoList.begin(); it != m_asyncCopyInfoList.end(); ++it)
+                for (auto it = ms_asyncCopyInfoList.begin(); it != ms_asyncCopyInfoList.end(); ++it)
                 {
                     delete(*it);
                 }
 
-                m_asyncCopyInfoList.clear();
+                ms_asyncCopyInfoList.clear();
             }
         }
     }
@@ -340,6 +345,9 @@ bool HSAAPIInfoManager::GetQueueId(const hsa_queue_t* pQueue, uint64_t& queueId)
 
 bool AsyncSignalHandler(hsa_signal_value_t value, void* pArg)
 {
+    // pAsyncCopyInfo must be guarded with the mutex in the callback
+    std::lock_guard<std::mutex> lock(HSAAPIInfoManager::ms_asyncTimeStampsMtx);
+
     AsyncCopyInfo* pAsyncCopyInfo = reinterpret_cast<AsyncCopyInfo*>(pArg);
 
     if (nullptr == pAsyncCopyInfo)
@@ -354,6 +362,14 @@ bool AsyncSignalHandler(hsa_signal_value_t value, void* pArg)
             // we will flag this condition by using 0 start and end times
             pAsyncCopyInfo->m_start = 0;
             pAsyncCopyInfo->m_end = 0;
+
+            // recover the original signal since the signal handle is used to identify async copy calls even if it fails
+            hsa_signal_t origSignal;
+
+            if (HSAAPIInfoManager::Instance()->GetOriginalAsyncCopySignal(pAsyncCopyInfo->m_signal, origSignal))
+            {
+                pAsyncCopyInfo->m_signal = origSignal;
+            }
         }
         else
         {
@@ -385,6 +401,9 @@ bool AsyncSignalHandler(hsa_signal_value_t value, void* pArg)
                 }
 
                 HSAAPIInfoManager::Instance()->UnlockSignalMap();
+
+                // the filling of ms_asyncCopyInfoList must be placed inside this callback to avoid zero valued timestamps before this callback is invoked
+                HSAAPIInfoManager::ms_asyncCopyInfoList.push_back(pAsyncCopyInfo);
             }
         }
     }
@@ -402,7 +421,7 @@ void HSAAPIInfoManager::UnlockSignalMap()
     m_signalMapMtx.unlock();
 }
 
-void HSAAPIInfoManager::AddAsyncCopyCompletionSignal(const hsa_signal_t& completionSignal)
+void HSAAPIInfoManager::AddAsyncCopyCompletionSignal(const hsa_signal_t& completionSignal, unsigned long long asyncCopyIdentifier)
 {
     hsa_signal_value_t signalValue = g_pRealCoreFunctions->hsa_signal_load_scacquire_fn(completionSignal);
 
@@ -414,9 +433,9 @@ void HSAAPIInfoManager::AddAsyncCopyCompletionSignal(const hsa_signal_t& complet
     }
     else
     {
-        std::lock_guard<std::mutex> lock(m_asyncTimeStampsMtx);
+        std::lock_guard<std::mutex> lock(ms_asyncTimeStampsMtx);
 
-        m_asyncCopyInfoList.push_back(pAsyncCopyInfo);
+        pAsyncCopyInfo->m_asyncCopyIdentifier = asyncCopyIdentifier;
 
         hsa_status_t status = g_pRealAmdExtFunctions->hsa_amd_signal_async_handler_fn(completionSignal, HSA_SIGNAL_CONDITION_LT, signalValue, AsyncSignalHandler, pAsyncCopyInfo);
 

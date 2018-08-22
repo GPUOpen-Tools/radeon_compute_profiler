@@ -241,6 +241,20 @@ performance counters can be used directly by an application to collect
 performance counter data at runtime. GPUPerfAPI can be found at
 https://github.com/GPUOpen-Tools/GPA.
 
+How do I ensure that my OpenCL application trace contains all API trace data?
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+When the the ``--interval`` command line switch is used (which is the default
+and only supported mode on Linux), the application trace might not include the
+full trace of all APIs called by the application. This is because any APIs
+called after the final interval in the application's lifetime might be omitted.
+To limit the number of APIs omitted in this scenario, the Profiler also writes
+all queued-up trace data when the clReleaseContext API is called. However, if
+an application does not call clReleaseContext to clean up any OpenCL contexts
+it has created, or if it calls any OpenCL™ APIs after the final
+clReleaseContext call, then the trace might not contain all APIs called. To
+prevent this from happening, it is recommended that clReleaseContext is the
+last OpenCL API called by the application when it is running.
+
 How do I report an issue with Radeon Compute Profiler
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

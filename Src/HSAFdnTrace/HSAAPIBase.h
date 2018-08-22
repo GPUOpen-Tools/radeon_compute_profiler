@@ -39,7 +39,7 @@ public:
     bool WriteTimestampEntry(std::ostream& sout, bool bTimeout);
 
 public:
-    HSA_API_Type m_type;       ///< api type enum
+    HSA_API_Type m_type;             ///< api type enum
 
 private:
     /// Disable copy constructor

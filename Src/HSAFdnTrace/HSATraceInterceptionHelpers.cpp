@@ -230,7 +230,7 @@ void HSA_APITrace_hsa_executable_symbol_get_info_PostCallHelper(hsa_status_t ret
     }
 }
 
-void HSA_APITrace_hsa_amd_memory_async_copy_PreCallHelper(void* dst, hsa_agent_t dst_agent, const void* src, hsa_agent_t src_agent, size_t size, uint32_t num_dep_signals, const hsa_signal_t* dep_signals, hsa_signal_t& completion_signal)
+void HSA_APITrace_hsa_amd_memory_async_copy_PreCallHelper(void* dst, hsa_agent_t dst_agent, const void* src, hsa_agent_t src_agent, size_t size, uint32_t num_dep_signals, const hsa_signal_t* dep_signals, hsa_signal_t& completion_signal, unsigned long long asyncCopyIdentifier)
 {
     SP_UNREFERENCED_PARAMETER(dst);
     SP_UNREFERENCED_PARAMETER(dst_agent);
@@ -258,7 +258,7 @@ void HSA_APITrace_hsa_amd_memory_async_copy_PreCallHelper(void* dst, hsa_agent_t
         else
         {
             HSAAPIInfoManager::Instance()->AddReplacementAsyncCopySignal(completion_signal, replacementSignal);
-            HSAAPIInfoManager::Instance()->AddAsyncCopyCompletionSignal(replacementSignal);
+            HSAAPIInfoManager::Instance()->AddAsyncCopyCompletionSignal(replacementSignal, asyncCopyIdentifier);
             completion_signal = replacementSignal;
         }
     }

@@ -94,9 +94,6 @@ $(OBJ_DIR)/%.o: $(SRC_SPROFILE_DIR)/%.cpp
 $(OBJ_DIR)/%.o: $(SRC_SANALYZE_DIR)/%.cpp
 	$(BUILD_SRC)
 
-$(OBJ_DIR)/%.o: $(CELF_DIR)/Src/%.cpp
-	$(BUILD_SRC)
-
 $(OBJ_DIR)/%.o: $(HSATESTCOMMON_DIR)/%.cpp
 	$(BUILD_SRC)
 

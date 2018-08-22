@@ -23,16 +23,18 @@
 /// Struct to hold AsyncCopy timestamps
 struct AsyncCopyInfo
 {
-    osThreadId   m_threadId; ///< thread id of host thread that called the API using the signal being tracked
-    hsa_signal_t m_signal;   ///< the signal being tracked
-    uint64_t     m_start;    ///< the start timestamp
-    uint64_t     m_end;      ///< the end timestamp
+    osThreadId   m_threadId;            ///< thread id of host thread that called the API using the signal being tracked
+    hsa_signal_t m_signal;              ///< the signal being tracked
+    uint64_t     m_start;               ///< the start timestamp
+    uint64_t     m_end;                 ///< the end timestamp
+    uint64_t     m_asyncCopyIdentifier; ///< the API start timestamp
 
     AsyncCopyInfo(const osThreadId& threadId, const hsa_signal_t& signal) :
         m_threadId(threadId),
         m_signal(signal),
         m_start(0),
-        m_end(0)
+        m_end(0),
+        m_asyncCopyIdentifier(0)
     {
     }
 };
@@ -100,9 +102,10 @@ public:
     /// \return true if the queue is known, false otherwise
     bool GetQueueId(const hsa_queue_t* pQueue, uint64_t& queueId);
 
-    /// Adds the specified signal to the list of async copy signals that need to be tracked.
+    /// Adds the specified signal to the list of async copy signals that need to be tracked
     /// \param completionSignal the signal that should be tracked
-    void AddAsyncCopyCompletionSignal(const hsa_signal_t& completionSignal);
+    /// \param asyncCopyIdentifier the async copy identifier
+    void AddAsyncCopyCompletionSignal(const hsa_signal_t& completionSignal, unsigned long long asyncCopyIdentifier);
 
     /// Add the orig/replacement signal to the map of replaced signals
     /// \param originalSignal the application-provided signal that is being replaced
@@ -171,6 +174,10 @@ public:
     /// \return true if HSA transfer time is disabled
     bool IsHsaTransferTimeDisabled();
 
+    static std::mutex        ms_asyncTimeStampsMtx; ///< mutex to guard access to m_asyncCopyInfoList
+
+    static AsyncCopyInfoList ms_asyncCopyInfoList;  ///< list of async copy information
+
 protected:
     /// Flush non-API timestamp data to the output stream
     /// \param pid the process id of the profiled process
@@ -211,12 +218,10 @@ private:
     QueueIdMap             m_queueIdMap;                    ///< map of a queue to that queue's index (basically creation order)
     uint64_t               m_queueCreationCount;            ///< count of queues created
     std::mutex             m_queueMapMtx;                   ///< mutex to guard access to m_queueIdMap
-    AsyncCopyInfoList      m_asyncCopyInfoList;             ///< list of async copy information
     PacketList             m_packetList;                    ///< list of packets
-    std::mutex             m_asyncTimeStampsMtx;            ///< mutex to guard access to m_asyncCopyInfoList
     std::mutex             m_packetTraceMtx;                ///< mutex to guard access to m_packetList
     bool                   m_bDelayStartEnabled;            ///< flag indicating whether or not the profiler should start with delay or not
-    bool                   m_bProfilerDurationEnabled;      ///< flag indiacating whether profiler should only run for certain duration
+    bool                   m_bProfilerDurationEnabled;      ///< flag indicating whether profiler should only run for certain duration
     unsigned long          m_delayInMilliseconds;           ///< millieconds to delay for profiler to start
     unsigned long          m_durationInMilliseconds;        ///< duration in milliseconds for which Profiler should run
     ProfilerTimer*         m_pDelayTimer;                   ///< timer for handling delay timer for the profile agent

@@ -840,6 +840,7 @@ public:
     /// \param dep_signals Parameter passed to hsa_amd_memory_async_copy
     /// \param completion_signal Parameter passed to hsa_amd_memory_async_copy
     /// \param retVal the return value for hsa_amd_memory_async_copy
+    /// \param asyncCopyIdentifier Parameter passed to hsa_amd_memory_async_copy
     void Create(ULONGLONG ullStartTime,
                 ULONGLONG ullEndTime,
                 void* dst,
@@ -850,7 +851,14 @@ public:
                 uint32_t num_dep_signals,
                 const hsa_signal_t* dep_signals,
                 hsa_signal_t completion_signal,
-                hsa_status_t retVal);
+                hsa_status_t retVal,
+                ULONGLONG asyncCopyIdentifier);
+
+    /// Write timestamp entry
+    /// \param sout output stream
+    /// \param bTimeout a flag indicating output mode
+    /// \return True if timestamps are ready
+    bool WriteTimestampEntry(std::ostream& sout, bool bTimeout);
 
 private:
     /// Disabled copy constructor
@@ -871,6 +879,7 @@ private:
     hsa_signal_t m_dep_signalsVal; ///< Member to hold value passed to hsa_amd_memory_async_copy in dep_signals parameter
     hsa_signal_t m_completion_signal; ///< Parameter passed to hsa_amd_memory_async_copy
     hsa_status_t m_retVal; ///< Parameter passed to hsa_amd_memory_async_copy
+    ULONGLONG m_asyncCopyIdentifier; ///< async copy identifier
 };
 
 ///////////////////////////////////////////////////

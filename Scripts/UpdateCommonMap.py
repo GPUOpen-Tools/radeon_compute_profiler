@@ -9,7 +9,6 @@ GitHubMapping = {
     "common-lib-amd-ADL"                     : "../Common/Lib/AMD/ADL",
     "common-lib-AMD-ACL"                     : "../Common/Lib/AMD/ACL",
     "common-lib-amd-APPSDK-3.0"              : "../Common/Lib/AMD/APPSDK",
-    "common-lib-AMD-CAL-8.95"                : "../Common/Lib/AMD/CAL",
     "common-lib-ext-Boost-1.59"              : "../Common/Lib/Ext/Boost",
     "common-lib-ext-mhook"                   : "../Common/Lib/Ext/mhook",
     "common-lib-ext-tinyxml-2.6.2"           : "../Common/Lib/Ext/tinyxml",
@@ -21,7 +20,6 @@ GitHubMapping = {
     "common-src-AMDTBaseTools"               : "../Common/Src/AMDTBaseTools",
     "common-src-AMDTInterceptor"             : "../Common/Src/AMDTInterceptor",
     "common-src-AMDTOSWrappers"              : "../Common/Src/AMDTOSWrappers",
-    "common-src-CElf"                        : "../Common/Src/CElf",
     "common-src-DeviceInfo"                  : "../Common/Src/DeviceInfo",
     "common-src-DynamicLibraryModule"        : "../Common/Src/DynamicLibraryModule",
     "common-src-HSAUtils"                    : "../Common/Src/HSAUtils",
@@ -33,12 +31,12 @@ GitHubMapping = {
 }
 
 downloadMappingWin = {
-    "https://github.com/GPUOpen-Tools/GPA/releases/download/v3.1a/GPUPerfAPI-3.1.571.0.zip" : "../Common/Lib/AMD/GPUPerfAPI",
+    "https://github.com/GPUOpen-Tools/GPA/releases/download/v3.2/GPUPerfAPI-3.2.623.0.zip" : "../Common/Lib/AMD/GPUPerfAPI",
     "https://github.com/GPUOpen-Tools/RCP/releases/download/v5.4/RadeonComputeProfiler-v5.4.6937.zip" : "../Common/Lib/AMD/VKStableClocks"
 }
 
 downloadMappingLin = {
-    "https://github.com/GPUOpen-Tools/GPA/releases/download/v3.1a/GPUPerfAPI.3.1.793-lnx.tgz" : "../Common/Lib/AMD/GPUPerfAPI",
+    "https://github.com/GPUOpen-Tools/GPA/releases/download/v3.2/GPUPerfAPI.3.2.858-lnx.tgz" : "../Common/Lib/AMD/GPUPerfAPI",
     "https://github.com/GPUOpen-Tools/RCP/releases/download/v5.4/RadeonComputeProfiler-v5.4.6906.tgz" : "../Common/Lib/AMD/VKStableClocks"
 }
 

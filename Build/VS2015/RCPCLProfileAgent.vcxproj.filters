@@ -10,18 +10,6 @@
     <ClCompile Include="..\..\..\Common\Src\ADLUtil\ADLUtil.cpp">
       <Filter>ADLUtil</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\Src\CElf\Src\CElf.cpp">
-      <Filter>CElf</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Common\Src\CElf\Src\CElfSection.cpp">
-      <Filter>CElf</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Common\Src\CElf\Src\CElfStringTable.cpp">
-      <Filter>CElf</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Common\Src\CElf\Src\CElfSymbolTable.cpp">
-      <Filter>CElf</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Src\CLProfileAgent\CLBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -97,9 +85,6 @@
   <ItemGroup>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{7124187b-7b76-4cc9-bdd2-0ff0af4cbbdc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="CElf">
-      <UniqueIdentifier>{59c4443f-a055-4755-8763-238265e9bc85}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{22d938b8-1adb-4011-ac9a-850e37321634}</UniqueIdentifier>

@@ -32,20 +32,13 @@ RCP was formerly delivered as part of CodeXL with the executable name
 * When used with CodeXL, all profiler data can be visualized in a user-friendly graphical user interface.
 
 ## What's New
-* Version 5.4 (6/22/18)
-  * Adds support for additional GPUs and APUs.
-  * Support for profiling OpenCL applications running on ROCm
-  * OpenCL: Support for tracing OpenCL 2.1 and 2.2 APIs
-  * ROCm/HSA: Support for ROCm 1.8.
-  * ROCm/HSA: Support for tracing AMD vendor extensions.
-  * Fixes an issue parsing occupancy data collected on systems with certain locale settings.
-  * ROCm/HSA: Fixes an issue with garbage characters in the .atp file for some HSA API string parameters.
-  * OpenCL: Fixes profiling on recent amdgpu-pro drivers using the legacy OpenCL stack.
-  * OpenCL: Works around a driver issue where GPU clock frequencies remain fixed after profiling on GFX9-based GPUs.
+* Version 5.5 (8/22/18)
+ * Adds support for additional GPUs and APUs.
+ * ROCm/HSA: Fixes several issues with incorrect or missing data transfer timestamps.
 
 ## System Requirements
 * An AMD Radeon GCN-based GPU or APU
-* Radeon Software Crimson ReLive Edition 18.5.1 or later (Driver Packaging Version 18.10 or later).
+* Radeon Software Adrenaline Edition 18.8.1 or later (Driver Packaging Version 18.30 or later).
 * ROCm 1.8. See system requirements for ROCm: https://rocm.github.io/install.html and https://rocm.github.io/hardware.html
 * Windows 7, 8.1, and 10
   * For Windows, the `Visual C++ Redistributable for Visual Studio 2015` is required. It can be downloaded from https://www.microsoft.com/en-us/download/details.aspx?id=48145

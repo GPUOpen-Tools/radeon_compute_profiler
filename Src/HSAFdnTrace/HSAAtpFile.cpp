@@ -664,9 +664,7 @@ bool HSAAtpFilePart::UpdateTmpTimestampFiles(const std::string& strTmpFilePath, 
             }
         }
 
-        bool retVal = true;
-
-        // now search the temp trace files to match up the timestamps to the correct API (using the signal handle string)
+        // now update the timestamp data for the has_amd_memory_async_copy to include the data transfer timing
         for (vector<string>::iterator it = files.begin(); it != files.end(); ++it)
         {
             size_t part_found = it->find(strPartName);
@@ -683,49 +681,24 @@ bool HSAAtpFilePart::UpdateTmpTimestampFiles(const std::string& strTmpFilePath, 
             {
                 std::string strExt = it->substr(found);
 
-                if (strExt == TMP_TRACE_EXT)
+                if (strExt == TMP_TIME_STAMP_EXT)
                 {
                     string strFullName = strTmpFilePath + '/' + *it;
-                    retVal |= UpdateApiIndexes(strFullName, threadCopyTimestamps);
-                }
-            }
-        }
-
-        if (retVal)
-        {
-            // now update the timestamp data for the has_amd_memory_async_copy to include the data transfer timing
-            for (vector<string>::iterator it = files.begin(); it != files.end(); ++it)
-            {
-                size_t part_found = it->find(strPartName);
-
-                if (part_found == string::npos)
-                {
-                    Log(logMESSAGE, "Skipping file: %s. It does not contain: %s.\n", it->c_str(), strPartName.c_str());
-                    continue;
-                }
-
-                size_t found = it->find_last_of(".");
-
-                if (found != string::npos)
-                {
-                    std::string strExt = it->substr(found);
-
-                    if (strExt == TMP_TIME_STAMP_EXT)
+                    if (!UpdateAsyncCopyTimestamps(strFullName, threadCopyTimestamps))
                     {
-                        string strFullName = strTmpFilePath + '/' + *it;
-                        UpdateAsyncCopyTimestamps(strFullName, threadCopyTimestamps);
+                        return false;
                     }
                 }
             }
         }
 
-        if (retVal && !strAsyncCopyTSFile.empty())
+        if (!strAsyncCopyTSFile.empty())
         {
             // delete async copy timestamp file.
             remove(strAsyncCopyTSFile.c_str());
         }
 
-        return retVal;
+        return true;
     }
 }
 
@@ -760,6 +733,7 @@ bool HSAAtpFilePart::LoadAsyncCopyTimestamps(const std::string& strFile, ThreadC
         ss >> asyncCopyItem.m_strSignalHandle;
         ss >> asyncCopyItem.m_start;
         ss >> asyncCopyItem.m_end;
+        ss >> asyncCopyItem.m_asyncCopyIdentifier;
 
         asyncCopyItem.m_apiIndex = 0;
 
@@ -787,141 +761,6 @@ bool HSAAtpFilePart::LoadAsyncCopyTimestamps(const std::string& strFile, ThreadC
     return true;
 }
 
-bool HSAAtpFilePart::UpdateApiIndexes(const std::string strFile, ThreadCopyItemMap& threadCopyInfoMap)
-{
-    osThreadId tid;
-    bool correctTidFile = IsCorrectTidFile(strFile, threadCopyInfoMap, tid);
-
-    if (!correctTidFile)
-    {
-        return false;
-    }
-
-    AsyncCopyItemList itemList = threadCopyInfoMap[tid];
-
-    char buf[MAX_LINE_SIZE];
-    std::ifstream fin(strFile.c_str());
-
-    if (!fin.is_open())
-    {
-        return false;
-    }
-
-    uint32_t curIndex = static_cast<uint32_t>(-1);
-
-    while (!fin.eof())
-    {
-        memset(buf, 0, MAX_LINE_SIZE * sizeof(char));
-        fin.getline(buf, MAX_LINE_SIZE);
-
-        std::string line(buf);
-
-        if (line.empty())
-        {
-            continue;
-        }
-
-        curIndex++;
-
-        size_t equalSignPos = line.find_first_of("=");
-        size_t openParenPos = line.find_first_of("(");
-
-        if (openParenPos != string::npos)
-        {
-            size_t nameStartIndex = 0;
-
-            // In HSA, not all APIs have a return value -- those with no return value do not have an equal sign before the API name
-            if (equalSignPos == string::npos || equalSignPos > openParenPos)
-            {
-                equalSignPos = 0;
-            }
-            else
-            {
-                // If there is an equal sign, increment the start index (we expect a space before the name starts)
-                nameStartIndex = equalSignPos + 2;
-            }
-
-            // Back up from the opening parentheses, this is where the name actually ends
-            size_t nameEndIndex = openParenPos - 1;
-
-            // Get the name
-            size_t nameLength = nameEndIndex - nameStartIndex;
-
-            if ((nameStartIndex < line.size()) && (nameStartIndex + nameLength <= line.size()))
-            {
-                std::string name = line.substr(nameStartIndex, nameEndIndex - nameStartIndex);
-
-                if (0 != name.compare("hsa_amd_memory_async_copy"))
-                {
-                    continue;
-                }
-
-                // Parse the return value
-                std::string returnValue;
-
-                if (0 != equalSignPos)
-                {
-                    returnValue = line.substr(0, equalSignPos - 1);
-                }
-
-                if (0 != returnValue.compare("HSA_STATUS_SUCCESS"))
-                {
-                    continue;
-                }
-
-                // Parse the arg list
-                size_t argListEndIndex = line.find_last_of(")");
-
-                if (argListEndIndex != string::npos)
-                {
-                    size_t argListLength = argListEndIndex - openParenPos;
-
-                    if (nameEndIndex + argListLength < line.size())
-                    {
-                        std::string argList = StringUtils::Trim(line.substr(nameEndIndex + 2, argListLength - 2));
-
-                        size_t signalHandleStart = argList.find_last_of("{");
-
-                        if (string::npos != signalHandleStart)
-                        {
-                            size_t signalHandleEnd = argList.find_last_of("}");
-
-                            if (string::npos != signalHandleEnd)
-                            {
-                                std::string signalHandle = argList.substr(signalHandleStart + 1, signalHandleEnd - 1 - signalHandleStart);
-
-                                for (auto it = itemList.begin(); it != itemList.end(); ++it)
-                                {
-                                    if (0 == it->m_apiIndex && 0 == it->m_strSignalHandle.compare(signalHandle))
-                                    {
-                                        it->m_apiIndex = curIndex;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    Log(logERROR, "Failed to parse API trace (%s), Unexpected data in input file.\n", line.c_str());
-                    return false;
-                }
-            }
-        }
-        else
-        {
-            Log(logERROR, "Failed to parse API trace (%s), Unexpected data in input file.\n", line.c_str());
-            return false;
-        }
-    }
-
-    threadCopyInfoMap[tid] = itemList;
-
-    fin.close();
-    return true;
-}
-
 bool HSAAtpFilePart::UpdateAsyncCopyTimestamps(const std::string strFile, ThreadCopyItemMap threadCopyInfoMap)
 {
     osThreadId tid;
@@ -939,14 +778,55 @@ bool HSAAtpFilePart::UpdateAsyncCopyTimestamps(const std::string strFile, Thread
 
     if (FileUtils::ReadFile(strFile, fileLines, false))
     {
+        std::unordered_map<uint64_t, uint32_t> asyncCopyIdentifierToIndexMap;
+
+        for (uint32_t i = 0; i < fileLines.size(); ++i)
+        {
+            if (std::string::npos != fileLines[i].find("hsa_amd_memory_async_copy"))
+            {
+                std::stringstream ss;
+                int apiType;
+                std::string apiName;
+                uint64_t ullStart;
+                uint64_t ullEnd;
+                uint64_t asyncCopyIdentifier;
+
+                ss << fileLines[i];
+
+                ss >> apiType;
+                ss >> apiName;
+                ss >> ullStart;
+                ss >> ullEnd;
+                ss >> asyncCopyIdentifier;
+
+                asyncCopyIdentifierToIndexMap[asyncCopyIdentifier] = i;
+
+                ss.str("");
+
+                ss << std::left << std::setw(5) << apiType;
+                ss << std::left << std::setw(45) << apiName;
+                ss << std::left << std::setw(21) << ullStart;
+                ss << std::left << std::setw(21) << ullEnd;
+
+                fileLines[i] = ss.str();
+            }
+        }
+
         for (auto it = itemList.begin(); it != itemList.end(); ++it)
         {
+            uint32_t apiIndex = 0;
+
+            if (asyncCopyIdentifierToIndexMap.count(it->m_asyncCopyIdentifier) > 0)
+            {
+                apiIndex = asyncCopyIdentifierToIndexMap[it->m_asyncCopyIdentifier];
+            }
+
             std::stringstream ss;
-            ss << fileLines[it->m_apiIndex];
+            ss << fileLines[apiIndex];
             ss << std::left << std::setw(21) << it->m_start;
             ss << std::left << std::setw(21) << it->m_end;
 
-            fileLines[it->m_apiIndex] = ss.str();
+            fileLines[apiIndex] = ss.str();
             fileUpdated = true;
         }
     }
