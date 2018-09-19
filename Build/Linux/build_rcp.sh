@@ -18,6 +18,15 @@ bBuildHSAProfiler=true
 # Build OCL Profiler
 bBuildOCLProfiler=true
 
+# Build Parser Lib
+bBuildParserLib=true
+
+# Build Executable
+bBuildExecutable=true
+
+# Build XInitthreads
+bBuildXInitThreads=true
+
 bBuildDocumentation=false
 
 # Generate zip file
@@ -86,6 +95,16 @@ do
       bIncrementalBuild=true
    elif [ "$1" = "skip-32bitbuild" ]; then
       b32bitbuild=false
+   elif [ "$1" = "skip-parser" ]; then
+      bBuildParserLib=false
+   elif [ "$1" = "parser-only" ]; then
+      bBuildParserLib=true
+      bBuildExecutable=false
+      bBuildOCLProfiler=false
+      bBuildHSAProfiler=false
+      SKIP_HSA_BUILD_DEFINE=-DSKIP_HSA_BUILD
+      ADDITIONAL_COMPILER_DEFINES_OVERRIDE="ADDITIONAL_COMPILER_DEFINES_FROM_BUILD_SCRIPT=$SKIP_HSA_BUILD_DEFINE"
+      bBuildXInitThreads=false
    elif [ "$1" = "framework-only" ]; then
       bBuildFrameworkOnly=true
    elif [ "$1" = "incremental" ]; then
@@ -323,7 +342,17 @@ if ! ($bZipOnly) ; then
       BUILD_DIRS="$BUILD_DIRS $HSAFDNCOMMON $HSAUTILS $HSAFDNTRACE $HSAFDNPMC"
    fi
 
-   BUILD_DIRS="$BUILD_DIRS $PROFILEDATAPARSERSRC $SPROFILE $PRELOADXINITTHREADS"
+   if $bBuildParserLib; then
+      BUILD_DIRS="$BUILD_DIRS $PROFILEDATAPARSERSRC"
+   fi
+
+   if $bBuildExecutable; then
+      BUILD_DIRS="$BUILD_DIRS $SPROFILE"
+   fi
+
+   if $bBuildXInitThreads; then
+      BUILD_DIRS="$BUILD_DIRS $PRELOADXINITTHREADS"
+   fi
 
    for SUBDIR in $BUILD_DIRS; do
       BASENAME=`basename $SUBDIR`
@@ -408,8 +437,13 @@ if ! ($bZipOnly) ; then
       #copy to bin folder
       #-----------------------------------------
       # x64
-      cp "$PROFILER_OUTPUT/$RCPROFILEBIN" "$BIN/$RCPROFILEBIN"
-      cp "$PROFILER_OUTPUT/$PRELOADXINITTHREADSBIN" "$BIN/$PRELOADXINITTHREADSBIN"
+      if $bBuildExecutable ; then
+         cp "$PROFILER_OUTPUT/$RCPROFILEBIN" "$BIN/$RCPROFILEBIN"
+      fi
+
+      if $bBuildXInitThreads ; then
+         cp "$PROFILER_OUTPUT/$PRELOADXINITTHREADSBIN" "$BIN/$PRELOADXINITTHREADSBIN"
+      fi
 
       if $bBuildOCLProfiler ; then
          cp "$PROFILER_OUTPUT/$CLPROFILEBIN" "$BIN/$CLPROFILEBIN"
@@ -428,8 +462,12 @@ if ! ($bZipOnly) ; then
       #x86
       if $b32bitbuild; then
          if $bBuildOCLProfiler ; then
-            cp "$PROFILER_OUTPUT/$RCPROFILEBIN32" "$BIN/$RCPROFILEBIN32"
-            cp "$PROFILER_OUTPUT/$PRELOADXINITTHREADSBIN32" "$BIN/$PRELOADXINITTHREADSBIN32"
+            if $bBuildExecutable ; then
+               cp "$PROFILER_OUTPUT/$RCPROFILEBIN32" "$BIN/$RCPROFILEBIN32"
+            fi
+            if $bBuildXInitThreads ; then
+               cp "$PROFILER_OUTPUT/$PRELOADXINITTHREADSBIN32" "$BIN/$PRELOADXINITTHREADSBIN32"
+            fi
             cp "$PROFILER_OUTPUT/$CLPROFILEBIN32" "$BIN/$CLPROFILEBIN32"
             cp "$PROFILER_OUTPUT/$CLTRACEBIN32" "$BIN/$CLTRACEBIN32"
             cp "$PROFILER_OUTPUT/$CLOCCUPANCYBIN32" "$BIN/$CLOCCUPANCYBIN32"
@@ -479,44 +517,46 @@ if $bZip || $bZipOnly ; then
    chmod 755 "$RCP_ARCHIVE"
    cd "$BUILD_PATH"
 
-   # Profile Data parser directory
-   mkdir -p "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/bin"
-   mkdir -p "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include"
+   if $bBuildParserLib ; then
+      # Profile Data parser directory
+      mkdir -p "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/bin"
+      mkdir -p "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include"
 
-   # copy 64-bit profile data parser binaries
-   cp "$PROFILER_OUTPUT/$PROFILEDATAPARSERBIN" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/bin/"
+      # copy 64-bit profile data parser binaries
+      cp "$PROFILER_OUTPUT/$PROFILEDATAPARSERBIN" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/bin/"
 
-   # copy 32-bit profile data parser binaries
-   if $b32bitbuild; then
-    cp "$PROFILER_OUTPUT/$PROFILEDATAPARSERBIN32" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/bin/"
+      # copy 32-bit profile data parser binaries
+      if $b32bitbuild; then
+         cp "$PROFILER_OUTPUT/$PROFILEDATAPARSERBIN32" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/bin/"
+      fi
+
+      # copy profile data parser header files
+      cp "$SRCCOMMON/Defs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$SRCCOMMON/IParserListener.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$SRCCOMMON/IParserProgressMonitor.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$SRCCOMMON/OSDefs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$SRCCOMMON/ProfilerOutputFileDefs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$SRCCOMMON/Version.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$SRCCOMMON/Config.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$CLCOMMON/CLFunctionEnumDefs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$HSAFDNCOMMON/HSAFunctionDefs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/IAtpDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/IAPIInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/ICLApiInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/IHSAApiInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/IOccupancyFileInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/IOccupancyInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/IPerfMarkerInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/ISymbolFileEntryInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/ATPParserInterface.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/ProfileDataParserLoader.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+
+      # Artifact for profile data parser
+      cd $BUILD_PATH/$PROFILEDATAPARSER-$VERSION
+      tar cvzf "$BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE" ./bin ./include
+      chmod -R 755 "$BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE"
+      cd $BUILD_PATH
    fi
-
-   # copy profile data parser header files
-   cp "$SRCCOMMON/Defs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$SRCCOMMON/IParserListener.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$SRCCOMMON/IParserProgressMonitor.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$SRCCOMMON/OSDefs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$SRCCOMMON/ProfilerOutputFileDefs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$SRCCOMMON/Version.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$SRCCOMMON/Config.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$CLCOMMON/CLFunctionEnumDefs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$HSAFDNCOMMON/HSAFunctionDefs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/IAtpDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/IAPIInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/ICLApiInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/IHSAApiInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/IOccupancyFileInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/IOccupancyInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/IPerfMarkerInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/ISymbolFileEntryInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/ATPParserInterface.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/ProfileDataParserLoader.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-
-   # Artifact for profile data parser
-   cd $BUILD_PATH/$PROFILEDATAPARSER-$VERSION
-   tar cvzf "$BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE" ./bin ./include
-   chmod -R 755 "$BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE"
-   cd $BUILD_PATH
 
    # cleanup
    rm -rf "$BUILD_PATH/$PRODUCTNAME-$VERSION/"
@@ -530,12 +570,14 @@ if $bZip || $bZipOnly ; then
       exit 1
    fi
 
-   #Check artifacts of profile data parser
-   if [ -e "$BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE" ] ; then
-      echo "$BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE" >> $LOGFILE
-   else
-      echo "Failed to generate $BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE" >> "$LOGFILE"
-      exit 1
+   if $bBuildParserLib ; then
+      #Check artifacts of profile data parser
+      if [ -e "$BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE" ] ; then
+         echo "$BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE" >> $LOGFILE
+      else
+         echo "Failed to generate $BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE" >> "$LOGFILE"
+         exit 1
+      fi
    fi
 fi
 
