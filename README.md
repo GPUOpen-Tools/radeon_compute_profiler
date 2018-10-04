@@ -90,7 +90,7 @@ version number up to 5.x.
 
 ## Known Issues
 * For the OpenCL Profiler
-  * When collecting performance counters on Linux, the current user must have read access to <br><br>/sys/class/drm/card\<N\>/device/power_dpm_force_performance_level<br><br>
+  * When collecting performance counters on Linux, the current user must have write access to <br><br>/sys/class/drm/card\<N\>/device/power_dpm_force_performance_level<br><br>
     where \<N\> is the index of the card in question. By default this file is only modifiable by root, so the profiler would have to be run as root in order for it to modify
     this file. It is possible to modify the permissions for the file instead so that it can be written by unprivileged users. The following command will
     achieve this. Note, however, that changing the permissions on a system file like this could circumvent security. Also, on multi-GPU systems, you may have to replace
