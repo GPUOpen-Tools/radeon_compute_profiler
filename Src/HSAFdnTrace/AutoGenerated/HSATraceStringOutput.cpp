@@ -2946,7 +2946,7 @@ std::string HSATraceStringUtils::Get_hsa_amd_ipc_memory_t_Ptr_String(const hsa_a
     }
 }
 
-std::string HSATraceStringUtils::Get_hsa_amd_event_t_String(hsa_amd_event_t input)
+std::string HSATraceStringUtils::Get_hsa_amd_event_type_t_String(hsa_amd_event_type_t input)
 {
     std::ostringstream ss;
 
@@ -2962,7 +2962,7 @@ std::string HSATraceStringUtils::Get_hsa_amd_event_t_String(hsa_amd_event_t inpu
     return ss.str();
 }
 
-std::string HSATraceStringUtils::Get_hsa_amd_event_t_Ptr_String(const hsa_amd_event_t* pInputPtr, hsa_amd_event_t input)
+std::string HSATraceStringUtils::Get_hsa_amd_event_type_t_Ptr_String(const hsa_amd_event_type_t* pInputPtr, hsa_amd_event_type_t input)
 {
     if (nullptr == pInputPtr)
     {
@@ -2970,7 +2970,7 @@ std::string HSATraceStringUtils::Get_hsa_amd_event_t_Ptr_String(const hsa_amd_ev
     }
     else
     {
-        return SurroundWithDeRef(Get_hsa_amd_event_t_String(input));
+        return SurroundWithDeRef(Get_hsa_amd_event_type_t_String(input));
     }
 }
 
@@ -2994,6 +2994,58 @@ std::string HSATraceStringUtils::Get_hsa_amd_gpu_memory_fault_info_t_Ptr_String(
     else
     {
         return SurroundWithDeRef(Get_hsa_amd_gpu_memory_fault_info_t_String(input));
+    }
+}
+
+std::string HSATraceStringUtils::Get_hsa_amd_event_t_String(hsa_amd_event_t input)
+{
+    std::ostringstream ss;
+
+    ss << HSATraceStringUtils::Get_hsa_amd_event_type_t_String(input.event_type) << s_pFieldSeparator;
+    ss << HSATraceStringUtils::Get_hsa_amd_gpu_memory_fault_info_t_String(input.memory_fault) << s_pFieldSeparator;
+
+    return SurroundWithStruct(ss.str());
+}
+
+std::string HSATraceStringUtils::Get_hsa_amd_event_t_Ptr_String(const hsa_amd_event_t* pInputPtr, hsa_amd_event_t input)
+{
+    if (nullptr == pInputPtr)
+    {
+        return "NULL";
+    }
+    else
+    {
+        return SurroundWithDeRef(Get_hsa_amd_event_t_String(input));
+    }
+}
+
+std::string HSATraceStringUtils::Get_hsa_amd_queue_priority_t_String(hsa_amd_queue_priority_t input)
+{
+    std::ostringstream ss;
+
+    switch (static_cast<int>(input))
+    {
+            CASE(HSA_AMD_QUEUE_PRIORITY_LOW);
+            CASE(HSA_AMD_QUEUE_PRIORITY_NORMAL);
+            CASE(HSA_AMD_QUEUE_PRIORITY_HIGH);
+
+        default:
+            ss << input;
+            break;
+    }
+
+    return ss.str();
+}
+
+std::string HSATraceStringUtils::Get_hsa_amd_queue_priority_t_Ptr_String(const hsa_amd_queue_priority_t* pInputPtr, hsa_amd_queue_priority_t input)
+{
+    if (nullptr == pInputPtr)
+    {
+        return "NULL";
+    }
+    else
+    {
+        return SurroundWithDeRef(Get_hsa_amd_queue_priority_t_String(input));
     }
 }
 
@@ -3237,6 +3289,7 @@ std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_parameter_name_t_Str
             CASE(HSA_VEN_AMD_AQLPROFILE_PARAMETER_NAME_MASK);
             CASE(HSA_VEN_AMD_AQLPROFILE_PARAMETER_NAME_TOKEN_MASK);
             CASE(HSA_VEN_AMD_AQLPROFILE_PARAMETER_NAME_TOKEN_MASK2);
+            CASE(HSA_VEN_AMD_AQLPROFILE_PARAMETER_NAME_SE_MASK);
 
         default:
             ss << input;

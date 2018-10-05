@@ -1109,16 +1109,16 @@ std::string Get_hsa_amd_ipc_memory_t_String(hsa_amd_ipc_memory_t input);
 /// \return the string representation of the hsa_amd_ipc_memory_t
 std::string Get_hsa_amd_ipc_memory_t_Ptr_String(const hsa_amd_ipc_memory_t* pInputPtr, hsa_amd_ipc_memory_t input);
 
-/// Gets the string representation of the hsa_amd_event_t type
-/// \param input the input hsa_amd_event_t
-/// \return the string representation of the hsa_amd_event_t
-std::string Get_hsa_amd_event_t_String(hsa_amd_event_t input);
+/// Gets the string representation of the hsa_amd_event_type_t type
+/// \param input the input hsa_amd_event_type_t
+/// \return the string representation of the hsa_amd_event_type_t
+std::string Get_hsa_amd_event_type_t_String(hsa_amd_event_type_t input);
 
-/// Gets the string representation of the hsa_amd_event_t pointer type
-/// \param pInputPtr the input hsa_amd_event_t pointer
-/// \param input the input hsa_amd_event_t
-/// \return the string representation of the hsa_amd_event_t
-std::string Get_hsa_amd_event_t_Ptr_String(const hsa_amd_event_t* pInputPtr, hsa_amd_event_t input);
+/// Gets the string representation of the hsa_amd_event_type_t pointer type
+/// \param pInputPtr the input hsa_amd_event_type_t pointer
+/// \param input the input hsa_amd_event_type_t
+/// \return the string representation of the hsa_amd_event_type_t
+std::string Get_hsa_amd_event_type_t_Ptr_String(const hsa_amd_event_type_t* pInputPtr, hsa_amd_event_type_t input);
 
 /// Gets the string representation of the hsa_amd_gpu_memory_fault_info_t type
 /// \param input the input hsa_amd_gpu_memory_fault_info_t
@@ -1130,6 +1130,28 @@ std::string Get_hsa_amd_gpu_memory_fault_info_t_String(hsa_amd_gpu_memory_fault_
 /// \param input the input hsa_amd_gpu_memory_fault_info_t
 /// \return the string representation of the hsa_amd_gpu_memory_fault_info_t
 std::string Get_hsa_amd_gpu_memory_fault_info_t_Ptr_String(const hsa_amd_gpu_memory_fault_info_t* pInputPtr, hsa_amd_gpu_memory_fault_info_t input);
+
+/// Gets the string representation of the hsa_amd_event_t type
+/// \param input the input hsa_amd_event_t
+/// \return the string representation of the hsa_amd_event_t
+std::string Get_hsa_amd_event_t_String(hsa_amd_event_t input);
+
+/// Gets the string representation of the hsa_amd_event_t pointer type
+/// \param pInputPtr the input hsa_amd_event_t pointer
+/// \param input the input hsa_amd_event_t
+/// \return the string representation of the hsa_amd_event_t
+std::string Get_hsa_amd_event_t_Ptr_String(const hsa_amd_event_t* pInputPtr, hsa_amd_event_t input);
+
+/// Gets the string representation of the hsa_amd_queue_priority_t type
+/// \param input the input hsa_amd_queue_priority_t
+/// \return the string representation of the hsa_amd_queue_priority_t
+std::string Get_hsa_amd_queue_priority_t_String(hsa_amd_queue_priority_t input);
+
+/// Gets the string representation of the hsa_amd_queue_priority_t pointer type
+/// \param pInputPtr the input hsa_amd_queue_priority_t pointer
+/// \param input the input hsa_amd_queue_priority_t
+/// \return the string representation of the hsa_amd_queue_priority_t
+std::string Get_hsa_amd_queue_priority_t_Ptr_String(const hsa_amd_queue_priority_t* pInputPtr, hsa_amd_queue_priority_t input);
 
 /// Gets the string representation of the hsa_ven_amd_loader_code_object_storage_type_t type
 /// \param input the input hsa_ven_amd_loader_code_object_storage_type_t

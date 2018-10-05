@@ -203,15 +203,19 @@ hsa_status_t HSA_API_Trace_hsa_amd_ipc_memory_attach(const hsa_amd_ipc_memory_t*
 hsa_status_t HSA_API_Trace_hsa_amd_ipc_memory_detach(void* mapped_ptr);
 hsa_status_t HSA_API_Trace_hsa_amd_ipc_signal_create(hsa_signal_t signal, hsa_amd_ipc_signal_t* handle);
 hsa_status_t HSA_API_Trace_hsa_amd_ipc_signal_attach(const hsa_amd_ipc_signal_t* handle, hsa_signal_t* signal);
+hsa_status_t HSA_API_Trace_hsa_amd_queue_set_priority(hsa_queue_t* queue, hsa_amd_queue_priority_t priority);
 hsa_status_t HSA_API_Trace_hsa_ven_amd_loader_query_host_address(const void* device_address, const void** host_address);
 hsa_status_t HSA_API_Trace_hsa_ven_amd_loader_query_segment_descriptors(hsa_ven_amd_loader_segment_descriptor_t* segment_descriptors, size_t* num_segment_descriptors);
 hsa_status_t HSA_API_Trace_hsa_ven_amd_loader_query_executable(const void* device_address, hsa_executable_t* executable);
 hsa_status_t HSA_API_Trace_hsa_ven_amd_loader_executable_iterate_loaded_code_objects(hsa_executable_t executable, hsa_status_t (*callback)(
     hsa_executable_t executable, hsa_loaded_code_object_t loaded_code_object, void* data), void* data);
 hsa_status_t HSA_API_Trace_hsa_ven_amd_loader_loaded_code_object_get_info(hsa_loaded_code_object_t loaded_code_object, hsa_ven_amd_loader_loaded_code_object_info_t attribute, void* value);
+uint32_t HSA_API_Trace_hsa_ven_amd_aqlprofile_version_major();
+uint32_t HSA_API_Trace_hsa_ven_amd_aqlprofile_version_minor();
 hsa_status_t HSA_API_Trace_hsa_ven_amd_aqlprofile_validate_event(hsa_agent_t agent, const hsa_ven_amd_aqlprofile_event_t* event, bool* result);
 hsa_status_t HSA_API_Trace_hsa_ven_amd_aqlprofile_start(hsa_ven_amd_aqlprofile_profile_t* profile, hsa_ext_amd_aql_pm4_packet_t* aql_start_packet);
 hsa_status_t HSA_API_Trace_hsa_ven_amd_aqlprofile_stop(const hsa_ven_amd_aqlprofile_profile_t* profile, hsa_ext_amd_aql_pm4_packet_t* aql_stop_packet);
+hsa_status_t HSA_API_Trace_hsa_ven_amd_aqlprofile_read(const hsa_ven_amd_aqlprofile_profile_t* profile, hsa_ext_amd_aql_pm4_packet_t* aql_read_packet);
 hsa_status_t HSA_API_Trace_hsa_ven_amd_aqlprofile_legacy_get_pm4(const hsa_ext_amd_aql_pm4_packet_t* aql_packet, void* data);
 hsa_status_t HSA_API_Trace_hsa_ven_amd_aqlprofile_get_info(const hsa_ven_amd_aqlprofile_profile_t* profile, hsa_ven_amd_aqlprofile_info_type_t attribute, void* value);
 hsa_status_t HSA_API_Trace_hsa_ven_amd_aqlprofile_iterate_data(const hsa_ven_amd_aqlprofile_profile_t* profile, hsa_ven_amd_aqlprofile_data_callback_t callback, void* data);

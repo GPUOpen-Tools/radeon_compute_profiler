@@ -833,8 +833,8 @@ void HSA_APITrace_hsa_amd_memory_async_copy::Create(
     uint32_t num_dep_signals,
     const hsa_signal_t* dep_signals,
     hsa_signal_t completion_signal,
-    hsa_status_t retVal,
-    ULONGLONG asyncCopyIdentifier)
+    ULONGLONG asyncCopyIdentifier,
+    hsa_status_t retVal)
 {
     m_ullStart = ullStartTime;
     m_ullEnd = ullEndTime;
@@ -853,9 +853,8 @@ void HSA_APITrace_hsa_amd_memory_async_copy::Create(
     }
 
     m_completion_signal = completion_signal;
-    m_retVal = retVal;
-
     m_asyncCopyIdentifier = asyncCopyIdentifier;
+    m_retVal = retVal;
 }
 
 bool HSA_APITrace_hsa_amd_memory_async_copy::WriteTimestampEntry(std::ostream& sout, bool bTimeout)
@@ -1772,6 +1771,52 @@ void HSA_APITrace_hsa_amd_ipc_signal_attach::Create(
         m_signalVal = *m_signal;
     }
 
+    m_retVal = retVal;
+}
+
+///////////////////////////////////////////////////
+/// Class HSA_APITrace_hsa_amd_queue_set_priority
+///////////////////////////////////////////////////
+
+HSA_APITrace_hsa_amd_queue_set_priority::HSA_APITrace_hsa_amd_queue_set_priority()
+{
+}
+
+HSA_APITrace_hsa_amd_queue_set_priority::~HSA_APITrace_hsa_amd_queue_set_priority()
+{
+}
+
+std::string HSA_APITrace_hsa_amd_queue_set_priority::GetRetString()
+{
+    return HSATraceStringUtils::Get_hsa_status_t_String(m_retVal);
+}
+
+std::string HSA_APITrace_hsa_amd_queue_set_priority::ToString()
+{
+    std::ostringstream ss;
+    ss << "queue=" << HSATraceStringUtils::Get_hsa_queue_t_Ptr_String(m_queue, m_queueVal) << s_strParamSeparator;
+    ss << "priority=" << HSATraceStringUtils::Get_hsa_amd_queue_priority_t_String(m_priority);
+    return ss.str();
+}
+
+void HSA_APITrace_hsa_amd_queue_set_priority::Create(
+    ULONGLONG ullStartTime,
+    ULONGLONG ullEndTime,
+    hsa_queue_t* queue,
+    hsa_amd_queue_priority_t priority,
+    hsa_status_t retVal)
+{
+    m_ullStart = ullStartTime;
+    m_ullEnd = ullEndTime;
+    m_type = HSA_API_Type_hsa_amd_queue_set_priority;
+    m_queue = queue;
+
+    if (nullptr != m_queue)
+    {
+        m_queueVal = *m_queue;
+    }
+
+    m_priority = priority;
     m_retVal = retVal;
 }
 

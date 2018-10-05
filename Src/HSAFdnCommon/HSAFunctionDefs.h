@@ -221,6 +221,12 @@ enum HSA_API_Type
     HSA_API_Type_Init,
     HSA_API_Type_Unload,
 
+    // new entrypoints in ROCm 1.9
+    HSA_API_Type_hsa_amd_queue_set_priority,
+    HSA_API_Type_hsa_ven_amd_aqlprofile_version_major,
+    HSA_API_Type_hsa_ven_amd_aqlprofile_version_minor,
+    HSA_API_Type_hsa_ven_amd_aqlprofile_read,
+
     // Non-API items (used to mark dispatches in the ATP file)
     HSA_API_Type_Non_API_First,
     HSA_API_Type_Non_API_Dispatch = HSA_API_Type_Non_API_First,

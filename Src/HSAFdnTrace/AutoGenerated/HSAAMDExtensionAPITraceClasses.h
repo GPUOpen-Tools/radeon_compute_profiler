@@ -839,8 +839,8 @@ public:
     /// \param num_dep_signals Parameter passed to hsa_amd_memory_async_copy
     /// \param dep_signals Parameter passed to hsa_amd_memory_async_copy
     /// \param completion_signal Parameter passed to hsa_amd_memory_async_copy
+    /// \param asyncCopyIdentifier async copy identifier
     /// \param retVal the return value for hsa_amd_memory_async_copy
-    /// \param asyncCopyIdentifier Parameter passed to hsa_amd_memory_async_copy
     void Create(ULONGLONG ullStartTime,
                 ULONGLONG ullEndTime,
                 void* dst,
@@ -851,8 +851,8 @@ public:
                 uint32_t num_dep_signals,
                 const hsa_signal_t* dep_signals,
                 hsa_signal_t completion_signal,
-                hsa_status_t retVal,
-                ULONGLONG asyncCopyIdentifier);
+                ULONGLONG asyncCopyIdentifier,
+                hsa_status_t retVal);
 
     /// Write timestamp entry
     /// \param sout output stream
@@ -878,8 +878,8 @@ private:
     const hsa_signal_t* m_dep_signals; ///< Parameter passed to hsa_amd_memory_async_copy
     hsa_signal_t m_dep_signalsVal; ///< Member to hold value passed to hsa_amd_memory_async_copy in dep_signals parameter
     hsa_signal_t m_completion_signal; ///< Parameter passed to hsa_amd_memory_async_copy
-    hsa_status_t m_retVal; ///< Parameter passed to hsa_amd_memory_async_copy
     ULONGLONG m_asyncCopyIdentifier; ///< async copy identifier
+    hsa_status_t m_retVal; ///< Parameter passed to hsa_amd_memory_async_copy
 };
 
 ///////////////////////////////////////////////////
@@ -1757,6 +1757,53 @@ private:
     hsa_signal_t* m_signal; ///< Parameter passed to hsa_amd_ipc_signal_attach
     hsa_signal_t m_signalVal; ///< Member to hold value passed to hsa_amd_ipc_signal_attach in signal parameter
     hsa_status_t m_retVal; ///< Parameter passed to hsa_amd_ipc_signal_attach
+};
+
+///////////////////////////////////////////////////
+/// Class used to trace hsa_amd_queue_set_priority
+///////////////////////////////////////////////////
+class HSA_APITrace_hsa_amd_queue_set_priority : public HSAAPIBase
+{
+public:
+    /// Constructor
+    HSA_APITrace_hsa_amd_queue_set_priority();
+
+    /// Destructor
+    ~HSA_APITrace_hsa_amd_queue_set_priority();
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString();
+
+    /// Returns the API's arguments formatted as strings
+    /// \return string representation of the API's arguments
+    std::string ToString();
+
+    /// Assigns the API's various parameter values
+    /// \param ullStartTime the start timestamp for hsa_amd_queue_set_priority
+    /// \param ullEndTime the end timestamp for hsa_amd_queue_set_priority
+    /// \param queue Parameter passed to hsa_amd_queue_set_priority
+    /// \param priority Parameter passed to hsa_amd_queue_set_priority
+    /// \param retVal the return value for hsa_amd_queue_set_priority
+    void Create(ULONGLONG ullStartTime,
+                ULONGLONG ullEndTime,
+                hsa_queue_t* queue,
+                hsa_amd_queue_priority_t priority,
+                hsa_status_t retVal);
+
+private:
+    /// Disabled copy constructor
+    /// \rhs item being copied
+    HSA_APITrace_hsa_amd_queue_set_priority(const HSA_APITrace_hsa_amd_queue_set_priority& rhs) = delete;
+
+    /// Disabled assignment operator
+    /// \rhs item being assigned
+    HSA_APITrace_hsa_amd_queue_set_priority& operator= (const HSA_APITrace_hsa_amd_queue_set_priority& rhs) = delete;
+
+    hsa_queue_t* m_queue; ///< Parameter passed to hsa_amd_queue_set_priority
+    hsa_queue_t m_queueVal; ///< Member to hold value passed to hsa_amd_queue_set_priority in queue parameter
+    hsa_amd_queue_priority_t m_priority; ///< Parameter passed to hsa_amd_queue_set_priority
+    hsa_status_t m_retVal; ///< Parameter passed to hsa_amd_queue_set_priority
 };
 
 

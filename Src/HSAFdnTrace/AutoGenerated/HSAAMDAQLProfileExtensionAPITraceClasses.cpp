@@ -11,6 +11,72 @@
 #include "HSAAMDAQLProfileExtensionAPITraceClasses.h"
 
 ///////////////////////////////////////////////////
+/// Class HSA_APITrace_hsa_ven_amd_aqlprofile_version_major
+///////////////////////////////////////////////////
+
+HSA_APITrace_hsa_ven_amd_aqlprofile_version_major::HSA_APITrace_hsa_ven_amd_aqlprofile_version_major()
+{
+}
+
+HSA_APITrace_hsa_ven_amd_aqlprofile_version_major::~HSA_APITrace_hsa_ven_amd_aqlprofile_version_major()
+{
+}
+
+std::string HSA_APITrace_hsa_ven_amd_aqlprofile_version_major::GetRetString()
+{
+    return StringUtils::ToString(m_retVal);
+}
+
+std::string HSA_APITrace_hsa_ven_amd_aqlprofile_version_major::ToString()
+{
+    return "";
+}
+
+void HSA_APITrace_hsa_ven_amd_aqlprofile_version_major::Create(
+    ULONGLONG ullStartTime,
+    ULONGLONG ullEndTime,
+    uint32_t retVal)
+{
+    m_ullStart = ullStartTime;
+    m_ullEnd = ullEndTime;
+    m_type = HSA_API_Type_hsa_ven_amd_aqlprofile_version_major;
+    m_retVal = retVal;
+}
+
+///////////////////////////////////////////////////
+/// Class HSA_APITrace_hsa_ven_amd_aqlprofile_version_minor
+///////////////////////////////////////////////////
+
+HSA_APITrace_hsa_ven_amd_aqlprofile_version_minor::HSA_APITrace_hsa_ven_amd_aqlprofile_version_minor()
+{
+}
+
+HSA_APITrace_hsa_ven_amd_aqlprofile_version_minor::~HSA_APITrace_hsa_ven_amd_aqlprofile_version_minor()
+{
+}
+
+std::string HSA_APITrace_hsa_ven_amd_aqlprofile_version_minor::GetRetString()
+{
+    return StringUtils::ToString(m_retVal);
+}
+
+std::string HSA_APITrace_hsa_ven_amd_aqlprofile_version_minor::ToString()
+{
+    return "";
+}
+
+void HSA_APITrace_hsa_ven_amd_aqlprofile_version_minor::Create(
+    ULONGLONG ullStartTime,
+    ULONGLONG ullEndTime,
+    uint32_t retVal)
+{
+    m_ullStart = ullStartTime;
+    m_ullEnd = ullEndTime;
+    m_type = HSA_API_Type_hsa_ven_amd_aqlprofile_version_minor;
+    m_retVal = retVal;
+}
+
+///////////////////////////////////////////////////
 /// Class HSA_APITrace_hsa_ven_amd_aqlprofile_validate_event
 ///////////////////////////////////////////////////
 
@@ -164,6 +230,58 @@ void HSA_APITrace_hsa_ven_amd_aqlprofile_stop::Create(
     if (nullptr != m_aql_stop_packet)
     {
         m_aql_stop_packetVal = *m_aql_stop_packet;
+    }
+
+    m_retVal = retVal;
+}
+
+///////////////////////////////////////////////////
+/// Class HSA_APITrace_hsa_ven_amd_aqlprofile_read
+///////////////////////////////////////////////////
+
+HSA_APITrace_hsa_ven_amd_aqlprofile_read::HSA_APITrace_hsa_ven_amd_aqlprofile_read()
+{
+}
+
+HSA_APITrace_hsa_ven_amd_aqlprofile_read::~HSA_APITrace_hsa_ven_amd_aqlprofile_read()
+{
+}
+
+std::string HSA_APITrace_hsa_ven_amd_aqlprofile_read::GetRetString()
+{
+    return HSATraceStringUtils::Get_hsa_status_t_String(m_retVal);
+}
+
+std::string HSA_APITrace_hsa_ven_amd_aqlprofile_read::ToString()
+{
+    std::ostringstream ss;
+    ss << "profile=" << HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_profile_t_Ptr_String(m_profile, m_profileVal) << s_strParamSeparator;
+    ss << "aql_read_packet=" << HSATraceStringUtils::Get_hsa_ext_amd_aql_pm4_packet_t_Ptr_String(m_aql_read_packet, m_aql_read_packetVal);
+    return ss.str();
+}
+
+void HSA_APITrace_hsa_ven_amd_aqlprofile_read::Create(
+    ULONGLONG ullStartTime,
+    ULONGLONG ullEndTime,
+    const hsa_ven_amd_aqlprofile_profile_t* profile,
+    hsa_ext_amd_aql_pm4_packet_t* aql_read_packet,
+    hsa_status_t retVal)
+{
+    m_ullStart = ullStartTime;
+    m_ullEnd = ullEndTime;
+    m_type = HSA_API_Type_hsa_ven_amd_aqlprofile_read;
+    m_profile = profile;
+
+    if (nullptr != m_profile)
+    {
+        m_profileVal = *m_profile;
+    }
+
+    m_aql_read_packet = aql_read_packet;
+
+    if (nullptr != m_aql_read_packet)
+    {
+        m_aql_read_packetVal = *m_aql_read_packet;
     }
 
     m_retVal = retVal;

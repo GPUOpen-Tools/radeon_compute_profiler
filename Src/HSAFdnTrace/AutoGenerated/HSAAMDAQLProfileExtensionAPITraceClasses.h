@@ -11,6 +11,86 @@
 #include "../HSAAPIBase.h"
 
 ///////////////////////////////////////////////////
+/// Class used to trace hsa_ven_amd_aqlprofile_version_major
+///////////////////////////////////////////////////
+class HSA_APITrace_hsa_ven_amd_aqlprofile_version_major : public HSAAPIBase
+{
+public:
+    /// Constructor
+    HSA_APITrace_hsa_ven_amd_aqlprofile_version_major();
+
+    /// Destructor
+    ~HSA_APITrace_hsa_ven_amd_aqlprofile_version_major();
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString();
+
+    /// Returns the API's arguments formatted as strings
+    /// \return string representation of the API's arguments
+    std::string ToString();
+
+    /// Assigns the API's various parameter values
+    /// \param ullStartTime the start timestamp for hsa_ven_amd_aqlprofile_version_major
+    /// \param ullEndTime the end timestamp for hsa_ven_amd_aqlprofile_version_major
+    /// \param retVal the return value for hsa_ven_amd_aqlprofile_version_major
+    void Create(ULONGLONG ullStartTime,
+                ULONGLONG ullEndTime,
+                uint32_t retVal);
+
+private:
+    /// Disabled copy constructor
+    /// \rhs item being copied
+    HSA_APITrace_hsa_ven_amd_aqlprofile_version_major(const HSA_APITrace_hsa_ven_amd_aqlprofile_version_major& rhs) = delete;
+
+    /// Disabled assignment operator
+    /// \rhs item being assigned
+    HSA_APITrace_hsa_ven_amd_aqlprofile_version_major& operator= (const HSA_APITrace_hsa_ven_amd_aqlprofile_version_major& rhs) = delete;
+
+    uint32_t m_retVal; ///< Parameter passed to hsa_ven_amd_aqlprofile_version_major
+};
+
+///////////////////////////////////////////////////
+/// Class used to trace hsa_ven_amd_aqlprofile_version_minor
+///////////////////////////////////////////////////
+class HSA_APITrace_hsa_ven_amd_aqlprofile_version_minor : public HSAAPIBase
+{
+public:
+    /// Constructor
+    HSA_APITrace_hsa_ven_amd_aqlprofile_version_minor();
+
+    /// Destructor
+    ~HSA_APITrace_hsa_ven_amd_aqlprofile_version_minor();
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString();
+
+    /// Returns the API's arguments formatted as strings
+    /// \return string representation of the API's arguments
+    std::string ToString();
+
+    /// Assigns the API's various parameter values
+    /// \param ullStartTime the start timestamp for hsa_ven_amd_aqlprofile_version_minor
+    /// \param ullEndTime the end timestamp for hsa_ven_amd_aqlprofile_version_minor
+    /// \param retVal the return value for hsa_ven_amd_aqlprofile_version_minor
+    void Create(ULONGLONG ullStartTime,
+                ULONGLONG ullEndTime,
+                uint32_t retVal);
+
+private:
+    /// Disabled copy constructor
+    /// \rhs item being copied
+    HSA_APITrace_hsa_ven_amd_aqlprofile_version_minor(const HSA_APITrace_hsa_ven_amd_aqlprofile_version_minor& rhs) = delete;
+
+    /// Disabled assignment operator
+    /// \rhs item being assigned
+    HSA_APITrace_hsa_ven_amd_aqlprofile_version_minor& operator= (const HSA_APITrace_hsa_ven_amd_aqlprofile_version_minor& rhs) = delete;
+
+    uint32_t m_retVal; ///< Parameter passed to hsa_ven_amd_aqlprofile_version_minor
+};
+
+///////////////////////////////////////////////////
 /// Class used to trace hsa_ven_amd_aqlprofile_validate_event
 ///////////////////////////////////////////////////
 class HSA_APITrace_hsa_ven_amd_aqlprofile_validate_event : public HSAAPIBase
@@ -155,6 +235,54 @@ private:
     hsa_ext_amd_aql_pm4_packet_t* m_aql_stop_packet; ///< Parameter passed to hsa_ven_amd_aqlprofile_stop
     hsa_ext_amd_aql_pm4_packet_t m_aql_stop_packetVal; ///< Member to hold value passed to hsa_ven_amd_aqlprofile_stop in aql_stop_packet parameter
     hsa_status_t m_retVal; ///< Parameter passed to hsa_ven_amd_aqlprofile_stop
+};
+
+///////////////////////////////////////////////////
+/// Class used to trace hsa_ven_amd_aqlprofile_read
+///////////////////////////////////////////////////
+class HSA_APITrace_hsa_ven_amd_aqlprofile_read : public HSAAPIBase
+{
+public:
+    /// Constructor
+    HSA_APITrace_hsa_ven_amd_aqlprofile_read();
+
+    /// Destructor
+    ~HSA_APITrace_hsa_ven_amd_aqlprofile_read();
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString();
+
+    /// Returns the API's arguments formatted as strings
+    /// \return string representation of the API's arguments
+    std::string ToString();
+
+    /// Assigns the API's various parameter values
+    /// \param ullStartTime the start timestamp for hsa_ven_amd_aqlprofile_read
+    /// \param ullEndTime the end timestamp for hsa_ven_amd_aqlprofile_read
+    /// \param profile Parameter passed to hsa_ven_amd_aqlprofile_read
+    /// \param aql_read_packet Parameter passed to hsa_ven_amd_aqlprofile_read
+    /// \param retVal the return value for hsa_ven_amd_aqlprofile_read
+    void Create(ULONGLONG ullStartTime,
+                ULONGLONG ullEndTime,
+                const hsa_ven_amd_aqlprofile_profile_t* profile,
+                hsa_ext_amd_aql_pm4_packet_t* aql_read_packet,
+                hsa_status_t retVal);
+
+private:
+    /// Disabled copy constructor
+    /// \rhs item being copied
+    HSA_APITrace_hsa_ven_amd_aqlprofile_read(const HSA_APITrace_hsa_ven_amd_aqlprofile_read& rhs) = delete;
+
+    /// Disabled assignment operator
+    /// \rhs item being assigned
+    HSA_APITrace_hsa_ven_amd_aqlprofile_read& operator= (const HSA_APITrace_hsa_ven_amd_aqlprofile_read& rhs) = delete;
+
+    const hsa_ven_amd_aqlprofile_profile_t* m_profile; ///< Parameter passed to hsa_ven_amd_aqlprofile_read
+    hsa_ven_amd_aqlprofile_profile_t m_profileVal; ///< Member to hold value passed to hsa_ven_amd_aqlprofile_read in profile parameter
+    hsa_ext_amd_aql_pm4_packet_t* m_aql_read_packet; ///< Parameter passed to hsa_ven_amd_aqlprofile_read
+    hsa_ext_amd_aql_pm4_packet_t m_aql_read_packetVal; ///< Member to hold value passed to hsa_ven_amd_aqlprofile_read in aql_read_packet parameter
+    hsa_status_t m_retVal; ///< Parameter passed to hsa_ven_amd_aqlprofile_read
 };
 
 ///////////////////////////////////////////////////
