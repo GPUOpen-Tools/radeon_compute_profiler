@@ -869,6 +869,119 @@ bool HSA_APITrace_hsa_amd_memory_async_copy::WriteTimestampEntry(std::ostream& s
 }
 
 ///////////////////////////////////////////////////
+/// Class HSA_APITrace_hsa_amd_memory_async_copy_rect
+///////////////////////////////////////////////////
+
+HSA_APITrace_hsa_amd_memory_async_copy_rect::HSA_APITrace_hsa_amd_memory_async_copy_rect()
+{
+}
+
+HSA_APITrace_hsa_amd_memory_async_copy_rect::~HSA_APITrace_hsa_amd_memory_async_copy_rect()
+{
+}
+
+std::string HSA_APITrace_hsa_amd_memory_async_copy_rect::GetRetString()
+{
+    return HSATraceStringUtils::Get_hsa_status_t_String(m_retVal);
+}
+
+std::string HSA_APITrace_hsa_amd_memory_async_copy_rect::ToString()
+{
+    std::ostringstream ss;
+    ss << "dst=" << HSATraceStringUtils::Get_hsa_pitched_ptr_t_Ptr_String(m_dst, m_dstVal) << s_strParamSeparator;
+    ss << "dst_offset=" << HSATraceStringUtils::Get_hsa_dim3_t_Ptr_String(m_dst_offset, m_dst_offsetVal) << s_strParamSeparator;
+    ss << "src=" << HSATraceStringUtils::Get_hsa_pitched_ptr_t_Ptr_String(m_src, m_srcVal) << s_strParamSeparator;
+    ss << "src_offset=" << HSATraceStringUtils::Get_hsa_dim3_t_Ptr_String(m_src_offset, m_src_offsetVal) << s_strParamSeparator;
+    ss << "range=" << HSATraceStringUtils::Get_hsa_dim3_t_Ptr_String(m_range, m_rangeVal) << s_strParamSeparator;
+    ss << "copy_agent=" << HSATraceStringUtils::Get_hsa_agent_t_String(m_copy_agent) << s_strParamSeparator;
+    ss << "dir=" << HSATraceStringUtils::Get_hsa_amd_copy_direction_t_String(m_dir) << s_strParamSeparator;
+    ss << "num_dep_signals=" << StringUtils::ToString(m_num_dep_signals) << s_strParamSeparator;
+    ss << "dep_signals=" << HSATraceStringUtils::Get_hsa_signal_t_Ptr_String(m_dep_signals, m_dep_signalsVal) << s_strParamSeparator;
+    ss << "completion_signal=" << HSATraceStringUtils::Get_hsa_signal_t_String(m_completion_signal);
+    return ss.str();
+}
+
+void HSA_APITrace_hsa_amd_memory_async_copy_rect::Create(
+    ULONGLONG ullStartTime,
+    ULONGLONG ullEndTime,
+    const hsa_pitched_ptr_t* dst,
+    const hsa_dim3_t* dst_offset,
+    const hsa_pitched_ptr_t* src,
+    const hsa_dim3_t* src_offset,
+    const hsa_dim3_t* range,
+    hsa_agent_t copy_agent,
+    hsa_amd_copy_direction_t dir,
+    uint32_t num_dep_signals,
+    const hsa_signal_t* dep_signals,
+    hsa_signal_t completion_signal,
+    ULONGLONG asyncCopyIdentifier,
+    hsa_status_t retVal)
+{
+    m_ullStart = ullStartTime;
+    m_ullEnd = ullEndTime;
+    m_type = HSA_API_Type_hsa_amd_memory_async_copy_rect;
+    m_dst = dst;
+
+    if (nullptr != m_dst)
+    {
+        m_dstVal = *m_dst;
+    }
+
+    m_dst_offset = dst_offset;
+
+    if (nullptr != m_dst_offset)
+    {
+        m_dst_offsetVal = *m_dst_offset;
+    }
+
+    m_src = src;
+
+    if (nullptr != m_src)
+    {
+        m_srcVal = *m_src;
+    }
+
+    m_src_offset = src_offset;
+
+    if (nullptr != m_src_offset)
+    {
+        m_src_offsetVal = *m_src_offset;
+    }
+
+    m_range = range;
+
+    if (nullptr != m_range)
+    {
+        m_rangeVal = *m_range;
+    }
+
+    m_copy_agent = copy_agent;
+    m_dir = dir;
+    m_num_dep_signals = num_dep_signals;
+    m_dep_signals = dep_signals;
+
+    if (nullptr != m_dep_signals)
+    {
+        m_dep_signalsVal = *m_dep_signals;
+    }
+
+    m_completion_signal = completion_signal;
+    m_asyncCopyIdentifier = asyncCopyIdentifier;
+    m_retVal = retVal;
+}
+
+bool HSA_APITrace_hsa_amd_memory_async_copy_rect::WriteTimestampEntry(std::ostream& sout, bool bTimeout)
+{
+    if (HSAAPIBase::WriteTimestampEntry(sout, bTimeout))
+    {
+        // async copy identifier
+        sout << std::left << std::setw(21) << m_asyncCopyIdentifier;
+    }
+
+    return true;
+}
+
+///////////////////////////////////////////////////
 /// Class HSA_APITrace_hsa_amd_agent_memory_pool_get_info
 ///////////////////////////////////////////////////
 

@@ -128,7 +128,7 @@ public:
 
     /// Generate Top X HTML table from statistic data and write to std::ostream
     /// \param sout output stream
-    virtual void GenerateTopXKernelHTMLTable(std::ostream& sout) = 0;
+    virtual void GenerateTopXKernelHTMLTable(std::ostream& sout, bool useTopX) = 0;
 
     /// Generate kernel summary HTML table from statistic data and write to std::ostream
     /// \param sout output stream
@@ -178,7 +178,7 @@ public:
     /// Generate simple HTML page
     /// \param szFileName file name
     /// \return true if the page was generated, false otherwise
-    bool GenerateTopXKernelHTMLPage(const char* szFileName)
+    bool GenerateTopXKernelHTMLPage(const char* szFileName, bool useTopX)
     {
         bool retVal = false;
 
@@ -198,7 +198,7 @@ public:
             fout << "</head>\n";
             fout << "<body>\n";
 
-            GenerateTopXKernelHTMLTable(fout);
+            GenerateTopXKernelHTMLTable(fout, useTopX);
 
             fout << "\n";
 

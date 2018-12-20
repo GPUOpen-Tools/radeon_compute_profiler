@@ -174,6 +174,9 @@ public:
     /// \return true if HSA transfer time is disabled
     bool IsHsaTransferTimeDisabled();
 
+    /// Mark timestamp data from rocprofiler as ready
+    void MarkRocProfilerDataAsReady();
+
     static std::mutex        ms_asyncTimeStampsMtx; ///< mutex to guard access to m_asyncCopyInfoList
 
     static AsyncCopyInfoList ms_asyncCopyInfoList;  ///< list of async copy information

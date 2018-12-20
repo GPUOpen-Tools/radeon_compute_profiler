@@ -32,17 +32,30 @@ RCP was formerly delivered as part of CodeXL with the executable name
 * When used with CodeXL, all profiler data can be visualized in a user-friendly graphical user interface.
 
 ## What's New
-* Version 5.5 (8/22/18)
+*Version 5.6 (12/21/18)
  * Adds support for additional GPUs and APUs.
- * ROCm/HSA: Fixes several issues with incorrect or missing data transfer timestamps.
+ * Adds support for extracting kernel ISA for OpenCL kernels running on the ROCm stack.
+ * Additional Trace summary HTML pages generated for both OpenCL and ROCm/HSA traces.
+ * ROCm/HSA: Support for ROCm 2.0.
+ * ROCm/HSA: Use new librocprofiler64.so rather than deprecated libhsa-runtime-tools64.so library for performance counter collection and kernel dispatch timing data.
+   * Performance counter collection for GFX IPv7 based GPUs is no longer supported on ROCm.
+ * ROCm/HSA: There is no longer any difference between using --hsatrace and --hsaaqlpackettrace. Identical data will be produced by both profiling modes.
+ * OpenCL: Fixed several issues with profiling on Linux systems with the amdgpu-pro driver installed if both "PAL" and "legacy" OpenCL support was installed by the driver.
+ * Fixed an issue where incorrect kernel count displayed in the kernel occupancy output file.
+ * Fixed a potential race condition or hang when profiling a plaidML application.
+ * Fixed an issue when specifying a relative path to a counter file (--counterfile).
+ * 32-bit Linux binaries have been removed, as the OpenCL Linux driver no longer supports 32-bit OpenCL libraries.
 
 ## System Requirements
 * An AMD Radeon GCN-based GPU or APU
 * Radeon Software Adrenaline Edition 18.8.1 or later (Driver Packaging Version 18.30 or later).
-* ROCm 1.8. See system requirements for ROCm: https://rocm.github.io/install.html and https://rocm.github.io/hardware.html
+* ROCm 2.0. See system requirements for ROCm: https://rocm.github.io/install.html and https://rocm.github.io/hardware.html
+  * For use with ROCm, please make sure that the optional ROCm package "rocprofiler-dev" is installed.
+    * Ubuntu: sudo apt install rocprofiler-dev
+    * CentOS: sudo yum install rocprofiler-dev
 * Windows 7, 8.1, and 10
   * For Windows, the `Visual C++ Redistributable for Visual Studio 2015` is required. It can be downloaded from https://www.microsoft.com/en-us/download/details.aspx?id=48145
-* Ubuntu (16.04 and later) and RHEL (7 and later) distributions
+* Ubuntu (16.04 and later) and CentOS/RHEL (7 and later) distributions
 
 ## Cloning the Repository
 To clone the RCP repository, execute the following git commands
@@ -102,3 +115,4 @@ version number up to 5.x.
   * When collecting a trace for an application that performs memory transfers using hsa_amd_memory_async_copy, if the application asks for the data transfer timestamps directly, it will not get correct timestamps. The profiler will show the correct timestamps, however.
   * When collecting an aql packet trace, if the application asks for the kernel dispatch timestamps directly, it will not get correct timestamps. The profiler will show the correct timestamps, however.
   * When the rocm-profiler package (.deb or .rpm) is installed along with rocm, it may not be able to generate the default single-pass counter files. If you do not see counter files in /opt/rocm/profiler/counterfiles, you can generate them manually with this command: "sudo /opt/rocm/profiler/bin/CodeXLGpuProfiler --list --outputfile /opt/rocm/profiler/counterfiles/counters --maxpassperfile 1"
+  * When collecting a trace for an application with ROCm 2.0, extra HSA API calls not made by the application itself will appear in the trace. These originate from the rocprofiler library which is now used by RCP to collect kernel dispatch timestamps. This issue may go away in future ROCm versions.

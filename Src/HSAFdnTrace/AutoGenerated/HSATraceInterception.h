@@ -16,7 +16,7 @@ extern CoreApiTable* g_pRealCoreFunctions;    ///< table of real core functions
 extern FinalizerExtTable* g_pRealFinalizerExtFunctions; ///< table of real finalizer extension functions
 extern ImageExtTable* g_pRealImageExtFunctions; ///< table of real image extension functions
 extern AmdExtTable* g_pRealAmdExtFunctions; ///< table of real AMD extension functions
-extern hsa_ven_amd_aqlprofile_1_00_pfn_t* g_pRealAqlProfileExtFunctions; ///< table of real AQL Profile extension functions
+extern hsa_ven_amd_aqlprofile_pfn_t* g_pRealAqlProfileExtFunctions; ///< table of real AQL Profile extension functions
 extern hsa_ven_amd_loader_1_01_pfn_t* g_pRealLoaderExtFunctions; ///< table of real Loader extension functions
 
 /// Intercepts HSA APIs for this HSA Profiler agent
@@ -186,6 +186,7 @@ hsa_status_t HSA_API_Trace_hsa_amd_agent_iterate_memory_pools(hsa_agent_t agent,
 hsa_status_t HSA_API_Trace_hsa_amd_memory_pool_allocate(hsa_amd_memory_pool_t memory_pool, size_t size, uint32_t flags, void** ptr);
 hsa_status_t HSA_API_Trace_hsa_amd_memory_pool_free(void* ptr);
 hsa_status_t HSA_API_Trace_hsa_amd_memory_async_copy(void* dst, hsa_agent_t dst_agent, const void* src, hsa_agent_t src_agent, size_t size, uint32_t num_dep_signals, const hsa_signal_t* dep_signals, hsa_signal_t completion_signal);
+hsa_status_t HSA_API_Trace_hsa_amd_memory_async_copy_rect(const hsa_pitched_ptr_t* dst, const hsa_dim3_t* dst_offset, const hsa_pitched_ptr_t* src, const hsa_dim3_t* src_offset, const hsa_dim3_t* range, hsa_agent_t copy_agent, hsa_amd_copy_direction_t dir, uint32_t num_dep_signals, const hsa_signal_t* dep_signals, hsa_signal_t completion_signal);
 hsa_status_t HSA_API_Trace_hsa_amd_agent_memory_pool_get_info(hsa_agent_t agent, hsa_amd_memory_pool_t memory_pool, hsa_amd_agent_memory_pool_info_t attribute, void* value);
 hsa_status_t HSA_API_Trace_hsa_amd_agents_allow_access(uint32_t num_agents, const hsa_agent_t* agents, const uint32_t* flags, const void* ptr);
 hsa_status_t HSA_API_Trace_hsa_amd_memory_pool_can_migrate(hsa_amd_memory_pool_t src_memory_pool, hsa_amd_memory_pool_t dst_memory_pool, bool* result);

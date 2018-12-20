@@ -42,17 +42,16 @@ Profile Mode options
     :header: "Option", "Description"
     :widths: 45, 55
 
-    "``-t [--apitrace]``", "Trace OpenCL™ application and generate CPU and GPU
+    "``-t [--apitrace]``", "Trace OpenCL application and generate CPU and GPU
     timestamps and detailed API call traces."
-    "``-p [ --perfcounter ]``", "Get the performance counters for each OpenCL™
+    "``-p [ --perfcounter ]``", "Get the performance counters for each OpenCL
     kernel dispatched by the application."
     "``-A [ --hsatrace]``", "Trace HSA application and generate CPU and GPU
     time stamps and detailed API call traces. (Linux only)"
     "``-C [ --hsapmc]``", "Get the performance counters for each HSA kernel
     kernel dispatched by the application. (Linux only)"
-    "``--hsaaqlpackettrace``", "Enable HSA AQL Packet tracing. This enhances
-    the ``--hsatrace`` output by adding information about all AQL packets
-    processed by the application. (Linux only)"
+    "``--hsaaqlpackettrace``", "Identical to --hsatrace. Provided for backward
+    compatibility (Linux only)"
     "``-O [ --occupancy ]``", "Generate kernel occupancy information file
     (.occupancy). When profiling an HSA application, occupancy information can
     only be collected while also collecting performance counters"
@@ -130,7 +129,7 @@ Application Trace mode options (for ``--apitrace`` and ``-–hsatrace`` and ``--
     :widths: 45, 55
 
     "``-F [ --apifilterfile ]``", "Path to the API filter file which contains a
-    list of OpenCL™ or HSA APIs to be filtered out when performing an API
+    list of OpenCL or HSA APIs to be filtered out when performing an API
     trace. See :ref:`format-of-apifilter-configuration-file` for information
     about the API filter file format."
     "``-i [ --interval ] arg (=100)``", "Timeout interval in milliseconds.
@@ -143,7 +142,7 @@ Application Trace mode options (for ``--apitrace`` and ``-–hsatrace`` and ``--
     "``-n [ --nocollapse ]``", "Do not collapse consecutive identical
     ``clGetEventInfo`` calls into a single call in the trace output. Ignored when
     not performing an API trace. "
-    "``-r [ --ret ]``", "Always include the OpenCL™ API return code in API
+    "``-r [ --ret ]``", "Always include the OpenCL API return code in API
     trace, even if client application does not query it. Ignored when not
     performing an API trace."
     "``-y [ --sym ]``", "Generate symbol information file (.st) for API trace,
@@ -165,12 +164,12 @@ Performance Counter mode options (for ``--perfcounter``  and ``--hsapmc``)
     "``-g [ --singlepass ]``", "Only allow a single pass when collecting
     performance counters. Any counters that cannot fit into a single pass will
     be ignored. If specified, the GPUTime will not be collected, as a separate
-    pass is required to query the GPUTime (OpenCL™ only, this is the default
+    pass is required to query the GPUTime (OpenCL only, this is the default
     for HSA)."
     "``-G [ --nogputime ]``", "Skip collection of GPUTime when profiling a
-    kernel (GPUTime requires a separate pass) (OpenCL™ only, this is the
+    kernel (GPUTime requires a separate pass) (OpenCL only, this is the
     default for HSA)."
-    "``-k [ --kerneloutput ] arg``", "| Output the specified kernel file (OpenCL™ only). Valid argument values are:
+    "``-k [ --kerneloutput ] arg``", "| Output the specified kernel file (OpenCL only). Valid argument values are:
     |   ``il``:    output kernel IL files
     |   ``isa``:   output kernel ISA files
     |   ``cl``:    output kernel CL files
@@ -199,7 +198,7 @@ Trace Summary mode options (for ``--tracesummary``)
     "``-a [ --atpfile ] arg``", "Path to the .atp file from which to generate
     summary pages. Optional when performing an API trace. Required if ``-T`` is
     specified when not performing an API trace. The handle of the kernel."
-    "``-R [ --apirulesfile ] arg``", "Path to OpenCL™ API analyzer configuration
+    "``-R [ --apirulesfile ] arg``", "Path to OpenCL API analyzer configuration
     file. If not specified, all rules are enabled. Ignored when
     ``-–tracesummary`` is not specified.  See
     :ref:`format-of-apirules-configuration-file` for information about the
@@ -220,7 +219,7 @@ Occupancy display mode options (for ``--occupancydisplay``)
 Example Command lines
 ~~~~~~~~~~~~~~~~~~~~~
 
-* Collect default set of OpenCL™ performance counters:
+* Collect default set of OpenCL performance counters:
 
   ``rcprof --perfcounter "/path/to/app.exe" --device gpu``
 
@@ -228,19 +227,19 @@ Example Command lines
 
   ``rcprof --apitrace "/path/to/app.exe" --device gpu``
 
-* Collect kernel occupancy data for all OpenCL™ kernels dispatched:
+* Collect kernel occupancy data for all OpenCL kernels dispatched:
 
   ``rcprof --occupancy "/path/to/app.exe" --device gpu``
 
-* Collect default set of OpenCL™ performance counters and occupancy data:
+* Collect default set of OpenCL performance counters and occupancy data:
 
   ``rcprof --perfcounter --occupancy "/path/to/app.exe" --device gpu``
 
-* Collect an OpenCL™ API trace and occupancy data:
+* Collect an OpenCL API trace and occupancy data:
 
   ``rcprof --apitrace --occupancy "/path/to/app.exe" --device gpu``
 
-* Collect an OpenCL™ API trace with summary pages:
+* Collect an OpenCL API trace with summary pages:
 
   ``rcprof ---apitrace --tracesummary "/path/to/app.exe" --device gpu``
 
@@ -255,10 +254,6 @@ Example Command lines
 * Collect default set of HSA performance counters and occupancy data:
 
   ``rcprof --hsapmc --occupancy "/path/to/app.exe"``
-
-* Collect an HSA API trace with aql packets:
-
-  ``rcprof --hsaaqlpackettrace "/path/to/app.exe"``
 
 * Collect an HSA API trace with summary pages:
 

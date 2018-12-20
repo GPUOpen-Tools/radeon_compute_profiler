@@ -20,7 +20,6 @@ using std::wstring;
 using std::vector;
 using std::stringstream;
 using std::wstringstream;
-using namespace GPULogger;
 
 static bool s_bCreateProcessAttached = false;
 
@@ -135,7 +134,7 @@ static bool CheckSkipW(const wstring& str)
 
         if (IsInListW(tok))
         {
-            LogW(traceMESSAGE, L"Skip app: %s", str.c_str());
+            GPULogger::LogW(GPULogger::traceMESSAGE, L"Skip app: %s", str.c_str());
             return true;
         }
     }
@@ -172,7 +171,7 @@ BOOL WINAPI Mine_CreateProcessA(
     LPSTARTUPINFOA lpStartupInfo,
     LPPROCESS_INFORMATION lpProcessInformation)
 {
-    Log(traceMESSAGE, "Detoured CreateProcessA called\n");
+    GPULogger::Log(GPULogger::traceMESSAGE, "Detoured CreateProcessA called\n");
     BOOL ret;
 
     std::string strApplicationName = (lpApplicationName != NULL) ? std::string(lpApplicationName) : "";
@@ -184,7 +183,7 @@ BOOL WINAPI Mine_CreateProcessA(
     if (s_dwInsideWrapper == 0 && !bSkip)
     {
         RefTracker rf(&s_dwInsideWrapper);
-        Log(traceMESSAGE, "Calling DetourCreateProcessWithDll(ASCII) %s %s", lpApplicationName, lpCommandLine);
+        GPULogger::Log(GPULogger::traceMESSAGE, "Calling DetourCreateProcessWithDll(ASCII) %s %s", lpApplicationName, lpCommandLine);
         ret = AMDT::CreateProcessAndInjectDllA(lpApplicationName,
                                                lpCommandLine,
                                                lpProcessAttributes,
@@ -200,7 +199,7 @@ BOOL WINAPI Mine_CreateProcessA(
         if (!ret)
         {
             // If we failed to detour create process, call real one so that app can continue
-            Log(logERROR, "Failed to detour create process[ app name:%s, arg = %s ]", lpApplicationName, lpCommandLine);
+            GPULogger::Log(GPULogger::logERROR, "Failed to detour create process[ app name:%s, arg = %s ]", lpApplicationName, lpCommandLine);
             return Real_CreateProcessA(lpApplicationName,
                                        lpCommandLine,
                                        lpProcessAttributes,
@@ -255,7 +254,7 @@ BOOL WINAPI Mine_CreateProcessW(LPCWSTR lpApplicationName,
                                 LPSTARTUPINFOW lpStartupInfo,
                                 LPPROCESS_INFORMATION lpProcessInformation)
 {
-    Log(traceMESSAGE, "Detoured CreateProcessW called\n");
+    GPULogger::Log(GPULogger::traceMESSAGE, "Detoured CreateProcessW called\n");
     BOOL ret;
 
     wstring strApplicationName = (lpApplicationName != NULL) ? wstring(lpApplicationName) : L"";
@@ -267,7 +266,7 @@ BOOL WINAPI Mine_CreateProcessW(LPCWSTR lpApplicationName,
     if (s_dwInsideWrapper == 0 && !bSkip)
     {
         RefTracker rf(&s_dwInsideWrapper);
-        LogW(traceMESSAGE, L"Calling DetourCreateProcessWithDll(Unicode) %s %s", lpApplicationName, lpCommandLine);
+        GPULogger::LogW(GPULogger::traceMESSAGE, L"Calling DetourCreateProcessWithDll(Unicode) %s %s", lpApplicationName, lpCommandLine);
         ret = AMDT::CreateProcessAndInjectDllW(lpApplicationName,
                                                lpCommandLine,
                                                lpProcessAttributes,
@@ -283,7 +282,7 @@ BOOL WINAPI Mine_CreateProcessW(LPCWSTR lpApplicationName,
         if (!ret)
         {
             // If we failed to detour create process, call real one so that app can continue
-            LogW(logERROR, L"Failed to detour create process[ app name:%s, arg = %s ]", lpApplicationName, lpCommandLine);
+            GPULogger::LogW(GPULogger::logERROR, L"Failed to detour create process[ app name:%s, arg = %s ]", lpApplicationName, lpCommandLine);
             return Real_CreateProcessW(lpApplicationName,
                                        lpCommandLine,
                                        lpProcessAttributes,

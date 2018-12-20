@@ -883,6 +883,91 @@ private:
 };
 
 ///////////////////////////////////////////////////
+/// Class used to trace hsa_amd_memory_async_copy_rect
+///////////////////////////////////////////////////
+class HSA_APITrace_hsa_amd_memory_async_copy_rect : public HSAAPIBase
+{
+public:
+    /// Constructor
+    HSA_APITrace_hsa_amd_memory_async_copy_rect();
+
+    /// Destructor
+    ~HSA_APITrace_hsa_amd_memory_async_copy_rect();
+
+    /// get return value string
+    /// \return string representation of the return value;
+    std::string GetRetString();
+
+    /// Returns the API's arguments formatted as strings
+    /// \return string representation of the API's arguments
+    std::string ToString();
+
+    /// Assigns the API's various parameter values
+    /// \param ullStartTime the start timestamp for hsa_amd_memory_async_copy_rect
+    /// \param ullEndTime the end timestamp for hsa_amd_memory_async_copy_rect
+    /// \param dst Parameter passed to hsa_amd_memory_async_copy_rect
+    /// \param dst_offset Parameter passed to hsa_amd_memory_async_copy_rect
+    /// \param src Parameter passed to hsa_amd_memory_async_copy_rect
+    /// \param src_offset Parameter passed to hsa_amd_memory_async_copy_rect
+    /// \param range Parameter passed to hsa_amd_memory_async_copy_rect
+    /// \param copy_agent Parameter passed to hsa_amd_memory_async_copy_rect
+    /// \param dir Parameter passed to hsa_amd_memory_async_copy_rect
+    /// \param num_dep_signals Parameter passed to hsa_amd_memory_async_copy_rect
+    /// \param dep_signals Parameter passed to hsa_amd_memory_async_copy_rect
+    /// \param completion_signal Parameter passed to hsa_amd_memory_async_copy_rect
+    /// \param asyncCopyIdentifier async copy identifier
+    /// \param retVal the return value for hsa_amd_memory_async_copy_rect
+    void Create(ULONGLONG ullStartTime,
+                ULONGLONG ullEndTime,
+                const hsa_pitched_ptr_t* dst,
+                const hsa_dim3_t* dst_offset,
+                const hsa_pitched_ptr_t* src,
+                const hsa_dim3_t* src_offset,
+                const hsa_dim3_t* range,
+                hsa_agent_t copy_agent,
+                hsa_amd_copy_direction_t dir,
+                uint32_t num_dep_signals,
+                const hsa_signal_t* dep_signals,
+                hsa_signal_t completion_signal,
+                ULONGLONG asyncCopyIdentifier,
+                hsa_status_t retVal);
+
+    /// Write timestamp entry
+    /// \param sout output stream
+    /// \param bTimeout a flag indicating output mode
+    /// \return True if timestamps are ready
+    bool WriteTimestampEntry(std::ostream& sout, bool bTimeout);
+
+private:
+    /// Disabled copy constructor
+    /// \rhs item being copied
+    HSA_APITrace_hsa_amd_memory_async_copy_rect(const HSA_APITrace_hsa_amd_memory_async_copy_rect& rhs) = delete;
+
+    /// Disabled assignment operator
+    /// \rhs item being assigned
+    HSA_APITrace_hsa_amd_memory_async_copy_rect& operator= (const HSA_APITrace_hsa_amd_memory_async_copy_rect& rhs) = delete;
+
+    const hsa_pitched_ptr_t* m_dst; ///< Parameter passed to hsa_amd_memory_async_copy_rect
+    hsa_pitched_ptr_t m_dstVal; ///< Member to hold value passed to hsa_amd_memory_async_copy_rect in dst parameter
+    const hsa_dim3_t* m_dst_offset; ///< Parameter passed to hsa_amd_memory_async_copy_rect
+    hsa_dim3_t m_dst_offsetVal; ///< Member to hold value passed to hsa_amd_memory_async_copy_rect in dst_offset parameter
+    const hsa_pitched_ptr_t* m_src; ///< Parameter passed to hsa_amd_memory_async_copy_rect
+    hsa_pitched_ptr_t m_srcVal; ///< Member to hold value passed to hsa_amd_memory_async_copy_rect in src parameter
+    const hsa_dim3_t* m_src_offset; ///< Parameter passed to hsa_amd_memory_async_copy_rect
+    hsa_dim3_t m_src_offsetVal; ///< Member to hold value passed to hsa_amd_memory_async_copy_rect in src_offset parameter
+    const hsa_dim3_t* m_range; ///< Parameter passed to hsa_amd_memory_async_copy_rect
+    hsa_dim3_t m_rangeVal; ///< Member to hold value passed to hsa_amd_memory_async_copy_rect in range parameter
+    hsa_agent_t m_copy_agent; ///< Parameter passed to hsa_amd_memory_async_copy_rect
+    hsa_amd_copy_direction_t m_dir; ///< Parameter passed to hsa_amd_memory_async_copy_rect
+    uint32_t m_num_dep_signals; ///< Parameter passed to hsa_amd_memory_async_copy_rect
+    const hsa_signal_t* m_dep_signals; ///< Parameter passed to hsa_amd_memory_async_copy_rect
+    hsa_signal_t m_dep_signalsVal; ///< Member to hold value passed to hsa_amd_memory_async_copy_rect in dep_signals parameter
+    hsa_signal_t m_completion_signal; ///< Parameter passed to hsa_amd_memory_async_copy_rect
+    ULONGLONG m_asyncCopyIdentifier; ///< async copy identifier
+    hsa_status_t m_retVal; ///< Parameter passed to hsa_amd_memory_async_copy_rect
+};
+
+///////////////////////////////////////////////////
 /// Class used to trace hsa_amd_agent_memory_pool_get_info
 ///////////////////////////////////////////////////
 class HSA_APITrace_hsa_amd_agent_memory_pool_get_info : public HSAAPIBase

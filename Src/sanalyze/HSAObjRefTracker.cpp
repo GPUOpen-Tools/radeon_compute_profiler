@@ -25,8 +25,6 @@ HSAObjRefTracker::HSAObjRefTracker()
 
     m_bRequireAPIFlattening = true;
 
-    SP_TODO("Add support for tracking memory allocations/regsitrations (the commented out bits below)");
-
     m_dependentAPIs.insert(HSA_API_Type_hsa_init);
     m_dependentAPIs.insert(HSA_API_Type_hsa_shut_down);
 

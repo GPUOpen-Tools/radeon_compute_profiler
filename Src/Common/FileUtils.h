@@ -15,6 +15,9 @@
 #include "ProfilingParams.h"
 #include "OSDefs.h"
 
+#include <AMDTBaseTools/Include/gtList.h>
+#include <AMDTOSWrappers/Include/osFilePath.h>
+
 /// \addtogroup Common
 // @{
 
@@ -43,6 +46,13 @@ bool ReplaceTilde(std::string& strHome, std::string& strInOut);
 /// Windows and .rcpdata on Linux
 /// \return fully-qualified file name of temp file
 std::string GetTempFile();
+
+/// Get the fully-qualified filename of the temp file used to serialize an
+/// OpenCL ICD table to and from disk  The file is stored in %TEMP% on Windows
+/// and in the user's home directory on Linux.  The file is named rcpcltable on
+/// Windows and .rcpcltable on Linux
+/// \return fully-qualified file name of temp file
+std::string GetCLICDTableFile();
 
 /// Get the fully-qualified filename of the temp file used to pass parameters
 /// between rcprof and the activity logger.  The file is stored in %TEMP% on Windows
@@ -247,6 +257,17 @@ typedef enum
     MergeSummaryType_TidAndNumEntries,     ///< include the thread id and number of entries when merging individual files into a single file
     MergeSummaryType_CumulativeNumEntries, ///< include a cumulative number of entries (but no thread id) when merging individual files into a single file
 } MergeSummaryType;
+
+/// Gets the list of temp files that need to be merged
+/// \param strTmpFilesDirPath input tmp files dir path
+/// \param strFilePrefix file prefix, we use process ID as prefix
+/// \param szFileExt the file extension to use
+/// \param[out] files the list of files that need to be merged
+/// \return true if the list of files to merge was successfully retrieved, false otherwise
+bool GetTmpFilesToMerge(const gtString& strTmpFilesDirPath,
+                        const gtString& strFilePrefix,
+                        const gtString& szFileExt,
+                        gtList<osFilePath>& files);
 
 /// Merge tmp trace files(api trace, timestamps, stack trace, perfmarker), delete tmp file after merging
 /// \param strOutputFile output file

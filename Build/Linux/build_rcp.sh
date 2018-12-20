@@ -18,6 +18,15 @@ bBuildHSAProfiler=true
 # Build OCL Profiler
 bBuildOCLProfiler=true
 
+# Build Parser Lib
+bBuildParserLib=true
+
+# Build Executable
+bBuildExecutable=true
+
+# Build XInitthreads
+bBuildXInitThreads=true
+
 bBuildDocumentation=false
 
 # Generate zip file
@@ -50,23 +59,19 @@ MAKE_TARGET=
 DEBUG_SUFFIX=
 CODEXL_FRAMEWORK_BUILD_CONFIG_DIR=release
 
-# Build 32-bit build
-b32bitbuild=true
-
 # HSA directory override
 HSA_DIR_OVERRIDE=
 
 # Boost Lib dir directory override
 BOOST_LIB_DIR_OVERRIDE=
 
-# Boost 32-bit Lib dir directory override
-BOOST_LIB_DIR_OVERRIDE32=
-
 # Additional compiler defines override
 ADDITIONAL_COMPILER_DEFINES_OVERRIDE="ADDITIONAL_COMPILER_DEFINES_FROM_BUILD_SCRIPT="
 
 # Skip HSA build define
 SKIP_HSA_BUILD_DEFINE=
+
+SKIP_HSA_MAKE_VAR="SKIP_HSA=0"
 
 # Set build flag
 while [ "$*" != "" ]
@@ -78,14 +83,23 @@ do
    elif [ "$1" = "skip-hsaprofiler" ]; then
       bBuildHSAProfiler=false
       SKIP_HSA_BUILD_DEFINE=-DSKIP_HSA_BUILD
+      SKIP_HSA_MAKE_VAR="SKIP_HSA=1"
       ADDITIONAL_COMPILER_DEFINES_OVERRIDE="ADDITIONAL_COMPILER_DEFINES_FROM_BUILD_SCRIPT=$SKIP_HSA_BUILD_DEFINE"
    elif [ "$1" = "skip-oclprofiler" ]; then
       bBuildOCLProfiler=false
    elif [ "$1" = "skip-framework" ]; then
       bBuildFramework=false
       bIncrementalBuild=true
-   elif [ "$1" = "skip-32bitbuild" ]; then
-      b32bitbuild=false
+   elif [ "$1" = "skip-parser" ]; then
+      bBuildParserLib=false
+   elif [ "$1" = "parser-only" ]; then
+      bBuildParserLib=true
+      bBuildExecutable=false
+      bBuildOCLProfiler=false
+      bBuildHSAProfiler=false
+      SKIP_HSA_BUILD_DEFINE=-DSKIP_HSA_BUILD
+      ADDITIONAL_COMPILER_DEFINES_OVERRIDE="ADDITIONAL_COMPILER_DEFINES_FROM_BUILD_SCRIPT=$SKIP_HSA_BUILD_DEFINE"
+      bBuildXInitThreads=false
    elif [ "$1" = "framework-only" ]; then
       bBuildFrameworkOnly=true
    elif [ "$1" = "incremental" ]; then
@@ -117,9 +131,6 @@ do
    elif [ "$1" = "boostlibdir" ]; then
       shift
       BOOST_LIB_DIR_OVERRIDE="BOOST_LIB_DIR=$1"
-   elif [ "$1" = "boostlibdir32" ]; then
-      shift
-      BOOST_LIB_DIR_OVERRIDE32="BOOST_LIB_DIR32=$1"
    elif [ "$1" = "additionaldefines" ]; then
       shift
       ADDITIONAL_COMPILER_DEFINES_OVERRIDE="ADDITIONAL_COMPILER_DEFINES_FROM_BUILD_SCRIPT=$1 $SKIP_HSA_BUILD_DEFINE"
@@ -161,40 +172,30 @@ HSAFDNTRACE="$SRCDIR/HSAFdnTrace"
 PRELOADXINITTHREADS="$SRCDIR/PreloadXInitThreads"
 ACTIVITYLOGGER="CXLActivityLogger"
 ACTIVITYLOGGERDIR="$COMMONSRC/AMDTActivityLogger/"
-GPA="$COMMON/Lib/AMD/GPUPerfAPI/3_2"
+GPA="$COMMON/Lib/AMD/GPUPerfAPI/3_3"
 VKSTABLECLOCKS="$COMMON/Lib/AMD/VKStableClocks/VKStableClocks/VkStableClocks"
 JQPLOT_PATH="$SRCCOMMON/jqPlot"
 PROFILEDATAPARSERSRC="$SRCDIR/ProfileDataParser"
 PROFILEDATAPARSER="RCPProfileDataParser"
 
 GPACL=libGPUPerfAPICL.so
-GPACL32=libGPUPerfAPICL32.so
 
-GPAHSA=libGPUPerfAPIHSA.so
+GPAROCM=libGPUPerfAPIROCm.so
 
 GPACOUNTER=libGPUPerfAPICounters.so
-GPACOUNTER32=libGPUPerfAPICounters32.so
 
 ACTIVITYLOGGERBIN=libCXLActivityLogger.so
 
 GPU_PROFILER_LIB_PREFIX=RCP
 
 RCPROFILEBIN="rcprof$DEBUG_SUFFIX"
-RCPROFILEBIN32="rcprof32$DEBUG_SUFFIX"
 CLPROFILEBIN="lib${GPU_PROFILER_LIB_PREFIX}CLProfileAgent$DEBUG_SUFFIX.so"
-CLPROFILEBIN32="lib${GPU_PROFILER_LIB_PREFIX}CLProfileAgent32$DEBUG_SUFFIX.so"
 CLTRACEBIN="lib${GPU_PROFILER_LIB_PREFIX}CLTraceAgent$DEBUG_SUFFIX.so"
-CLTRACEBIN32="lib${GPU_PROFILER_LIB_PREFIX}CLTraceAgent32$DEBUG_SUFFIX.so"
 CLOCCUPANCYBIN="lib${GPU_PROFILER_LIB_PREFIX}CLOccupancyAgent$DEBUG_SUFFIX.so"
-CLOCCUPANCYBIN32="lib${GPU_PROFILER_LIB_PREFIX}CLOccupancyAgent32$DEBUG_SUFFIX.so"
 HSAPROFILEAGENTBIN="lib${GPU_PROFILER_LIB_PREFIX}HSAProfileAgent$DEBUG_SUFFIX.so"
 HSATRACEAGENTBIN="lib${GPU_PROFILER_LIB_PREFIX}HSATraceAgent$DEBUG_SUFFIX.so"
 PRELOADXINITTHREADSBIN="lib${GPU_PROFILER_LIB_PREFIX}PreloadXInitThreads$DEBUG_SUFFIX.so"
-PRELOADXINITTHREADSBIN32="lib${GPU_PROFILER_LIB_PREFIX}PreloadXInitThreads32$DEBUG_SUFFIX.so"
 PROFILEDATAPARSERBIN="lib${GPU_PROFILER_LIB_PREFIX}ProfileDataParser$DEBUG_SUFFIX.so"
-PROFILEDATAPARSERBIN32="lib${GPU_PROFILER_LIB_PREFIX}ProfileDataParser32$DEBUG_SUFFIX.so"
-
-MAKE_TARGET_SUFFIX_X86=x86
 
 PRODUCTNAME=RadeonComputeProfiler
 
@@ -262,30 +263,12 @@ if ! ($bZipOnly) ; then
          echo "*** ERROR during the build of the 64 bit framework ***" | tee -a "$LOGFILE"
       fi
 
-      RC2=0
-      if $b32bitbuild; then
-         if ($bDebugBuild) ; then
-            echo "----------- Building debug 32-bit version --------------- " | tee -a "$LOGFILE"
-            echo "scons -C ${RCPROOT}/Build/Linux CXL_prefix=${RCP_OUTPUT} CXL_arch=x86 CXL_build=debug CXL_build_type=static $commandLineArgs" | tee -a "$LOGFILE"
-            (scons -C "${RCPROOT}/Build/Linux" CXL_prefix="${RCP_OUTPUT}" CXL_arch=x86 CXL_build=debug CXL_build_type=static CXL_gpu_profiler_backend_dir="$SRCDIR" $commandLineArgs) >> "$LOGFILE" 2>&1
-         else
-            echo "========================================== " | tee -a $LOGFILE
-            echo "(scons -C "${RCPROOT}/Build/Linux" CXL_prefix="${RCP_OUTPUT}" CXL_arch=x86 CXL_build_type=static $commandLineArgs)" | tee -a "$LOGFILE"
-            (scons -C "${RCPROOT}/Build/Linux" CXL_prefix="${RCP_OUTPUT}" CXL_arch=x86 CXL_build_type=static CXL_gpu_profiler_backend_dir="$SRCDIR" $commandLineArgs) >> "$LOGFILE" 2>&1
-         fi
-         RC2=$?
-         if [ ${RC2} -ne 0 ]
-         then
-            echo "*** ERROR during the build of the 32 bit framework ***" | tee -a "$LOGFILE"
-         fi
-      fi
-
       echo "========================================== " | tee -a "$LOGFILE"
       echo "----------- End building ----------------- " | tee -a "$LOGFILE"
       date | tee -a "$LOGFILE"
       echo "========================================== " | tee -a "$LOGFILE"
 
-      NUM_ERRORS=`expr ${NUM_ERRORS} + ${RC1} + ${RC2}`
+      NUM_ERRORS=`expr ${NUM_ERRORS} + ${RC1}`
       if [ ${NUM_ERRORS} -ne 0 ]
       then
          echo "*** ERROR ***"
@@ -323,7 +306,18 @@ if ! ($bZipOnly) ; then
       BUILD_DIRS="$BUILD_DIRS $HSAFDNCOMMON $HSAUTILS $HSAFDNTRACE $HSAFDNPMC"
    fi
 
-   BUILD_DIRS="$BUILD_DIRS $PROFILEDATAPARSERSRC $SPROFILE $PRELOADXINITTHREADS"
+   if $bBuildParserLib; then
+      BUILD_DIRS="$BUILD_DIRS $PROFILEDATAPARSERSRC"
+   fi
+
+   if $bBuildExecutable; then
+      BUILD_DIRS="$BUILD_DIRS $SPROFILE"
+   fi
+
+   if $bBuildXInitThreads; then
+      BUILD_DIRS="$BUILD_DIRS $PRELOADXINITTHREADS"
+   fi
+
 
    for SUBDIR in $BUILD_DIRS; do
       BASENAME=`basename $SUBDIR`
@@ -336,43 +330,23 @@ if ! ($bZipOnly) ; then
          #make 64 bit
          echo "Build ${BASENAME}, 64-bit..." | tee -a "$LOGFILE"
 
-         if ! make -C "$SUBDIR" -j$CPU_COUNT $HSA_DIR_OVERRIDE $BOOST_LIB_DIR_OVERRIDE $BOOST_LIB_DIR_OVERRIDE32 "$ADDITIONAL_COMPILER_DEFINES_OVERRIDE" $MAKE_TARGET >> "$LOGFILE" 2>&1; then
+         if ! make -C "$SUBDIR" -j$CPU_COUNT $SKIP_HSA_MAKE_VAR $HSA_DIR_OVERRIDE $BOOST_LIB_DIR_OVERRIDE "$ADDITIONAL_COMPILER_DEFINES_OVERRIDE" $MAKE_TARGET >> "$LOGFILE" 2>&1; then
             echo "Failed to build ${BASENAME}, 64 bit"
             exit 1
-         fi
-
-         if $b32bitbuild; then
-            if [ "$SUBDIR" = "$HSAFDNTRACE" ]; then
-               continue;
-            fi
-
-            if [ "$SUBDIR" = "$HSAFDNPMC" ]; then
-               continue;
-            fi
-
-            #make 32 bit
-            echo "Build ${BASENAME}, 32-bit..." | tee -a "$LOGFILE"
-
-            if ! make -C "$SUBDIR" -j$CPU_COUNT $HSA_DIR_OVERRIDE $BOOST_LIB_DIR_OVERRIDE $BOOST_LIB_DIR_OVERRIDE32 "$ADDITIONAL_COMPILER_DEFINES_OVERRIDE" $MAKE_TARGET$MAKE_TARGET_SUFFIX_X86 >> "$LOGFILE" 2>&1; then
-               echo "Failed to build ${BASENAME}, 32 bit"
-               exit 1
-            fi
          fi
       fi
    done
 
    if ! ($bCleanOnly); then
       cp -f "$GPA/Bin/Linx64/$GPACOUNTER" "$PROFILER_OUTPUT"
-      cp -f "$GPA/Bin/Linx86/$GPACOUNTER32" "$PROFILER_OUTPUT"
 
       if $bBuildOCLProfiler ; then
          cp -f "$GPA/Bin/Linx64/$GPACL" "$PROFILER_OUTPUT"
-         cp -f "$GPA/Bin/Linx86/$GPACL32" "$PROFILER_OUTPUT"
-         cp "$VKSTABLECLOCKS" "$PROFILER_OUTPUT"
+         cp -f "$VKSTABLECLOCKS" "$PROFILER_OUTPUT"
       fi
 
       if $bBuildHSAProfiler ; then
-         cp -f "$GPA/Bin/Linx64/$GPAHSA" "$PROFILER_OUTPUT"
+         cp -f "$GPA/Bin/Linx64/$GPAROCM" "$PROFILER_OUTPUT"
       fi
    else
       rm -rf "$PROFILER_OUTPUT"
@@ -399,7 +373,6 @@ if ! ($bZipOnly) ; then
       mkdir -p "$BIN/$ACTIVITYLOGGER"
       mkdir -p "$BIN/$ACTIVITYLOGGER/bin"
       mkdir -p "$BIN/$ACTIVITYLOGGER/doc"
-      mkdir -p "$BIN/$ACTIVITYLOGGER/bin/x86"
       mkdir -p "$BIN/$ACTIVITYLOGGER/bin/x86_64"
       mkdir -p "$BIN/$ACTIVITYLOGGER/include"
       mkdir -p "$BIN/jqPlot"
@@ -408,8 +381,13 @@ if ! ($bZipOnly) ; then
       #copy to bin folder
       #-----------------------------------------
       # x64
-      cp "$PROFILER_OUTPUT/$RCPROFILEBIN" "$BIN/$RCPROFILEBIN"
-      cp "$PROFILER_OUTPUT/$PRELOADXINITTHREADSBIN" "$BIN/$PRELOADXINITTHREADSBIN"
+      if $bBuildExecutable ; then
+         cp "$PROFILER_OUTPUT/$RCPROFILEBIN" "$BIN/$RCPROFILEBIN"
+      fi
+
+      if $bBuildXInitThreads ; then
+         cp "$PROFILER_OUTPUT/$PRELOADXINITTHREADSBIN" "$BIN/$PRELOADXINITTHREADSBIN"
+      fi
 
       if $bBuildOCLProfiler ; then
          cp "$PROFILER_OUTPUT/$CLPROFILEBIN" "$BIN/$CLPROFILEBIN"
@@ -421,26 +399,12 @@ if ! ($bZipOnly) ; then
       if $bBuildHSAProfiler ; then
          cp "$PROFILER_OUTPUT/$HSATRACEAGENTBIN" "$BIN/$HSATRACEAGENTBIN"
          cp "$PROFILER_OUTPUT/$HSAPROFILEAGENTBIN" "$BIN/$HSAPROFILEAGENTBIN"
-         cp "$GPA/Bin/Linx64/$GPAHSA" "$BIN/$GPAHSA"
+         cp "$GPA/Bin/Linx64/$GPAROCM" "$BIN/$GPAROCM"
       fi
       cp "$GPA/Bin/Linx64/$GPACOUNTER" "$BIN/$GPACOUNTER"
 
-      #x86
-      if $b32bitbuild; then
-         if $bBuildOCLProfiler ; then
-            cp "$PROFILER_OUTPUT/$RCPROFILEBIN32" "$BIN/$RCPROFILEBIN32"
-            cp "$PROFILER_OUTPUT/$PRELOADXINITTHREADSBIN32" "$BIN/$PRELOADXINITTHREADSBIN32"
-            cp "$PROFILER_OUTPUT/$CLPROFILEBIN32" "$BIN/$CLPROFILEBIN32"
-            cp "$PROFILER_OUTPUT/$CLTRACEBIN32" "$BIN/$CLTRACEBIN32"
-            cp "$PROFILER_OUTPUT/$CLOCCUPANCYBIN32" "$BIN/$CLOCCUPANCYBIN32"
-            cp "$GPA/Bin/Linx86/$GPACL32" "$BIN/$GPACL32"
-            cp "$GPA/Bin/Linx86/$GPACOUNTER32" "$BIN/$GPACOUNTER32"
-         fi
-      fi
-
       #AMDTActivityLogger files
       cp "$RCP_OUTPUT/Output_x86_64/$CODEXL_FRAMEWORK_BUILD_CONFIG_DIR/bin/$ACTIVITYLOGGERBIN" "$BIN/$ACTIVITYLOGGER/bin/x86_64/$ACTIVITYLOGGERBIN"
-      $b32bitbuild && cp "$RCP_OUTPUT/Output_x86/$CODEXL_FRAMEWORK_BUILD_CONFIG_DIR/bin/$ACTIVITYLOGGERBIN" "$BIN/$ACTIVITYLOGGER/bin/x86/$ACTIVITYLOGGERBIN"
       cp "$ACTIVITYLOGGERDIR/CXLActivityLogger.h" "$BIN/$ACTIVITYLOGGER/include/$ACTIVITYLOGGER.h"
       cp "$ACTIVITYLOGGERDIR/Doc/AMDTActivityLogger.pdf" "$BIN/$ACTIVITYLOGGER/doc/AMDTActivityLogger.pdf"
       #jqPlot files
@@ -479,44 +443,41 @@ if $bZip || $bZipOnly ; then
    chmod 755 "$RCP_ARCHIVE"
    cd "$BUILD_PATH"
 
-   # Profile Data parser directory
-   mkdir -p "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/bin"
-   mkdir -p "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include"
+   if $bBuildParserLib ; then
+      # Profile Data parser directory
+      mkdir -p "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/bin"
+      mkdir -p "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include"
 
-   # copy 64-bit profile data parser binaries
-   cp "$PROFILER_OUTPUT/$PROFILEDATAPARSERBIN" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/bin/"
+      # copy 64-bit profile data parser binaries
+      cp "$PROFILER_OUTPUT/$PROFILEDATAPARSERBIN" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/bin/"
 
-   # copy 32-bit profile data parser binaries
-   if $b32bitbuild; then
-    cp "$PROFILER_OUTPUT/$PROFILEDATAPARSERBIN32" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/bin/"
+      # copy profile data parser header files
+      cp "$SRCCOMMON/Defs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$SRCCOMMON/IParserListener.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$SRCCOMMON/IParserProgressMonitor.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$SRCCOMMON/OSDefs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$SRCCOMMON/ProfilerOutputFileDefs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$SRCCOMMON/Version.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$SRCCOMMON/Config.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$CLCOMMON/CLFunctionEnumDefs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$HSAFDNCOMMON/HSAFunctionDefs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/IAtpDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/IAPIInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/ICLApiInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/IHSAApiInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/IOccupancyFileInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/IOccupancyInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/IPerfMarkerInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/ISymbolFileEntryInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/ATPParserInterface.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+      cp "$PROFILEDATAPARSERSRC/ProfileDataParserLoader.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
+
+      # Artifact for profile data parser
+      cd $BUILD_PATH/$PROFILEDATAPARSER-$VERSION
+      tar cvzf "$BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE" ./bin ./include
+      chmod -R 755 "$BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE"
+      cd $BUILD_PATH
    fi
-
-   # copy profile data parser header files
-   cp "$SRCCOMMON/Defs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$SRCCOMMON/IParserListener.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$SRCCOMMON/IParserProgressMonitor.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$SRCCOMMON/OSDefs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$SRCCOMMON/ProfilerOutputFileDefs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$SRCCOMMON/Version.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$SRCCOMMON/Config.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$CLCOMMON/CLFunctionEnumDefs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$HSAFDNCOMMON/HSAFunctionDefs.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/IAtpDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/IAPIInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/ICLApiInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/IHSAApiInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/IOccupancyFileInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/IOccupancyInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/IPerfMarkerInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/ISymbolFileEntryInfoDataHandler.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/ATPParserInterface.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-   cp "$PROFILEDATAPARSERSRC/ProfileDataParserLoader.h" "$BUILD_PATH/$PROFILEDATAPARSER-$VERSION/include/"
-
-   # Artifact for profile data parser
-   cd $BUILD_PATH/$PROFILEDATAPARSER-$VERSION
-   tar cvzf "$BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE" ./bin ./include
-   chmod -R 755 "$BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE"
-   cd $BUILD_PATH
 
    # cleanup
    rm -rf "$BUILD_PATH/$PRODUCTNAME-$VERSION/"
@@ -530,12 +491,14 @@ if $bZip || $bZipOnly ; then
       exit 1
    fi
 
-   #Check artifacts of profile data parser
-   if [ -e "$BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE" ] ; then
-      echo "$BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE" >> $LOGFILE
-   else
-      echo "Failed to generate $BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE" >> "$LOGFILE"
-      exit 1
+   if $bBuildParserLib ; then
+      #Check artifacts of profile data parser
+      if [ -e "$BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE" ] ; then
+         echo "$BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE" >> $LOGFILE
+      else
+         echo "Failed to generate $BUILD_PATH/$RCPPROFILEDATAPARSERARCHIVE" >> "$LOGFILE"
+         exit 1
+      fi
    fi
 fi
 

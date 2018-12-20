@@ -16,31 +16,19 @@ $(TARGETSO) : makedir $(SO_OBJS)
 	$(CC) $(LINKFLAGS_SO) $(PLATFORM_LFLAG) $(SO_OBJS) $(LIBPATH) $(LIBS) -o $(TARGETSO) $(STATIC_LIBS)
 	$(POST_BUILD_ACTION)
 
-x86:
-	$(MAKE) -f $(MAKEFILENAME) $(BUILD_X86_OVERRIDES)
-
 Internal:
 	$(MAKE) -f $(MAKEFILENAME) $(BUILD_INTERNAL_OVERRIDES)
-
-Internalx86:
-	$(MAKE) -f $(MAKEFILENAME) $(BUILD_INTERNAL_X86_OVERRIDES)
 
 Dbg:
 	$(MAKE) -f $(MAKEFILENAME) $(BUILD_DEBUG_OVERRIDES)
 
-Dbgx86:
-	$(MAKE) -f $(MAKEFILENAME) $(BUILD_DEBUG_X86_OVERRIDES)
-
 DbgInternal:
 	$(MAKE) -f $(MAKEFILENAME) $(BUILD_DEBUG_INTERNAL_OVERRIDES)
-
-DbgInternalx86:
-	$(MAKE) -f $(MAKEFILENAME) $(BUILD_DEBUG_INTERNAL_X86_OVERRIDES)
 
 makedir:
 	mkdir -p $(OUTPUT_DIRS_TO_CREATE)
 
-all: default x86 Internal Internalx86 Dbg Dbgx86 DbgInternal DbgInternalx86
+all: default Internal Dbg DbgInternal
 
 # source file targets
 
@@ -106,31 +94,22 @@ $(OBJ_DIR)/%.o: $(HSAUTILS_DIR)/%.cpp
 $(OBJ_DIR)/%.o: $(SRC_PROFILEDATAPARSER_DIR)/%.cpp
 	$(BUILD_SRC)
 
+$(OBJ_DIR)/%.o: $(COMGRUTILS_DIR)/%.cpp
+	$(BUILD_SRC)
+
 # clean targets
 clean:
 	rm -f $(OBJS) $(LIB_OBJS) $(SO_OBJS) $(TARGET) $(TARGETLIB) $(TARGETSO)
 
-cleanx86:
-	$(MAKE) -f $(MAKEFILENAME) clean $(BUILD_X86_OVERRIDES)
-
 cleanInternal:
 	$(MAKE) -f $(MAKEFILENAME) clean $(BUILD_INTERNAL_OVERRIDES)
-
-cleanInternalx86:
-	$(MAKE) -f $(MAKEFILENAME) clean $(BUILD_INTERNAL_X86_OVERRIDES)
 
 cleanDbg:
 	$(MAKE) -f $(MAKEFILENAME) clean $(BUILD_DEBUG_OVERRIDES)
 
-cleanDbgx86:
-	$(MAKE) -f $(MAKEFILENAME) clean $(BUILD_DEBUG_X86_OVERRIDES)
-
 cleanDbgInternal:
 	$(MAKE) -f $(MAKEFILENAME) clean $(BUILD_DEBUG_INTERNAL_OVERRIDES)
 
-cleanDbgInternalx86:
-	$(MAKE) -f $(MAKEFILENAME) clean $(BUILD_DEBUG_INTERNAL_X86_OVERRIDES)
-
-spotless: clean cleanx86 cleanInternal cleanInternalx86 cleanDbg cleanDbgx86 cleanDbgInternal cleanDbgInternalx86
+spotless: clean cleanInternal cleanDbg cleanDbgInternal
 	rm -rf $(BASE_OBJDIR)
 

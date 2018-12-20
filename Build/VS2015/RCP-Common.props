@@ -12,6 +12,7 @@
     <Import Project="$(CommonSrcDir)\DeviceInfo\Global-DeviceInfo.props" />
     <Import Project="$(CommonSrcDir)\DynamicLibraryModule\Global-DynamicLibraryModule.props" />
     <Import Project="$(CommonSrcDir)\AMDTInterceptor\Global-Interceptor-mhook-2015.props" />
+    <Import Project="$(CommonSrcDir)\ADLUtil\Global-ADLUtil.props" />
     <Import Project="$(CommonDir)\Lib\Ext\Boost\Global-Boost-2015.props" />
     <Import Project="RCP-GPUPerfAPI.props" />
   </ImportGroup>

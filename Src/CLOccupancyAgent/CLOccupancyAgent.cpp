@@ -142,29 +142,31 @@ clAgent_OnLoad(cl_agent* agent)
     FileUtils::CheckForDebuggerAttach();
 #endif
 
-    cl_int status = CL_SUCCESS;
+    std::string strLogFile = FileUtils::GetDefaultOutputPath() + "cloccupancyagent.log";
+    LogFileInitialize(strLogFile.c_str());
+
+    cl_icd_dispatch_table nextTable;
+    cl_icd_dispatch_table realTable;
+    cl_int status = InitAgent(agent, CL_OCCUPANCY_AGENT_DLL, &nextTable, &realTable);
+
+    if (CL_SUCCESS != status)
+    {
+        return CL_SUCCESS;
+    }
+
+    memcpy(&dispatch, &nextTable, sizeof(cl_icd_dispatch_table));
+    memcpy(&agentDispatch, &dispatch, sizeof(cl_icd_dispatch_table));
+
+    InitNextCLFunctions(&nextTable, &realTable);
 
     std::cout << RCP_PRODUCT_NAME " Kernel occupancy module is enabled" << std::endl;
 
-    status = agent->GetICDDispatchTable(agent, &dispatch, sizeof(cl_icd_dispatch_table));
-
-    if (status != CL_SUCCESS)
-    {
-        return status;
-    }
-
-    InitNextCLFunctions(dispatch);
-
-    memcpy(&agentDispatch, &dispatch, sizeof(cl_icd_dispatch_table));
-
     agentDispatch.EnqueueNDRangeKernel = CL_OCCUPANCY_API_ENTRY_EnqueueNDRangeKernel;
     agentDispatch.ReleaseContext = CL_OCCUPANCY_API_ENTRY_ReleaseContext;
+    agentDispatch.GetPlatformInfo = CL_OCCUPANCY_API_ENTRY_GetPlatformInfo;
     agentDispatch.GetDeviceIDs = CL_OCCUPANCY_API_ENTRY_GetDeviceIDs;
 
     status = agent->SetICDDispatchTable(agent, &agentDispatch, sizeof(cl_icd_dispatch_table));
-
-    std::string strLogFile = FileUtils::GetDefaultOutputPath() + "cloccupancyagent.log";
-    LogFileInitialize(strLogFile.c_str());
 
     Parameters params;
     FileUtils::GetParametersFromFile(params);

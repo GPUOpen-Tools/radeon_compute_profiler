@@ -18,6 +18,9 @@ INCLUDES = \
 	-I$(HSA_DIR)/include \
 	-I$(HSA_DIR)/include/hsa \
 	-I$(DYNAMICLIBRARYMODULE_DIR) \
+	-I$(COMGR_DIR) \
+	-I$(HSA_DIR)/../include/comgr \
+	-I$(COMGRUTILS_DIR) \
 	-I$(DEVICEINFO_DIR) \
 	-I$(TSINGLETON_DIR) \
 	-I$(ADL_DIR)/include
@@ -26,7 +29,7 @@ LIBS = \
 	$(HSAFDNCOMMON_LIBS) \
 	$(COMMON_LIBS) \
 	$(FRAMEWORK_LIBS) \
-	$(STANDARD_LIBS)
+	$(STANDARD_LIBS) \
 
 LIBPATH = $(COMMON_LIB_PATHS)
 
@@ -40,6 +43,8 @@ SO_OBJS = \
 	./$(OBJ_DIR)/CLOccupancyInfoManager.o \
 	./$(OBJ_DIR)/ProfilerTimer.o \
 	./$(OBJ_DIR)/ADLUtil.o \
+	./$(OBJ_DIR)/ComgrUtils.o \
+	./$(OBJ_DIR)/HSAKernelAssembly.o \
 
 include $(DEPTH)/Build/Linux/CommonTargets.mk
 

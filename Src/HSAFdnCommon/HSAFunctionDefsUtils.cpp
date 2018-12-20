@@ -8,6 +8,10 @@
 // std
 #include <unordered_map>
 
+#ifdef _DEBUG
+    #include <iostream>
+#endif
+
 // profiler common
 #include <Logger.h>
 
@@ -185,6 +189,62 @@ HSAFunctionDefsUtils::HSAFunctionDefsUtils()
     m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_amd_interop_map_buffer"), HSA_API_Type_hsa_amd_interop_map_buffer));
     m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_amd_interop_unmap_buffer"), HSA_API_Type_hsa_amd_interop_unmap_buffer));
     m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_amd_image_create"), HSA_API_Type_hsa_amd_image_create));
+
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_amd_pointer_info"), HSA_API_Type_hsa_amd_pointer_info));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_amd_pointer_info_set_userdata"), HSA_API_Type_hsa_amd_pointer_info_set_userdata));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_amd_ipc_memory_create"), HSA_API_Type_hsa_amd_ipc_memory_create));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_amd_ipc_memory_attach"), HSA_API_Type_hsa_amd_ipc_memory_attach));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_amd_ipc_memory_detach"), HSA_API_Type_hsa_amd_ipc_memory_detach));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_ext_image_get_capability_with_layout"), HSA_API_Type_hsa_ext_image_get_capability_with_layout));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_ext_image_data_get_info_with_layout"), HSA_API_Type_hsa_ext_image_data_get_info_with_layout));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_ext_image_create_with_layout"), HSA_API_Type_hsa_ext_image_create_with_layout));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_amd_signal_create"), HSA_API_Type_hsa_amd_signal_create));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_amd_ipc_signal_create"), HSA_API_Type_hsa_amd_ipc_signal_create));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_amd_ipc_signal_attach"), HSA_API_Type_hsa_amd_ipc_signal_attach));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_ven_amd_aqlprofile_validate_event"), HSA_API_Type_hsa_ven_amd_aqlprofile_validate_event));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_ven_amd_aqlprofile_start"), HSA_API_Type_hsa_ven_amd_aqlprofile_start));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_ven_amd_aqlprofile_stop"), HSA_API_Type_hsa_ven_amd_aqlprofile_stop));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_ven_amd_aqlprofile_legacy_get_pm4"), HSA_API_Type_hsa_ven_amd_aqlprofile_legacy_get_pm4));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_ven_amd_aqlprofile_get_info"), HSA_API_Type_hsa_ven_amd_aqlprofile_get_info));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_ven_amd_aqlprofile_iterate_data"), HSA_API_Type_hsa_ven_amd_aqlprofile_iterate_data));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_ven_amd_aqlprofile_error_string"), HSA_API_Type_hsa_ven_amd_aqlprofile_error_string));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_ven_amd_loader_query_segment_descriptors"), HSA_API_Type_hsa_ven_amd_loader_query_segment_descriptors));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_ven_amd_loader_query_host_address"), HSA_API_Type_hsa_ven_amd_loader_query_host_address));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_ven_amd_loader_query_executable"), HSA_API_Type_hsa_ven_amd_loader_query_executable));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_ven_amd_loader_executable_iterate_loaded_code_objects"), HSA_API_Type_hsa_ven_amd_loader_executable_iterate_loaded_code_objects));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_ven_amd_loader_loaded_code_object_get_info"), HSA_API_Type_hsa_ven_amd_loader_loaded_code_object_get_info));
+
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_amd_queue_set_priority"), HSA_API_Type_hsa_amd_queue_set_priority));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_ven_amd_aqlprofile_version_major"), HSA_API_Type_hsa_ven_amd_aqlprofile_version_major));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_ven_amd_aqlprofile_version_minor"), HSA_API_Type_hsa_ven_amd_aqlprofile_version_minor));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_ven_amd_aqlprofile_read"), HSA_API_Type_hsa_ven_amd_aqlprofile_read));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_amd_memory_async_copy_rect"), HSA_API_Type_hsa_amd_memory_async_copy_rect));
+
+    // placeholders for Init/Unload to make sure the map is the correct size (for the following assert)
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("Init"), HSA_API_Type_Init));
+    m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("Unload"), HSA_API_Type_Unload));
+
+#ifdef _DEBUG
+    for (int i = 0; i < HSA_API_Type_Non_API_First; i++)
+    {
+        bool found = false;
+        for (auto it = m_hsaAPIMap.begin(); it != m_hsaAPIMap.end(); ++it)
+        {
+            if (it->second == i)
+            {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+        {
+            std::cout << i << " not found\n";
+        }
+    }
+#endif
+
+    SpAssert(HSA_API_Type_Non_API_First == m_hsaAPIMap.size());
 
     // add mapping for ROCm 1.2 functions to the ROCm 1.3 enum values
     m_hsaAPIMap.insert(std::pair<std::string, HSA_API_Type>(std::string("hsa_queue_load_read_index_acquire"), HSA_API_Type_hsa_queue_load_read_index_scacquire));

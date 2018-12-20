@@ -44,20 +44,31 @@ public:
     /// \param[out] stopParsing flag indicating if parsing should stop after this item
     void OnParse(CLAPIInfo* pAPIInfo, bool& stopParsing);
 
+    /// Generate Top X data transfer HTML table from statistic data and write to std::ostream
+    /// \param sout output stream
+    /// \param useTopX flag indicating if the table should include all data transfers (false) or just the top X (true)
+    void GenerateTopXHTMLTable(std::ostream& sout, bool useTopX);
+
     /// Generate HTML table from statistic data and write to std::ostream
     /// \param sout output stream
-    void GenerateHTMLTable(std::ostream& sout);
+    void GenerateDataTransferSummaryHTMLTable(std::ostream& sout);
 
-    /// Generate simple HTML page
+    /// Generate simple HTML page with list of data transfers
     /// \param szFileName file name
     /// \return true if the page was generated, false otherwise
-    bool GenerateHTMLPage(const char* szFileName);
+    bool GenerateDataTransferHTMLPage(const char* szFileName);
+
+    /// Generate simple HTML page with Top X data transfers
+    /// \param szFileName file name
+    /// \param useTopX flag indicating if the table should include all data transfers (false) or just the top X (true)
+    /// \return true if the page was generated, false otherwise
+    bool GenerateTopXDataTransferHTMLPage(const char* szFileName, bool useTopX);
 
     /// Debug
     void Debug();
 
 protected:
-    std::multiset<CLMemAPIInfo*, CLMemDurationCmp> m_MemAPISet; /// memory api map, sorted by duration
+    std::multiset<CLMemAPIInfo*, CLMemDurationCmp> m_memAPISet; /// memory api map, sorted by duration
     unsigned int m_uiTopX;           ///< Number of top items to list
 private:
     /// Copy constructor

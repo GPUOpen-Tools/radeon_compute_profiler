@@ -28,6 +28,14 @@
 #include <iostream>
 #include <sstream>
 #include <locale>
+
+#include <AMDTBaseTools/Include/gtString.h>
+#include <AMDTBaseTools/Include/gtStringTokenizer.h>
+#include <AMDTOSWrappers/Include/osDirectory.h>
+#include <AMDTOSWrappers/Include/osFile.h>
+#include <AMDTOSWrappers/Include/osProcess.h>
+#include <AMDTOSWrappers/Include/osEnvironmentVariable.h>
+
 #include "FileUtils.h"
 #include "StringUtils.h"
 #include "Logger.h"
@@ -36,13 +44,6 @@
 #include "Defs.h"
 #include "ProfilerOutputFileDefs.h"
 
-#include <AMDTBaseTools/Include/gtString.h>
-#include <AMDTBaseTools/Include/gtStringTokenizer.h>
-#include <AMDTBaseTools/Include/gtList.h>
-#include <AMDTOSWrappers/Include/osDirectory.h>
-#include <AMDTOSWrappers/Include/osFile.h>
-#include <AMDTOSWrappers/Include/osProcess.h>
-#include <AMDTOSWrappers/Include/osEnvironmentVariable.h>
 
 using std::stringstream;
 using std::ofstream;
@@ -116,6 +117,19 @@ std::string FileUtils::GetTempFile()
 #else //_LINUX || LINUX
     strTmpPath = OSUtils::Instance()->GetEnvVar("HOME");
     strTmpPath.append("/.rcpdata");
+#endif
+    return strTmpPath;
+}
+
+std::string FileUtils::GetCLICDTableFile()
+{
+    std::string strTmpPath;
+#ifdef _WIN32
+    strTmpPath = OSUtils::Instance()->GetEnvVar("TEMP");
+    strTmpPath.append("\\rcpcltable");
+#else //_LINUX || LINUX
+    strTmpPath = OSUtils::Instance()->GetEnvVar("HOME");
+    strTmpPath.append("/.rcpcltable");
 #endif
     return strTmpPath;
 }
@@ -1162,6 +1176,31 @@ bool FileUtils::MergeTmpTraceFiles(const string& strOutputFile,
     }
 }
 
+bool FileUtils::GetTmpFilesToMerge(const gtString& strTmpFilesDirPath,
+                        const gtString& strFilePrefix,
+                        const gtString& szFileExt,
+                        gtList<osFilePath>& files)
+{
+    osDirectory tempFileDirectory(strTmpFilesDirPath);
+
+    gtString fileMask = strFilePrefix;
+    fileMask.append(L"*");
+
+    if (!szFileExt.isEmpty())
+    {
+        fileMask.append(szFileExt);
+    }
+
+    bool ret = tempFileDirectory.getContainedFilePaths(fileMask, osDirectory::SORT_BY_NAME_ASCENDING, files);
+
+    if (files.size() == 0)
+    {
+        Log(logWARNING, "No temp files found under %s. Nothing will be merged.\n", strTmpFilesDirPath.asUTF8CharArray());
+    }
+
+    return ret;
+}
+
 bool FileUtils::MergeTmpTraceFiles(SP_outStream& sout,
                                    const gtString& strTmpFilesDirPath,
                                    const gtString& strFilePrefix,
@@ -1170,18 +1209,8 @@ bool FileUtils::MergeTmpTraceFiles(SP_outStream& sout,
                                    MergeSummaryType mergeSummaryType)
 {
     gtList<osFilePath> files;
-    osDirectory tempFileDirectory(strTmpFilesDirPath);
 
-    gtString finalPrefix = strFilePrefix;
-    finalPrefix.append(L"*");
-
-    bool ret = tempFileDirectory.getContainedFilePaths(finalPrefix, osDirectory::SORT_BY_NAME_ASCENDING, files);
-
-    if (files.size() == 0)
-    {
-        Log(logWARNING, "No temp files found under %s. Nothing will be merged.\n", strTmpFilesDirPath.asUTF8CharArray());
-        return false;
-    }
+    bool ret = GetTmpFilesToMerge(strTmpFilesDirPath, strFilePrefix, szFileExt, files);
 
     if (ret)
     {

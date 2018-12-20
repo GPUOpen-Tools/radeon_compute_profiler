@@ -55,7 +55,8 @@ public:
 
     /// Generate Top X HTML table from statistic data and write to std::ostream
     /// \param sout output stream
-    void GenerateTopXKernelHTMLTable(std::ostream& sout);
+    /// \param useTopX flag indicating if the table should include all kernels (false) or just the top X (true)
+    void GenerateTopXKernelHTMLTable(std::ostream& sout, bool useTopX);
 
 protected:
     /// Gets the href tag for a min/max kernel dispatch time

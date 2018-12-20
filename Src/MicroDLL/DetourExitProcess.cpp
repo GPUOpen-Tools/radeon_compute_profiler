@@ -13,7 +13,6 @@
 #include "DLLMain.h"
 
 static bool s_bExitProcessAttached = false;
-using namespace GPULogger;
 
 typedef VOID(WINAPI* ExitProcess_type)(UINT uExitCode);
 
@@ -21,7 +20,7 @@ ExitProcess_type Real_ExitProcess = NULL;
 
 DECLSPEC_NORETURN VOID WINAPI Mine_ExitProcess(UINT uExitCode)
 {
-    Log(traceMESSAGE, "Detoured ExitProcess called\n");
+    GPULogger::Log(GPULogger::traceMESSAGE, "Detoured ExitProcess called\n");
     NotifyOnExitProcess();
 
     if (NULL != Real_ExitProcess)

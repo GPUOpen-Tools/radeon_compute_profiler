@@ -20,7 +20,6 @@
 
 using std::vector;
 using std::string;
-using namespace GPULogger;
 
 static vector<PluginInfo> g_sPluginList;
 

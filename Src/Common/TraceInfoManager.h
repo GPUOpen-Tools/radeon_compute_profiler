@@ -155,6 +155,7 @@ protected:
     std::mutex m_mtx;                   ///< mutex used to lock APIInfoMap
     std::mutex m_mtxFlush;              ///< mutex used to lock flush()
     std::mutex m_mtxTracemap;           ///< mutex used to lock AddTraceInfoEntry
+    std::mutex m_mtxStopResume;         ///< mutex used to lock Stop/Resume Timer
     bool m_bTimeOutMode;                ///< Is time out mode
     bool m_bIsRunning;                  ///< Is app running
     unsigned int m_uiInterval;          ///< Timer interval

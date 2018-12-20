@@ -16,8 +16,6 @@
 #include "..\Common\Logger.h"
 #include "..\Common\FileUtils.h"
 
-using namespace GPULogger;
-
 std::string g_strMicroDllPath;
 std::string g_strOutputFile;
 std::string g_strDLLPath;
@@ -38,7 +36,7 @@ BOOL APIENTRY DllMain(HMODULE /* hModule */, DWORD  ul_reason_for_call, LPVOID /
         case DLL_PROCESS_ATTACH:
         {
             std::string strLogFile = FileUtils::GetDefaultOutputPath() + "microdll.log";
-            LogFileInitialize(strLogFile.c_str());
+            GPULogger::LogFileInitialize(strLogFile.c_str());
             InitAvailablePluginInfo();
             DetoursAttachLoadLibrary();
             DetoursAttachCreateProcess();

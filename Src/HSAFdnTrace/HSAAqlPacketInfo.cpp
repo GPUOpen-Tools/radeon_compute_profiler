@@ -77,13 +77,15 @@ bool HSAAqlPacketBase::WritePacketEntry(std::ostream& sout)
     sout << std::left << std::setw(35) << HSATraceStringUtils::Get_hsa_packet_type_t_String(m_type);
 
     // packet id
-    sout << std::left << std::setw(10) << m_packetId;
+    sout << std::left << std::setw(21) << m_packetId;
 
     return true;
 }
 
 HSAAqlKernelDispatchPacket::HSAAqlKernelDispatchPacket(hsa_kernel_dispatch_packet_t kernelDispatchPacket) :
     HSAAqlPacketBase(HSA_PACKET_TYPE_KERNEL_DISPATCH),
+    m_isRocProfilerPacket(false),
+    m_pContextEntry(nullptr),
     m_start(0),
     m_end(0),
     m_packet(kernelDispatchPacket)

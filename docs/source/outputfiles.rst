@@ -52,7 +52,7 @@ dispatches:
     :header: "Name", "Description"
     :widths: 45, 55
 
-    "CallIndex", "The call index of the OpenCL™ API call that initiated the
+    "CallIndex", "The call index of the OpenCL API call that initiated the
     kernel dispatch operation."
     "Time", "The time spent (in milliseconds) executing the kernel. This does
     not include the kernel set-up time."
@@ -123,7 +123,7 @@ nanoseconds. A Timestamp thread block consists of the following:
  * The time counter value for the start of the API.
  * The time counter value for the end of the API.
 
-Most OpenCL™ Enqueue APIs contain the following additional data, appended to
+Most OpenCL Enqueue APIs contain the following additional data, appended to
 the end of the API line.
 
 * An integer representing the enqueue command type.
@@ -142,7 +142,7 @@ the end of the API line.
 * The handle of the context.
 * The device name.
 
-OpenCL™ Kernel dispatch Enqueue commands contain the following additional data
+OpenCL Kernel dispatch Enqueue commands contain the following additional data
 appended to the end of the API line:
 
 * The handle of the kernel.
@@ -152,7 +152,7 @@ appended to the end of the API line:
 * The work-group size for the kernel – one value is given for each work
   dimension.
 
-OpenCL™ Data transfer Enqueue commands contain the data transfer size appended
+OpenCL Data transfer Enqueue commands contain the data transfer size appended
 to the end of the API line.
 
 HSA Data transfers (entries for ``hsa_amd_memory_async_copy``) will also
@@ -182,9 +182,9 @@ The HSA Kernel Timestamp section contains the following information:
  * The handle of the agent where the kernel was dispatched.
  * The zero-based index of the queue that was used to dispatch the kernel.
  * The zero-based agent index for the agent where the kernel was dispatched.
-
-When collecting an AQL packet trace (with ``--hsaaqlpackettrace``), each line
-in the kernel timestamp section will contain additional information 
+ * The AQL Packet type.
+ * The AQL Packet ID.
+ * The string representation of the AQL dispatch packet structure.
 
 Source Code Section
 ###################

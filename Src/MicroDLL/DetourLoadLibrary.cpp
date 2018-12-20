@@ -15,10 +15,7 @@
 #include "Fileutils.h"
 #include "Logger.h"
 
-using namespace GPULogger;
-
 static bool s_bLoadLibraryAttached = false;
-
 
 typedef BOOL (WINAPI*  FreeLibrary_type)(HMODULE hLibModule);
 static FreeLibrary_type Real_FreeLibrary = FreeLibrary;
@@ -40,7 +37,9 @@ static bool s_bD3DX11CompileShaderAttached = false;
 
 static BOOL WINAPI Mine_FreeLibrary(HMODULE hLibModule)
 {
-    Log(traceMESSAGE, "Detoured FreeLibrary called, HOMDULE: %p", hLibModule);
+#ifdef MICRODLL_LOG_LOAD_LIBRARY
+    GPULogger::Log(GPULogger::traceMESSAGE, "Detoured FreeLibrary called, HOMDULE: %p", hLibModule);
+#endif
     BOOL retVal = Real_FreeLibrary(hLibModule);
     DWORD realError = GetLastError();
 
@@ -53,7 +52,9 @@ static BOOL WINAPI Mine_FreeLibrary(HMODULE hLibModule)
 static HMODULE WINAPI Mine_LoadLibraryA(LPCSTR lpLibFileName)
 {
     HMODULE res = Real_LoadLibraryA(lpLibFileName);
-    Log(traceMESSAGE, "Detoured LoadLibraryA called: %s, HOMDULE: %p\n", lpLibFileName, res);
+#ifdef MICRODLL_LOG_LOAD_LIBRARY
+    GPULogger::Log(GPULogger::traceMESSAGE, "Detoured LoadLibraryA called: %s, HOMDULE: %p\n", lpLibFileName, res);
+#endif
     DWORD realError = GetLastError();
 
 #ifdef _DEBUG
@@ -76,7 +77,9 @@ static HMODULE WINAPI Mine_LoadLibraryA(LPCSTR lpLibFileName)
 static HMODULE WINAPI Mine_LoadLibraryExA(LPCSTR lpLibFileName, HANDLE hFile, DWORD dwFlags)
 {
     HMODULE res = Real_LoadLibraryExA(lpLibFileName, hFile, dwFlags);
-    Log(traceMESSAGE, "Detoured LoadLibraryExA called: %s, HOMDULE: %p\n", lpLibFileName, res);
+#ifdef MICRODLL_LOG_LOAD_LIBRARY
+    GPULogger::Log(GPULogger::traceMESSAGE, "Detoured LoadLibraryExA called: %s, HOMDULE: %p\n", lpLibFileName, res);
+#endif
     DWORD realError = GetLastError();
 
 #ifdef _DEBUG
@@ -99,7 +102,9 @@ static HMODULE WINAPI Mine_LoadLibraryExA(LPCSTR lpLibFileName, HANDLE hFile, DW
 static HMODULE WINAPI Mine_LoadLibraryW(LPCWSTR lpLibFileName)
 {
     HMODULE res = Real_LoadLibraryW(lpLibFileName);
-    LogW(traceMESSAGE, L"Detoured LoadLibraryW called: %s, HOMDULE: %p\n", lpLibFileName, res);
+#ifdef MICRODLL_LOG_LOAD_LIBRARY
+    GPULogger::LogW(GPULogger::traceMESSAGE, L"Detoured LoadLibraryW called: %s, HOMDULE: %p\n", lpLibFileName, res);
+#endif
     DWORD realError = GetLastError();
 
 #ifdef _DEBUG
@@ -122,7 +127,9 @@ static HMODULE WINAPI Mine_LoadLibraryW(LPCWSTR lpLibFileName)
 static HMODULE WINAPI Mine_LoadLibraryExW(LPCWSTR lpLibFileName, HANDLE hFile, DWORD dwFlags)
 {
     HMODULE res = Real_LoadLibraryExW(lpLibFileName, hFile, dwFlags);
-    LogW(traceMESSAGE, L"Detoured LoadLibraryExW called: %s, HOMDULE: %p\n", lpLibFileName, res);
+#ifdef MICRODLL_LOG_LOAD_LIBRARY
+    GPULogger::LogW(GPULogger::traceMESSAGE, L"Detoured LoadLibraryExW called: %s, HOMDULE: %p\n", lpLibFileName, res);
+#endif
     DWORD realError = GetLastError();
 
 #ifdef _DEBUG

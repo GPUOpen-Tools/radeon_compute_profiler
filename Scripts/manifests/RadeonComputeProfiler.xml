@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <remote name="github"
+      fetch="https://github.com/GPUOpen-Tools/" />
+
+  <default revision="master"
+      remote="github"
+      sync-j="4"
+      sync-c="true"
+      sync-tags="false" />
+
+  <project path="RCP"
+           name="RCP"
+           revision="master" />
+  <project path="Common/Lib/AMD/ADL"
+           name="common-lib-amd-ADL"
+           revision="master" />
+  <project path="Common/Lib/AMD/ACL"
+           name="common-lib-AMD-ACL"
+           revision="master" />
+  <project path="Common/Lib/AMD/APPSDK"
+           name="common-lib-amd-APPSDK-3.0"
+           revision="master" />
+  <project path="Common/Lib/Ext/Boost"
+           name="common-lib-ext-Boost-1.59"
+           revision="master" />
+  <project path="Common/Lib/Ext/mhook"
+           name="common-lib-ext-mhook"
+           revision="master" />
+  <project path="Common/Lib/Ext/tinyxml"
+           name="common-lib-ext-tinyxml-2.6.2"
+           revision="master" />
+  <project path="Common/Lib/Ext/utf8cpp"
+           name="common-lib-ext-utf8cpp"
+           revision="master" />
+  <project path="Common/Src/ACLModuleManager"
+           name="common-src-ACLModuleManager"
+           revision="master" />
+  <project path="Common/Src/ADLUtil"
+           name="common-src-ADLUtil"
+           revision="master" />
+  <project path="Common/Src/AMDTActivityLogger"
+           name="common-src-AMDTActivityLogger"
+           revision="master" />
+  <project path="Common/Src/AMDTApplication"
+           name="common-src-AMDTApplication"
+           revision="master" />
+  <project path="Common/Src/AMDTBaseTools"
+           name="common-src-AMDTBaseTools"
+           revision="master" />
+  <project path="Common/Src/AMDTInterceptor"
+           name="common-src-AMDTInterceptor"
+           revision="master" />
+  <project path="Common/Src/AMDTOSWrappers"
+           name="common-src-AMDTOSWrappers"
+           revision="master" />
+  <project path="Common/Src/ComgrUtils"
+           name="ComgrUtils"
+           revision="master" />
+  <project path="Common/Src/DeviceInfo"
+           name="common-src-DeviceInfo"
+           revision="master" />
+  <project path="Common/Src/DynamicLibraryModule"
+           name="common-src-DynamicLibraryModule"
+           revision="master" />
+  <project path="Common/Src/HSAUtils"
+           name="common-src-HSAUtils"
+           revision="master" />
+  <project path="Common/Src/Miniz"
+           name="common-src-Miniz"
+           revision="master" />
+  <project path="Common/Src/SCons"
+           name="common-src-SCons"
+           revision="master" />
+  <project path="Common/Src/TSingleton"
+           name="common-src-TSingleton"
+           revision="master" />
+  <project path="Common/Src/Vsprops"
+           name="common-src-Vsprops"
+           revision="master" />
+  <project path="Common/Src/VersionInfo"
+           name="common-src-VersionInfo"
+           revision="master" />
+
+</manifest>
+

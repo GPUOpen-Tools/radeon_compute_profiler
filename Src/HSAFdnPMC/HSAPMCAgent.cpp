@@ -32,14 +32,30 @@ extern "C" DLL_PUBLIC void amdtCodeXLResumeProfiling()
     HSAGPAProfiler::Instance()->EnableProfiling(true);
 }
 
-extern "C" bool DLL_PUBLIC OnLoad(void* pTable, uint64_t runtimeVersion, uint64_t failedToolCount, const char* const* pFailedToolNames)
+void InitAgent()
 {
+    static bool isAgentInitialized = false;
+
+    if (!isAgentInitialized)
+    {
+        isAgentInitialized = true;
 #ifdef _DEBUG
-    FileUtils::CheckForDebuggerAttach();
+        FileUtils::CheckForDebuggerAttach();
 #endif
 
-    std::string strLogFile = FileUtils::GetDefaultOutputPath() + "hsapmcagent.log";
-    GPULogger::LogFileInitialize(strLogFile.c_str());
+        std::string strLogFile = FileUtils::GetDefaultOutputPath() + "hsapmcagent.log";
+        GPULogger::LogFileInitialize(strLogFile.c_str());
+
+        Parameters params;
+        FileUtils::GetParametersFromFile(params);
+
+        GlobalSettings::GetInstance()->m_params = params;
+   }
+}
+
+extern "C" bool DLL_PUBLIC OnLoad(void* pTable, uint64_t runtimeVersion, uint64_t failedToolCount, const char* const* pFailedToolNames)
+{
+    InitAgent();
 
     if (!CheckRuntimeToolsLibLoaded(runtimeVersion, failedToolCount, pFailedToolNames))
     {
@@ -53,14 +69,9 @@ extern "C" bool DLL_PUBLIC OnLoad(void* pTable, uint64_t runtimeVersion, uint64_
 
     InitHSAAPIInterceptPMC(pHsaTable);
 
-    Parameters params;
-    FileUtils::GetParametersFromFile(params);
-
-    GlobalSettings::GetInstance()->m_params = params;
-
-    if (params.m_bKernelOccupancy)
+    if (GlobalSettings::GetInstance()->m_params.m_bKernelOccupancy)
     {
-        std::string occupancyFile = params.m_strOutputFile;
+        std::string occupancyFile = GlobalSettings::GetInstance()->m_params.m_strOutputFile;
         size_t passStringPosition = occupancyFile.find("_pass");
 
         if (passStringPosition != std::string::npos)
@@ -70,7 +81,7 @@ extern "C" bool DLL_PUBLIC OnLoad(void* pTable, uint64_t runtimeVersion, uint64_
         }
 
         OccupancyInfoManager::Instance()->SetOutputFile(occupancyFile);
-        OccupancyInfoEntry::m_cListSeparator = params.m_cOutputSeparator;
+        OccupancyInfoEntry::m_cListSeparator = GlobalSettings::GetInstance()->m_params.m_cOutputSeparator;
     }
 
     std::string strError;
@@ -96,5 +107,18 @@ extern "C" void DLL_PUBLIC OnUnload()
     }
 
     DoneHSAAPIInterceptPMC();
+}
+
+extern "C" void DLL_PUBLIC OnLoadTool()
+{
+    InitAgent();
+    // not needed, but rocprofiler library requires tool libraries to export OnLoadTool and OnUnloadTool
+    GPULogger::Log(GPULogger::logMESSAGE, "HSAPMCAgent - OnLoadTool called\n");
+}
+
+extern "C" void DLL_PUBLIC OnUnloadTool()
+{
+    // not needed, but rocprofiler library requires tool libraries to export OnLoadTool and OnUnloadTool
+    GPULogger::Log(GPULogger::logMESSAGE, "HSAPMCAgent - OnUnloadTool called\n");
 }
 

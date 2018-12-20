@@ -90,7 +90,7 @@ void CLKernelSummarizer::OnParse(CLAPIInfo* pAPIInfo, bool& stopParsing)
     }
 }
 
-void CLKernelSummarizer::GenerateTopXKernelHTMLTable(std::ostream& sout)
+void CLKernelSummarizer::GenerateTopXKernelHTMLTable(std::ostream& sout, bool useTopX)
 {
     HTMLTable table;
     table.AddColumn("Kernel Name")
@@ -107,7 +107,7 @@ void CLKernelSummarizer::GenerateTopXKernelHTMLTable(std::ostream& sout)
 
     for (std::multiset<CLKernelAPIInfo*, cmp_type>::reverse_iterator it = m_KernelAPISet.rbegin(); it != m_KernelAPISet.rend(); it++)
     {
-        if (c > m_uiTopX)
+        if (useTopX && c > m_uiTopX)
         {
             break;
         }

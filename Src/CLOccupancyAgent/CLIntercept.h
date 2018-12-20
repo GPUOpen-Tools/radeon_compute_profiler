@@ -27,6 +27,14 @@ extern cl_int CL_API_CALL
 CL_OCCUPANCY_API_ENTRY_ReleaseContext(cl_context context);
 
 extern cl_int CL_API_CALL
+CL_OCCUPANCY_API_ENTRY_GetPlatformInfo(
+    cl_platform_id    platform,
+    cl_platform_info  param_name,
+    size_t            param_value_size,
+    void*             param_value,
+    size_t*           param_value_size_ret);
+
+extern cl_int CL_API_CALL
 CL_OCCUPANCY_API_ENTRY_GetDeviceIDs(
     cl_platform_id    platform,
     cl_device_type    device_type,

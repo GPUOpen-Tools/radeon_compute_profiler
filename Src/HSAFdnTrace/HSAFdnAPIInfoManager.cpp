@@ -26,6 +26,7 @@
 #include "HSAFdnMaxApiTime.h"
 #include <ProfilerOutputFileDefs.h>
 #include "HSAAgentUtils.h"
+#include "ROCProfilerModule.h"
 
 using namespace std;
 
@@ -183,69 +184,28 @@ bool HSAAPIInfoManager::WriteAsyncCopyTimestamp(std::ostream& sout, const AsyncC
 
 void HSAAPIInfoManager::FlushNonAPITimestampData(const osProcessId& pid)
 {
-    if (HSARTModuleLoader<HSAToolsRTModule>::Instance()->IsLoaded())
     {
-        HSAToolsRTModule* toolsRTModule = HSARTModuleLoader<HSAToolsRTModule>::Instance()->GetHSARTModule();
+        std::lock_guard<std::mutex> lock(ms_asyncTimeStampsMtx);
 
-        if (toolsRTModule->IsModuleLoaded())
+        if (ms_asyncCopyInfoList.size() > 0)
         {
-            size_t count = toolsRTModule->ext_tools_get_kernel_times(0, NULL);
+            string tmpAsyncCopyTimestampFile = GetTempFileName(pid, 0, TMP_ASYNC_COPY_TIME_STAMP_EXT);
+            ofstream foutCopyTS(tmpAsyncCopyTimestampFile.c_str(), fstream::out | fstream::app);
 
-            if (count > 0)
+            for (auto asyncCopyInfo : ms_asyncCopyInfoList)
             {
-                hsa_profiler_kernel_time_t* records = new(std::nothrow) hsa_profiler_kernel_time_t[count];
-
-                if (NULL != records)
-                {
-                    string tmpKernelTimestampFile = GetTempFileName(pid, 0, TMP_KERNEL_TIME_STAMP_EXT);
-                    ofstream foutKTS(tmpKernelTimestampFile.c_str(), fstream::out | fstream::app);
-
-                    count = toolsRTModule->ext_tools_get_kernel_times(count, records);
-
-                    for (size_t i = 0; i < count; i++)
-                    {
-                        WriteKernelTimestampEntry(foutKTS, records[i]);
-                        foutKTS << std::endl;
-                    }
-
-                    foutKTS.close();
-                }
-                else
-                {
-                    GPULogger::Log(GPULogger::logERROR, "FlushNonAPITimestampData: unable to allocate memory for kernel timestamps\n");
-                }
-
-                delete[] records;
+                WriteAsyncCopyTimestamp(foutCopyTS, asyncCopyInfo);
+                foutCopyTS << std::endl;
             }
-        }
-        else
-        {
-            GPULogger::Log(GPULogger::logERROR, "FlushNonAPITimestampData: tools lib not loaded\n");
-        }
 
-        {
-            std::lock_guard<std::mutex> lock(ms_asyncTimeStampsMtx);
+            foutCopyTS.close();
 
-            if (ms_asyncCopyInfoList.size() > 0)
+            for (auto it = ms_asyncCopyInfoList.begin(); it != ms_asyncCopyInfoList.end(); ++it)
             {
-                string tmpAsyncCopyTimestampFile = GetTempFileName(pid, 0, TMP_ASYNC_COPY_TIME_STAMP_EXT);
-                ofstream foutCopyTS(tmpAsyncCopyTimestampFile.c_str(), fstream::out | fstream::app);
-
-                for (auto asyncCopyInfo : ms_asyncCopyInfoList)
-                {
-                    WriteAsyncCopyTimestamp(foutCopyTS, asyncCopyInfo);
-                    foutCopyTS << std::endl;
-                }
-
-                foutCopyTS.close();
-
-                for (auto it = ms_asyncCopyInfoList.begin(); it != ms_asyncCopyInfoList.end(); ++it)
-                {
-                    delete(*it);
-                }
-
-                ms_asyncCopyInfoList.clear();
+                delete (*it);
             }
+
+            ms_asyncCopyInfoList.clear();
         }
     }
 
@@ -378,7 +338,7 @@ bool AsyncSignalHandler(hsa_signal_value_t value, void* pArg)
 
             if (HSA_STATUS_SUCCESS != status)
             {
-                GPULogger::Log(GPULogger::logERROR, "Error returned from hsa_amd_profiling_get_dispatch_time\n");
+                GPULogger::Log(GPULogger::logERROR, "Error returned from hsa_amd_profiling_get_async_copy_time\n");
             }
             else
             {
@@ -670,4 +630,35 @@ void HSAAPIInfoManager::DisableHsaTransferTime()
 bool HSAAPIInfoManager::IsHsaTransferTimeDisabled()
 {
     return m_bNoHSATransferTime;
+}
+
+void HSAAPIInfoManager::MarkRocProfilerDataAsReady()
+{
+    for (auto it = m_packetList.begin(); it != m_packetList.end(); ++it)
+    {
+        HSAAqlKernelDispatchPacket* pRocProfilerPacket = reinterpret_cast<HSAAqlKernelDispatchPacket*>(*it);
+
+        if (pRocProfilerPacket->m_isRocProfilerPacket)
+        {
+            ContextEntry* pEntry = pRocProfilerPacket->m_pContextEntry;
+
+            if (pEntry->m_data.record)
+            {
+                pRocProfilerPacket->SetTimestamps(pEntry->m_data.record->begin, pEntry->m_data.record->end);
+            }
+
+            ROCProfilerModule* pROCProfilerModule = HSARTModuleLoader<ROCProfilerModule>::Instance()->GetHSARTModule();
+
+            if (nullptr != pROCProfilerModule && pROCProfilerModule->IsModuleLoaded())
+            {
+                hsa_status_t status = pROCProfilerModule->rocprofiler_close(pEntry->m_group.context);
+                if (HSA_STATUS_SUCCESS != status)
+                {
+                    GPULogger::Log(GPULogger::logERROR, "Error returned from rocprofiler_close()\n");
+                }
+            }
+
+            delete pEntry;
+        }
+    }
 }

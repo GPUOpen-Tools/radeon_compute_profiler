@@ -121,6 +121,12 @@ cl_int CL_API_CALL CL_API_TRACE_clGetPlatformInfo(
 
     RECORD_STACK_TRACE_FOR_API(pAPIInfo)
     CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    if (CL_SUCCESS == ret)
+    {
+        CLUtils::AddPlatform(platform);
+    }
+
     return ret;
 }
 
@@ -191,6 +197,11 @@ cl_int CL_API_CALL CL_API_TRACE_clGetDeviceIDs(
 
     RECORD_STACK_TRACE_FOR_API(pAPIInfo)
     CLAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    if (CL_SUCCESS == ret)
+    {
+        CLUtils::AddPlatform(platform);
+    }
 
     return ret;
 }

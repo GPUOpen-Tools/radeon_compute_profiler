@@ -206,18 +206,32 @@ bool OSUtils::UnsetEnvVar(const char* szName)
 
 std::string OSUtils::GetEnvVar(const char* szName)
 {
-    char szTmpPath[ SP_MAX_PATH ];
+    std::string retVal = "";
     SP_TODO("revisit use of GetEnvironmentVariableA for Unicode support")
-    DWORD ret = GetEnvironmentVariableA(szName, szTmpPath, SP_MAX_PATH);
+    DWORD ret = GetEnvironmentVariableA(szName, nullptr, 0);
 
-    if (ret == 0)
+    if (0 != ret)
     {
-        return "";
+        char* szTmpPath = new char[ret + 1];
+
+        if (nullptr == szTmpPath)
+        {
+            GPULogger::Log(GPULogger::logERROR, "Unable to allocate memory for environment variable\n");
+        }
+        else
+        {
+            ret = GetEnvironmentVariableA(szName, szTmpPath, ret + 1);
+
+            if (ret != 0)
+            {
+                retVal = szTmpPath;
+            }
+
+            delete[] szTmpPath;
+        }
     }
-    else
-    {
-        return szTmpPath;
-    }
+
+    return retVal;
 }
 
 ENVSYSBLOCK OSUtils::GetSysEnvBlock()
@@ -501,7 +515,7 @@ void OSUtils::GenericUnloadLibrary(LIB_HANDLE pLibrary)
 
 LIB_HANDLE OSUtils::GetLibraryHandle(const char* szLibName)
 {
-    return dlopen(szLibName, RTLD_NOLOAD);
+    return dlopen(szLibName, RTLD_LAZY | RTLD_NOLOAD);
 }
 
 void* OSUtils::GetSymbolAddr(LIB_HANDLE pLibrary, std::string strFunctionName)

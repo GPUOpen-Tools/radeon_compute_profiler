@@ -166,12 +166,6 @@ extern "C" bool DLL_PUBLIC OnLoad(void* pTable, uint64_t runtimeVersion, uint64_
     RECORD_STACK_TRACE_FOR_API(pAPIInfo);
     HSAAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
 
-    if (params.m_bAqlPacketTracing)
-    {
-        g_pSignalCollector = new HSASignalCollectorThread();
-        g_pSignalCollector->execute();
-    }
-
     return true;
 }
 
@@ -231,6 +225,18 @@ extern "C" void DLL_PUBLIC OnUnload()
     {
         GPULogger::Log(GPULogger::logERROR, "Unable to destroy signal\n");
     }
+}
+
+extern "C" void DLL_PUBLIC OnLoadTool()
+{
+    GPULogger::Log(GPULogger::logMESSAGE, "HSATraceAgent - OnLoadTool called\n");
+}
+
+extern "C" void DLL_PUBLIC OnUnloadTool()
+{
+    GPULogger::Log(GPULogger::logMESSAGE, "HSATraceAgent - OnUnloadTool called\n");
+
+    HSAAPIInfoManager::Instance()->MarkRocProfilerDataAsReady();
 
     if (HSAAPIInfoManager::Instance()->IsTimeOutMode())
     {

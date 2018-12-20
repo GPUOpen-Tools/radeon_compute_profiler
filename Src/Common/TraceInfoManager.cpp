@@ -39,9 +39,9 @@ TraceInfoManager::TraceInfoManager(void) :
     m_bIsRunning(true),
     m_uiInterval(100),
     m_cListSeparator(LocaleSetting::GetListSeparator()),
-    m_tidTimer(NULL),
+    m_tidTimer(0),
     m_bStopped(false),
-    m_timerFunc(NULL)
+    m_timerFunc(nullptr)
 {
 }
 
@@ -75,18 +75,23 @@ bool TraceInfoManager::StartTimer(TimerFunc timerFunc)
 
 void TraceInfoManager::StopTimer()
 {
+    std::lock_guard<std::mutex> lock(m_mtxStopResume);
+
     m_bIsRunning = false;
     OSUtils::Instance()->Join(m_tidTimer);
+    m_tidTimer = 0;
 }
 
 bool TraceInfoManager::ResumeTimer()
 {
+    std::lock_guard<std::mutex> lock(m_mtxStopResume);
+
     m_bIsRunning = true;
     bool retVal = false;
 
-    if (NULL != m_timerFunc)
+    if (nullptr != m_timerFunc)
     {
-        m_tidTimer = OSUtils::Instance()->CreateThread(m_timerFunc, NULL);
+        m_tidTimer = OSUtils::Instance()->CreateThread(m_timerFunc, nullptr);
 
         if (0 != m_tidTimer)
         {

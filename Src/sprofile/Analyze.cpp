@@ -1,5 +1,5 @@
 //==============================================================================
-// Copyright (c) 2015 Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2015-2018 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 /// \brief This file contains the function to analyze profile/trace output
@@ -29,8 +29,6 @@
 #include "../Common/FileUtils.h"
 #include "../Common/HTMLTable.h"
 
-using namespace std;
-
 bool APITraceAnalyze(const Config& config)
 {
     AtpFileParser parser;
@@ -49,14 +47,19 @@ bool APITraceAnalyze(const Config& config)
     CLMemSummarizer clMemSum;
     CLContextSummarizer clContextsum;
 
-    string strWorkingDir;
+    std::string strWorkingDir;
 
-    parser.LoadFile(config.analyzeOps.strAtpFile.c_str());
+    if (!parser.LoadFile(config.analyzeOps.strAtpFile.c_str()))
+    {
+        std::cout << "Unable to open atp file: " << config.analyzeOps.strAtpFile << std::endl;
+        return false;
+    }
+
     FileUtils::GetWorkingDirectory(config.analyzeOps.strAtpFile, strWorkingDir);
     strWorkingDir += "/";
 
 
-    string atpName = config.analyzeOps.strAtpFile;
+    std::string atpName = config.analyzeOps.strAtpFile;
     size_t idx0 = atpName.find_last_of("/\\");
 
     if (idx0 >= 0)
@@ -71,7 +74,7 @@ bool APITraceAnalyze(const Config& config)
         atpName = atpName.substr(0, idx1);
     }
 
-    string filePrefix = strWorkingDir + atpName + '.';
+    std::string filePrefix = strWorkingDir + atpName + '.';
 
     if (config.analyzeOps.bAPISummary)
     {
@@ -132,21 +135,21 @@ bool APITraceAnalyze(const Config& config)
         hsaTrace.AddListener(&hsaAnalyzerMgr);
     }
 
-    cout << "Generating summary pages...\n";
-    cout << "Parsing API trace file...\n";
+    std::cout << "Generating summary pages...\n";
+    std::cout << "Parsing API trace file...\n";
     bool parseRet = parser.Parse();
     bool bWarning;
-    string strMsg;
+    std::string strMsg;
     parser.GetParseWarning(bWarning, strMsg);
 
     if (!(parseRet || bWarning))
     {
-        cout << "Failed to parse .atp file.\n";
+        std::cout << "Failed to parse .atp file.\n";
     }
 
     if (bWarning)
     {
-        cout << strMsg << endl;
+        std::cout << strMsg << std::endl;
     }
 
     bool anySummaryPageShouldBeGenerated = false;
@@ -167,8 +170,15 @@ bool APITraceAnalyze(const Config& config)
 
     if (config.analyzeOps.bTop10KernelSummary)
     {
-        summaryPagesGenerated |= clKernelSum.GenerateTopXKernelHTMLPage((filePrefix + CLTOP10_KERNEL).c_str());
-        summaryPagesGenerated |= hsaKernelSum.GenerateTopXKernelHTMLPage((filePrefix + HSATOP10_KERNEL).c_str());
+        summaryPagesGenerated |= clKernelSum.GenerateTopXKernelHTMLPage((filePrefix + CLTOP10_KERNEL).c_str(), true);
+        summaryPagesGenerated |= hsaKernelSum.GenerateTopXKernelHTMLPage((filePrefix + HSATOP10_KERNEL).c_str(), true);
+        anySummaryPageShouldBeGenerated = true;
+    }
+
+    if (config.analyzeOps.bKernelList)
+    {
+        summaryPagesGenerated |= clKernelSum.GenerateTopXKernelHTMLPage((filePrefix + CLLIST_KERNEL).c_str(), false);
+        summaryPagesGenerated |= hsaKernelSum.GenerateTopXKernelHTMLPage((filePrefix + HSALIST_KERNEL).c_str(), false);
         anySummaryPageShouldBeGenerated = true;
     }
 
@@ -181,14 +191,28 @@ bool APITraceAnalyze(const Config& config)
 
     if (config.analyzeOps.bTop10DataTransferSummary)
     {
-        summaryPagesGenerated |= clMemSum.GenerateHTMLPage((filePrefix + CLTOP10_DATA).c_str());
-        summaryPagesGenerated |= hsaMemSum.GenerateHTMLPage((filePrefix + HSATOP10_DATA).c_str());
+        summaryPagesGenerated |= clMemSum.GenerateTopXDataTransferHTMLPage((filePrefix + CLTOP10_DATA).c_str(), true);
+        summaryPagesGenerated |= hsaMemSum.GenerateTopXDataTransferHTMLPage((filePrefix + HSATOP10_DATA).c_str(), true);
+        anySummaryPageShouldBeGenerated = true;
+    }
+
+    if (config.analyzeOps.bDataTransferList)
+    {
+        summaryPagesGenerated |= clMemSum.GenerateTopXDataTransferHTMLPage((filePrefix + CLDATA_TRANSFERS).c_str(), false);
+        summaryPagesGenerated |= hsaMemSum.GenerateTopXDataTransferHTMLPage((filePrefix + HSADATA_TRANSFERS).c_str(), false);
+        anySummaryPageShouldBeGenerated = true;
+    }
+
+    if (config.analyzeOps.bDataTransferSummary)
+    {
+        summaryPagesGenerated |= clMemSum.GenerateDataTransferHTMLPage((filePrefix + CLDATA_SUM).c_str());
+        summaryPagesGenerated |= hsaMemSum.GenerateDataTransferHTMLPage((filePrefix + HSADATA_SUM).c_str());
         anySummaryPageShouldBeGenerated = true;
     }
 
     if (anySummaryPageShouldBeGenerated && !summaryPagesGenerated)
     {
-        cout << "No summary pages generated\n";
+        std::cout << "No summary pages generated\n";
     }
 
     if (bEnableAnalyzer)

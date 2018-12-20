@@ -89,15 +89,42 @@ bool MergeTmpCLOccupancyFile(const std::string& strOutputFile,
         strOccupancyFile = strOutputFile;
     }
 
-    // Optional
-    std::stringstream headerStream;
-    char separator = LocaleSetting::GetListSeparator();
-    WriteOccupancyHeader(headerStream, occupancyHeader, separator);
-
     wstring strUnicodePrefix;
     wstring strUnicodeExt;
     StringUtils::Utf8StringToWideString(strFilePrefix, strUnicodePrefix);
     StringUtils::Utf8StringToWideString(TMP_OCCUPANCY_EXT, strUnicodeExt);
+
+    gtList<osFilePath> files;
+    bool ret = FileUtils::GetTmpFilesToMerge(strTmpFilePath, strUnicodePrefix.c_str(), strUnicodeExt.c_str(), files);
+
+    // Count the kernels in the map
+    size_t kernelCount = 0u;
+
+    if (ret)
+    {
+        std::wstring strFullFilePath;
+        std::string strFileContent;
+        osFilePath strFileAsFilePath;
+        gtString strFileName;
+        std::wstring strFile;
+
+        for (gtList<osFilePath>::iterator it = files.begin(); it != files.end(); ++it)
+        {
+            strFileAsFilePath = (*it);
+            strFileAsFilePath.getFileNameAndExtension(strFileName);
+            strFile = strFileName.asCharArray();
+            strFullFilePath = strFileAsFilePath.asString().asCharArray();
+
+            if (FileUtils::ReadFile(strFullFilePath, strFileContent))
+            {
+                kernelCount += StringUtils::GetNumLines(strFileContent);
+            }
+        }
+    }
+
+    std::stringstream headerStream;
+    char separator = LocaleSetting::GetListSeparator();
+    WriteOccupancyHeader(headerStream, occupancyHeader, kernelCount, separator);
 
     FileUtils::MergeTmpTraceFiles(strOccupancyFile, strTmpFilePath, strUnicodePrefix.c_str(), strUnicodeExt.c_str(), headerStream.str().c_str(), FileUtils::MergeSummaryType_None);
 

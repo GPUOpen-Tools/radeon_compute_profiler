@@ -226,6 +226,7 @@ enum HSA_API_Type
     HSA_API_Type_hsa_ven_amd_aqlprofile_version_major,
     HSA_API_Type_hsa_ven_amd_aqlprofile_version_minor,
     HSA_API_Type_hsa_ven_amd_aqlprofile_read,
+    HSA_API_Type_hsa_amd_memory_async_copy_rect,
 
     // Non-API items (used to mark dispatches in the ATP file)
     HSA_API_Type_Non_API_First,

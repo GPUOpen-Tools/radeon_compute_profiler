@@ -61,7 +61,12 @@ static void MergeTraceFile(int sig);
 static void MergeOccupancyFile(int sig);
 static bool SetAgent(const gtString& strDirPath);
 
+static const char* ROCP_TOOL_LIB_ENV_VAR_NAME = "ROCP_TOOL_LIB";             ///< The ROCProfiler tool lib env variable name
+static const char* ROCP_HSA_INTERCEPT_ENV_VAR_NAME = "ROCP_HSA_INTERCEPT";   ///< The ROCProfiler HSA intercept env variable name
+static const char* ROCP_TIMESTAMP_ON_ENV_VAR_NAME = "ROCP_TIMESTAMP_ON_LIB"; ///< The ROCProfiler timestamp on env variable name
+
 #if defined (_LINUX) || defined (LINUX)
+    static const char* LD_PRELOAD_ENV_VAR_NAME = "LD_PRELOAD";                   ///< The LD_PRELOAD env variable name
     static bool SetPreLoadLibs();
 #endif
 
@@ -345,60 +350,6 @@ int DisplayOccupancy(const std::string& strOutputFile)
     return retVal;
 }
 
-static const char* s_HSA_SOFTCP_ENV_VAR_NAME = "HSA_EMULATE_AQL"; ///< The SoftCP environment variable name
-static const char* s_HSA_SOFTCP_ENV_VAR_VALUE = "1";              ///< The SoftCP environment variable value
-
-bool SetHSASoftCPEnvVar(bool showMessage)
-{
-    UNREFERENCED_PARAMETER(showMessage);
-    bool retVal = true;
-
-#ifndef _WIN32
-    int result = setenv(s_HSA_SOFTCP_ENV_VAR_NAME, s_HSA_SOFTCP_ENV_VAR_VALUE, 1);
-    retVal = (0 == result);
-
-    if (showMessage)
-    {
-        if (!retVal)
-        {
-            std::cout << "Error: Unable to enable HSA Performance Counters in Driver\n";
-        }
-        else
-        {
-            std::cout << "Successfully enabled HSA Performance Counters in Driver\n";
-        }
-    }
-
-#endif
-    return retVal;
-}
-
-bool UnsetHSASoftCPEnvVar(bool showMessage)
-{
-    UNREFERENCED_PARAMETER(showMessage);
-    bool retVal = true;
-
-#ifndef _WIN32
-    int result = unsetenv(s_HSA_SOFTCP_ENV_VAR_NAME);
-    retVal = (0 == result);
-
-    if (showMessage)
-    {
-        if (!retVal)
-        {
-            std::cout << "Error: Unable to disable HSA Performance Counters in Driver\n";
-        }
-        else
-        {
-            std::cout << "Successfully disabled HSA Performance Counters in Driver\n";
-        }
-    }
-
-#endif
-
-    return retVal;
-}
-
 /// Sets the GPU Stable clock mode
 /// \param mode the clock mode to use: 0 is default
 void SetStableClocks(unsigned int mode)
@@ -406,7 +357,7 @@ void SetStableClocks(unsigned int mode)
     if (!config.bNoStableClocks && config.bPerfCounter)
     {
 #ifdef _WIN32
-        const char* pStableClocksExe = "VkStableClocks" BITNESS ".exe";
+        const char* pStableClocksExe = "VkStableClocks-x64.exe";
         std::stringstream args;
         args << FileUtils::GetExePath().c_str() << "/" << pStableClocksExe << " " << mode;
         PROCESSID pid = OSUtils::Instance()->ExecProcess(nullptr, args.str().c_str(), nullptr, nullptr, false, false);
@@ -419,11 +370,56 @@ void SetStableClocks(unsigned int mode)
         PROCESSID pid = OSUtils::Instance()->ExecProcess(exe.str().c_str(), args.str().c_str(), nullptr, nullptr, false, false);
 #endif
 
-        if (!OSUtils::Instance()->WaitForProcess(pid))
+        OSUtils::Instance()->WaitForProcess(pid);
+    }
+}
+
+bool SetROCPInterceptEnvVar(bool showMessage, std::string interceptionLevel)
+{
+    SP_UNREFERENCED_PARAMETER(showMessage);
+    bool retVal = true;
+
+#ifndef _WIN32
+    retVal = OSUtils::Instance()->SetEnvVar(ROCP_HSA_INTERCEPT_ENV_VAR_NAME, interceptionLevel.c_str());
+
+    if (showMessage)
+    {
+        if (!retVal)
         {
-            std::cout << "FAIL:  error running: " << pStableClocksExe << std::endl;
+            std::cout << "Error: Unable to enable queue interception in rocprofiler library\n";
+        }
+        else
+        {
+            std::cout << "Successfully enabled queue interception in rocprofiler library\n";
         }
     }
+
+#endif
+    return retVal;
+}
+
+bool UnsetROCPInterceptEnvVar(bool showMessage)
+{
+    SP_UNREFERENCED_PARAMETER(showMessage);
+    bool retVal = true;
+
+#ifndef _WIN32
+    retVal = OSUtils::Instance()->UnsetEnvVar(ROCP_HSA_INTERCEPT_ENV_VAR_NAME);
+
+    if (showMessage)
+    {
+        if (!retVal)
+        {
+            std::cout << "Error: Unable to disable queue interception in rocprofiler library\n";
+        }
+        else
+        {
+            std::cout <<  "Successfully disabled queue interception in rocprofiler library\n";
+        }
+    }
+#endif
+
+    return retVal;
 }
 
 int ProfileApplication(const std::string& strCounterFile, const int& profilerBits)
@@ -622,6 +618,7 @@ int ProfileApplication(const std::string& strCounterFile, const int& profilerBit
     //cout << params.m_strOutputFile << endl;
 
     FileUtils::PassParametersByFile(params);
+    remove(FileUtils::GetCLICDTableFile().c_str());
 
     //----------------------------------------
     // Get App working dir
@@ -676,7 +673,11 @@ int ProfileApplication(const std::string& strCounterFile, const int& profilerBit
 
     if (config.bHSAPMC)
     {
-        SetHSASoftCPEnvVar(reportPerfCounterEnablement);
+        SetROCPInterceptEnvVar(reportPerfCounterEnablement, "1");
+    }
+    else if (config.bHSATrace)
+    {
+        SetROCPInterceptEnvVar(reportPerfCounterEnablement, "2");
     }
 
 #ifdef _WIN32
@@ -850,7 +851,12 @@ int ProfileApplication(const std::string& strCounterFile, const int& profilerBit
 
     if (config.bHSAPMC)
     {
-        UnsetHSASoftCPEnvVar(reportPerfCounterEnablement);
+        UnsetROCPInterceptEnvVar(reportPerfCounterEnablement);
+    }
+
+    if (config.bHSATrace)
+    {
+        UnsetROCPInterceptEnvVar(reportPerfCounterEnablement);
     }
 
     //----------------------------------------
@@ -907,6 +913,7 @@ int ProcessCommandLine(const std::string& strCounterFile)
         if (!APITraceAnalyze(config))
         {
             std::cout << "\nFailed to generate summary pages\n";
+            retVal = -1;
         }
     }
 
@@ -1344,7 +1351,7 @@ bool MergeKernelProfileOutputFiles(std::vector<std::string> counterFileList,
 
         if (config.bHSAPMC)
         {
-            apiName = GPA_API_HSA;
+            apiName = GPA_API_ROCM;
         }
 
         if (config.bPerfCounter)
@@ -1447,6 +1454,7 @@ static bool SetHSAServer(const gtString& strDirPathUnicode)
     SP_TODO("Solve API Loader Issues for installed libraries in unicode directory");
     std::wstring strDirPathWide = strDirPathUnicode.asCharArray();
     std::string strDirPath;
+    std::string rocpToolLibPath;
     StringUtils::WideStringToUtf8String(strDirPathWide, strDirPath);
 
     std::string strServerPath;
@@ -1454,6 +1462,7 @@ static bool SetHSAServer(const gtString& strDirPathUnicode)
     if (config.bHSATrace)
     {
         strServerPath = strDirPath + HSA_TRACE_AGENT_DLL;
+        rocpToolLibPath = strServerPath;
 
         if (config.bOccupancy)
         {
@@ -1463,6 +1472,7 @@ static bool SetHSAServer(const gtString& strDirPathUnicode)
     else if (config.bHSAPMC)
     {
         strServerPath = strDirPath + HSA_PROFILE_AGENT_DLL;
+        rocpToolLibPath = strServerPath;
     }
     else
     {
@@ -1484,20 +1494,19 @@ static bool SetHSAServer(const gtString& strDirPathUnicode)
         return false;
     }
 
-    if (config.bHSATrace || config.bHSAPMC)
+    if (config.bHSAPMC || config.bHSATrace)
     {
-        // need to specify the runtime tools lib as well for both HSA Trace and HSA PMC mode
-        std::string toolsRuntimeLib = HSA_RUNTIME_TOOLS_LIB;
-        toolsRuntimeLib.append(" ");
-        strServerPath = toolsRuntimeLib + strServerPath;
+        OSUtils::Instance()->SetEnvVar(ROCP_TOOL_LIB_ENV_VAR_NAME, rocpToolLibPath.c_str());
+        std::string rocProfilerLib = "librocprofiler64.so";
+        rocProfilerLib.append(" ");
+        strServerPath = rocProfilerLib + strServerPath;
     }
 
     OSUtils::Instance()->SetEnvVar(HSA_ENABLE_PROFILING_ENV_VAR, strServerPath.c_str());
 
-    if (config.bHSATrace && config.bAqlPacketTracing)
+    if (config.bHSATrace)
     {
-        // for now, AQL packet tracing is enabled via an env var
-        OSUtils::Instance()->SetEnvVar("HSA_SERVICE_GET_KERNEL_TIMES", "0");
+        OSUtils::Instance()->SetEnvVar(ROCP_TIMESTAMP_ON_ENV_VAR_NAME, "1");
     }
 
     return true;
@@ -1778,7 +1787,6 @@ static bool SetPreLoadLibs()
 
     if (!config.strPreloadLib.empty())
     {
-        static const char* LD_PRELOAD_ENV_VAR_NAME = "LD_PRELOAD";
         std::string curPreLoadPath = OSUtils::Instance()->GetEnvVar(LD_PRELOAD_ENV_VAR_NAME);
 
         if (!curPreLoadPath.empty())
@@ -1875,6 +1883,49 @@ EnvSysBlockString GetEnvironmentBlock(EnvVarMap mapUserBlock, bool bIncludeSyste
         envBlock[agentVar] = agentVarVal;
     }
 
+    strAgentVar = OSUtils::Instance()->GetEnvVar(LD_PRELOAD_ENV_VAR_NAME);
+
+    if (!strAgentVar.empty())
+    {
+        gtString agentVar;
+        gtString agentVarVal;
+        agentVar.fromASCIIString(LD_PRELOAD_ENV_VAR_NAME);
+        agentVarVal.fromASCIIString(strAgentVar.c_str());
+        envBlock[agentVar] = agentVarVal;
+    }
+
+    strAgentVar = OSUtils::Instance()->GetEnvVar(ROCP_HSA_INTERCEPT_ENV_VAR_NAME);
+
+    if (!strAgentVar.empty())
+    {
+        gtString agentVar;
+        gtString agentVarVal;
+        agentVar.fromASCIIString(ROCP_HSA_INTERCEPT_ENV_VAR_NAME);
+        agentVarVal.fromASCIIString(strAgentVar.c_str());
+        envBlock[agentVar] = agentVarVal;
+    }
+
+    strAgentVar = OSUtils::Instance()->GetEnvVar(ROCP_TOOL_LIB_ENV_VAR_NAME);
+
+    if (!strAgentVar.empty())
+    {
+        gtString agentVar;
+        gtString agentVarVal;
+        agentVar.fromASCIIString(ROCP_TOOL_LIB_ENV_VAR_NAME);
+        agentVarVal.fromASCIIString(strAgentVar.c_str());
+        envBlock[agentVar] = agentVarVal;
+    }
+
+    strAgentVar = OSUtils::Instance()->GetEnvVar(ROCP_TIMESTAMP_ON_ENV_VAR_NAME);
+
+    if (!strAgentVar.empty())
+    {
+        gtString agentVar;
+        gtString agentVarVal;
+        agentVar.fromASCIIString(ROCP_TIMESTAMP_ON_ENV_VAR_NAME);
+        agentVarVal.fromASCIIString(strAgentVar.c_str());
+        envBlock[agentVar] = agentVarVal;
+    }
 #endif
 
     // next, replace or add the user-specified env vars

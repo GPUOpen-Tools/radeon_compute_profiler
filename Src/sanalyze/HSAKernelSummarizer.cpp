@@ -81,7 +81,7 @@ void HSAKernelSummarizer::OnParse(HSAAPIInfo* pAPIInfo, bool& stopParsing)
     }
 }
 
-void HSAKernelSummarizer::GenerateTopXKernelHTMLTable(std::ostream& sout)
+void HSAKernelSummarizer::GenerateTopXKernelHTMLTable(std::ostream& sout, bool useTopX)
 {
     SP_TODO("Add back in Global Work Size and Work Group Size, once we can get that data for a dispatch");
     HTMLTable table;
@@ -93,7 +93,7 @@ void HSAKernelSummarizer::GenerateTopXKernelHTMLTable(std::ostream& sout)
 
     for (std::multiset<HSADispatchInfo*, cmp_type>::reverse_iterator it = m_KernelAPISet.rbegin(); it != m_KernelAPISet.rend(); it++)
     {
-        if (c > m_uiTopX)
+        if (useTopX && c > m_uiTopX)
         {
             break;
         }

@@ -40,26 +40,27 @@ clAgent_OnLoad(cl_agent* agent)
     FileUtils::CheckForDebuggerAttach();
 #endif
 
-    std::cout << RCP_PRODUCT_NAME " " << RCP_VERSION_STRING << " is enabled\n";
-
-    cl_int err = agent->GetICDDispatchTable(
-                     agent, &original_dispatch, sizeof(original_dispatch));
-
-    if (err != CL_SUCCESS)
-    {
-        return err;
-    }
-
-    memcpy(&modified_dispatch, &original_dispatch, sizeof(modified_dispatch));
-
-    InitNextCLFunctions(original_dispatch);
-    CreateMineDispatchTable(modified_dispatch);
-
-    err = agent->SetICDDispatchTable(
-              agent, &modified_dispatch, sizeof(modified_dispatch));
-
     std::string strLogFile = FileUtils::GetDefaultOutputPath() + "clprofileagent.log";
     GPULogger::LogFileInitialize(strLogFile.c_str());
+
+    cl_icd_dispatch_table nextTable;
+    cl_icd_dispatch_table realTable;
+    cl_int status = InitAgent(agent, CL_PROFILE_AGENT_DLL, &nextTable, &realTable);
+
+    if (CL_SUCCESS != status)
+    {
+        return CL_SUCCESS;
+    }
+
+    std::cout << RCP_PRODUCT_NAME " " << RCP_VERSION_STRING << " is enabled\n";
+
+    memcpy(&original_dispatch, &nextTable, sizeof(original_dispatch));
+    memcpy(&modified_dispatch, &original_dispatch, sizeof(modified_dispatch));
+
+    InitNextCLFunctions(&nextTable, &realTable);
+    CreateMineDispatchTable(modified_dispatch);
+
+    status = agent->SetICDDispatchTable(agent, &modified_dispatch, sizeof(modified_dispatch));
 
     // Pass params between processes through file
     // rcprof generates a text file in current dir
@@ -70,9 +71,9 @@ clAgent_OnLoad(cl_agent* agent)
     GlobalSettings::GetInstance()->m_bVerbose = params.m_bVerbose;
     GlobalSettings::GetInstance()->m_params = params;
 
-    if (err != CL_SUCCESS)
+    if (status != CL_SUCCESS)
     {
-        return err;
+        return status;
     }
 
     return CL_SUCCESS;

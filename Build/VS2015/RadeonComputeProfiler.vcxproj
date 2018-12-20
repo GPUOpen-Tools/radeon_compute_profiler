@@ -38,7 +38,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="RCP-Common.props" />
     <Import Project="RCP-Common-OpenCL.props" />
-    <Import Project="..\..\..\Common\Src\ADLUtil\Global-ADLUtil.props" />
     <Import Project="..\..\..\RCP-Internal\Build\VS2015\RCP-Internal.props" Condition="exists('..\..\..\RCP-Internal\Build\VS2015\RCP-Internal.props')"/>
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />

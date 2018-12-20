@@ -1,5 +1,19 @@
 # Radeon Compute Profiler Release Notes
 ---
+## Version 5.6 (12/21/18)
+ * Adds support for additional GPUs and APUs.
+ * Adds support for extracting kernel ISA for OpenCL kernels running on the ROCm stack.
+ * Additional Trace summary HTML pages generated for both OpenCL and ROCm/HSA traces.
+ * ROCm/HSA: Support for ROCm 2.0.
+ * ROCm/HSA: Use new librocprofiler64.so rather than deprecated libhsa-runtime-tools64.so library for performance counter collection and kernel dispatch timing data.
+   * Performance counter collection for GFX IPv7 based GPUs is no longer supported on ROCm.
+ * ROCm/HSA: There is no longer any difference between using --hsatrace and --hsaaqlpackettrace. Identical data will be produced by both profiling modes.
+ * OpenCL: Fixed several issues with profiling on Linux systems with the amdgpu-pro driver installed if both "PAL" and "legacy" OpenCL support was installed by the driver.
+ * Fixed an issue where incorrect kernel count displayed in the kernel occupancy output file.
+ * Fixed a potential race condition or hang when profiling a plaidML application.
+ * Fixed an issue when specifying a relative path to a counter file (--counterfile).
+ * 32-bit Linux binaries have been removed, as the OpenCL Linux driver no longer supports 32-bit OpenCL libraries.
+
 ## Version 5.5 (8/22/18)
  * Adds support for additional GPUs and APUs.
  * ROCm/HSA: Fixes several issues with incorrect or missing data transfer timestamps.

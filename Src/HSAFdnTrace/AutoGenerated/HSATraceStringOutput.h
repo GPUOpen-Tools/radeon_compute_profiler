@@ -1021,6 +1021,28 @@ std::string Get_hsa_amd_memory_pool_info_t_String(hsa_amd_memory_pool_info_t inp
 /// \return the string representation of the hsa_amd_memory_pool_info_t
 std::string Get_hsa_amd_memory_pool_info_t_Ptr_String(const hsa_amd_memory_pool_info_t* pInputPtr, hsa_amd_memory_pool_info_t input);
 
+/// Gets the string representation of the hsa_pitched_ptr_t type
+/// \param input the input hsa_pitched_ptr_t
+/// \return the string representation of the hsa_pitched_ptr_t
+std::string Get_hsa_pitched_ptr_t_String(hsa_pitched_ptr_t input);
+
+/// Gets the string representation of the hsa_pitched_ptr_t pointer type
+/// \param pInputPtr the input hsa_pitched_ptr_t pointer
+/// \param input the input hsa_pitched_ptr_t
+/// \return the string representation of the hsa_pitched_ptr_t
+std::string Get_hsa_pitched_ptr_t_Ptr_String(const hsa_pitched_ptr_t* pInputPtr, hsa_pitched_ptr_t input);
+
+/// Gets the string representation of the hsa_amd_copy_direction_t type
+/// \param input the input hsa_amd_copy_direction_t
+/// \return the string representation of the hsa_amd_copy_direction_t
+std::string Get_hsa_amd_copy_direction_t_String(hsa_amd_copy_direction_t input);
+
+/// Gets the string representation of the hsa_amd_copy_direction_t pointer type
+/// \param pInputPtr the input hsa_amd_copy_direction_t pointer
+/// \param input the input hsa_amd_copy_direction_t
+/// \return the string representation of the hsa_amd_copy_direction_t
+std::string Get_hsa_amd_copy_direction_t_Ptr_String(const hsa_amd_copy_direction_t* pInputPtr, hsa_amd_copy_direction_t input);
+
 /// Gets the string representation of the hsa_amd_memory_pool_access_t type
 /// \param input the input hsa_amd_memory_pool_access_t
 /// \return the string representation of the hsa_amd_memory_pool_access_t
@@ -1284,6 +1306,17 @@ std::string Get_hsa_ext_amd_aql_pm4_packet_t_String(hsa_ext_amd_aql_pm4_packet_t
 /// \param input the input hsa_ext_amd_aql_pm4_packet_t
 /// \return the string representation of the hsa_ext_amd_aql_pm4_packet_t
 std::string Get_hsa_ext_amd_aql_pm4_packet_t_Ptr_String(const hsa_ext_amd_aql_pm4_packet_t* pInputPtr, hsa_ext_amd_aql_pm4_packet_t input);
+
+/// Gets the string representation of the hsa_ven_amd_aqlprofile_info_data_t type
+/// \param input the input hsa_ven_amd_aqlprofile_info_data_t
+/// \return the string representation of the hsa_ven_amd_aqlprofile_info_data_t
+std::string Get_hsa_ven_amd_aqlprofile_info_data_t_String(hsa_ven_amd_aqlprofile_info_data_t input);
+
+/// Gets the string representation of the hsa_ven_amd_aqlprofile_info_data_t pointer type
+/// \param pInputPtr the input hsa_ven_amd_aqlprofile_info_data_t pointer
+/// \param input the input hsa_ven_amd_aqlprofile_info_data_t
+/// \return the string representation of the hsa_ven_amd_aqlprofile_info_data_t
+std::string Get_hsa_ven_amd_aqlprofile_info_data_t_Ptr_String(const hsa_ven_amd_aqlprofile_info_data_t* pInputPtr, hsa_ven_amd_aqlprofile_info_data_t input);
 
 /// Gets the string representation of the hsa_ven_amd_aqlprofile_id_query_t type
 /// \param input the input hsa_ven_amd_aqlprofile_id_query_t

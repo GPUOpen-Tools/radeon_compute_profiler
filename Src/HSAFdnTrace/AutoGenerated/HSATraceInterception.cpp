@@ -14,7 +14,6 @@
 #include "Logger.h"
 #include "GlobalSettings.h"
 #include "OSUtils.h"
-#include "HSAToolsRTModule.h"
 #include "HSARTModuleLoader.h"
 #include "../HSAFdnAPIInfoManager.h"
 #include "../HSATraceInterceptionHelpers.h"
@@ -30,12 +29,12 @@
 
 #include "HSATraceInterception.h"
 
-CoreApiTable*                      g_pRealCoreFunctions          = nullptr;
-FinalizerExtTable*                 g_pRealFinalizerExtFunctions  = nullptr;
-ImageExtTable*                     g_pRealImageExtFunctions      = nullptr;
-AmdExtTable*                       g_pRealAmdExtFunctions        = nullptr;
-hsa_ven_amd_aqlprofile_1_00_pfn_t* g_pRealAqlProfileExtFunctions = nullptr;
-hsa_ven_amd_loader_1_01_pfn_t*     g_pRealLoaderExtFunctions     = nullptr;
+CoreApiTable*                  g_pRealCoreFunctions          = nullptr;
+FinalizerExtTable*             g_pRealFinalizerExtFunctions  = nullptr;
+ImageExtTable*                 g_pRealImageExtFunctions      = nullptr;
+AmdExtTable*                   g_pRealAmdExtFunctions        = nullptr;
+hsa_ven_amd_aqlprofile_pfn_t*  g_pRealAqlProfileExtFunctions = nullptr;
+hsa_ven_amd_loader_1_01_pfn_t* g_pRealLoaderExtFunctions     = nullptr;
 
 hsa_status_t HSA_API_Trace_hsa_status_string(hsa_status_t status, const char** status_string)
 {
@@ -1304,15 +1303,6 @@ hsa_status_t HSA_API_Trace_hsa_queue_create(hsa_agent_t agent, uint32_t size, hs
     ULONGLONG ullStart = 0ull;
     ULONGLONG ullEnd = 0ull;
     hsa_status_t retVal = HSA_STATUS_ERROR;
-
-    HSAToolsRTModule* pToolsRTModule = HSARTModuleLoader<HSAToolsRTModule>::Instance()->GetHSARTModule();
-
-    if (pToolsRTModule->IsModuleLoaded())
-    {
-        ullStart = OSUtils::Instance()->GetTimeNanos();
-        retVal = pToolsRTModule->ext_tools_queue_create_profiled(agent, size, type, callback, data, private_segment_size, group_segment_size, queue);
-        ullEnd = OSUtils::Instance()->GetTimeNanos();
-    }
 
     if (HSA_STATUS_SUCCESS != retVal)
     {
@@ -3787,6 +3777,40 @@ hsa_status_t HSA_API_Trace_hsa_amd_memory_async_copy(void* dst, hsa_agent_t dst_
     return retVal;
 }
 
+hsa_status_t HSA_API_Trace_hsa_amd_memory_async_copy_rect(const hsa_pitched_ptr_t* dst, const hsa_dim3_t* dst_offset, const hsa_pitched_ptr_t* src, const hsa_dim3_t* src_offset, const hsa_dim3_t* range, hsa_agent_t copy_agent, hsa_amd_copy_direction_t dir, uint32_t num_dep_signals, const hsa_signal_t* dep_signals, hsa_signal_t completion_signal)
+{
+    hsa_signal_t origSignal = completion_signal;
+    ULONGLONG asyncCopyIdentifier = OSUtils::Instance()->GetTimeNanos();
+    HSA_APITrace_hsa_amd_memory_async_copy_rect_PreCallHelper(dst, dst_offset, src, src_offset, range, copy_agent, dir, num_dep_signals, dep_signals, completion_signal, asyncCopyIdentifier);
+    ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
+    hsa_status_t retVal = g_pRealAmdExtFunctions->hsa_amd_memory_async_copy_rect_fn(dst, dst_offset, src, src_offset, range, copy_agent, dir, num_dep_signals, dep_signals, completion_signal);
+    ULONGLONG ullEnd = OSUtils::Instance()->GetTimeNanos();
+
+    HSA_APITrace_hsa_amd_memory_async_copy_rect* pAPIInfo = new(std::nothrow) HSA_APITrace_hsa_amd_memory_async_copy_rect();
+    SpAssertRet(nullptr != pAPIInfo) retVal;
+
+    pAPIInfo->Create(
+        ullStart,
+        ullEnd,
+        dst,
+        dst_offset,
+        src,
+        src_offset,
+        range,
+        copy_agent,
+        dir,
+        num_dep_signals,
+        dep_signals,
+        origSignal,
+        asyncCopyIdentifier,
+        retVal);
+
+    RECORD_STACK_TRACE_FOR_API(pAPIInfo);
+    HSAAPIInfoManager::Instance()->AddAPIInfoEntry(pAPIInfo);
+
+    return retVal;
+}
+
 hsa_status_t HSA_API_Trace_hsa_amd_agent_memory_pool_get_info(hsa_agent_t agent, hsa_amd_memory_pool_t memory_pool, hsa_amd_agent_memory_pool_info_t attribute, void* value)
 {
     ULONGLONG ullStart = OSUtils::Instance()->GetTimeNanos();
@@ -5376,6 +5400,11 @@ void InitHSAAPIInterceptTrace(HsaApiTable* pTable)
         if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_amd_memory_async_copy))
         {
             pTable->amd_ext_->hsa_amd_memory_async_copy_fn = HSA_API_Trace_hsa_amd_memory_async_copy;
+        }
+
+        if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_amd_memory_async_copy_rect))
+        {
+            pTable->amd_ext_->hsa_amd_memory_async_copy_rect_fn = HSA_API_Trace_hsa_amd_memory_async_copy_rect;
         }
 
         if (HSAAPIInfoManager::Instance()->ShouldIntercept(HSA_API_Type_hsa_amd_agent_memory_pool_get_info))

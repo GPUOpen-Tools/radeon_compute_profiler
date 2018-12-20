@@ -5,9 +5,18 @@
 /// \brief The helper file to initialize the OpenCL function pointers.
 //==============================================================================
 
+#include <algorithm>
 #include <cstring>
+#include <fstream>
 
 #include <AMDTBaseTools/Include/AMDTDefinitions.h>
+
+#include <AMDTOSWrappers/Include/osModule.h>
+#include <AMDTOSWrappers/Include/osFilePath.h>
+
+#include "../Common/OSUtils.h"
+#include "../Common/Logger.h"
+#include "../Common/FileUtils.h"
 
 #include "CLFunctionDefs.h"
 #include "OpenCLModule.h"
@@ -17,57 +26,28 @@ cl_icd_dispatch_table g_realDispatchTable;
 
 CLExtensionFunctionTable g_realExtensionFunctionTable;
 
-void InitNextCLFunctions(cl_icd_dispatch_table& table)
+void InitNextCLFunctions(cl_icd_dispatch_table* pNextTable, cl_icd_dispatch_table* pRealTable)
 {
-    InitRealCLFunctions();
+    SpAssertRet(nullptr != pNextTable);
 
-    memcpy(&g_nextDispatchTable, &table, sizeof(g_nextDispatchTable));
+    InitRealCLFunctions(pRealTable);
+
+    memcpy(&g_nextDispatchTable, pNextTable, sizeof(g_nextDispatchTable));
 }
 
-#ifdef _WIN32
-    #if AMDT_ADDRESS_SPACE_TYPE == AMDT_64_BIT_ADDRESS_SPACE
-        #define AMDOCL_MODULE_NAME "amdocl64.dll"
-    #else
-        #define AMDOCL_MODULE_NAME "amdocl.dll"
-    #endif
-    // on Windows systems with the driver store enabled, you can't just load amdocl
-    // you need to load opencl.dll which will in turn load amdocl
-    #define FALLBACK_AMDOCL_MODULE_NAME "opencl.dll"
-#else
-    #ifdef __x86_64__
-        #define AMDOCL_MODULE_NAME "libamdocl64.so"
-        #define FALLBACK_AMDOCL_MODULE_NAME "libamdocl-orca64.so"
-    #else
-        #define AMDOCL_MODULE_NAME "libamdocl32.so"
-        #define FALLBACK_AMDOCL_MODULE_NAME "libamdocl-orca32.so"
-    #endif
-#endif
-
-
-void InitRealCLFunctions()
+void InitRealCLFunctions(cl_icd_dispatch_table* pRealTable)
 {
-    /// static flag indicating if we've initialized the g_realDispatchTable with the amd ocl entry points
-    static bool g_OpenCLModuleInit = false;
+    static OpenCLModule g_OpenCLModule;
 
-    /// static instance used to get entry points from amdocl lib
-    static OpenCLModule g_OpenCLModule(AMDOCL_MODULE_NAME);
-
-    if (!g_OpenCLModuleInit)
+    if (g_OpenCLModule.OpenCLLoaded() == OpenCLModule::OpenCL_None)
     {
-        if (g_OpenCLModule.OpenCLLoaded() == OpenCLModule::OpenCL_None)
-        {
-            // AMDOCL_MODULE_NAME not loaded, try to load FALLBACK_AMDOCL_MODULE_NAME
-            g_OpenCLModule.UnloadModule();
-            g_OpenCLModule.LoadModule(FALLBACK_AMDOCL_MODULE_NAME);
-        }
+        return;
+    }
 
-        if (g_OpenCLModule.OpenCLLoaded() == OpenCLModule::OpenCL_None)
-        {
-            return;
-        }
-
-        g_OpenCLModuleInit = true;
-        g_realDispatchTable.GetPlatformIDs = g_OpenCLModule.GetPlatformIDs;
+    // if thisModuleName is empty, then we are not initializing the real dispatch table with
+    // an agent's original dispatch table. Thus, we load the entry points from opencl.dll or libopencl.so
+    if (nullptr == pRealTable)
+    {
         g_realDispatchTable.GetPlatformInfo = g_OpenCLModule.GetPlatformInfo;
         g_realDispatchTable.GetDeviceIDs = g_OpenCLModule.GetDeviceIDs;
         g_realDispatchTable.GetDeviceInfo = g_OpenCLModule.GetDeviceInfo;
@@ -228,6 +208,15 @@ void InitRealCLFunctions()
         g_realDispatchTable.clSetProgramReleaseCallback = g_OpenCLModule.SetProgramReleaseCallback;
         g_realDispatchTable.clSetProgramSpecializationConstant = g_OpenCLModule.SetProgramSpecializationConstant;
     }
+    else
+    {
+        // here, we are initializing the real function pointers with an agent's original dispatch table.
+        SpAssertRet(nullptr != pRealTable);
+        memcpy(&g_realDispatchTable, pRealTable, sizeof(g_realDispatchTable));
+    }
+
+    // Always use GetPlatformIDs from OpenCL ICD lib, as it is never assigned in the agent's dispatch table
+    g_realDispatchTable.GetPlatformIDs = g_OpenCLModule.GetPlatformIDs;
 }
 
 CL_FUNC_TYPE InitExtensionFunction(const char* pFuncName, void* pFuncPtr)
@@ -312,4 +301,146 @@ CL_FUNC_TYPE InitExtensionFunction(const char* pFuncName, void* pFuncPtr)
     }
 
     return retVal;
+}
+
+bool WriteDispatchTableToFile(cl_icd_dispatch_table* pTable)
+{
+    bool retVal = false;
+
+    if (nullptr != pTable)
+    {
+        std::ofstream fout;
+
+        fout.open(FileUtils::GetCLICDTableFile().c_str(), std::ios::binary);
+
+        if (fout.good())
+        {
+            size_t tableSize = sizeof(cl_icd_dispatch_table);
+
+            fout << tableSize;
+            fout.write(reinterpret_cast<char*>(pTable), tableSize);
+
+            retVal = true;
+        }
+    }
+
+    return retVal;
+}
+
+bool ReadDispatchTableFromFile(cl_icd_dispatch_table* pTable)
+{
+    bool retVal = false;
+
+    if (nullptr != pTable)
+    {
+        std::ifstream fin;
+
+        fin.open(FileUtils::GetCLICDTableFile().c_str(), std::ios::binary);
+
+        if (fin.good())
+        {
+            size_t tableSize = 0;
+            fin >> tableSize;
+
+            fin.read(reinterpret_cast<char*>(pTable), tableSize);
+
+            retVal = true;
+        }
+    }
+
+    return retVal;
+}
+
+cl_int InitAgent(cl_agent* pAgent,
+                 const char* pAgentName,
+                 cl_icd_dispatch_table* pICDDispatchTable,
+                 cl_icd_dispatch_table* pRealDispatchTable)
+{
+    SpAssertRet(nullptr != pICDDispatchTable && nullptr != pRealDispatchTable) CL_INVALID_VALUE;
+
+    bool isFirstAgent = IsFirstAgent(pAgentName);
+
+    cl_icd_dispatch_table localTable;
+    cl_int err = pAgent->GetICDDispatchTable(pAgent, &localTable, sizeof(localTable));
+
+    if (CL_SUCCESS != err)
+    {
+        return err;
+    }
+
+    cl_icd_dispatch_table tableToCheckDevices;
+
+    if (isFirstAgent)
+    {
+        memcpy(&tableToCheckDevices, &localTable, sizeof(localTable));
+        bool success = WriteDispatchTableToFile(&localTable);
+
+        if (!success)
+        {
+            GPULogger::Log(GPULogger::logERROR, "Unable to write dispatch table to file\n");
+            return CL_INVALID_VALUE;
+        }
+    }
+    else
+    {
+        bool success = ReadDispatchTableFromFile(&tableToCheckDevices);
+
+        if (!success)
+        {
+            GPULogger::Log(GPULogger::logERROR, "Unable to read dispatch table from file\n");
+            return CL_INVALID_VALUE;
+        }
+    }
+
+
+    // using the local table, check for available devices. If there are none, this is not the right ICD
+    cl_uint numDevices = 0;
+    err = tableToCheckDevices.GetDeviceIDs(nullptr, CL_DEVICE_TYPE_ALL, 0, nullptr, &numDevices);
+
+    if (CL_SUCCESS != err)
+    {
+        return err;
+    }
+
+    if (0 == numDevices)
+    {
+        return CL_DEVICE_NOT_FOUND;
+    }
+
+    memcpy(pICDDispatchTable, &localTable, sizeof(cl_icd_dispatch_table));
+    memcpy(pRealDispatchTable, &tableToCheckDevices, sizeof(cl_icd_dispatch_table));
+
+    return CL_SUCCESS;
+}
+
+bool IsFirstAgent(const std::string& thisModuleName)
+{
+    // We detect the first agent by looking at the CL_AGENT environment variable.
+    // The first agent listed in the env var is the first agent loaded.
+
+    SpAssertRet(!thisModuleName.empty()) false;
+
+    // looking at the CL_AGENT environment variable. The first agent listed in the env var is the first agent loaded.
+    std::string clAgentVar = OSUtils::Instance()->GetEnvVar(OCL_ENABLE_PROFILING_ENV_VAR);
+
+    size_t thisModulePos = clAgentVar.find(thisModuleName);
+
+    if (std::string::npos == thisModulePos)
+    {
+        GPULogger::Log(GPULogger::logERROR, "Unexpected module %s\n", thisModuleName.c_str());
+    }
+
+    size_t anyModuleMinPos = std::string::npos;
+
+    anyModuleMinPos = std::min(anyModuleMinPos, clAgentVar.find(CL_TRACE_AGENT_DLL));
+    anyModuleMinPos = std::min(anyModuleMinPos, clAgentVar.find(CL_SUB_KERNEL_PROFILE_AGENT_DLL));
+    anyModuleMinPos = std::min(anyModuleMinPos, clAgentVar.find(CL_PROFILE_AGENT_DLL));
+    anyModuleMinPos = std::min(anyModuleMinPos, clAgentVar.find(CL_OCCUPANCY_AGENT_DLL));
+    anyModuleMinPos = std::min(anyModuleMinPos, clAgentVar.find(CL_THREAD_TRACE_AGENT_DLL));
+
+    // If we are the first agent, we serialize the original dispatch table to disk.
+    // If we are not the first agent, we read the previously-serialized table from disk.
+    bool result = (thisModulePos != std::string::npos) && (thisModulePos <= anyModuleMinPos);
+
+    return result;
 }

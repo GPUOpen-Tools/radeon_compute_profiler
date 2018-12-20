@@ -40,7 +40,6 @@
     <Import Project="RCP-VKStableClocks.props" />
     <Import Project="..\..\..\RCP-Internal\Build\VS2015\RCP-Internal.props" Condition="exists('..\..\..\RCP-Internal\Build\VS2015\RCP-Internal.props')" />
     <Import Project="$(CommonDir)\Lib\AMD\ACL\Global-ACL.props" />
-    <Import Project="$(CommonDir)\Src\ADLUtil\Global-ADLUtil.props" />
     <Import Project="$(CommonDir)\Src\ACLModuleManager\Global-ACLModuleManager.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />

@@ -1,5 +1,5 @@
 //==============================================================================
-// Copyright (c) 2015 Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2015-2018 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 /// \brief  This file contains functions called by various intercepted APIs
@@ -9,13 +9,6 @@
 #define _HSA_PMC_INTERCEPTION_HELPERS_
 
 #include "hsa.h"
-
-/// const representing the min required queue size for SoftCP mode
-static const uint32_t MIN_QUEUE_SIZE_FOR_SOFTCP = 128;
-
-/// interception helper function for hsa_agent_get_info
-/// see HSA runtime spec for parameter descriptions
-void HSA_PMC_hsa_agent_get_info_PostCallHelper(hsa_status_t retVal, hsa_agent_t agent, hsa_agent_info_t attribute, void* value);
 
 /// interception helper function for hsa_queue_create
 /// see HSA runtime spec for parameter descriptions
@@ -37,5 +30,13 @@ void HSA_PMC_hsa_executable_get_symbol_by_name_PostCallHelper(hsa_status_t retVa
 /// interception helper function for hsa_executable_symbol_get_info
 /// see HSA runtime spec for parameter descriptions
 void HSA_PMC_hsa_executable_symbol_get_info_PostCallHelper(hsa_status_t retVal, hsa_executable_symbol_t executable_symbol, hsa_executable_symbol_info_t attribute, void* value);
+
+/// interception helper function for hsa_executable_load_code_object
+/// see HSA runtime spec for parameter descriptions
+void HSA_PMC_hsa_executable_load_code_object_PostCallHelper(hsa_status_t retVal, hsa_executable_t executable, hsa_agent_t agent, hsa_code_object_t code_object, const char* options);
+
+/// interception helper function for hsa_executable_load_agent_code_object
+/// see HSA runtime spec for parameter descriptions
+void HSA_PMC_hsa_executable_load_agent_code_object_PostCallHelper(hsa_status_t retVal, hsa_executable_t executable, hsa_agent_t agent, hsa_code_object_reader_t code_object_reader, const char* options, hsa_loaded_code_object_t* loaded_code_object);
 
 #endif // _HSA_PMC_INTERCEPTION_HELPERS_

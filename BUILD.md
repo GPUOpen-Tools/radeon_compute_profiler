@@ -43,31 +43,23 @@ this script every time you pull new changes from RCP repository.
    * `sudo apt-get install scons`
  * RCP requires OpenGL headers in order to build the OpenCL™ profiler backend. You will need to install mesa-common-dev as follows:
    * `sudo apt-get install mesa-common-dev`
- * In order to build the 32-bit version of RCP, you will need to install the following libraries:
-   * `sudo apt-get install gcc-multilib g++-multilib`
- * When building on Ubuntu 16.04, you will need to install the compatible Boost libraries:
+ * When building on Ubuntu (16.04 or later), you will need to install the compatible Boost libraries:
    * `sudo apt-get install libboost-all-dev`
-   * If you plan to build the 32 bit version of the profiler, you will need to install the 32-bit versions of the required boost libraries:
-     * `sudo apt-get install libboost-chrono-dev:i386`
-     * `sudo apt-get install libboost-date-time-dev:i386`
-     * `sudo apt-get install libboost-filesystem-dev:i386`
-     * `sudo apt-get install libboost-program-options-dev:i386`
-     * `sudo apt-get install libboost-system-dev:i386`
-     * `sudo apt-get install libboost-thread-dev:i386`
-     * `sudo apt-get install libboost-wave-dev:i386`
 
-##### Building the HSA/ROCm Profiler
-* In order to build the HSA/ROCm profiler, the ROCm packages need to be installed (so that the ROCR header files are available at build time).
-* Please see the ROCm install instructions at [https://rocm.github.io/ROCmInstall.html](https://rocm.github.io/ROCmInstall.html).
+##### Building the ROCm/HSA Profiler
+* In order to build the ROCm/HSA profiler, you will need all or part of the ROCm stack installed (so that the ROCR header files are available at build time).
+* Please see the ROCm install instructions at [https://rocm.github.io/ROCmInstall.html](https://rocm.github.io/ROCmInstall.html), and install either rocm-dkms or rocm-dev, as appropriate.
+  * In addition, please make sure that the optional ROCm package "rocprofiler-dev" is installed:
+    * Ubuntu: sudo apt install rocprofiler-dev
+    * CentOS: sudo yum install rocprofiler-dev
 * If the ROCR header files are not available on the build system, you can skip this part of the build. See the Build Instructions section below for information on how to do this.
 
 ##### Build Instructions
  * cd into the Build\Linux directory
  * Execute `./build_rcp.sh`
-   * By default this performs a from-scratch build of the release versions of RCP, both 32-bit and 64-bit binaries.
+   * By default this performs a from-scratch build of the release version of RCP.
  * The following arguments can be passed to build_rcp.sh to alter the build:
    * `debug`: performs a debug build
-   * `skip-32bitbuild`: skips building the 32-bit binaries
    * `skip-framework`: skips building BaseTools/OSWrappers from the CodeXL framework
    * `skip-hsaprofiler`: skips building the ROCm/HSA Profiler agents
    * `skip-oclprofiler`: skips building the OpenCL Profiler agents
@@ -75,20 +67,16 @@ this script every time you pull new changes from RCP repository.
    * `clean`: performs a "clean" on all build targets, removing all intermediate and final output files
    * `hsadir`: overrides the location of the ROCm/HSA header files (by default they are expected to be in /opt/rocm/hsa)
    * `boostlibdir`: overrides the location of the Boost libraries
-   * `boostlibdir32`: overrides the location of the 32-bit Boost libraries
    * `doc`: build the documentation using Sphinx (see below for prerequisites)
- * By default, the boostlibdir and boostlibdir32 paths are defined to the the following values which are required when building on Ubuntu 16.04:
+ * By default, the boostlibdir path is defined to the the following values which are required when building on Ubuntu 16.04:
    * boostlibdir /usr/lib/x86_64-linux-gnu
-   * boostlibdir32 /usr/lib/i386-linux-gnu
    * For other systems, you may need to override these paths to point to the correct location of the boost libraries
  * After a successful build, the RCP binaries can be found in __RCP\Output\bin__
  * Example build command line (builds the debug versions of the binaries, skipping the ROCm/HSA profiler):
    * ./build_rcp.sh debug skip-hsaprofiler
  * In addition to using the build_rcp.sh build script to build all of RCP, you can also build a single library by executing __make__ in that library's source code directory. This is useful when making localized changes in a particular library. When using __make__, the following default targets are supported:
    * `\<default\>`: makes the 64-bit release version
-   * `x86`: makes the 32-bit release version
    * `Dbg`: makes the 64-bit debug version
-   * `Dbgx86`: makes the 32-bit debug version
  * __Make__ is supported in the following directories (those marked with (*) are required to be built before the others, as they produce static libraries used by the others):
    * Src/CLCommon (*)
    * Src/CLOccupancyAgent

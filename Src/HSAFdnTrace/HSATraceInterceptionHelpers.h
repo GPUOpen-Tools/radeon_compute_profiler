@@ -23,6 +23,10 @@ void HSA_APITrace_hsa_executable_get_symbol_PostCallHelper(hsa_status_t retVal, 
 /// see HSA runtime spec for parameter descriptions
 void HSA_APITrace_hsa_amd_memory_async_copy_PreCallHelper(void* dst, hsa_agent_t dst_agent, const void* src, hsa_agent_t src_agent, size_t size, uint32_t num_dep_signals, const hsa_signal_t* dep_signals, hsa_signal_t& completion_signal, unsigned long long asyncCopyIdentifier);
 
+/// interception helper function for hsa_amd_memory_async_copy_rect
+/// see HSA runtime spec for parameter descriptions
+void HSA_APITrace_hsa_amd_memory_async_copy_rect_PreCallHelper(const hsa_pitched_ptr_t* dst, const hsa_dim3_t* dst_offset, const hsa_pitched_ptr_t* src, const hsa_dim3_t* src_offset, const hsa_dim3_t* range, hsa_agent_t copy_agent, hsa_amd_copy_direction_t dir, uint32_t num_dep_signals, const hsa_signal_t* dep_signals, hsa_signal_t completion_signal, unsigned long long asyncCopyIdentifier);
+
 /// interception helper function for hsa_executable_get_symbol_by_name
 /// see HSA runtime spec for parameter descriptions
 void HSA_APITrace_hsa_executable_get_symbol_by_name_PostCallHelper(hsa_status_t retVal, hsa_executable_t executable, const char* symbol_name, const hsa_agent_t* agent, hsa_executable_symbol_t* symbol);

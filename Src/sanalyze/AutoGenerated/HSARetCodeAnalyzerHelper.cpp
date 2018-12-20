@@ -63,5 +63,7 @@ void GetNoReturnCodeAPIs(HSAAPITypeSet& noReturnCodeAPIs)
     noReturnCodeAPIs.insert(HSA_API_Type_hsa_queue_store_read_index_relaxed);
     noReturnCodeAPIs.insert(HSA_API_Type_hsa_queue_store_read_index_screlease);
     noReturnCodeAPIs.insert(HSA_API_Type_hsa_amd_signal_wait_any);
+    noReturnCodeAPIs.insert(HSA_API_Type_hsa_ven_amd_aqlprofile_version_major);
+    noReturnCodeAPIs.insert(HSA_API_Type_hsa_ven_amd_aqlprofile_version_minor);
 }
 

@@ -87,7 +87,7 @@ To ignore a set of APIs when collecting an API trace using the command line,
 pass the name of a configuration file to the ``--apifilterfile`` option. The
 format of this file is one API name per line.
 
-An example of the contents of this file  for an OpenCL™ is given below::
+An example of the contents of this file  for an OpenCL is given below::
 
   clGetPlatformIDs
   clGetPlatformInfo

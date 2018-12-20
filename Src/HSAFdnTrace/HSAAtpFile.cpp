@@ -119,6 +119,10 @@ HSAAPIInfo* HSAAtpFilePart::CreateAPIInfo(const std::string& strAPIName)
     {
         retObj = new(nothrow) HSAMemoryTransferAPIInfo();
     }
+    else if (apiType == HSA_API_Type_hsa_amd_memory_async_copy_rect)
+    {
+        retObj = new(nothrow) HSAMemoryTransferRectAPIInfo();
+    }
     else if (apiType == HSA_API_Type_hsa_memory_allocate || apiType == HSA_API_Type_hsa_memory_copy ||
              apiType == HSA_API_Type_hsa_memory_register || apiType == HSA_API_Type_hsa_memory_deregister ||
              apiType == HSA_API_Type_hsa_amd_memory_pool_allocate || apiType == HSA_API_Type_hsa_amd_memory_lock ||
@@ -224,7 +228,9 @@ bool HSAAtpFilePart::ParseHostTimestamp(const char* buf, HSAAPIInfo* pAPIInfo, b
     pAPIInfo->m_ullStart = ullStart;
     pAPIInfo->m_ullEnd = ullEnd;
 
-    if (HSA_API_Type_hsa_amd_memory_async_copy == pAPIInfo->m_apiID && !ss.eof())
+    if ((HSA_API_Type_hsa_amd_memory_async_copy == pAPIInfo->m_apiID ||
+        HSA_API_Type_hsa_amd_memory_async_copy_rect == pAPIInfo->m_apiID) &&
+        !ss.eof())
     {
         ULONGLONG ullAsyncCopyStart;
         ULONGLONG ullAsyncCopyEnd;
@@ -566,30 +572,37 @@ bool HSAAtpFilePart::Parse(std::istream& in, std::string& outErrorMsg)
             }
             else
             {
-                if (std::string::npos != line.find("HSA_PACKET_TYPE_KERNEL_DISPATCH"))
+                if (std::string::npos != line.find("HSA_PACKET_TYPE_"))
                 {
-                    HSADispatchInfo* dispatchInfo = new(std::nothrow) HSADispatchInfo();
-
-                    if (nullptr == dispatchInfo)
+                    if (std::string::npos == line.find("HSA_PACKET_TYPE_KERNEL_DISPATCH"))
                     {
-                        Log(logERROR, "Error: out of memory\n");
-                        return false;
+                        // skip packet trace entry for non-dispatch packets
+                        continue;
                     }
 
-                    if (!ParseDeviceTimestamp(line.c_str(), dispatchInfo))
-                    {
-                        Log(logERROR, "Error parsing device timestamp entry\n");
-                        return false;
-                    }
+                }
 
-                    m_HSADispatchInfoList.push_back(dispatchInfo);
+                HSADispatchInfo* dispatchInfo = new(std::nothrow) HSADispatchInfo();
 
-                    for (std::vector<IParserListener<HSAAPIInfo>*>::iterator it = m_listenerList.begin(); it != m_listenerList.end() && !m_shouldStopParsing; it++)
+                if (nullptr == dispatchInfo)
+                {
+                    Log(logERROR, "Error: out of memory\n");
+                    return false;
+                }
+
+                if (!ParseDeviceTimestamp(line.c_str(), dispatchInfo))
+                {
+                    Log(logERROR, "Error parsing device timestamp entry\n");
+                    return false;
+                }
+
+                m_HSADispatchInfoList.push_back(dispatchInfo);
+
+                for (std::vector<IParserListener<HSAAPIInfo>*>::iterator it = m_listenerList.begin(); it != m_listenerList.end() && !m_shouldStopParsing; it++)
+                {
+                    if (nullptr != (*it))
                     {
-                        if (nullptr != (*it))
-                        {
-                            (*it)->OnParse(dispatchInfo, m_shouldStopParsing);
-                        }
+                        (*it)->OnParse(dispatchInfo, m_shouldStopParsing);
                     }
                 }
             }
@@ -650,10 +663,8 @@ bool HSAAtpFilePart::UpdateTmpTimestampFiles(const std::string& strTmpFilePath, 
                     // once we find the async copy timestamp file, load the data into threadCopyTimestamps
                     if (!LoadAsyncCopyTimestamps(strAsyncCopyTSFile, threadCopyTimestamps))
                     {
-                        return false;
+                        continue;
                     }
-
-                    break;
                 }
             }
             else
@@ -686,7 +697,7 @@ bool HSAAtpFilePart::UpdateTmpTimestampFiles(const std::string& strTmpFilePath, 
                     string strFullName = strTmpFilePath + '/' + *it;
                     if (!UpdateAsyncCopyTimestamps(strFullName, threadCopyTimestamps))
                     {
-                        return false;
+                        continue;
                     }
                 }
             }
@@ -782,7 +793,8 @@ bool HSAAtpFilePart::UpdateAsyncCopyTimestamps(const std::string strFile, Thread
 
         for (uint32_t i = 0; i < fileLines.size(); ++i)
         {
-            if (std::string::npos != fileLines[i].find("hsa_amd_memory_async_copy"))
+            if (std::string::npos != fileLines[i].find("hsa_amd_memory_async_copy") ||
+                std::string::npos != fileLines[i].find("hsa_amd_memory_async_copy_rect"))
             {
                 std::stringstream ss;
                 int apiType;

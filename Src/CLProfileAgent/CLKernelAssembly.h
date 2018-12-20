@@ -1,5 +1,5 @@
 //==============================================================================
-// Copyright (c) 2015 Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2015-2018 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 /// \brief This class manages the retrieval of CL kernel source, IL,
@@ -16,6 +16,7 @@
 
 #include "CLUtils.h"
 #include "ACLModule.h"
+#include "DeviceInfoUtils.h"
 
 /// \defgroup CLKernelAssembly CLKernelAssembly
 /// This module handles the retrieval of OpenCL kernel source, IL, ISA, and x86
@@ -156,17 +157,43 @@ private:
                                           bool               isGPU,
                                           bool               usesHSAILPath);
 
+    /// Extract kernel files, using the COMGR lib
+    /// \param vBinary binary for ocl runtime
+    /// \param strKernelFunction Kernel name
+    /// \param strKernelHandle Kernel object handle
+    /// \param strOutputDir Output dir
+    /// \param strDeviceName device name
+    /// \param isGPU Is kernel compiled for GPU
+    /// \return true if no error
+    bool GenerateKernelFilesFromComgrModule(const std::vector<char>& vBinary,
+                                            const std::string&       strKernelFunction,
+                                            const std::string&       strKernelHandle,
+                                            const std::string&       strOutputDir,
+                                            const std::string&       strDeviceName,
+                                            const bool&              isGPU);
+
+    /// Generate the code object target string
+    /// The naming convention should follow the LLVM documentation
+    /// https://llvm.org/docs/AMDGPUUsage.html#code-object-target-identification
+    /// \param deviceName the device name
+    /// \param codeObjectTargetString the generated code object target string
+    /// \return true if successful, false otherwise
+    bool GenerateCodeObjectTargetString(const std::string& deviceName,
+                                        std::string&       codeObjectTargetString);
+
     /// Extract kernel files, if compiler lib is detected, use compiler lib, otherwise, fallback to CAL
     /// \param vBinary Bif binary for ocl runtime
     /// \param strKernelFunction Kernel name
     /// \param strKernelHandle Kernel object handle
     /// \param strOutputDir Output dir
+    /// \param strDeviceName device name
     /// \param isGPU Is kernel compiled for GPU
     /// \return true if no error
     bool GenerateKernelFiles(std::vector<char>& vBinary,
                              const std::string& strKernelFunction,
                              const std::string& strKernelHandle,
                              const std::string& strOutputDir,
+                             const std::string& strDeviceName,
                              bool               isGPU);
 
     /// Disassembler callback function

@@ -1,5 +1,5 @@
 //==============================================================================
-// Copyright (c) 2015 Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2015-2018 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 /// \brief This class manages the retrieval of CL kernel source, IL,
@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <fstream>
 #include <boost/algorithm/string.hpp>
+#include <cstdlib>
 
 // ADL headers
 #include <ADLUtil.h>
@@ -17,12 +18,17 @@
 #include "../Common/StringUtils.h"
 #include "../Common/FileUtils.h"
 #include "../Common/Logger.h"
-#include "DeviceInfoUtils.h"
+#include "../Common/GlobalSettings.h"
 #include "ACLModuleManager.h"
 #include "CLKernelAssembly.h"
 #include "CLUtils.h"
 #include "CLFunctionDefs.h"
 #include <ProfilerOutputFileDefs.h>
+#ifndef _WIN32
+    #ifndef SKIP_HSA_BUILD
+        #include "ComgrUtils.h"
+    #endif
+#endif
 
 using namespace CLUtils;
 using namespace std;
@@ -315,58 +321,158 @@ bool KernelAssembly::GenerateKernelFilesFromACLModule(ACLModule*         pAclMod
     return bRet;
 }
 
+bool KernelAssembly::GenerateKernelFilesFromComgrModule(const std::vector<char>& vBinary,
+                                                        const std::string&       strKernelFunction,
+                                                        const std::string&       strKernelHandle,
+                                                        const std::string&       strOutputDir,
+                                                        const std::string&       strDeviceName,
+                                                        const bool&              isGPU)
+{
+    bool ret = false;
+
+#if (defined (_LINUX) || defined (LINUX)) && !defined(SKIP_HSA_BUILD)
+
+    bool assemblyGenerated = false;
+
+    // Current COMGR supports output ISA only
+    if (m_bOutputISA)
+    {
+        if (isGPU && AMDT::ComgrEntryPoints::Instance()->EntryPointsValid())
+        {
+            std::vector<char> assemblyBuffer;
+
+            auto codeObj = AMDT::CodeObj::OpenBuffer(vBinary);
+
+            if (nullptr != codeObj)
+            {
+                std::string options("");
+
+                if (GenerateCodeObjectTargetString(strDeviceName, options))
+                {
+                    assemblyGenerated = codeObj->ExtractAssemblyData(assemblyBuffer, options);
+                }
+            }
+
+            if (assemblyGenerated)
+            {
+                std::string outputFileFullPath = strOutputDir + m_strFilePrefix + strKernelHandle + ".isa";
+
+                std::string assemblyBufferString(assemblyBuffer.begin(), assemblyBuffer.end());
+
+                ret = FileUtils::WriteFile(outputFileFullPath, assemblyBufferString);
+            }
+        }
+    }
+
+#else
+
+    SP_UNREFERENCED_PARAMETER(vBinary);
+    SP_UNREFERENCED_PARAMETER(strKernelFunction);
+    SP_UNREFERENCED_PARAMETER(strKernelHandle);
+    SP_UNREFERENCED_PARAMETER(strOutputDir);
+    SP_UNREFERENCED_PARAMETER(strDeviceName);
+    SP_UNREFERENCED_PARAMETER(isGPU);
+
+#endif
+
+    return ret;
+}
+
+bool KernelAssembly::GenerateCodeObjectTargetString(const std::string& deviceName,
+                                                    std::string&       codeObjectTargetString)
+{
+    codeObjectTargetString = "";
+    std::string arch("amdgcn");
+    std::string vendor("amd");
+    std::string os("amdhsa");
+    // The env should be set empty by default.
+    std::string env("");
+    std::string processor(AMDTDeviceInfoUtils::Instance()->TranslateDeviceName(deviceName.c_str()));
+
+    // TODO: The xnack support is currently not available in COMGR library.
+    // See https://llvm.org/docs/AMDGPUUsage.html#amdgpu-target-feature-table,
+    // for the XNACK support list of hardware.
+    // std::string targetFeatures("");
+    // if ("gfx801" == processor ||
+    //     "gfx810" == processor ||
+    //     "gfx902" == processor)
+    // {
+    //     targetFeatures = "xnack";
+    // }
+    // else
+    // {
+    //     targetFeatures = "no-xnack";
+    // }
+
+    codeObjectTargetString = arch + "-" + vendor + "-" + os + "-" + env + "-" + processor;
+
+    return true;
+}
+
 bool KernelAssembly::GenerateKernelFiles(std::vector<char>& vBinary,
                                          const std::string& strKernelFunction,
                                          const std::string& strKernelHandle,
                                          const std::string& strOutputDir,
+                                         const std::string& strDeviceName,
                                          bool               isGPU)
 {
-    bool kernelFilesGenerated = true;
-
-    ACLModule* pAclModuleHSAIL = nullptr;
-    aclCompiler* pAclCompilerHSAIL = nullptr;
-    ACLModule* pAclModuleAMDIL = nullptr;
-    aclCompiler* pAclCompilerAMDIL = nullptr;
-
-    // attempt to load the HSAIL-based ACL module
-    bool aclLoaded = ACLModuleManager::Instance()->GetACLModule(true, pAclModuleHSAIL, pAclCompilerHSAIL);
-
-    // if the HSAIL ACL module was loaded, then try to use it to extract the kernel files.
-    if (aclLoaded)
+    if (m_bOutputISA || m_bOutputHSAIL || m_bOutputIL)
     {
-        kernelFilesGenerated = GenerateKernelFilesFromACLModule(pAclModuleHSAIL,
-                                                                pAclCompilerHSAIL,
-                                                                vBinary,
-                                                                strKernelFunction,
-                                                                strKernelHandle,
-                                                                strOutputDir,
-                                                                isGPU,
-                                                                true);
-    }
+        bool kernelFilesGenerated = false;
 
-    // if using the HSAIL ACL module failed for one of the following reasons, then try the AMDIL ACL module:
-    //   1) the HSAIL ACL module failed to load (as indicated by "aclLoaded == false")
-    //   2) the HSAIL ACL module failed to extract the kernel files (as indicated by "kernelFilesGenerated == false")
-    if (!aclLoaded || !kernelFilesGenerated)
-    {
-        aclLoaded = ACLModuleManager::Instance()->GetACLModule(false, pAclModuleAMDIL, pAclCompilerAMDIL);
+        ACLModule* pAclModuleHSAIL = nullptr;
+        aclCompiler* pAclCompilerHSAIL = nullptr;
+        ACLModule* pAclModuleAMDIL = nullptr;
+        aclCompiler* pAclCompilerAMDIL = nullptr;
 
+        // attempt to load the HSAIL-based ACL module
+        bool aclLoaded = ACLModuleManager::Instance()->GetACLModule(true, pAclModuleHSAIL, pAclCompilerHSAIL);
+
+        // if the HSAIL ACL module was loaded, then try to use it to extract the kernel files.
         if (aclLoaded)
         {
-            kernelFilesGenerated = GenerateKernelFilesFromACLModule(pAclModuleAMDIL,
-                                                                    pAclCompilerAMDIL,
-                                                                    vBinary,
-                                                                    strKernelFunction,
-                                                                    strKernelHandle,
-                                                                    strOutputDir,
-                                                                    isGPU,
-                                                                    false);
+            kernelFilesGenerated = GenerateKernelFilesFromACLModule(pAclModuleHSAIL,
+                pAclCompilerHSAIL,
+                vBinary,
+                strKernelFunction,
+                strKernelHandle,
+                strOutputDir,
+                isGPU,
+                true);
         }
-    }
 
-    if (!aclLoaded || !kernelFilesGenerated)
-    {
-        Log(logWARNING, "Unable to generate kernel files using ACL Module\n");
+        // if using the HSAIL ACL module failed for one of the following reasons, then try the AMDIL ACL module:
+        //   1) the HSAIL ACL module failed to load (as indicated by "aclLoaded == false")
+        //   2) the HSAIL ACL module failed to extract the kernel files (as indicated by "kernelFilesGenerated == false")
+        if (!aclLoaded || !kernelFilesGenerated)
+        {
+            aclLoaded = ACLModuleManager::Instance()->GetACLModule(false, pAclModuleAMDIL, pAclCompilerAMDIL);
+
+            if (aclLoaded)
+            {
+                kernelFilesGenerated = GenerateKernelFilesFromACLModule(pAclModuleAMDIL,
+                    pAclCompilerAMDIL,
+                    vBinary,
+                    strKernelFunction,
+                    strKernelHandle,
+                    strOutputDir,
+                    isGPU,
+                    false);
+            }
+        }
+
+        if (!aclLoaded || !kernelFilesGenerated)
+        {
+            Log(logWARNING, "Unable to generate kernel files using ACL Module\n");
+
+            // If ACL fails, try COMGR
+            kernelFilesGenerated = GenerateKernelFilesFromComgrModule(vBinary, strKernelFunction, strKernelHandle, strOutputDir, strDeviceName, isGPU);
+
+            if (!kernelFilesGenerated)
+            {
+                Log(logWARNING, "Unable to generate kernel using COMGR Module\n");
+            }
+        }
     }
 
     return true;
@@ -425,7 +531,7 @@ bool KernelAssembly::Generate(const cl_command_queue& commandQueue,
 
     if (bRet)
     {
-        bRet &= GenerateKernelFiles(binary, strKernelFunction, strKernelHandle, strOutputDir, isGPU);
+        bRet &= GenerateKernelFiles(binary, strKernelFunction, strKernelHandle, strOutputDir, strDeviceName, isGPU);
     }
 
     // Output the CL kernel source

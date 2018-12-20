@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include <map>
+#include <utility>
 
 #include <TSingleton.h>
 
@@ -24,6 +25,15 @@ public:
 
     /// Map from symbol handle to symbol name
     std::map<uint64_t, std::string> m_symbolHandleToNameMap;
+
+    /// Map from executable and agent handle to code object handle
+    std::map<std::pair<uint64_t, uint64_t>, uint64_t> m_exeAndAgentHandleToCodeObjHandleMap;
+
+    /// Map from executable and agent handle to loaded code object handle
+    std::map<std::pair<uint64_t, uint64_t>, uint64_t> m_exeAndAgentHandleToLoadedCodeObjHandleMap;
+
+    /// Map from kernel object handle to executable handle
+    std::map<uint64_t, uint64_t> m_kernelObjHandleToExeHandleMap;
 };
 
 #endif // _FINALIZER_INFO_MANAGER_H_

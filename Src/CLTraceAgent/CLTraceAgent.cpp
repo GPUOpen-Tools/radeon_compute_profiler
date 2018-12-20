@@ -158,19 +158,24 @@ clAgent_OnLoad(cl_agent* agent)
     FileUtils::CheckForDebuggerAttach();
 #endif
 
-    std::cout << RCP_PRODUCT_NAME " " << RCP_VERSION_STRING << " is enabled\n";
+    std::string strLogFile = FileUtils::GetDefaultOutputPath() + "cltraceagent.log";
+    LogFileInitialize(strLogFile.c_str());
 
-    cl_int err = agent->GetICDDispatchTable(
-                     agent, &original_dispatch, sizeof(original_dispatch));
+    cl_icd_dispatch_table nextTable;
+    cl_icd_dispatch_table realTable;
+    cl_int status = InitAgent(agent, CL_TRACE_AGENT_DLL, &nextTable, &realTable);
 
-    if (err != CL_SUCCESS)
+    if (CL_SUCCESS != status)
     {
-        return err;
+        return CL_SUCCESS;
     }
 
+    std::cout << RCP_PRODUCT_NAME " " << RCP_VERSION_STRING << " is enabled\n";
+
+    memcpy(&original_dispatch, &nextTable, sizeof(original_dispatch));
     memcpy(&modified_dispatch, &original_dispatch, sizeof(modified_dispatch));
 
-    InitNextCLFunctions(original_dispatch);
+    InitNextCLFunctions(&nextTable, &realTable);
 
     Parameters params;
     FileUtils::GetParametersFromFile(params);
@@ -219,18 +224,9 @@ clAgent_OnLoad(cl_agent* agent)
         CLAPIInfoManager::Instance()->LoadAPIFilterFile(params.m_strAPIFilterFile);
     }
 
-    if (err != CL_SUCCESS)
-    {
-        return err;
-    }
-
-    std::string strLogFile = FileUtils::GetDefaultOutputPath() + "cltraceagent.log";
-    LogFileInitialize(strLogFile.c_str());
-
     CreateAPITraceDispatchTable(modified_dispatch);
 
-    err = agent->SetICDDispatchTable(
-              agent, &modified_dispatch, sizeof(modified_dispatch));
+    status = agent->SetICDDispatchTable(agent, &modified_dispatch, sizeof(modified_dispatch));
 
     // Set Event callback
     cl_agent_callbacks callbacks;

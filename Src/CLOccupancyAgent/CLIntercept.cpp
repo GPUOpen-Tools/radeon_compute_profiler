@@ -381,6 +381,29 @@ CL_OCCUPANCY_API_ENTRY_ReleaseContext(cl_context  context)
 }
 
 cl_int CL_API_CALL
+CL_OCCUPANCY_API_ENTRY_GetPlatformInfo(
+    cl_platform_id    platform,
+    cl_platform_info  param_name,
+    size_t            param_value_size,
+    void*             param_value,
+    size_t*           param_value_size_ret)
+{
+    cl_int ret = g_nextDispatchTable.GetPlatformInfo(
+        platform,
+        param_name,
+        param_value_size,
+        param_value,
+        param_value_size_ret);
+
+    if (CL_SUCCESS == ret)
+    {
+        CLUtils::AddPlatform(platform);
+    }
+
+    return ret;
+}
+
+cl_int CL_API_CALL
 CL_OCCUPANCY_API_ENTRY_GetDeviceIDs(
     cl_platform_id    platform,
     cl_device_type    device_type,
@@ -411,6 +434,11 @@ CL_OCCUPANCY_API_ENTRY_GetDeviceIDs(
                   num_entries,
                   device_list,
                   num_devices);
+    }
+
+    if (CL_SUCCESS == ret)
+    {
+        CLUtils::AddPlatform(platform);
     }
 
     return ret;

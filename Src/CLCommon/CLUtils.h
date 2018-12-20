@@ -101,6 +101,11 @@ typedef std::vector<cl_queue_properties> QueuePropertiesList;
 /// \param[out] vecProperties vector of queue properties that will also include the profiling flag
 /// \return true if the properties already had profiling enabled, false if not
 bool EnableQueueProfiling(const cl_queue_properties* properties, QueuePropertiesList& vecProperties);
+
+/// Utility to let CLUtils know about a CL platform -- this function checks if the specified platform is the default AMD platform
+/// \param[in] platform the OpenCL platform identifier
+void AddPlatform(cl_platform_id platform);
+
 } // CLUtils
 
 // @}

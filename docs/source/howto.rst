@@ -250,7 +250,7 @@ called after the final interval in the application's lifetime might be omitted.
 To limit the number of APIs omitted in this scenario, the Profiler also writes
 all queued-up trace data when the clReleaseContext API is called. However, if
 an application does not call clReleaseContext to clean up any OpenCL contexts
-it has created, or if it calls any OpenCL™ APIs after the final
+it has created, or if it calls any OpenCL APIs after the final
 clReleaseContext call, then the trace might not contain all APIs called. To
 prevent this from happening, it is recommended that clReleaseContext is the
 last OpenCL API called by the application when it is running.

@@ -670,6 +670,11 @@ cl_int CL_API_CALL Mine_clGetPlatformInfo(
                      param_value,
                      param_value_size_ret);
 
+    if (CL_SUCCESS == ret)
+    {
+        CLUtils::AddPlatform(platform);
+    }
+
     return ret;
 }
 
@@ -704,6 +709,11 @@ cl_int CL_API_CALL Mine_clGetDeviceIDs(
                   num_entries,
                   device_list,
                   num_devices);
+    }
+
+    if (CL_SUCCESS == ret)
+    {
+        CLUtils::AddPlatform(platform);
     }
 
     return ret;

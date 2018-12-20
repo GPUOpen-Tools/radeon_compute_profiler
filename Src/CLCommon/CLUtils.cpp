@@ -8,6 +8,9 @@
 #include <CL/opencl.h>
 
 #include <cstdio>
+#include <cstring>
+#include <mutex>
+
 #include "CLUtils.h"
 #include "CLFunctionDefs.h"
 #include "CLInternalFunctionDefs.h"
@@ -15,10 +18,11 @@
 #include "Defs.h"
 #include "Logger.h"
 #include "CLPlatformInfo.h"
-#include <cstring>
 
-using namespace CLUtils;
-using namespace GPULogger;
+#define INVALID_CL_PLATFORM reinterpret_cast<cl_platform_id>(-1)
+
+static cl_platform_id gs_defaultPlatform = INVALID_CL_PLATFORM;
+static std::mutex gs_platformMutex;
 
 cl_int CLUtils::GetDeviceName(cl_device_id device, std::string& strDeviceNameOut)
 {
@@ -286,13 +290,28 @@ bool CLUtils::GetPlatformInfo(CLPlatformSet& platformList)
 
 cl_platform_id CLUtils::GetDefaultPlatform()
 {
-    static cl_platform_id s_defaultPlatform = NULL;
-    static bool s_bPlatformChecked = false;
+    std::lock_guard<std::mutex> lock(gs_platformMutex);
 
-    if (!s_bPlatformChecked)
+    if (INVALID_CL_PLATFORM == gs_defaultPlatform)
     {
-        s_bPlatformChecked = true;
         cl_uint numPlatforms;
+
+        // If we haven't already figured out the default platform (which may have been done in
+        // AddPlatform), then we have to query the OCL runtime for available platforms.
+        //
+        // Calling GetPlatformIDs here may result in two clGetPlatformInfo calls appearing
+        // in an API trace, if GetDefaultPlatform is called by another agent. This is because
+        // the clGetPlatformIDs implementation in opencl.dll/libopencl.so calls clGetPlatformInfo
+        // twice to query the ICD suffix. In the case where GetDefaultPlatform is called by an
+        // agent, it's possible to see these two calls in the api trace.
+        //
+        // To avoid this, CLUtils now has a mechanism whereby OpenCL profiler agents can now
+        // inform it of any OpenCL platforms they encounter (see the AddPlatform function).
+        // This allows CLUtils to keep track of the default (i.e. AMD) platform and always use
+        // that without needing to query available platforms. Because of this, the code here to
+        // query platforms is now really only used when this code is called from somewhere other
+        // than in the context of an agent (for instance when it is called by rcprof.exe while
+        // writing an .atp file).
 
         cl_int status = g_realDispatchTable.GetPlatformIDs(0, NULL, &numPlatforms);
 
@@ -317,7 +336,7 @@ cl_platform_id CLUtils::GetDefaultPlatform()
 
                         if (!strcmp(pbuf, "Advanced Micro Devices, Inc."))
                         {
-                            s_defaultPlatform = pPlatforms[i];
+                            gs_defaultPlatform = pPlatforms[i];
                             break;
                         }
                     }
@@ -328,7 +347,14 @@ cl_platform_id CLUtils::GetDefaultPlatform()
         }
     }
 
-    return s_defaultPlatform;
+    if (INVALID_CL_PLATFORM == gs_defaultPlatform)
+    {
+        return nullptr;
+    }
+    else
+    {
+        return gs_defaultPlatform;
+    }
 }
 
 bool CLUtils::QueryKernelInfo(cl_kernel kernel,
@@ -340,7 +366,7 @@ bool CLUtils::QueryKernelInfo(cl_kernel kernel,
 
     if (nullptr == clExtAMDDispatchTable::Instance()->GetKernelInfoAMD)
     {
-        Log(logERROR, "CLUtils::QueryKernelInfo: GetKernelInfoAMD entry point not initialized\n");
+        GPULogger::Log(GPULogger::logERROR, "CLUtils::QueryKernelInfo: GetKernelInfoAMD entry point not initialized\n");
         bRetVal = false;
     }
     else
@@ -358,7 +384,7 @@ bool CLUtils::QueryKernelInfo(cl_kernel kernel,
         else
         {
             bRetVal = false;
-            Log(logERROR, "CLUtils::QueryKernelInfo: GetKernelInfoAMD(CL_KERNELINFO_SCRATCH_REGS) failed\n");
+            GPULogger::Log(GPULogger::logERROR, "CLUtils::QueryKernelInfo: GetKernelInfoAMD(CL_KERNELINFO_SCRATCH_REGS) failed\n");
         }
 
         status = clExtAMDDispatchTable::Instance()->GetKernelInfoAMD(kernel, device, CL_KERNELINFO_WAVEFRONT_SIZE, sizeof(tmp), &tmp, NULL);
@@ -370,7 +396,7 @@ bool CLUtils::QueryKernelInfo(cl_kernel kernel,
         else
         {
             bRetVal = false;
-            Log(logERROR, "CLUtils::QueryKernelInfo: GetKernelInfoAMD(CL_KERNELINFO_WAVEFRONT_SIZE) failed\n");
+            GPULogger::Log(GPULogger::logERROR, "CLUtils::QueryKernelInfo: GetKernelInfoAMD(CL_KERNELINFO_WAVEFRONT_SIZE) failed\n");
         }
 
         status = clExtAMDDispatchTable::Instance()->GetKernelInfoAMD(kernel, device, CL_KERNELINFO_AVAILABLE_VGPRS, sizeof(tmp), &tmp, NULL);
@@ -382,7 +408,7 @@ bool CLUtils::QueryKernelInfo(cl_kernel kernel,
         else
         {
             bRetVal = false;
-            Log(logERROR, "CLUtils::QueryKernelInfo: GetKernelInfoAMD(CL_KERNELINFO_AVAILABLE_VGPRS) failed\n");
+            GPULogger::Log(GPULogger::logERROR, "CLUtils::QueryKernelInfo: GetKernelInfoAMD(CL_KERNELINFO_AVAILABLE_VGPRS) failed\n");
         }
 
         status = clExtAMDDispatchTable::Instance()->GetKernelInfoAMD(kernel, device, CL_KERNELINFO_USED_VGPRS, sizeof(tmp), &tmp, NULL);
@@ -394,7 +420,7 @@ bool CLUtils::QueryKernelInfo(cl_kernel kernel,
         else
         {
             bRetVal = false;
-            Log(logERROR, "CLUtils::QueryKernelInfo: GetKernelInfoAMD(CL_KERNELINFO_USED_VGPRS) failed\n");
+            GPULogger::Log(GPULogger::logERROR, "CLUtils::QueryKernelInfo: GetKernelInfoAMD(CL_KERNELINFO_USED_VGPRS) failed\n");
         }
 
         status = clExtAMDDispatchTable::Instance()->GetKernelInfoAMD(kernel, device, CL_KERNELINFO_AVAILABLE_SGPRS, sizeof(tmp), &tmp, NULL);
@@ -406,7 +432,7 @@ bool CLUtils::QueryKernelInfo(cl_kernel kernel,
         else
         {
             bRetVal = false;
-            Log(logERROR, "CLUtils::QueryKernelInfo: GetKernelInfoAMD(CL_KERNELINFO_AVAILABLE_SGPRS) failed\n");
+            GPULogger::Log(GPULogger::logERROR, "CLUtils::QueryKernelInfo: GetKernelInfoAMD(CL_KERNELINFO_AVAILABLE_SGPRS) failed\n");
         }
 
         status = clExtAMDDispatchTable::Instance()->GetKernelInfoAMD(kernel, device, CL_KERNELINFO_USED_SGPRS, sizeof(tmp), &tmp, NULL);
@@ -418,7 +444,7 @@ bool CLUtils::QueryKernelInfo(cl_kernel kernel,
         else
         {
             bRetVal = false;
-            Log(logERROR, "CLUtils::QueryKernelInfo: GetKernelInfoAMD(CL_KERNELINFO_USED_SGPRS) failed\n");
+            GPULogger::Log(GPULogger::logERROR, "CLUtils::QueryKernelInfo: GetKernelInfoAMD(CL_KERNELINFO_USED_SGPRS) failed\n");
         }
 
         status = g_realDispatchTable.GetDeviceInfo(device, CL_DEVICE_LOCAL_MEM_SIZE_PER_COMPUTE_UNIT_AMD, sizeof(tmp), &tmp, NULL);
@@ -430,7 +456,7 @@ bool CLUtils::QueryKernelInfo(cl_kernel kernel,
         else
         {
             bRetVal = false;
-            Log(logERROR, "CLUtils::QueryKernelInfo: GetDeviceInfo(CL_DEVICE_LOCAL_MEM_SIZE_PER_COMPUTE_UNIT_AMD) failed\n");
+            GPULogger::Log(GPULogger::logERROR, "CLUtils::QueryKernelInfo: GetDeviceInfo(CL_DEVICE_LOCAL_MEM_SIZE_PER_COMPUTE_UNIT_AMD) failed\n");
         }
 
         // get the used local memory by the kernel
@@ -447,7 +473,7 @@ bool CLUtils::QueryKernelInfo(cl_kernel kernel,
         else
         {
             bRetVal = false;
-            Log(logERROR, "CLUtils::QueryKernelInfo: GetKernelWorkGroupInfo(CL_KERNEL_LOCAL_MEM_SIZE) failed\n");
+            GPULogger::Log(GPULogger::logERROR, "CLUtils::QueryKernelInfo: GetKernelWorkGroupInfo(CL_KERNEL_LOCAL_MEM_SIZE) failed\n");
         }
 
         SP_TODO("Replace clGetKernelWorkGroupInfo with internal extension GetKernelInfoAMD when this extension is fixed")
@@ -498,7 +524,7 @@ bool CLUtils::QueryKernelInfo(cl_kernel kernel,
                             if (asicType != card.m_asicType)
                             {
                                 bRetVal = false;
-                                Log(logERROR, "CLUtils::QueryKernelInfo: GetDeviceInfo failed\n");
+                                GPULogger::Log(GPULogger::logERROR, "CLUtils::QueryKernelInfo: GetDeviceInfo failed\n");
                                 break;
                             }
                         }
@@ -512,20 +538,20 @@ bool CLUtils::QueryKernelInfo(cl_kernel kernel,
                             else
                             {
                                 bRetVal = false;
-                                Log(logERROR, "CLUtils::QueryKernelInfo: GetDeviceInfo failed\n");
+                                GPULogger::Log(GPULogger::logERROR, "CLUtils::QueryKernelInfo: GetDeviceInfo failed\n");
                             }
                         }
                     }
                     else
                     {
                         bRetVal = false;
-                        Log(logERROR, "CLUtils::QueryKernelInfo: GetDeviceInfo failed\n");
+                        GPULogger::Log(GPULogger::logERROR, "CLUtils::QueryKernelInfo: GetDeviceInfo failed\n");
                     }
                 }
                 else
                 {
                     bRetVal = false;
-                    Log(logERROR, "CLUtils::QueryKernelInfo: GetDeviceInfo failed\n");
+                    GPULogger::Log(GPULogger::logERROR, "CLUtils::QueryKernelInfo: GetDeviceInfo failed\n");
                 }
             }
         }
@@ -538,7 +564,7 @@ bool CLUtils::QueryKernelInfo(cl_kernel kernel,
             else
             {
                 bRetVal = false;
-                Log(logERROR, "CLUtils::QueryKernelInfo: GetDeviceInfo failed\n");
+                GPULogger::Log(GPULogger::logERROR, "CLUtils::QueryKernelInfo: GetDeviceInfo failed\n");
             }
         }
     }
@@ -599,3 +625,22 @@ bool CLUtils::EnableQueueProfiling(const cl_queue_properties* properties, QueueP
     return bUserSetProfileFlag;
 }
 
+void CLUtils::AddPlatform(cl_platform_id platform)
+{
+    std::lock_guard<std::mutex> lock(gs_platformMutex);
+
+    if (INVALID_CL_PLATFORM == gs_defaultPlatform)
+    {
+        char pbuf[100] = "";
+        cl_int status = g_realDispatchTable.GetPlatformInfo(platform,
+                                                            CL_PLATFORM_VENDOR,
+                                                            sizeof(pbuf),
+                                                            pbuf,
+                                                            nullptr);
+
+        if (CL_SUCCESS == status && !strcmp(pbuf, "Advanced Micro Devices, Inc."))
+        {
+            gs_defaultPlatform = platform;
+        }
+    }
+}

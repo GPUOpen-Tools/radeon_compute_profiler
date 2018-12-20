@@ -1,5 +1,5 @@
 //==============================================================================
-// Copyright (c) 2015 Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2015-2018 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 /// \brief  This class interfaces with GPA to retrieve PMC and write the output file
@@ -14,7 +14,7 @@
 #include <AMDTOSWrappers/Include/osThread.h>
 
 #include "DeviceInfoUtils.h"
-#include "GPUPerfAPI-HSA.h"
+#include "GPUPerfAPI-ROCm.h"
 
 #include "HSAGPAProfiler.h"
 #include "HSAModule.h"
@@ -96,7 +96,7 @@ bool HSAGPAProfiler::WaitForCompletedSession(uint64_t queueId, uint32_t timeoutS
     bool retVal = true;
 
     // to avoid an infinite loop, bail after spinning for the specified number of seconds
-    static const uint32_t SLEEP_TIME_MILLISECONDS = 10;
+    static const uint32_t SLEEP_TIME_MILLISECONDS = 1;
     uint64_t waitCount = (timeoutSeconds * 1000) / SLEEP_TIME_MILLISECONDS;
     uint64_t safetyNet = 0;
 
@@ -149,7 +149,7 @@ bool HSAGPAProfiler::CheckForCompletedSession(uint64_t queueId)
     bool retVal = false;
     QueueSessionMap::iterator it = m_activeSessionMap.find(queueId);
 
-    if (m_activeSessionMap.end() != it)
+    if (m_activeSessionMap.end() != it && it->second.m_sessionEnded)
     {
         GPA_Status sessionStatus = m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_IsSessionComplete(it->second.m_sessionID));
 
@@ -211,6 +211,12 @@ hsa_status_t HSAGPAProfiler::GetGPUDeviceIDs(hsa_agent_t agent, void* pData)
 
 bool HSAGPAProfiler::Init(const Parameters& params, std::string& strErrorOut)
 {
+#if defined (_LINUX) || defined (LINUX)
+    // Set kernel output flags.
+    m_hsaKernelAssembly.SetOutputIsaFlag(params.m_bOutputISA);
+    m_hsaKernelAssembly.SetOutputHsailFlag(params.m_bOutputHSAIL);
+#endif
+
     if (!m_isProfilerInitialized)
     {
         Log(logMESSAGE, "Initializing HSAGPAProfiler\n");
@@ -267,7 +273,7 @@ bool HSAGPAProfiler::Init(const Parameters& params, std::string& strErrorOut)
         InitHeader();
 
         CounterList enabledCounters;
-        m_gpaUtils.InitGPA(GPA_API_HSA,
+        m_gpaUtils.InitGPA(GPA_API_ROCM,
                            params.m_strDLLPath,
                            strErrorOut,
                            params.m_strCounterFile.empty() ? NULL : params.m_strCounterFile.c_str(),
@@ -416,7 +422,10 @@ void HSAGPAProfiler::SetOutputFile(const std::string& strOutputFile)
     KernelProfileResultManager::Instance()->SetOutputFile(m_strOutputFile);
 }
 
-bool HSAGPAProfiler::PopulateKernelStatsFromDispatchPacket(hsa_kernel_dispatch_packet_t* pAqlPacket, const std::string& strAgentName,  KernelStats& kernelStats)
+bool HSAGPAProfiler::PopulateKernelStatsFromDispatchPacket(const hsa_kernel_dispatch_packet_t* pAqlPacket,
+                                                           const std::string& strAgentName,
+                                                           KernelStats& kernelStats,
+                                                           hsa_agent_t agent)
 {
     bool retVal = true;
 
@@ -493,6 +502,79 @@ bool HSAGPAProfiler::PopulateKernelStatsFromDispatchPacket(hsa_kernel_dispatch_p
                     pKernelCode = reinterpret_cast<const amd_kernel_code_t*>(pKernelHostAddress);
                 }
             }
+
+#if defined (_LINUX) || defined (LINUX)
+            // Extract the disassembly
+            if (nullptr != pHsaModule->ven_amd_loader_loaded_code_object_get_info)
+            {
+                if (pFinalizerInfoMan->m_kernelObjHandleToExeHandleMap.count(pAqlPacket->kernel_object) > 0)
+                {
+                    uint64_t exeHandle = pFinalizerInfoMan->m_kernelObjHandleToExeHandleMap[pAqlPacket->kernel_object];
+                    auto exeAndAgentHandle = std::make_pair(exeHandle, agent.handle);
+
+                    if (pFinalizerInfoMan->m_exeAndAgentHandleToLoadedCodeObjHandleMap.count(exeAndAgentHandle) > 0)
+                    {
+                        hsa_loaded_code_object_t loadedCodeObject;
+
+                        loadedCodeObject.handle = pFinalizerInfoMan->m_exeAndAgentHandleToLoadedCodeObjHandleMap[exeAndAgentHandle];
+
+                        uint64_t loadedCodeObjectSize = 0;
+                        uint64_t loadedCodeObjectAddress = 0;
+
+                        if (HSA_STATUS_SUCCESS == pHsaModule->ven_amd_loader_loaded_code_object_get_info(loadedCodeObject, HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_CODE_OBJECT_STORAGE_MEMORY_SIZE, &loadedCodeObjectSize))
+                        {
+                            if (HSA_STATUS_SUCCESS == pHsaModule->ven_amd_loader_loaded_code_object_get_info(loadedCodeObject, HSA_VEN_AMD_LOADER_LOADED_CODE_OBJECT_INFO_CODE_OBJECT_STORAGE_MEMORY_BASE, &loadedCodeObjectAddress))
+                            {
+                                char* buffer = reinterpret_cast<char*>(loadedCodeObjectAddress);
+                                std::vector<char> codeObjectBinary(buffer, buffer + loadedCodeObjectSize);
+
+                                char deviceNameBuffer[64] = {0};
+                                uint32_t deviceId = 0;
+
+                                if (HSA_STATUS_SUCCESS == pHsaModule->agent_get_info(agent, HSA_AGENT_INFO_NAME, deviceNameBuffer))
+                                {
+                                    if(HSA_STATUS_SUCCESS == pHsaModule->agent_get_info(agent, static_cast<hsa_agent_info_t>(HSA_AMD_AGENT_INFO_CHIP_ID), &deviceId))
+                                    {
+                                        std::string deviceName(deviceNameBuffer);
+                                        std::string outputDir("");
+                                        bool isGPU = false;
+                                        uint32_t deviceType = 0;
+
+                                        if (HSA_STATUS_SUCCESS == pHsaModule->agent_get_info(agent, HSA_AGENT_INFO_DEVICE, &deviceType))
+                                        {
+                                            isGPU = (HSA_DEVICE_TYPE_GPU == deviceType);
+                                        }
+
+                                        if (FileUtils::GetWorkingDirectory(m_strOutputFile, outputDir))
+                                        {
+                                            m_hsaKernelAssembly.Generate(codeObjectBinary, deviceName, symName, strAgentName, outputDir, isGPU);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Log(logERROR, "Unable to get device ID.\n");
+                                    }
+                                }
+                                else
+                                {
+                                    Log(logERROR, "Unable to get device name.\n");
+                                }
+                            }
+                            else
+                            {
+                                Log(logERROR, "Unable to extract code object address info.\n");
+                            }
+                        }
+                        else
+                        {
+                            Log(logERROR, "Unable to extract code object size info.\n");
+                        }
+                    }
+                }
+            }
+#else
+            SP_UNREFERENCED_PARAMETER(agent);
+#endif
         }
 
         if (nullptr == pKernelCode)
@@ -530,17 +612,21 @@ bool HSAGPAProfiler::PopulateKernelStatsFromDispatchPacket(hsa_kernel_dispatch_p
     return retVal;
 }
 
-bool HSAGPAProfiler::Begin(const hsa_agent_t             device,
-                           const hsa_queue_t*            pQueue,
-                           hsa_kernel_dispatch_packet_t* pAqlPacket,
-                           void*                         pAqlTranslationHandle)
+bool HSAGPAProfiler::Begin(const rocprofiler_callback_data_t* pRocProfilerData)
 {
+    SpAssertRet(NULL != pRocProfilerData) false;
+
+    const hsa_agent_t agent = pRocProfilerData->agent;
+    const hsa_queue_t* pQueue = pRocProfilerData->queue;
+    const hsa_kernel_dispatch_packet_t* pAqlPacket = pRocProfilerData->packet;
+
     SpAssertRet(NULL != pQueue) false;
+    SpAssertRet(NULL != pAqlPacket) false;
 
     bool retVal = true;
 
-    char agentName[64];
-    hsa_status_t status = g_pRealCoreFunctions->hsa_agent_get_info_fn(device, HSA_AGENT_INFO_NAME, agentName);
+    char agentName[64] = {0};
+    hsa_status_t status = g_pRealCoreFunctions->hsa_agent_get_info_fn(agent, HSA_AGENT_INFO_NAME, agentName);
 
     std::string strAgentName = "<UnknownDeviceName>";
 
@@ -550,9 +636,9 @@ bool HSAGPAProfiler::Begin(const hsa_agent_t             device,
     }
 
     KernelStats kernelStats;
-    PopulateKernelStatsFromDispatchPacket(pAqlPacket, strAgentName, kernelStats);
+    PopulateKernelStatsFromDispatchPacket(pAqlPacket, strAgentName, kernelStats, agent);
 
-    if (IsGPUDevice(device))
+    if (IsGPUDevice(agent))
     {
         if (!m_gpaUtils.IsInitialized())
         {
@@ -569,14 +655,13 @@ bool HSAGPAProfiler::Begin(const hsa_agent_t             device,
         SpAssertRet(pQueue != NULL) false;
 
         //TODO: If we ever want to support opening more than one context at a
-        //      time, we will need to create GPA_HSA_Context intances on the
+        //      time, we will need to create GPA_ROCm_Context intances on the
         //      heap and manage their lifetime. Using a local can cause
         //      GPA_OpenContext to think that we are opening the same context
         //      more than once, and it will throw an error
-        GPA_HSA_Context gpaContext;
-        gpaContext.m_pAgent = &device;
+        GPA_ROCm_Context gpaContext;
+        gpaContext.m_pAgent = &agent;
         gpaContext.m_pQueue = pQueue;
-        gpaContext.m_pAqlTranslationHandle = pAqlTranslationHandle;
         bool bRet = m_gpaUtils.Open(&gpaContext);
         SpAssertRet(bRet) false;
         GPA_SessionId currentSessionId = nullptr;
@@ -599,12 +684,12 @@ bool HSAGPAProfiler::Begin(const hsa_agent_t             device,
 
         if (retVal)
         {
-            SessionInfo sessionInfo = { currentSessionId, kernelStats, strAgentName };
+            SessionInfo sessionInfo = { currentSessionId, kernelStats, strAgentName, false };
             m_activeSessionMap[pQueue->id] = sessionInfo;
 
             if (GlobalSettings::GetInstance()->m_params.m_bKernelOccupancy)
             {
-                if (!AddOccupancyEntry(kernelStats, strAgentName, device))
+                if (!AddOccupancyEntry(kernelStats, strAgentName, agent))
                 {
                     Log(logERROR, "Unable to add Occupancy data\n");
                 }
@@ -615,33 +700,34 @@ bool HSAGPAProfiler::Begin(const hsa_agent_t             device,
     return retVal;
 }
 
-bool HSAGPAProfiler::End(const hsa_agent_t  device,
-                         const hsa_queue_t* pQueue,
-                         void*              pAqlTranslationHandle,
-                         hsa_signal_t       signal)
+bool HSAGPAProfiler::End()
 {
-    SP_UNREFERENCED_PARAMETER(device);
-    SP_UNREFERENCED_PARAMETER(pQueue);
-    SP_UNREFERENCED_PARAMETER(pAqlTranslationHandle);
-    SP_UNREFERENCED_PARAMETER(signal);
-
     bool retVal = true;
 
-    if (IsGPUDevice(device))
+    if (!m_gpaUtils.IsInitialized())
     {
-        if (!m_gpaUtils.IsInitialized())
-        {
-            return false;
-        }
+        retVal = false;
+    }
 
+    if (retVal)
+    {
         int stat = m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_EndSample(m_commandListId));
         stat += m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_EndCommandList(m_commandListId));
 
-        QueueSessionMap::iterator it = m_activeSessionMap.find(pQueue->id);
+        //TODO: confirm that there will only be a single active session
+        //      or reinstate the code that looks up a session by the queue here
+        assert(1 == m_activeSessionMap.size());
+        QueueSessionMap::iterator it = m_activeSessionMap.begin();
 
         if (m_activeSessionMap.end() != it)
         {
             stat += m_gpaUtils.StatusCheck(m_gpaUtils.GetGPAFuncTable()->GPA_EndSession(it->second.m_sessionID));
+
+            if (GPA_STATUS_OK == stat)
+            {
+                it->second.m_sessionEnded = true;
+            }
+
             m_commandListId = nullptr;
         }
         else

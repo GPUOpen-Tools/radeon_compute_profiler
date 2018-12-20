@@ -21,6 +21,7 @@ LIB_OBJS =  \
 	./$(OBJ_DIR)/HSAFunctionDefsUtils.o \
 	./$(OBJ_DIR)/HSAModule.o \
 	./$(OBJ_DIR)/HSAToolsRTModule.o \
+	./$(OBJ_DIR)/ROCProfilerModule.o \
 	./$(OBJ_DIR)/HSAAgentUtils.o \
 	./$(OBJ_DIR)/HSAAgentIterateReplacer.o \
 	./$(OBJ_DIR)/HSAKernelDemangler.o \

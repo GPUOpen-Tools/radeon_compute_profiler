@@ -69,17 +69,45 @@ extern CLExtensionFunctionTable g_realExtensionFunctionTable;
 
 /// Initializes the g_nextDispatchTable table with the dispatch table read by an agent in
 /// clAgent_OnLoad via GetICDDispatchTable
-/// \param table the dispatch table read by an agent before replacing the table items with its own detoured functions.
-void InitNextCLFunctions(cl_icd_dispatch_table& table);
+/// \param pNextTable the dispatch table read by an agent before replacing the table items with its own detoured functions.
+/// \param pRealTable the dispatch table of real function pointers from the OpenCL runtime.
+void InitNextCLFunctions(cl_icd_dispatch_table* pNextTable, cl_icd_dispatch_table* pRealTable = nullptr);
 
 /// Initializes the g_realDispatchTable with entry points read from the amdocl library.
-void InitRealCLFunctions();
+/// \param table the dispatch table read by an agent before replacing the table items with its own detoured functions.
+void InitRealCLFunctions(cl_icd_dispatch_table* pTable = nullptr);
 
 /// Attempts to initialize an item in the g_realExtensionFunctionTable table
 /// \param pFuncName the name of the extension function being initialized
 /// \param pFuncPtr the address of the real extension function pointer
 /// \return the CL_FUNC_TYPE of the function detoured, or CL_FUNC_TYPE_Unknown if it is not a detoured function
 CL_FUNC_TYPE InitExtensionFunction(const char* pFuncName, void* pFuncPtr);
+
+/// Serializes the specified dispatch table to a temp file
+/// \param pTable the icd table to serialize
+/// \return true if successful
+bool WriteDispatchTableToFile(cl_icd_dispatch_table* pTable);
+
+/// Reads a serialized dispatch table from a temp file
+/// \param pTable the icd table to populate from the file
+/// \return true if successful
+bool ReadDispatchTableFromFile(cl_icd_dispatch_table* pTable);
+
+/// Helper function to initialize dispatch tables for OpenCL agents
+/// \param pAgent the OpenCL agent
+/// \param pAgentName the filename of the agent library
+/// \param pICDDispatchTable the table which will hold the dispatch table from the agent interface
+/// \param pRealDispatchTable the table which will hold the real function pointers from the runtime
+/// \return CL_SUCCESS on success, other error code on failure
+cl_int InitAgent(cl_agent* pAgent,
+                 const char* pAgentName,
+                 cl_icd_dispatch_table* pICDDispatchTable,
+                 cl_icd_dispatch_table* pRealDispatchTable);
+
+/// Helper function to determine if the specified agent file name is the first agent in the CL_AGENT env variable
+/// \param thisModuleName the filename of the agent library to check
+/// \return true if this is the first agent specified in the CL_AGENT env variable
+bool IsFirstAgent(const std::string& thisModuleName);
 
 // *INDENT-OFF*
 #ifdef CL_UNITTEST_MOCK

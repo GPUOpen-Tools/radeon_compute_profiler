@@ -10,6 +10,16 @@
 
 #include <ostream>
 #include "hsa.h"
+#include "rocprofiler.h"
+
+/// ROCProfiler callback context struct
+struct ContextEntry
+{
+    bool m_isValid;                     ///< if the current entry is valid
+    hsa_agent_t m_agent;                ///< agent handle
+    rocprofiler_group_t m_group;        ///< rocprofiler group handle
+    rocprofiler_callback_data_t m_data; ///< rocprofiler callback data handle
+};
 
 /// HSAAqlPacketBase base class
 class HSAAqlPacketBase
@@ -67,6 +77,9 @@ public:
     /// Get the start timestamp of the dispatch kernel AQL packet
     /// \return endtimestamp of the dispatch kernel AQL packet
     uint64_t GetEndTimestamp();
+
+    bool              m_isRocProfilerPacket;  ///< if this packet is a rocprofiler packet
+    ContextEntry*     m_pContextEntry;        ///< pointer to the current callback context entry struct
 
 private:
     uint64_t                     m_start;  ///< start time of packet

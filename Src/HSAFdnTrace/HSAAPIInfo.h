@@ -93,8 +93,11 @@ public:
         unsigned int sizeArgPos = 0;
         bool doesAPIHaveSizeArg = false;
 
-        unsigned int multiplySizeArgPos = 0;
-        bool doesAPIHaveMultiplySizeArg = false;
+        size_t sizeToMultiply = 0;
+        bool doesAPINeedToMultiplySize = false;
+
+        unsigned int rectangleArgPos = 0;
+        bool doesAPIHaveRectangleArg = false;
 
         if (HSA_API_Type_UNKNOWN == m_apiID)
         {
@@ -118,41 +121,77 @@ public:
             doesAPIHaveSizeArg = true;
             sizeArgPos = 4;
         }
+        else if (m_apiID == HSA_API_Type_hsa_amd_memory_async_copy_rect)
+        {
+            doesAPIHaveRectangleArg = true;
+            rectangleArgPos = 4;
+        }
         else if (m_apiID == HSA_API_Type_hsa_amd_memory_fill)
         {
             doesAPIHaveSizeArg = true;
             sizeArgPos = 2;
-            doesAPIHaveMultiplySizeArg = true;
-            multiplySizeArgPos = 1;
+            doesAPINeedToMultiplySize = true;
+            sizeToMultiply = sizeof(uint32_t);
         }
 
-        if (doesAPIHaveSizeArg)
+        if (doesAPIHaveSizeArg || doesAPIHaveRectangleArg)
         {
             std::vector<std::string> args;
             m_argList = StringUtils::ReplaceHTMLSymbolsToASCIISymbols(m_argList);
             StringUtils::Split(args, m_argList, ATP_TRACE_ENTRY_ARG_SEPARATOR);
             RemoveParamNameFromArgList(args);
 
-            if (sizeArgPos < args.size())
+            if (doesAPIHaveSizeArg)
             {
-                std::istringstream ss(args[sizeArgPos]);
-                ss >> m_size;
-            }
-
-            if (doesAPIHaveMultiplySizeArg)
-            {
-                if (multiplySizeArgPos < args.size())
+                if (sizeArgPos < args.size())
                 {
-                    size_t multiplyArg = 0;
-                    std::istringstream ss(args[multiplySizeArgPos]);
-                    ss >> multiplyArg;
-                    m_size *= multiplyArg;
+                    std::istringstream ss(args[sizeArgPos]);
+                    ss >> m_size;
+
+                    if (doesAPINeedToMultiplySize)
+                    {
+                        m_size *= sizeToMultiply;
+                    }
+                }
+            }
+            else if (doesAPIHaveRectangleArg)
+            {
+                if (rectangleArgPos < args.size())
+                {
+                    std::string dimString = args[rectangleArgPos];
+                    size_t openBracketPos = dimString.find("{");
+                    size_t closeBracketPos = dimString.find("}");
+
+                    if (0 == openBracketPos && dimString.size() - 1 == closeBracketPos)
+                    {
+                        dimString = dimString.substr(openBracketPos + 1, dimString.size() - 2);
+                    }
+
+                    std::vector<std::string> rectDims;
+                    StringUtils::Split(rectDims, dimString, ATP_TRACE_STRUCT_ARG_SEPARATOR);
+
+                    if (0 == rectDims.size())
+                    {
+                        m_size = 0;
+                    }
+                    else
+                    {
+                        m_size = 1;
+
+                        for (auto it = rectDims.begin(); it != rectDims.end(); ++it)
+                        {
+                            size_t dim = 0;
+                            std::istringstream ss(*it);
+                            ss >> dim;
+                            m_size *= dim;
+                        }
+                    }
                 }
             }
         }
     }
 
-    size_t m_size;                ///< size of memory operation
+    size_t m_size; ///< size of memory operation
 };
 
 //------------------------------------------------------------------------------------
@@ -197,6 +236,43 @@ public:
     std::string m_strDstAgent;       ///< Destination agent of mem transfer
 };
 
+//------------------------------------------------------------------------------------
+/// HSAMemoryTransferAPIInfo descendant for data transfer memory rect APIs
+//------------------------------------------------------------------------------------
+class HSAMemoryTransferRectAPIInfo : public HSAMemoryTransferAPIInfo
+{
+public:
+    /// Parse the argument list
+    virtual void ParseArgList() override
+    {
+        HSAMemoryAPIInfo::ParseArgList();
+
+        std::vector<std::string> args;
+        StringUtils::Split(args, m_argList, ATP_TRACE_ENTRY_ARG_SEPARATOR);
+        RemoveParamNameFromArgList(args);
+
+        if (7 < args.size())
+        {
+            bool agentIsSrc = args[6] != "hsaHostToDevice";
+
+            if (agentIsSrc)
+            {
+                m_strSrcAgent = args[5];
+                m_strDstAgent = "{handle=Unknown,name=Host}"; // TODO: try to figure out the real Host device
+            }
+            else
+            {
+                m_strDstAgent = args[5];
+                m_strSrcAgent = "{handle=Unknown,name=Host}";; // TODO: try to figure out the real Host device
+            }
+        }
+        else
+        {
+            m_strSrcAgent = "Unknown_Agent";
+            m_strDstAgent = "Unknown_Agent";
+        }
+    }
+};
 //------------------------------------------------------------------------------------
 /// HSA Dispatch API info
 //------------------------------------------------------------------------------------

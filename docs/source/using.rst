@@ -9,12 +9,12 @@ The Radeon Compute Profiler provides two main modes of operation
 Application Trace Mode
 ~~~~~~~~~~~~~~~~~~~~~~
 
-This mode provides a high-level overview of an OpenCL™ or ROCm/HSA application.
+This mode provides a high-level overview of an OpenCL or ROCm/HSA application.
 It collects the following data:
 
-#. An API Trace, showing all OpenCL™ of HSA APIs called by the application,
+#. An API Trace, showing all OpenCL of HSA APIs called by the application,
    including their arguments and return values.
-#. A timeline showing the call sequence and duration of all OpenCL™ or HSA APIs
+#. A timeline showing the call sequence and duration of all OpenCL or HSA APIs
    called by the host as well as inter-device data transfers and kernels
    executing on a device.
 #. A set of Summary Pages, providing a set of statistics for the application, as
@@ -25,7 +25,7 @@ Performance Counter Mode
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 This mode collects the following data from the AMD Radeon GPU or APU for each
-kernel dispatched to the device by either an OpenCL™ or ROCm/HSA application:
+kernel dispatched to the device by either an OpenCL or ROCm/HSA application:
 
 #. Hardware performance counters.
 #. Statistics from the compiler for each kernel dispatched.
@@ -34,11 +34,11 @@ The performance counters and statistics can be used to discover bottlenecks in a
 particular kernel.
 
 This mode also can also extract the kernel source code, the generated IL code,
-and the compiled ISA code for an OpenCL™ kernel dispatched to a GPU.
+and the compiled ISA code for an OpenCL kernel dispatched to a GPU.
 
 Additional Data
 ~~~~~~~~~~~~~~~
-For OpenCL™ programs, both profiling modes can also generate Kernel Occupancy
+For OpenCL programs, both profiling modes can also generate Kernel Occupancy
 information for each kernel dispatched to a GPU. For HSA applications Kernel
 Occupancy information is only available in Performance Counter mode.
 See :ref:`kernel-occupancy` for more information.

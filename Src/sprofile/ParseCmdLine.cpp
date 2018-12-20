@@ -281,6 +281,23 @@ bool ParseCmdLine(int argc, wchar_t* argv[], Config& configOut)
             std::wstring valueStr;
             valueStr = unicodeOptionsMap["counterfile"];
             boost::split(configOut.counterFileList, valueStr, boost::is_any_of(","));
+
+            char counterFileFullPath[SP_MAX_PATH];
+
+            for (auto& counterFilePath : configOut.counterFileList)
+            {
+#ifdef _WIN32
+                if (nullptr != _fullpath(counterFileFullPath, counterFilePath.c_str(), SP_MAX_PATH))
+#else
+                if (nullptr != realpath(counterFilePath.c_str(), counterFileFullPath))
+#endif
+                {
+                    if (!counterFilePath.empty())
+                    {
+                        counterFilePath = std::string(counterFileFullPath);
+                    }
+                }
+            }
         }
 
         // get the kernel file
@@ -870,10 +887,21 @@ bool ParseCmdLine(int argc, wchar_t* argv[], Config& configOut)
 
         if (unicodeOptionsMap.count("showdoc") > 0)
         {
-            std::string docPath = FileUtils::GetExePath();
-            docPath = docPath.substr(0, docPath.find_last_of("/\\")) + "/docs/index.html";
+            std::string exePath = FileUtils::GetExePath();
+            std::string docPathRcp = exePath.substr(0, exePath.find_last_of("/\\")) + "/docs/index.html";
+            std::string docPathCodexl = exePath + "/RCPDocs/index.html";
+            std::string docPath("");
 
-            if (FileUtils::FileExist(docPath))
+            if (FileUtils::FileExist(docPathRcp))
+            {
+                docPath = docPathRcp;
+            }
+            else if (FileUtils::FileExist(docPathCodexl))
+            {
+                docPath = docPathCodexl;
+            }
+
+            if (!docPath.empty())
             {
                 bool docLaunchStatus = true;
 #ifdef _WIN32
@@ -902,7 +930,7 @@ bool ParseCmdLine(int argc, wchar_t* argv[], Config& configOut)
             }
             else
             {
-                std::cout << "Documentation not found in " << docPath << "." << std::endl;
+                std::cout << "Documentation not found in " << docPathRcp << " or " << docPathCodexl << "." << std::endl;
             }
 
             return false;
@@ -1248,7 +1276,7 @@ void PrintCounters(const std::string& strOutputFile, const bool shouldIncludeCou
             {
                 string strGenerationName;
 
-                if (GetGenerationName(hwGen, strGenerationName))
+                if (0 < counterList.size() && GetGenerationName(hwGen, strGenerationName))
                 {
                     PrintCounters(counterList, strGenerationName, GetCounterListOutputFileName(strOutputFile, "OpenCL", strGenerationName), shouldIncludeCounterDescriptions);
                 }
@@ -1258,7 +1286,7 @@ void PrintCounters(const std::string& strOutputFile, const bool shouldIncludeCou
         gpaUtils.Unload();
     }
 
-    gpaInit = gpaUtils.InitGPA(GPA_API_HSA,
+    gpaInit = gpaUtils.InitGPA(GPA_API_ROCM,
                                strDirPath,
                                strErrorOut,
                                nullptr,
@@ -1271,7 +1299,7 @@ void PrintCounters(const std::string& strOutputFile, const bool shouldIncludeCou
             cout << "HSA performance counters:\n";
         }
 
-        for (int gen = GPA_HW_GENERATION_SEAISLAND; gen < GPA_HW_GENERATION__LAST; gen++)
+        for (int gen = GPA_HW_GENERATION_VOLCANICISLAND; gen < GPA_HW_GENERATION__LAST; gen++)
         {
             GPA_Hw_Generation hwGen = static_cast<GPA_Hw_Generation>(gen);
 
@@ -1279,7 +1307,7 @@ void PrintCounters(const std::string& strOutputFile, const bool shouldIncludeCou
             {
                 string strGenerationName;
 
-                if (GetGenerationName(hwGen, strGenerationName))
+                if (0 < counterList.size() && GetGenerationName(hwGen, strGenerationName))
                 {
                     PrintCounters(counterList, strGenerationName, GetCounterListOutputFileName(strOutputFile, "HSA", strGenerationName), shouldIncludeCounterDescriptions);
                 }
@@ -1326,9 +1354,9 @@ void PrintCountersForDevices(const std::string& strOutputFile, const bool should
     }
 
     deviceInfoList.clear();
-    deviceInfoList = GetDeviceInfoList(GPA_API_HSA);
+    deviceInfoList = GetDeviceInfoList(GPA_API_ROCM);
 
-    gpaInit = gpaUtils.InitGPA(GPA_API_HSA,
+    gpaInit = gpaUtils.InitGPA(GPA_API_ROCM,
                                strDirPath,
                                strErrorOut,
                                nullptr,
@@ -1391,7 +1419,7 @@ void PrintNumberOfPass(const std::string counterFile, const bool& gpuTimePMCEnab
     //HSA
 
     std::vector<CounterPassInfo> counterPassInfiListForHSA;
-    counterPassInfiListForHSA = GetNumberOfPassForAPI(GPA_API_HSA, counterList);
+    counterPassInfiListForHSA = GetNumberOfPassForAPI(GPA_API_ROCM, counterList);
 
     for (std::vector<CounterPassInfo>::iterator i = counterPassInfiListForHSA.begin(); i != counterPassInfiListForHSA.end(); ++i)
     {
@@ -1834,7 +1862,7 @@ std::vector<DeviceInfo> GetDeviceInfoList(GPA_API_Type apiType)
 
 #ifndef SKIP_HSA_BUILD
 
-    if (apiType == GPA_API_HSA)
+    if (apiType == GPA_API_ROCM)
     {
         HSADeviceIdList hsaDeviceList;
 
@@ -1919,7 +1947,7 @@ std::vector<CounterPassInfo> GetNumberOfPassFromGPUPerfAPI(GPA_API_Type apiType,
                         computeCounterList.push_back(ppCounterAccessor->GetCounterName(j));
                     }
 
-                    if (GPA_API_HSA == apiType && forceSinglePassForHSA)
+                    if (GPA_API_ROCM == apiType && forceSinglePassForHSA)
                     {
                         considerNumberOfPassToBeOne = true;
                     }
@@ -2029,7 +2057,7 @@ void ListCounterToFileForMaxPass(CounterList counterList, std::string counterOut
 
 #if defined (_LINUX) || defined (LINUX)
     // HSA
-    apiType = GPA_API_HSA;
+    apiType = GPA_API_ROCM;
     apiTypeString = "HSA";
 
     CounterToFileForMaxPassLambda();

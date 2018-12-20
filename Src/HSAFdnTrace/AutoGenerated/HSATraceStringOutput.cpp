@@ -6,13 +6,14 @@
 //==============================================================================
 
 
+#include "../../Common/ProfilerOutputFileDefs.h"
 #include "../HSATraceStringUtils.h"
 #include "HSAAgentUtils.h"
 #include "HSATraceStringOutput.h"
 
 namespace HSATraceStringUtils
 {
-    static const char* s_pFieldSeparator = ","; ///< separator between fields in a structure
+    static const char* s_pFieldSeparator = ATP_TRACE_STRUCT_ARG_SEPARATOR; ///< separator between fields in a structure
 }
 
 std::string HSATraceStringUtils::Get_hsa_status_t_String(hsa_status_t input)
@@ -231,6 +232,7 @@ std::string HSATraceStringUtils::Get_hsa_system_info_t_String(hsa_system_info_t 
             CASE(HSA_SYSTEM_INFO_ENDIANNESS);
             CASE(HSA_SYSTEM_INFO_MACHINE_MODEL);
             CASE(HSA_SYSTEM_INFO_EXTENSIONS);
+            CASE(HSA_AMD_SYSTEM_INFO_BUILD_VERSION);
 
         default:
             ss << input;
@@ -2723,6 +2725,60 @@ std::string HSATraceStringUtils::Get_hsa_amd_memory_pool_info_t_Ptr_String(const
     }
 }
 
+std::string HSATraceStringUtils::Get_hsa_pitched_ptr_t_String(hsa_pitched_ptr_t input)
+{
+    std::ostringstream ss;
+
+    ss << StringUtils::ToString(input.base) << s_pFieldSeparator;
+    ss << StringUtils::ToString(input.pitch) << s_pFieldSeparator;
+    ss << StringUtils::ToString(input.slice);
+
+    return SurroundWithStruct(ss.str());
+}
+
+std::string HSATraceStringUtils::Get_hsa_pitched_ptr_t_Ptr_String(const hsa_pitched_ptr_t* pInputPtr, hsa_pitched_ptr_t input)
+{
+    if (nullptr == pInputPtr)
+    {
+        return "NULL";
+    }
+    else
+    {
+        return SurroundWithDeRef(Get_hsa_pitched_ptr_t_String(input));
+    }
+}
+
+std::string HSATraceStringUtils::Get_hsa_amd_copy_direction_t_String(hsa_amd_copy_direction_t input)
+{
+    std::ostringstream ss;
+
+    switch (static_cast<int>(input))
+    {
+            CASE(hsaHostToHost);
+            CASE(hsaHostToDevice);
+            CASE(hsaDeviceToHost);
+            CASE(hsaDeviceToDevice);
+
+        default:
+            ss << input;
+            break;
+    }
+
+    return ss.str();
+}
+
+std::string HSATraceStringUtils::Get_hsa_amd_copy_direction_t_Ptr_String(const hsa_amd_copy_direction_t* pInputPtr, hsa_amd_copy_direction_t input)
+{
+    if (nullptr == pInputPtr)
+    {
+        return "NULL";
+    }
+    else
+    {
+        return SurroundWithDeRef(Get_hsa_amd_copy_direction_t_String(input));
+    }
+}
+
 std::string HSATraceStringUtils::Get_hsa_amd_memory_pool_access_t_String(hsa_amd_memory_pool_access_t input)
 {
     std::ostringstream ss;
@@ -2763,6 +2819,7 @@ std::string HSATraceStringUtils::Get_hsa_amd_link_info_type_t_String(hsa_amd_lin
             CASE(HSA_AMD_LINK_INFO_TYPE_QPI);
             CASE(HSA_AMD_LINK_INFO_TYPE_PCIE);
             CASE(HSA_AMD_LINK_INFO_TYPE_INFINBAND);
+            CASE(HSA_AMD_LINK_INFO_TYPE_XGMI);
 
         default:
             ss << input;
@@ -3002,7 +3059,9 @@ std::string HSATraceStringUtils::Get_hsa_amd_event_t_String(hsa_amd_event_t inpu
     std::ostringstream ss;
 
     ss << HSATraceStringUtils::Get_hsa_amd_event_type_t_String(input.event_type) << s_pFieldSeparator;
-    ss << HSATraceStringUtils::Get_hsa_amd_gpu_memory_fault_info_t_String(input.memory_fault) << s_pFieldSeparator;
+    ss << "{ " ;
+    ss << HSATraceStringUtils::Get_hsa_amd_gpu_memory_fault_info_t_String(input.memory_fault);
+    ss << " }";
 
     return SurroundWithStruct(ss.str());
 }
@@ -3406,6 +3465,34 @@ std::string HSATraceStringUtils::Get_hsa_ext_amd_aql_pm4_packet_t_Ptr_String(con
     }
 }
 
+std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_info_data_t_String(hsa_ven_amd_aqlprofile_info_data_t input)
+{
+    std::ostringstream ss;
+
+    ss << StringUtils::ToString(input.sample_id) << s_pFieldSeparator;
+    ss << "{ " ;
+    ss << "{ " ;
+    ss << HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_event_t_String(input.pmc_data.event) << s_pFieldSeparator;
+    ss << StringUtils::ToString(input.pmc_data.result);
+    ss << " }";
+    ss << HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_descriptor_t_String(input.sqtt_data);
+    ss << " }";
+
+    return SurroundWithStruct(ss.str());
+}
+
+std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_info_data_t_Ptr_String(const hsa_ven_amd_aqlprofile_info_data_t* pInputPtr, hsa_ven_amd_aqlprofile_info_data_t input)
+{
+    if (nullptr == pInputPtr)
+    {
+        return "NULL";
+    }
+    else
+    {
+        return SurroundWithDeRef(Get_hsa_ven_amd_aqlprofile_info_data_t_String(input));
+    }
+}
+
 std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_id_query_t_String(hsa_ven_amd_aqlprofile_id_query_t input)
 {
     std::ostringstream ss;
@@ -3441,6 +3528,7 @@ std::string HSATraceStringUtils::Get_hsa_ven_amd_aqlprofile_info_type_t_String(h
             CASE(HSA_VEN_AMD_AQLPROFILE_INFO_SQTT_DATA);
             CASE(HSA_VEN_AMD_AQLPROFILE_INFO_BLOCK_COUNTERS);
             CASE(HSA_VEN_AMD_AQLPROFILE_INFO_BLOCK_ID);
+            CASE(HSA_VEN_AMD_AQLPROFILE_INFO_ENABLE_CMD);
 
         default:
             ss << input;

@@ -1,5 +1,5 @@
 //==============================================================================
-// Copyright (c) 2015 Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2015-2018 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 /// \brief Some common definitions.
@@ -233,21 +233,34 @@ struct MemberCmp
     }
 };
 
+/// Structure for analyze options
 struct AnalyzeOps
 {
-    std::string strAtpFile;             ///< Input Atp file
-    std::string strCsvFile;             ///< Input csv file
-    bool bContextSummary;               ///< Indicating whether we generate summary page for context
-    bool bTop10KernelSummary;           ///< Indicating whether we generate summary page for top 10 kernel
-    bool bTop10DataTransferSummary;     ///< Indicating whether we generate summary page for top 10 data transfer
-    bool bAPISummary;                   ///< Indicating whether we generate summary page for API
-    bool bKernelSummary;                ///< Indicating whether we generate summary page for kernel summary
-    bool bBestPractices;                ///< Indicating whether we generate best practices page
-    AnalyzerMap analyzerMap;            ///< Analyzer map
+    std::string strAtpFile;         ///< Input Atp file
+    std::string strCsvFile;         ///< Input csv file
+    bool bContextSummary;           ///< Indicating whether we generate summary page for context
+    bool bTop10KernelSummary;       ///< Indicating whether we generate summary page for top 10 kernel
+    bool bTop10DataTransferSummary; ///< Indicating whether we generate summary page for top 10 data transfer
+    bool bDataTransferSummary;      ///< Indicating whether we generate summary page for data transfers
+    bool bDataTransferList;         ///< Indicating whether we generate summary page for list of data transfers
+    bool bAPISummary;               ///< Indicating whether we generate summary page for API
+    bool bKernelSummary;            ///< Indicating whether we generate summary page for kernel summary
+    bool bKernelList;               ///< Indicating whether we generate summary page for list of kernels
+    bool bBestPractices;            ///< Indicating whether we generate best practices page
+    AnalyzerMap analyzerMap;        ///< Analyzer map
 
-    AnalyzeOps()
+    /// default constructor
+    AnalyzeOps() :
+        bContextSummary(true),
+        bTop10KernelSummary(true),
+        bTop10DataTransferSummary(true),
+        bDataTransferSummary(true),
+        bDataTransferList(true),
+        bAPISummary(true),
+        bKernelSummary(true),
+        bKernelList(true),
+        bBestPractices(true)
     {
-        bContextSummary = bTop10DataTransferSummary = bTop10KernelSummary = bAPISummary = bKernelSummary = bBestPractices = true;
         strAtpFile.clear();
         strCsvFile.clear();
     }

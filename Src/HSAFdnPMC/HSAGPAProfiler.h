@@ -1,5 +1,5 @@
 //==============================================================================
-// Copyright (c) 2015 Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2015-2018 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 /// \brief  This class interfacts with GPA to retrieve PMC and write the output file
@@ -18,6 +18,11 @@
 #include "TSingleton.h"
 #include "../Common/KernelStats.h"
 #include "../Common/ProfilerTimer.h"
+#include "GPUPerfAPI-ROCm.h"
+
+#if defined (_LINUX) || defined (LINUX)
+#include "HSAKernelAssembly.h"
+#endif
 
 /// Handle the response on the end of the timer
 /// \param timerType type of the ending timer for which response have to be executed
@@ -37,25 +42,13 @@ public:
     bool Init(const Parameters& params, std::string& strErrorOut);
 
     // Thread safe - concurrent sessions are serialized
-    /// \param device HSA Agent
-    /// \param pQueue HSA Queue object
-    /// \param pAqlPacket the AQL dispatch packet
-    /// \param pAqlTranslationHandle an opaque handle required to collect perf counters
+    /// \param pRocProfilerData the ROCProfiler callback data
     /// \return true if succeeded
-    bool Begin(const hsa_agent_t             device,
-               const hsa_queue_t*            pQueue,
-               hsa_kernel_dispatch_packet_t* pAqlPacket,
-               void*                         pAqlTranslationHandle);
+    bool Begin(const rocprofiler_callback_data_t* pRocProfilerData);
 
     /// End PMC session, generate profiling result
-    /// \param pQueue HSA Queue
-    /// \param pAqlTranslationHandle aql translation handle (opaque pointer)
-    /// \param signal signal object
     /// \return true if succeeded
-    bool End(const hsa_agent_t  device,
-             const hsa_queue_t* pQueue,
-             void*              pAqlTranslationHandle,
-             hsa_signal_t       signal);
+    bool End();
 
     /// This function waits for a session for the specified queue and and writes out results if one is found
     /// \param queueId the ID of the queue whose sessions should be checked
@@ -133,9 +126,10 @@ private:
     /// Struct used in the session map
     typedef struct
     {
-        GPA_SessionId  m_sessionID;   ///< the GPA session ID for a given session
-        KernelStats    m_kernelStats; ///< the Kernel Statistics for a given session
-        std::string    m_agentName;   ///< the name of the agent (device)
+        GPA_SessionId  m_sessionID;    ///< the GPA session ID for a given session
+        KernelStats    m_kernelStats;  ///< the Kernel Statistics for a given session
+        std::string    m_agentName;    ///< the name of the agent (device)
+        bool           m_sessionEnded; ///< flag indicating if the session has been ended
     } SessionInfo;
 
     /// Writes the results from the specified session to the session output file
@@ -153,8 +147,12 @@ private:
     /// \param[in] pAqlPacket the AQL Dispatch packet to get the kernel stats from
     /// \param[in] strAgentName the name of the device the kernel was dispatched to
     /// \param[out] kernelStats the kernelStats for the specified dispatch
+    /// \param[in] agent the HSA agent the kernel was dispatched to
     /// \return true on success, false if pAqlPacket is null or if the kernel code object is null
-    bool PopulateKernelStatsFromDispatchPacket(hsa_kernel_dispatch_packet_t* pAqlPacket, const std::string& strAgentName, KernelStats& kernelStats);
+    bool PopulateKernelStatsFromDispatchPacket(const hsa_kernel_dispatch_packet_t* pAqlPacket,
+                                               const std::string& strAgentName,
+                                               KernelStats& kernelStats,
+                                               hsa_agent_t agent);
 
     /// Add Occupancy entry
     /// \param kernelStats kernel stats structure which contains most of the info we need for occupancy
@@ -185,6 +183,9 @@ private:
     ProfilerTimer*          m_pDelayTimer;                       ///< timer for handling delay timer for the profile agent
     ProfilerTimer*          m_pDurationTimer;                    ///< timer for handling duration timer for the profile agent
     GPA_CommandListId       m_commandListId;                     ///< GPA Command List object for the session
+#if defined (_LINUX) || defined (LINUX)
+    HsaKernelAssembly       m_hsaKernelAssembly;                 ///< manages retrieving the HSA source, IL and ISA from the HSA runtime
+#endif
 };
 
 #endif  //_HSA_GPA_PROFILE_H_
