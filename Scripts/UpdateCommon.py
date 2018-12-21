@@ -141,7 +141,7 @@ if __name__ == "__main__":
     manifestRoot = manifestTree.getroot()
 
     (defaultServer, defaultRevision, remotes) = initializeDefaults(manifestRoot)
-    
+
     for child in manifestRoot:
         if child.tag == "project":
             # determine git server to clone from
@@ -149,25 +149,44 @@ if __name__ == "__main__":
             if projectName == "RCP":
                 # Skip RCP project, assume already cloned
                 continue
-                
+
+            revision = child.get('revision')
+            if revision == None:
+                revision = defaultRevision
+
             clonePrefix = remotes[defaultServer]
             if child.find('remote'):
                 clonePrefix = remotes[child.get('remote')] 
-                
+
             # construct clone path and target path
             cloneString = clonePrefix + projectName
             targetPath = os.path.normpath(os.path.join(scriptRoot, "..", "..", child.get('path')))
-                                
+
             # clone or update the project
             projectGitFolder = os.path.join(targetPath, ".git")
             if os.path.isdir(projectGitFolder):
                 # project already cloned into workspace, update
-                print("Updating %s"%targetPath)
-                updateProject(targetPath)
+                gitCmd = ["git", "rev-parse", "HEAD"]
+                process = subprocess.Popen(gitCmd, cwd=targetPath, shell=useShell, stdout=subprocess.PIPE)
+                out, err = process.communicate()
+                if out.strip() == revision:
+                    print("Project %s is at correct revision"%projectName)
+                else:
+                    print("ERROR: Project %s is at incorrect revision"%projectName)
+                continue
             else:
                 # project needs to be cloned into workspace
                 print("Cloning %s into %s"%(projectName, targetPath))
                 cloneProject(cloneString, targetPath)
+
+                gitCmd = ["git", "checkout", revision]
+                try:
+                    subprocess.check_call(gitCmd, cwd=targetPath, shell=useShell)
+                except subprocess.CalledProcessError as e:
+                    print("'git checkout %s' failed with return code %d\n"%(branch,e.returncode))
+                    sys.stderr.flush()
+                    sys.exit(e.returncode)
+                sys.stdout.flush()
 
     for key in downloadMapping:
         downloadandunzip(key, downloadMapping[key])
