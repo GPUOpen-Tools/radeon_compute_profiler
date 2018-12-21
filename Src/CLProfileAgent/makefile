@@ -13,7 +13,7 @@ else
 			-I$(HSA_DIR)/include \
 			-I$(HSA_DIR)/include/hsa \
 			-I$(COMGR_DIR) \
-			-I$(HSA_DIR)/../include/comgr
+			-I$(HSA_DIR)/../include
 endif
 
 INCLUDES = \
