@@ -8,7 +8,6 @@
 #include "Logger.h"
 #include "StringUtils.h"
 
-#include "HSAToolsRTModule.h"
 #include "ROCProfilerModule.h"
 #include "HSARTModuleLoader.h"
 #include "FinalizerInfoManager.h"

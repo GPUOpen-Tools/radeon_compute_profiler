@@ -10,7 +10,6 @@
 #include <fstream>
 #include <iomanip>
 #include "HSAFdnAPIInfoManager.h"
-#include "HSAToolsRTModule.h"
 #include "HSARTModuleLoader.h"
 #include "FinalizerInfoManager.h"
 #include "HSAKernelDemangler.h"
