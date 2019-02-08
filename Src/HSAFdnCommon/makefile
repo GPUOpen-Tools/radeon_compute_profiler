@@ -15,6 +15,7 @@ INCLUDES = \
 	-I$(HSA_DIR)/include \
 	-I$(HSA_DIR)/include/hsa \
 	-I$(HSA_DIR)/../include \
+	-I$(HSA_DIR)/../include/rocprofiler \
 	-I$(DYNAMICLIBRARYMODULE_DIR) \
 	-I$(TSINGLETON_DIR) \
 
