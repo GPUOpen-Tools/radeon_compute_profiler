@@ -166,7 +166,9 @@ The HSA Kernel Timestamp section is marked with the following line:
 
 ``=====hsa Kernel Timestamp Output=====``
 
-The HSA Kernel Timestamp section contains the following information:
+In the HSA Kernel Timestamp section, all time counter data represents CPU-based
+time expressed in nanoseconds. The HSA Kernel Timestamp section contains the
+following information:
 
 * A line giving the number of HSA kernel dispatches, followed by a Kernel
   Timestamp line for each kernel dispatched by the application. A Kernel
