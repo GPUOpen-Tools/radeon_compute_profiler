@@ -8,7 +8,7 @@
 #ifndef _HSA_FDN_API_INFO_MANAGER_H_
 #define _HSA_FDN_API_INFO_MANAGER_H_
 
-#include <hsa_ext_profiler.h>
+#include <hsa_ext_amd.h>
 
 #include <unordered_map>
 #include <mutex>
@@ -193,12 +193,6 @@ protected:
 private:
     /// Constructor
     HSAAPIInfoManager();
-
-    /// Write kernel timestamp data to stream
-    /// \param sout the output stream
-    /// \param record the kernel timestamp record to write to the stream
-    /// \return true on success
-    bool WriteKernelTimestampEntry(std::ostream& sout, const hsa_profiler_kernel_time_t& record);
 
     /// Write Async Copy timestamp data to stream
     /// \param sout the output stream
