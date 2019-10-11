@@ -1228,35 +1228,6 @@ bool CLAPI_clEnqueueMapMemObj::GetMemDeviceInfo(cl_mem buffer)
 
 bool CLAPI_clEnqueueMapMemObj::GetLocation(MemLocation& allocLocation, MemLocation& mapLocation, bool& bZeroCopy, bool bImage) const
 {
-#ifndef _WIN32
-    // Linux
-    bool bVM = false;
-    bool isGcn = false;
-    bool isVarIsGcnSet = false;
-
-    if (m_isDevicePcieIdSet)
-    {
-        isVarIsGcnSet = AMDTDeviceInfoUtils::Instance()->IsGCN(static_cast<size_t>(m_devicePcieId), isGcn);
-    }
-
-    if (!isVarIsGcnSet)
-    {
-        isVarIsGcnSet = AMDTDeviceInfoUtils::Instance()->IsGCN(m_strDeviceName.c_str(), isGcn);
-    }
-
-    if (isVarIsGcnSet)
-    {
-        if (isGcn)
-        {
-            // SI and CI supports VM on Linux
-            bVM = true;
-        }
-    }
-
-#else
-    bool bVM = true;
-#endif
-
     const size_t DATA_THRESHOLD = 33554432;   // 32MB
 
     switch (m_deviceType)
@@ -1271,9 +1242,8 @@ bool CLAPI_clEnqueueMapMemObj::GetLocation(MemLocation& allocLocation, MemLocati
             }
             else if (m_memFlags & CL_MEM_ALLOC_HOST_PTR)
             {
-                if (!bVM || bImage)
+                if (bImage)
                 {
-                    // no VM
                     allocLocation = ML_DeviceVisibleHostMem;
                     mapLocation = ML_PinnedHostMem;
                     bZeroCopy = false;
@@ -1287,27 +1257,9 @@ bool CLAPI_clEnqueueMapMemObj::GetLocation(MemLocation& allocLocation, MemLocati
             }
             else if (m_memFlags & CL_MEM_USE_PERSISTENT_MEM_AMD)
             {
-                if (!bVM)
-                {
-                    allocLocation = ML_DeviceVisibleHostMem;
-
-                    if (GetDataSize() > DATA_THRESHOLD)
-                    {
-                        mapLocation = ML_HostMem;
-                    }
-                    else
-                    {
-                        mapLocation = ML_PinnedHostMem;
-                    }
-
-                    bZeroCopy = false;
-                }
-                else
-                {
-                    allocLocation = ML_DeviceVisibleHostMem;
-                    mapLocation = ML_DeviceVisibleHostMem;
-                    bZeroCopy = true;
-                }
+                allocLocation = ML_DeviceVisibleHostMem;
+                mapLocation = ML_DeviceVisibleHostMem;
+                bZeroCopy = true;
             }
             else
             {
@@ -1337,9 +1289,8 @@ bool CLAPI_clEnqueueMapMemObj::GetLocation(MemLocation& allocLocation, MemLocati
             }
             else if (m_memFlags & CL_MEM_ALLOC_HOST_PTR)
             {
-                if (!bVM || bImage)
+                if (bImage)
                 {
-                    // no VM
                     allocLocation = ML_DeviceMem;
                     mapLocation = ML_PinnedHostMem;
                     bZeroCopy = false;
@@ -1353,27 +1304,9 @@ bool CLAPI_clEnqueueMapMemObj::GetLocation(MemLocation& allocLocation, MemLocati
             }
             else if (m_memFlags & CL_MEM_USE_PERSISTENT_MEM_AMD)
             {
-                if (!bVM)
-                {
-                    allocLocation = ML_DeviceMem;
-
-                    if (GetDataSize() > DATA_THRESHOLD)
-                    {
-                        mapLocation = ML_HostMem;
-                    }
-                    else
-                    {
-                        mapLocation = ML_PinnedHostMem;
-                    }
-
-                    bZeroCopy = false;
-                }
-                else
-                {
-                    allocLocation = ML_HostVisibleDeviceMem;
-                    mapLocation = ML_HostVisibleDeviceMem;
-                    bZeroCopy = true;
-                }
+                allocLocation = ML_HostVisibleDeviceMem;
+                mapLocation = ML_HostVisibleDeviceMem;
+                bZeroCopy = true;
             }
             else
             {
@@ -1427,7 +1360,7 @@ bool CLAPI_clEnqueueMapMemObj::GetLocation(MemLocation& allocLocation, MemLocati
             }
             else if (m_memFlags & CL_MEM_USE_PERSISTENT_MEM_AMD)
             {
-                if (!bVM || bImage)
+                if (bImage)
                 {
                     if (GetDataSize() > DATA_THRESHOLD)
                     {
